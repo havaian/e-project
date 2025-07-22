@@ -7,7 +7,7 @@
                     <!-- Logo -->
                     <router-link to="/" class="flex items-center space-x-3">
                         <div class="rounded-xl shadow-lg">
-                            <img src="/images/logo.svg" :alt="`${import.meta.env.VITE_APP_TITLE} Logo`" width="40" height="40" class="w-15 h-15" />
+                            <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="40" height="40" class="w-15 h-15" />
                         </div>
                         <span class="text-xl font-bold">
                             {{ import.meta.env.VITE_APP_TITLE_1 }}<span
@@ -217,6 +217,11 @@ const authStore = useAuthStore()
 
 const showMobileMenu = ref(false)
 const showProfileMenu = ref(false)
+
+const appTitle = import.meta.env.VITE_APP_TITLE
+const appTitle1 = import.meta.env.VITE_APP_TITLE_1  
+const appTitle2 = import.meta.env.VITE_APP_TITLE_2
+const appTitle3 = import.meta.env.VITE_APP_TITLE_3
 
 const toggleMobileMenu = () => {
     showMobileMenu.value = !showMobileMenu.value

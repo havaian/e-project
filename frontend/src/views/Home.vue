@@ -34,7 +34,7 @@
             <div class="relative">
               <div
                 class="float-element glow-effect">
-                  <img src="/images/logo.svg" :alt="`${import.meta.env.VITE_APP_TITLE} Logo`" width="80" height="80" class="w-20 h-20" />
+                  <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="80" height="80" class="w-20 h-20" />
               </div>
             </div>
           </div>
@@ -234,7 +234,10 @@
 </template>
 
 <script setup>
-// No additional imports needed as this is just updating the template
+const appTitle = import.meta.env.VITE_APP_TITLE
+const appTitle1 = import.meta.env.VITE_APP_TITLE_1  
+const appTitle2 = import.meta.env.VITE_APP_TITLE_2
+const appTitle3 = import.meta.env.VITE_APP_TITLE_3
 </script>
 
 <style scoped>

@@ -9,6 +9,15 @@ RUN npm ci
 # Copy app source
 COPY . .
 
+# Set build-time environment variables
+ARG VITE_APP_PAGE_TITLE
+ARG VITE_APP_PAGE_DESC  
+ARG VITE_PROJECT_URL
+
+ENV VITE_APP_PAGE_TITLE=$VITE_APP_PAGE_TITLE
+ENV VITE_APP_PAGE_DESC=$VITE_APP_PAGE_DESC
+ENV VITE_PROJECT_URL=$VITE_PROJECT_URL
+
 # Set environment variables
 ENV NODE_ENV=development
 
