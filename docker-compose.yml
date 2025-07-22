@@ -91,7 +91,7 @@ services:
       - API_URL=${PROJECT_URL}/api
     env_file:
       - ./.env
-      - ./.env.docker
+      - ./.env.local
     ports:
       - "${BACKEND_EXPOSE}:${BACKEND_PORT}"
     volumes:
@@ -121,7 +121,7 @@ services:
         condition: service_healthy
     env_file:
       - ./.env
-      - ./.env.docker
+      - ./.env.local
     environment:
       - VITE_SOCKET_URL=${API_URL}
       - VUE_APP_API_URL=${PROJECT_URL}/api
