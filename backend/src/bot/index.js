@@ -125,14 +125,14 @@
 //                 }
 
 //                 try {
-//                     // Validate API_URL is set
-//                     if (!process.env.API_URL) {
-//                         throw new Error('API_URL environment variable is not set');
+//                     // Validate VITE_API_URL is set
+//                     if (!process.env.VITE_API_URL) {
+//                         throw new Error('VITE_API_URL environment variable is not set');
 //                     }
 
 //                     // Request verification code from API
 //                     const response = await axios.post(
-//                         `${process.env.API_URL}/users/telegram-verification`,
+//                         `${process.env.VITE_API_URL}/users/telegram-verification`,
 //                         { email, telegramChatId: ctx.chat.id }
 //                     );
 
@@ -151,7 +151,7 @@
 //                     // Specific error messages based on the error
 //                     if (error.response?.status === 404) {
 //                         await ctx.reply("❌ Email not found. Please make sure your email is registered with e-project.uz.");
-//                     } else if (error.message.includes('API_URL environment variable')) {
+//                     } else if (error.message.includes('VITE_API_URL environment variable')) {
 //                         await ctx.reply("❌ System configuration error. Please contact support.");
 //                         console.error(error.message);
 //                     } else {
@@ -166,14 +166,14 @@
 //                 const verificationCode = ctx.message.text.trim();
 
 //                 try {
-//                     // Validate API_URL is set
-//                     if (!process.env.API_URL) {
-//                         throw new Error('API_URL environment variable is not set');
+//                     // Validate VITE_API_URL is set
+//                     if (!process.env.VITE_API_URL) {
+//                         throw new Error('VITE_API_URL environment variable is not set');
 //                     }
 
 //                     // Verify the code with API
 //                     const response = await axios.post(
-//                         `${process.env.API_URL}/users/link-telegram`,
+//                         `${process.env.VITE_API_URL}/users/link-telegram`,
 //                         {
 //                             telegramId: ctx.chat.id.toString(),
 //                             verificationCode
@@ -197,7 +197,7 @@
 //                         await ctx.reply(
 //                             "❌ Invalid or expired verification code. Please check the code and try again, or use /link to request a new code."
 //                         );
-//                     } else if (error.message.includes('API_URL environment variable')) {
+//                     } else if (error.message.includes('VITE_API_URL environment variable')) {
 //                         await ctx.reply("❌ System configuration error. Please contact support.");
 //                         console.error(error.message);
 //                     } else {
@@ -259,14 +259,14 @@
 //                             throw new Error('Missing authentication token');
 //                         }
 
-//                         // Validate API_URL is set
-//                         if (!process.env.API_URL) {
-//                             throw new Error('API_URL environment variable is not set');
+//                         // Validate VITE_API_URL is set
+//                         if (!process.env.VITE_API_URL) {
+//                             throw new Error('VITE_API_URL environment variable is not set');
 //                         }
 
 //                         // Create appointment via API
 //                         const response = await axios.post(
-//                             `${process.env.API_URL}/appointments`,
+//                             `${process.env.VITE_API_URL}/appointments`,
 //                             {
 //                                 providerId,
 //                                 dateTime,
@@ -331,14 +331,14 @@
 //                 try {
 //                     const userMessage = ctx.message.text.trim();
                     
-//                     // Validate API_URL is set
-//                     if (!process.env.API_URL) {
-//                         throw new Error('API_URL environment variable is not set');
+//                     // Validate VITE_API_URL is set
+//                     if (!process.env.VITE_API_URL) {
+//                         throw new Error('VITE_API_URL environment variable is not set');
 //                     }
 
 //                     // Call to virtual assistant API
 //                     const response = await axios.post(
-//                         `${process.env.API_URL}/assistant/chat`,
+//                         `${process.env.VITE_API_URL}/assistant/chat`,
 //                         {
 //                             message: userMessage,
 //                             userId: ctx.session.userData?.userId || `telegram_${ctx.chat.id}` // Fallback ID for non-linked users
@@ -353,7 +353,7 @@
 //                 } catch (error) {
 //                     console.error('Error with assistant:', error.response?.data || error.message);
                     
-//                     if (error.message.includes('API_URL environment variable')) {
+//                     if (error.message.includes('VITE_API_URL environment variable')) {
 //                         console.error(error.message);
 //                         await ctx.reply("❌ System configuration error. Please try again later.");
 //                     } else if (error.message === 'Empty reply from assistant') {
@@ -403,15 +403,15 @@
 //                 return;
 //             }
 
-//             // Validate API_URL is set
-//             if (!process.env.API_URL) {
-//                 throw new Error('API_URL environment variable is not set');
+//             // Validate VITE_API_URL is set
+//             if (!process.env.VITE_API_URL) {
+//                 throw new Error('VITE_API_URL environment variable is not set');
 //             }
             
 //             try {
 //                 // Fetch appointments from API
 //                 const response = await axios.get(
-//                     `${process.env.API_URL}/appointments/client/${ctx.session.userData.userId}`,
+//                     `${process.env.VITE_API_URL}/appointments/client/${ctx.session.userData.userId}`,
 //                     {
 //                         headers: {
 //                             'Authorization': `Bearer ${ctx.session.userData.token}`
@@ -488,15 +488,15 @@
 //                 return;
 //             }
 
-//             // Validate API_URL is set
-//             if (!process.env.API_URL) {
-//                 throw new Error('API_URL environment variable is not set');
+//             // Validate VITE_API_URL is set
+//             if (!process.env.VITE_API_URL) {
+//                 throw new Error('VITE_API_URL environment variable is not set');
 //             }
 
 //             try {
 //                 // Fetch user profile from API
 //                 const response = await axios.get(
-//                     `${process.env.API_URL}/users/me`,
+//                     `${process.env.VITE_API_URL}/users/me`,
 //                     {
 //                         headers: {
 //                             'Authorization': `Bearer ${ctx.session.userData.token}`
@@ -595,8 +595,8 @@
 //     // Helper function to find user by Telegram ID
 //     async function findUserByTelegramId(telegramId) {
 //         try {
-//             if (!process.env.API_URL) {
-//                 throw new Error('API_URL environment variable is not set');
+//             if (!process.env.VITE_API_URL) {
+//                 throw new Error('VITE_API_URL environment variable is not set');
 //             }
 
 //             const User = require('../user/model');
@@ -656,15 +656,15 @@
 //                 return;
 //             }
 
-//             // Validate API_URL is set
-//             if (!process.env.API_URL) {
-//                 throw new Error('API_URL environment variable is not set');
+//             // Validate VITE_API_URL is set
+//             if (!process.env.VITE_API_URL) {
+//                 throw new Error('VITE_API_URL environment variable is not set');
 //             }
 
 //             try {
 //                 // Fetch available specializations
 //                 const response = await axios.get(
-//                     `${process.env.API_URL}/providers/specializations`
+//                     `${process.env.VITE_API_URL}/providers/specializations`
 //                 );
 
 //                 const specializations = response.data.specializations;
@@ -733,7 +733,7 @@
             
 //             // Fetch providers with this specializations
 //             const response = await axios.get(
-//                 `${process.env.API_URL}/providers?specializations=${encodeURIComponent(selectedSpecialization)}`,
+//                 `${process.env.VITE_API_URL}/providers?specializations=${encodeURIComponent(selectedSpecialization)}`,
 //                 {
 //                     headers: {
 //                         'Authorization': `Bearer ${ctx.session.userData.token}`
