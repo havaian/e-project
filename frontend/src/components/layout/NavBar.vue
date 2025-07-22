@@ -10,9 +10,9 @@
                             <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="40" height="40" class="w-15 h-15" />
                         </div>
                         <span class="text-xl font-bold">
-                            {{ import.meta.env.VITE_APP_TITLE_1 }}<span
-                                class="bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent">{{ import.meta.env.VITE_APP_TITLE_2 }}</span><span
-                                class="text-success">{{ import.meta.env.VITE_APP_TITLE_3 }}</span>
+                            {{ appTitle1 }}<span
+                                class="bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent">{{ appTitle2 }}</span><span
+                                class="text-success">{{ appTitle3 }}</span>
                         </span>
                     </router-link>
 
