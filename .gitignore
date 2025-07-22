@@ -6,6 +6,7 @@ yarn.lock
 .env
 .env.*
 !.env.sample
+!.env.local
 
 # Build outputs
 dist/

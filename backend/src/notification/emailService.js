@@ -27,7 +27,7 @@ class EmailService {
     async sendEmail(options) {
         try {
             const mailOptions = {
-                from: `"dev.e-stud.uz" <${process.env.SMTP_FROM_EMAIL}>`,
+                from: `"e-project.uz" <${process.env.SMTP_FROM_EMAIL}>`,
                 to: options.to,
                 subject: options.subject,
                 text: options.text || '',
@@ -51,7 +51,7 @@ class EmailService {
             // Email to client
             await this.sendEmail({
                 to: client.email,
-                subject: 'Appointment Confirmation - dev.e-stud.uz',
+                subject: 'Appointment Confirmation - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Appointment Confirmed</h2>
@@ -67,7 +67,7 @@ class EmailService {
                     </div>
                     
                     <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
-                    <p>You can view your appointment details and join the session by logging into your dev.e-stud.uz account.</p>
+                    <p>You can view your appointment details and join the session by logging into your e-project.uz account.</p>
                 </div>
                 `
             });
@@ -75,7 +75,7 @@ class EmailService {
             // Email to provider
             await this.sendEmail({
                 to: provider.email,
-                subject: 'New Appointment Scheduled - dev.e-stud.uz',
+                subject: 'New Appointment Scheduled - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">New Appointment</h2>
@@ -88,7 +88,7 @@ class EmailService {
                         <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
-                    <p>Please log in to your dev.e-stud.uz account to view the complete appointment details.</p>
+                    <p>Please log in to your e-project.uz account to view the complete appointment details.</p>
                 </div>
                 `
             });
@@ -108,7 +108,7 @@ class EmailService {
 
             await this.sendEmail({
                 to: client.email,
-                subject: 'Appointment Booking Failed - dev.e-stud.uz',
+                subject: 'Appointment Booking Failed - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #e74c3c;">Appointment Booking Failed</h2>
@@ -143,7 +143,7 @@ class EmailService {
             // Email to client
             await this.sendEmail({
                 to: client.email,
-                subject: 'Appointment Reminder - dev.e-stud.uz',
+                subject: 'Appointment Reminder - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Appointment Reminder</h2>
@@ -164,7 +164,7 @@ class EmailService {
             // Email to provider
             await this.sendEmail({
                 to: provider.email,
-                subject: 'Appointment Reminder - dev.e-stud.uz',
+                subject: 'Appointment Reminder - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Appointment Reminder</h2>
@@ -198,7 +198,7 @@ class EmailService {
             // Email to client
             await this.sendEmail({
                 to: client.email,
-                subject: 'Appointment Cancelled - dev.e-stud.uz',
+                subject: 'Appointment Cancelled - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #e74c3c;">Appointment Cancelled</h2>
@@ -219,7 +219,7 @@ class EmailService {
             // Email to provider
             await this.sendEmail({
                 to: provider.email,
-                subject: 'Appointment Cancelled - dev.e-stud.uz',
+                subject: 'Appointment Cancelled - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #e74c3c;">Appointment Cancelled</h2>
@@ -253,7 +253,7 @@ class EmailService {
             // Email to client
             await this.sendEmail({
                 to: client.email,
-                subject: 'Appointment Confirmed by Provider - dev.e-stud.uz',
+                subject: 'Appointment Confirmed by Provider - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Appointment Confirmed by Provider</h2>
@@ -274,7 +274,7 @@ class EmailService {
             // Email confirmation to provider
             await this.sendEmail({
                 to: provider.email,
-                subject: 'Appointment Confirmation Successful - dev.e-stud.uz',
+                subject: 'Appointment Confirmation Successful - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Appointment Confirmed</h2>
@@ -307,7 +307,7 @@ class EmailService {
 
             await this.sendEmail({
                 to: client.email,
-                subject: 'Payment Successful - dev.e-stud.uz',
+                subject: 'Payment Successful - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Payment Successful</h2>
@@ -356,7 +356,7 @@ class EmailService {
 
             await this.sendEmail({
                 to: client.email,
-                subject: 'Payment Confirmation - dev.e-stud.uz',
+                subject: 'Payment Confirmation - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Payment Confirmation</h2>
@@ -400,7 +400,7 @@ class EmailService {
 
             await this.sendEmail({
                 to: client.email,
-                subject: 'Payment Refund - dev.e-stud.uz',
+                subject: 'Payment Refund - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Payment Refund</h2>
@@ -452,17 +452,17 @@ class EmailService {
 
             await this.sendEmail({
                 to: client.email,
-                subject: 'New Recommendations from Your Provider - dev.e-stud.uz',
+                subject: 'New Recommendations from Your Provider - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">New Recommendations</h2>
-                    <p>${provider.firstName} ${provider.lastName} has prescribed the following title(s) after your session:</p>
+                    <p>${provider.firstName} ${provider.lastName} has left the following notes after your session:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         ${recommendationsHtml}
                     </div>
                     
-                    <p>You can view these recommendations at any time by logging into your dev.e-stud.uz account.</p>
+                    <p>You can view these recommendations at any time by logging into your e-project.uz account.</p>
                     <p><strong>Note:</strong> Always follow your provider's instructions when taking titles.</p>
                 </div>
                 `
@@ -485,7 +485,7 @@ class EmailService {
 
             await this.sendEmail({
                 to: client.email,
-                subject: 'Follow-up Appointment Recommended - dev.e-stud.uz',
+                subject: 'Follow-up Appointment Recommended - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Follow-up Appointment</h2>
@@ -499,14 +499,14 @@ class EmailService {
                         <p><strong>Reason:</strong> ${shortDescription}</p>
                     </div>
                     
-                    <p>This appointment requires payment confirmation. Please log in to your dev.e-stud.uz account to confirm and complete payment for this follow-up appointment.</p>
+                    <p>This appointment requires payment confirmation. Please log in to your e-project.uz account to confirm and complete payment for this follow-up appointment.</p>
                 </div>
                 `
             });
 
             await this.sendEmail({
                 to: provider.email,
-                subject: 'Follow-up Appointment Created - dev.e-stud.uz',
+                subject: 'Follow-up Appointment Created - e-project.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Follow-up Appointment Created</h2>
