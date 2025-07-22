@@ -77,7 +77,7 @@
 //                 "/profile - View your profile\n" +
 //                 "/unlink - Unlink your account\n" +
 //                 "/assistant - Chat with assistant\n\n" +
-//                 "If you need further assistance, contact study@ytech.space"
+//                 "If you need further assistance, contact " + process.env.VITE_CONTACT_MAIL
 //             );
 //         } catch (error) {
 //             console.error("Error in help command:", error);
