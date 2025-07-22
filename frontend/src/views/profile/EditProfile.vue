@@ -258,7 +258,7 @@ const formData = reactive({
     },
     specializations: [],
     languages: [],
-   : [],
+    education: [],
     certifications: [],
     sessionFee: 0,
     experience: 0,
@@ -350,16 +350,16 @@ async function fetchSpecializations() {
         console.error('Error fetching specializations:', error)
         // Set some defaults in case API call fails
         availableSpecializations.value = [
-            'Mathematics',
-            'Science',
-            'Languages',
-            'Computer Science',
-            'History',
-            'Literature',
-            'Arts',
-            'Music',
-            'Business',
-            'Test Prep'
+            'Specialization 1',
+            'Specialization 2',
+            'Specialization 3',
+            'Specialization 4',
+            'Specialization 5',
+            'Specialization 6',
+            'Specialization 7',
+            'Specialization 8',
+            'Specialization 9',
+            'Specialization 10'
         ]
     }
 }

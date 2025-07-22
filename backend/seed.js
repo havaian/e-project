@@ -15,7 +15,18 @@ mongoose.set('bufferTimeoutMS', 30000);
 // No need to connect - using existing connection from db.js
 
 // Seed data
-const specializations = [];
+const specializations = [
+    { name: 'Specialization 1', description: 'Description 1', icon: 'fa-calculator' },
+    { name: 'Specialization 2', description: 'Description 2', icon: 'fa-atom' },
+    { name: 'Specialization 3', description: 'Description 3', icon: 'fa-language' },
+    { name: 'Specialization 4', description: 'Description 4', icon: 'fa-code' },
+    { name: 'Specialization 5', description: 'Description 5', icon: 'fa-landmark' },
+    { name: 'Specialization 6', description: 'Description 6', icon: 'fa-book' },
+    { name: 'Specialization 7', description: 'Description 7', icon: 'fa-palette' },
+    { name: 'Specialization 8', description: 'Description 8', icon: 'fa-music' },
+    { name: 'Specialization 9', description: 'Description 9', icon: 'fa-chart-line' },
+    { name: 'Specialization 10', description: 'Description 10', icon: 'fa-graduation-cap' }
+];
 
 // Non-destructive seed function
 async function seedDatabase() {

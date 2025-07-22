@@ -41,12 +41,12 @@
             </dl>
           </div>
 
-          <!-- Educational History -->
+          <!-- Background & History -->
           <div>
-            <h2 class="text-lg font-medium text-gray-900 mb-4">Educational History</h2>
+            <h2 class="text-lg font-medium text-gray-900 mb-4">History</h2>
             <dl class="space-y-4">
               <div>
-                <dt class="text-sm font-medium text-gray-500">Educational Background</dt>
+                <dt class="text-sm font-medium text-gray-500">Background</dt>
                 <dd class="mt-1 text-gray-900">
                   <p v-if="user?.backgroundInfo?.length">
                     {{ user.backgroundInfo }}

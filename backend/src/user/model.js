@@ -85,7 +85,7 @@ const userSchema = new Schema({
         default: 0,
         required: function () { return this.role === 'provider'; }
     },
-   : [{
+    education: [{
         degree: String,
         institution: String,
         year: Number
