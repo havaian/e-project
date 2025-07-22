@@ -21,7 +21,7 @@ exports.sendSessionCompletedNotification = async (appointment) => {
         // Send email to client
         await emailService.sendEmail({
             to: client.email,
-            subject: 'Your Session Has Ended - E-Study',
+            subject: 'Your Session Has Ended - ' + process.env.VITE_APP_TITLE,
             text: `Your session with ${provider.firstName} ${provider.lastName} has ended. 
             If you need to schedule a follow-up appointment, please visit our website.`,
             html: `
@@ -32,7 +32,7 @@ exports.sendSessionCompletedNotification = async (appointment) => {
               <p><strong>Date:</strong> ${new Date(appointment.dateTime).toLocaleDateString()}</p>
               <p><strong>Time:</strong> ${new Date(appointment.dateTime).toLocaleTimeString()} - ${new Date(appointment.endTime).toLocaleTimeString()}</p>
               <p>If you need to schedule a follow-up appointment, please visit our website.</p>
-              <p>Thank you for choosing E-Study for your education needs.</p>
+              <p>Thank you for choosing our platform for your needs.</p>
             </div>
             `
         });
@@ -40,7 +40,7 @@ exports.sendSessionCompletedNotification = async (appointment) => {
         // Send email to provider
         await emailService.sendEmail({
             to: provider.email,
-            subject: 'Session Completed - E-Study',
+            subject: 'Session Completed - ' + process.env.VITE_APP_TITLE,
             text: `Your session with ${client.firstName} ${client.lastName} has ended. 
             Please complete your session summary if you haven't already done so.`,
             html: `

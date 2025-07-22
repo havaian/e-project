@@ -1018,7 +1018,7 @@ exports.updateSessionResults = async (req, res) => {
 };
 
 /**
- * Upload educational documents for an appointment
+ * Upload documents for an appointment
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */

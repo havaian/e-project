@@ -33,7 +33,7 @@
 
                 <div class="flex items-center justify-between">
                     <div class="text-sm">
-                        <a href="#" @click.prevent="forgotPassword" class="font-medium bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-500">
+                        <a href="#" @click.prevent="forgotPassword" class="font-medium bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-500">
                             Forgot your password?
                         </a>
                     </div>
@@ -48,7 +48,7 @@
 
             <p class="mt-2 text-center text-sm text-gray-600">
                 Don't have an account?
-                <a href="#" @click.prevent="goToRegister" class="font-medium bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-500">
+                <a href="#" @click.prevent="goToRegister" class="font-medium bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-500">
                     Sign up
                 </a>
             </p>

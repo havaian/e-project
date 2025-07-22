@@ -7,23 +7,49 @@ export default {
   theme: {
     extend: {
       colors: {
-        'educational-blue': '#1e3a8a',
-        'educational-green': '#059669',
-        'educational-teal': '#0d9488',
-        'educational-purple': '#7c3aed',
-        'soft-blue': '#1e40af',
-        'soft-green': '#f3f4f6',
+        // Brand colors using CSS variables
+        'brand-1': 'var(--color-brand-1)',
+        'brand-2': 'var(--color-brand-2)',
+        'brand-3': 'var(--color-brand-3)',
+        'brand-4': 'var(--color-brand-4)',
+        'brand-5': 'var(--color-brand-5)',
+        
+        // Semantic colors using CSS variables
+        'success': 'rgb(var(--color-success))',
+        'warning': 'rgb(var(--color-warning))',
+        'error': 'rgb(var(--color-error))',
+        
+        // Legacy support for theme
+        'color1': 'var(--color-brand-1)',
+        'success': 'rgb(var(--color-success))',
+        'color2': 'var(--color-brand-2)',
+        'color3': 'var(--color-brand-3)',
+        'color4': 'var(--color-brand-4)',
+        'color5': 'var(--color-brand-5)',
+
+        // Legacy primary/secondary/accent
+        'primary': 'var(--color-brand-1)',
+        'secondary': 'var(--color-brand-2)',
+        'accent': 'var(--color-brand-3)',
       },
       backgroundImage: {
-        'educational-gradient': 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 25%, #f8fafc 50%, #ddd6fe 75%, #f8fafc 100%)',
+        'element-gradient': 'var(--gradient-element)',
+        'brand-gradient': 'linear-gradient(135deg, var(--color-brand-1), var(--color-brand-2))',
+        'brand-gradient-reverse': 'linear-gradient(135deg, var(--color-brand-2), var(--color-brand-1))',
+        'brand-gradient-multi': 'linear-gradient(135deg, var(--color-brand-1), var(--color-brand-2), var(--color-brand-3))',
+        
+        // Legacy gradients
+        'element-gradient': 'var(--gradient-element)',
       },
       animation: {
-        'float-educational': 'floatEducational 4s ease-in-out infinite',
-        'pulse-educational': 'pulse 3s ease-in-out infinite',
+        'float-element': 'floatElement 4s ease-in-out infinite',
+        'float-element': 'floatElement 4s ease-in-out infinite', // Legacy alias
+        'pulse-animation': 'pulse 3s ease-in-out infinite',
         'slide-in': 'slideIn 1.2s ease-out',
+        'heartbeat': 'heartbeat 2s ease-in-out infinite',
       },
       keyframes: {
-        floatEducational: {
+        floatElement: {
           '0%, 100%': {
             transform: 'translateY(0px) rotate(0deg)',
           },
@@ -47,11 +73,21 @@ export default {
             transform: 'translateY(0)',
           },
         },
+        heartbeat: {
+          '0%, 100%': {
+            transform: 'scale(1)',
+          },
+          '50%': {
+            transform: 'scale(1.1)',
+          },
+        },
       },
       boxShadow: {
-        'glow': '0 20px 40px rgba(14, 165, 233, 0.15)',
-        'glow-green': '0 20px 40px rgba(16, 185, 129, 0.15)',
-        'glow-teal': '0 20px 40px rgba(6, 182, 212, 0.15)',
+        'glow': '0 20px 40px color-mix(in srgb, var(--color-brand-1) 15%, transparent)',
+        'glow-brand': '0 20px 40px color-mix(in srgb, var(--color-brand-2) 15%, transparent)',
+        'glow-success': '0 20px 40px rgba(var(--color-success), 0.15)',
+        'glow-green': '0 20px 40px rgba(var(--color-success), 0.15)', // Legacy alias
+        'glow-effect': '0 20px 40px color-mix(in srgb, var(--color-brand-1) 15%, transparent)', // Legacy alias
       },
     },
   },

@@ -40,7 +40,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const props = defineProps({
     linked: {
@@ -64,13 +64,13 @@ async function handleSubmit() {
 
         if (!verificationSent.value) {
             // Request verification code
-            await axios.post('/api/telegram/verification', {
+            await axios.post('/telegram/verification', {
                 email: email.value
             })
             verificationSent.value = true
         } else {
             // Verify code
-            await axios.post('/api/users/link-telegram', {
+            await axios.post('/users/link-telegram', {
                 verificationCode: verificationCode.value
             })
             emit('update:linked', true)
@@ -87,7 +87,7 @@ async function handleUnlink() {
         loading.value = true
         error.value = ''
 
-        await axios.post('/api/users/unlink-telegram')
+        await axios.post('/users/unlink-telegram')
         emit('update:linked', false)
     } catch (err) {
         error.value = err.response?.data?.message || 'Failed to unlink account'

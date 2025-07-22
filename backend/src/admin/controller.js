@@ -794,7 +794,7 @@ exports.getSystemHealth = async (req, res) => {
 };
 
 /**
- * Create a new educational specializations
+ * Create a new specializations
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */

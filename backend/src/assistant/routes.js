@@ -5,7 +5,7 @@ const { authenticateUser } = require('../auth/index');
 
 /**
  * @route POST /api/assistant/chat
- * @desc Chat with the educational assistant
+ * @desc Chat with the assistant
  * @access Private (uses authenticated user ID when available)
  */
 router.post('/chat', authenticateUser, assistantController.chatWithAssistant);

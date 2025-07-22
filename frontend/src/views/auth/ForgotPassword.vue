@@ -28,7 +28,7 @@
                 </form>
 
                 <div class="text-sm text-center">
-                    <router-link to="/login" class="font-medium bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-500">
+                    <router-link to="/login" class="font-medium bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-500">
                         Back to login
                     </router-link>
                 </div>
@@ -60,7 +60,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const email = ref('')
 const loading = ref(false)
@@ -72,7 +72,7 @@ async function handleSubmit() {
         loading.value = true
         error.value = ''
 
-        await axios.post('/api/users/forgot-password', { email: email.value })
+        await axios.post('/users/forgot-password', { email: email.value })
         success.value = true
     } catch (err) {
         error.value = err.response?.data?.message || 'Failed to process request'

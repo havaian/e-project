@@ -163,7 +163,7 @@ import { ref, reactive, onMounted, computed, watch, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { format, parseISO, differenceInYears, isWithinInterval, subMinutes, addMinutes } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import PendingConfirmations from '@/components/appointments/PendingConfirmations.vue'
 
 const router = useRouter()
@@ -220,7 +220,7 @@ async function fetchAppointments() {
             ...filters
         }
 
-        const response = await axios.get(`/api/appointments/provider/${authStore.user._id}`, { params })
+        const response = await axios.get(`/appointments/provider/${authStore.user._id}`, { params })
         appointments.value = response.data.appointments
         totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
     } catch (error) {
@@ -232,7 +232,7 @@ async function fetchAppointments() {
 
 async function fetchPendingCount() {
     try {
-        const response = await axios.get(`/api/appointments/pending-confirmation/provider/${authStore.user._id}`, {
+        const response = await axios.get(`/appointments/pending-confirmation/provider/${authStore.user._id}`, {
             params: { limit: 1 } // Just get count, not all data
         })
         pendingCount.value = response.data.pagination.total
@@ -246,7 +246,7 @@ async function markAsNoShow(appointmentId) {
     if (!confirm('Are you sure you want to mark this appointment as no-show?')) return
 
     try {
-        await axios.patch(`/api/appointments/${appointmentId}/status`, {
+        await axios.patch(`/appointments/${appointmentId}/status`, {
             status: 'no-show'
         })
         await fetchAppointments()
@@ -257,7 +257,7 @@ async function markAsNoShow(appointmentId) {
 
 async function joinSession(appointmentId) {
     try {
-        const response = await axios.get(`/api/sessions/${appointmentId}/join`)
+        const response = await axios.get(`/sessions/${appointmentId}/join`)
         if (response.data.session) {
             router.push({
                 name: 'session-room',

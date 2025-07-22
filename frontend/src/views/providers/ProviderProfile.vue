@@ -70,7 +70,7 @@
                                 {{ edu.degree }} - {{ edu.institution }} ({{ edu.year }})
                             </li>
                             <li v-if="!provider.education || provider.education.length === 0" class="text-gray-500">
-                                No education information provided.
+                                No information provided.
                             </li>
                         </ul>
 
@@ -179,7 +179,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { format } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -253,7 +253,7 @@ const formatDate = (date) => {
 async function fetchProviderProfile() {
     try {
         loading.value = true
-        const response = await axios.get(`/api/users/providers/${route.params.id}`)
+        const response = await axios.get(`/users/providers/${route.params.id}`)
         provider.value = response.data.provider
 
         // After provider is loaded, check appointments and fetch reviews
@@ -270,7 +270,7 @@ async function fetchProviderProfile() {
 
 async function fetchReviews() {
     try {
-        const reviewsResponse = await axios.get(`/api/reviews/provider/${route.params.id}`)
+        const reviewsResponse = await axios.get(`/reviews/provider/${route.params.id}`)
         reviews.value = reviewsResponse.data.reviews || []
         reviewsLoaded.value = true
     } catch (reviewError) {
@@ -292,7 +292,7 @@ async function checkUpcomingAppointments() {
     }
 
     try {
-        const response = await axios.get(`/api/appointments/client/${authStore.user._id}`, {
+        const response = await axios.get(`/appointments/client/${authStore.user._id}`, {
             params: { 
                 status: 'scheduled', 
                 provider: provider.value._id  // Use provider filter instead of providerId
@@ -311,7 +311,7 @@ async function startChat() {
     }
 
     try {
-        const response = await axios.post('/api/chat/conversations', {
+        const response = await axios.post('/chat/conversations', {
             participantId: provider.value._id
         })
 

@@ -57,7 +57,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -69,7 +69,7 @@ const error = ref('')
 onMounted(async () => {
     try {
         const token = route.params.token
-        await axios.get(`/api/users/verify/${token}`)
+        await axios.get(`/users/verify/${token}`)
         success.value = true
     } catch (err) {
         error.value = err.response?.data?.message || 'Failed to verify email'

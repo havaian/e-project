@@ -163,7 +163,7 @@
             </form>
 
             <div class="text-sm text-center">
-                <router-link to="/login" class="font-medium bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-500">
+                <router-link to="/login" class="font-medium bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-500">
                     Back to login
                 </router-link>
             </div>
@@ -174,7 +174,7 @@
 <script setup>
 import { ref, computed, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -242,7 +242,7 @@ async function handleSubmit() {
         loading.value = true
         error.value = ''
 
-        await axios.post(`/api/users/reset-password/${route.params.token}`, {
+        await axios.post(`/users/reset-password/${route.params.token}`, {
             password: password.value
         })
 

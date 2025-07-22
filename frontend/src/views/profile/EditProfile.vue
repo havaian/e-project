@@ -64,7 +64,7 @@
                                         </button>
                                     </div>
                                     <button type="button" @click="addSpecialization"
-                                        class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-800"
+                                        class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800"
                                         :disabled="availableSpecializations.length <= formData.specializations.filter(s => s !== '').length">
                                         + Add Another Specialization
                                     </button>
@@ -88,7 +88,7 @@
                                         </button>
                                     </div>
                                     <button type="button" @click="addLanguage"
-                                        class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-800"
+                                        class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800"
                                         :disabled="availableLanguages.length <= formData.languages.filter(l => l !== '').length">
                                         + Add Language
                                     </button>
@@ -114,7 +114,7 @@
                                         </div>
                                     </div>
                                     <button type="button" @click="addEducation"
-                                        class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-800">
+                                        class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800">
                                         + Add Education
                                     </button>
                                 </div>
@@ -140,7 +140,7 @@
                                         </div>
                                     </div>
                                     <button type="button" @click="addCertification"
-                                        class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-800">
+                                        class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800">
                                         + Add Certification
                                     </button>
                                 </div>
@@ -238,7 +238,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -258,7 +258,7 @@ const formData = reactive({
     },
     specializations: [],
     languages: [],
-    education: [],
+   : [],
     certifications: [],
     sessionFee: 0,
     experience: 0,
@@ -344,7 +344,7 @@ const formatDay = (dayOfWeek) => {
 // Added function to fetch specializations from the API
 async function fetchSpecializations() {
     try {
-        const response = await axios.get('/api/specializations')
+        const response = await axios.get('/specializations')
         availableSpecializations.value = response.data.specializations.map(s => s.name)
     } catch (error) {
         console.error('Error fetching specializations:', error)
@@ -366,7 +366,7 @@ async function fetchSpecializations() {
 
 async function fetchUserProfile() {
     try {
-        const response = await axios.get('/api/users/me')
+        const response = await axios.get('/users/me')
         const user = response.data
 
         // Update form data
@@ -431,7 +431,7 @@ async function handleSubmit() {
             updateData.emergencyContact = formData.emergencyContact
         }
 
-        await axios.patch('/api/users/me', updateData)
+        await axios.patch('/users/me', updateData)
         router.push({ name: authStore.isProvider ? 'provider-profile' : 'client-profile' })
     } catch (error) {
         console.error('Error updating profile:', error)

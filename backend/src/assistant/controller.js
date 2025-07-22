@@ -3,7 +3,7 @@ const User = require('../user/model');
 const { redisClient } = require('../utils/redisClient');
 
 /**
- * Chat with the educational assistant
+ * Chat with the assistant
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
@@ -233,7 +233,7 @@ exports.checkProblems = async (req, res) => {
         res.status(200).json({
             problems,
             guidance: result.reply,
-            disclaimer: 'This information is for educational purposes only and is not a substitute for professional educational advice. Please consult with a qualified education provider for diagnosis and treatment.',
+            disclaimer: 'This information is for purposes only and is not a substitute for professional advice. Please consult with a qualified provider for diagnosis and treatment.',
             success: true
         });
     } catch (error) {

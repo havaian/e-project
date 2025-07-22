@@ -196,7 +196,7 @@
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format, parseISO, differenceInYears } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const authStore = useAuthStore()
 
@@ -271,7 +271,7 @@ async function fetchPendingConfirmations() {
             limit: 10
         }
 
-        const response = await axios.get(`/api/appointments/pending-confirmation/provider/${authStore.user._id}`, { params })
+        const response = await axios.get(`/appointments/pending-confirmation/provider/${authStore.user._id}`, { params })
         appointments.value = response.data.appointments
         totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
     } catch (error) {
@@ -291,7 +291,7 @@ async function confirmAppointment(appointment) {
     try {
         processingAppointments.value.add(appointment._id)
 
-        await axios.post(`/api/appointments/${appointment._id}/confirm`)
+        await axios.post(`/appointments/${appointment._id}/confirm`)
 
         // Remove from list after successful confirmation
         appointments.value = appointments.value.filter(app => app._id !== appointment._id)
@@ -334,7 +334,7 @@ async function rejectAppointment() {
         processingRejection.value = true
 
         // Use the updateAppointmentStatus endpoint to cancel the appointment
-        await axios.patch(`/api/appointments/${selectedAppointment.value._id}/status`, {
+        await axios.patch(`/appointments/${selectedAppointment.value._id}/status`, {
             status: 'canceled',
             cancellationReason: rejectionReason.value || 'Rejected by provider'
         })

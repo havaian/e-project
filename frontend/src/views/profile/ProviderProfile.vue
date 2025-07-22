@@ -77,7 +77,7 @@
                   <dd class="mt-1 text-gray-500">{{ edu.institution }} ({{ edu.year }})</dd>
                 </div>
                 <div v-if="!user.education || user.education.length === 0" class="text-gray-500">
-                  No education information provided.
+                  No information provided.
                 </div>
               </dl>
               
@@ -139,7 +139,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const authStore = useAuthStore()
 const user = ref(null)
@@ -202,7 +202,7 @@ const formatDay = (dayOfWeek) => {
 async function fetchUserProfile() {
   try {
     loading.value = true
-    const response = await axios.get('/api/users/me')
+    const response = await axios.get('/users/me')
     user.value = response.data
   } catch (error) {
     console.error('Error fetching user profile:', error)

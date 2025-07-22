@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { loadStripe } from '@stripe/stripe-js'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 export const usePaymentStore = defineStore('payment', () => {
     const stripe = ref(null)
@@ -25,7 +25,7 @@ export const usePaymentStore = defineStore('payment', () => {
             loading.value = true
             error.value = null
 
-            const response = await axios.post('/api/payments/create-checkout', {
+            const response = await axios.post('/payments/create-checkout', {
                 appointmentId
             })
 
@@ -44,7 +44,7 @@ export const usePaymentStore = defineStore('payment', () => {
             loading.value = true
             error.value = null
 
-            const response = await axios.get(`/api/payments/session/${sessionId}`)
+            const response = await axios.get(`/payments/session/${sessionId}`)
             return response.data
         } catch (err) {
             error.value = err.response?.data?.message || 'Failed to verify payment'

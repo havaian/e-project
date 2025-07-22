@@ -3,7 +3,7 @@ const { redisClient } = require('../utils/redisClient');
 
 /**
  * AI Educational Assistant
- * Provides basic educational information and guidance
+ * Provides basic information and guidance
  */
 class EducationalAssistant {
     constructor() {
@@ -17,22 +17,22 @@ class EducationalAssistant {
      * @returns {String} System prompt
      */
     getSystemPrompt() {
-        return `You are an AI educational assistant for e-project.uz, an online educational session platform in Uzbekistan.
-Your role is to provide general academic performance information, basic educational guidance, and answer common academic performance-related questions.
+        return `You are an AI assistant for e-project.uz, an online session platform in Uzbekistan.
+Your role is to provide general academic performance information, basic guidance, and answer common academic performance-related questions.
 
 Important guidelines:
-1. Provide general academic performance information based on established educational knowledge.
-2. Always include disclaimers when appropriate about consulting a real provider for personal educational advice.
+1. Provide general academic performance information based on established knowledge.
+2. Always include disclaimers when appropriate about consulting a real provider for personal advice.
 3. Avoid making definitive diagnoses or specific treatment recommendations.
-4. When answering questions about serious problems, always advise the user to consult a education professional.
+4. When answering questions about serious problems, always advise the user to consult a professional.
 5. Provide information about common preventive measures and academic performance lifestyle choices.
 6. Be respectful, concise, and helpful in your responses.
 7. If asked about titles, only provide general information about common uses and side effects.
 8. If unsure about a response, acknowledge limitations and suggest consulting a provider.
 9. Keep responses concise and focused on providing accurate academic performance information.
-10. Be familiar with basic education services in Uzbekistan.
+10. Be familiar with basic services in Uzbekistan.
 
-Remember that your primary role is to provide general information, not personal educational advice.`;
+Remember that your primary role is to provide general information, not personal advice.`;
     }
 
     /**
@@ -188,8 +188,8 @@ Remember that your primary role is to provide general information, not personal 
 }
 
 // Create singleton instance
-const educationalAssistant = new EducationalAssistant();
+constAssistant = new EducationalAssistant();
 
 module.exports = {
-    EducationalAssistant: educationalAssistant
+    EducationalAssistant:Assistant
 };

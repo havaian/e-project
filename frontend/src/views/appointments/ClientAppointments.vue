@@ -114,7 +114,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { format, parseISO, isWithinInterval, subMinutes, addMinutes } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -149,7 +149,7 @@ async function fetchAppointments() {
             ...filters
         }
 
-        const response = await axios.get(`/api/appointments/client/${authStore.user._id}`, { params })
+        const response = await axios.get(`/appointments/client/${authStore.user._id}`, { params })
         appointments.value = response.data.appointments
         totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
     } catch (error) {
@@ -163,7 +163,7 @@ async function cancelAppointment(appointmentId) {
     if (!confirm('Are you sure you want to cancel this appointment?')) return
 
     try {
-        await axios.patch(`/api/appointments/${appointmentId}/status`, {
+        await axios.patch(`/appointments/${appointmentId}/status`, {
             status: 'canceled'
         })
         await fetchAppointments()
@@ -174,7 +174,7 @@ async function cancelAppointment(appointmentId) {
 
 async function joinSession(appointmentId) {
     try {
-        const response = await axios.get(`/api/sessions/${appointmentId}/join`)
+        const response = await axios.get(`/sessions/${appointmentId}/join`)
         if (response.data.session) {
             router.push({
                 name: 'session-room',

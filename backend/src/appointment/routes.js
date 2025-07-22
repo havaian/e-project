@@ -115,7 +115,7 @@ router.patch(
 
 /**
  * @route POST /api/appointments/:id/documents
- * @desc Upload educational documents for an appointment
+ * @desc Upload documents for an appointment
  * @access Private (Clients and Providers - only for their appointments)
  */
 router.post(
@@ -184,7 +184,7 @@ router.patch(
 
 /**
  * @route POST /api/appointments/:id/documents
- * @desc Upload educational documents for an appointment
+ * @desc Upload documents for an appointment
  * @access Private (Clients and Providers - only for their appointments)
  */
 router.post(

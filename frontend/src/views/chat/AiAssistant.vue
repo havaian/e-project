@@ -14,7 +14,7 @@
                 <div class="space-y-4">
                     <template v-if="messages.length === 0">
                         <div class="text-center text-gray-500">
-                            <p>👋 Hi! I'm your AI educational assistant.</p>
+                            <p>👋 Hi! I'm your AI assistant.</p>
                             <p>I can provide general academic performance information and guidance.</p>
                             <p>How can I help you today?</p>
                         </div>
@@ -26,7 +26,7 @@
                         <!-- Assistant Avatar -->
                         <div v-if="message.sender === 'assistant'" class="flex-shrink-0 mr-3">
                             <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <svg class="h-6 w-6 bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent " fill="none" viewBox="0 0 24 24"
+                                <svg class="h-6 w-6 bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent " fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -60,7 +60,7 @@
                     <div v-if="isTyping" class="flex justify-start mb-4">
                         <div class="flex-shrink-0 mr-3">
                             <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <svg class="h-6 w-6 bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent " fill="none" viewBox="0 0 24 24"
+                                <svg class="h-6 w-6 bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent " fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -101,7 +101,7 @@
 
                 <div class="mt-3 flex justify-between items-center">
                     <p class="text-xs text-gray-500">
-                        Note: This is for general information only. Always consult a provider for educational advice.
+                        Note: This is for general information only. Always consult a provider for advice.
                     </p>
 
                     <div class="flex space-x-2">
@@ -165,7 +165,7 @@
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import sanitizeHtml from 'sanitize-html'
 import { marked } from 'marked'
 
@@ -236,7 +236,7 @@ const formatMessage = (text) => {
 const loadChatHistory = async () => {
     try {
         loading.value = true
-        const response = await axios.get('/api/assistant/history')
+        const response = await axios.get('/assistant/history')
 
         if (response.data.success && response.data.messages) {
             messages.value = response.data.messages.map(msg => ({
@@ -294,7 +294,7 @@ async function sendMessage() {
         isTyping.value = true
 
         // Send message to AI assistant
-        const response = await axios.post('/api/assistant/chat', {
+        const response = await axios.post('/assistant/chat', {
             message: messageText,
             userId: authStore.user.id,
             chatId: currentChatId.value
@@ -350,7 +350,7 @@ async function clearChat() {
     if (!confirm('Are you sure you want to clear the chat history?')) return
 
     try {
-        await axios.delete('/api/assistant/history')
+        await axios.delete('/assistant/history')
         messages.value = []
         currentChatId.value = null
     } catch (error) {
@@ -378,7 +378,7 @@ async function saveFeedback() {
     try {
         feedbackSubmitting.value = true
 
-        await axios.post('/api/assistant/feedback', {
+        await axios.post('/assistant/feedback', {
             messageId: lastMessageId.value,
             feedback: feedback.value,
             feedbackText: feedbackText.value

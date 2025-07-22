@@ -102,7 +102,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -111,7 +111,7 @@ const specializations = ref([])
 
 async function fetchSpecializations() {
   try {
-    const response = await axios.get('/api/specializations')
+    const response = await axios.get('/specializations')
     specializations.value = response.data.specializations.map(s => s.name)
   } catch (error) {
     console.error('Error fetching specializations:', error)
@@ -163,7 +163,7 @@ async function fetchProviders() {
       ...filters
     }
 
-    const response = await axios.get('/api/users/providers', { params })
+    const response = await axios.get('/users/providers', { params })
     providers.value = response.data.providers
     totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
   } catch (error) {

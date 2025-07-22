@@ -126,8 +126,8 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { format } from 'date-fns'
-import axios from 'axios'
-import io from 'socket.io-client'
+import api from '@/plugins/axios'
+import { io } from 'socket.io-client'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -245,7 +245,7 @@ function handleKeyDown(event) {
 async function fetchConversation() {
     try {
         loading.value = true
-        const response = await axios.get(`/api/chat/conversations/${route.params.id}`)
+        const response = await api.get(`/chat/conversations/${route.params.id}`)
         conversation.value = response.data.conversation
         messages.value = response.data.messages
         await nextTick()
@@ -320,7 +320,10 @@ function initializeSocket() {
         return
     }
 
-    socket.value = io('https://e-project.uz', {
+    // Use environment variable for WebSocket URL, fallback to current location origin
+    const wsUrl = import.meta.env.VITE_WS_URL || window.location.origin
+
+    socket.value = io(wsUrl, {
         query: { token },
         path: '/socket.io/',
         transports: ['websocket', 'polling'],

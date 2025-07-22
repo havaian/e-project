@@ -168,7 +168,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-medium text-gray-900">Chat History</h3>
                             <button @click="showChatLog = !showChatLog"
-                                class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-900">
+                                class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-900">
                                 {{ showChatLog ? 'Hide Chat' : 'Show Chat' }}
                             </button>
                         </div>
@@ -291,7 +291,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePaymentStore } from '@/stores/payment'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -413,7 +413,7 @@ const getChatButtonText = computed(() => {
 async function fetchAppointment() {
     try {
         loading.value = true
-        const response = await axios.get(`/api/appointments/${route.params.id}`)
+        const response = await axios.get(`/appointments/${route.params.id}`)
         appointment.value = response.data.appointment
 
         // If this appointment has a follow-up recommendation, try to find the follow-up appointment
@@ -432,7 +432,7 @@ async function fetchAppointment() {
 async function findFollowUpAppointment() {
     try {
         // Get client's pending-payment appointments
-        const response = await axios.get(`/api/appointments/client/${authStore.user._id}/pending-followups`)
+        const response = await axios.get(`/appointments/client/${authStore.user._id}/pending-followups`)
 
         // Find follow-up for this appointment
         const followUps = response.data.appointments || []
@@ -452,7 +452,7 @@ async function cancelAppointment() {
     if (!confirm('Are you sure you want to cancel this appointment?')) return
 
     try {
-        await axios.patch(`/api/appointments/${appointment.value._id}/status`, {
+        await axios.patch(`/appointments/${appointment.value._id}/status`, {
             status: 'canceled'
         })
         await fetchAppointment()
@@ -463,7 +463,7 @@ async function cancelAppointment() {
 
 async function joinSession() {
     try {
-        const response = await axios.get(`/api/sessions/${appointment.value._id}/join`)
+        const response = await axios.get(`/sessions/${appointment.value._id}/join`)
         if (response.data.session) {
             router.push({
                 name: 'session-room',
@@ -498,7 +498,7 @@ async function startChat() {
             appointment.value.provider._id
 
         // Create or get existing conversation
-        const response = await axios.post('/api/chat/conversations', {
+        const response = await axios.post('/chat/conversations', {
             participantId,
             appointmentId: appointment.value._id
         })
@@ -518,7 +518,7 @@ async function createFollowUp() {
 
     try {
         submitting.value = true
-        await axios.post(`/api/appointments/${route.params.id}/follow-up`, {
+        await axios.post(`/appointments/${route.params.id}/follow-up`, {
             followUpDate: followUpDate.value,
             notes: followUpNotes.value
         })

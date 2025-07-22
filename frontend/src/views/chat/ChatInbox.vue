@@ -56,7 +56,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const authStore = useAuthStore()
 const conversations = ref([])
@@ -81,7 +81,7 @@ function formatTime(timestamp) {
 async function fetchConversations() {
     try {
         loading.value = true
-        const response = await axios.get('/api/chat/conversations')
+        const response = await axios.get('/chat/conversations')
         conversations.value = response.data.conversations
     } catch (error) {
         console.error('Error fetching conversations:', error)

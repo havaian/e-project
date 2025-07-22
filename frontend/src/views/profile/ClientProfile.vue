@@ -92,7 +92,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const authStore = useAuthStore()
 const user = ref(null)
@@ -109,7 +109,7 @@ const formatGender = (gender) => {
 
 async function fetchUserProfile() {
   try {
-    const response = await axios.get('/api/users/me')
+    const response = await axios.get('/users/me')
     user.value = response.data.user
   } catch (error) {
     console.error('Error fetching user profile:', error)

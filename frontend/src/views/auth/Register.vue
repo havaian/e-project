@@ -167,7 +167,7 @@
                                     </button>
                                 </div>
                                 <button type="button" @click="addSpecialization"
-                                    class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-800"
+                                    class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800"
                                     :disabled="availableSpecializations.length <= formData.specializations.filter(s => s !== '').length">
                                     + Add Specialization
                                 </button>
@@ -208,7 +208,7 @@
                                     </button>
                                 </div>
                                 <button type="button" @click="addLanguage"
-                                    class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-800"
+                                    class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800"
                                     :disabled="availableLanguages.length <= formData.languages.filter(l => l !== '').length">
                                     + Add Language
                                 </button>
@@ -248,7 +248,7 @@
 
             <p class="mt-2 text-center text-sm text-gray-600">
                 Already have an account?
-                <router-link to="/login" class="font-medium bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-500">
+                <router-link to="/login" class="font-medium bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-500">
                     Sign in
                 </router-link>
             </p>
@@ -264,7 +264,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -451,7 +451,7 @@ async function handleSubmit() {
 
 async function fetchSpecializations() {
     try {
-        const response = await axios.get('/api/specializations')
+        const response = await axios.get('/specializations')
         availableSpecializations.value = response.data.specializations.map(s => s.name)
     } catch (error) {
         console.error('Error fetching specializations:', error)

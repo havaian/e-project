@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 export const useAuthStore = defineStore('auth', () => {
   // Initialize state from localStorage
@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(email, password) {
     try {
-      const response = await axios.post('/api/users/login', { email, password })
+      const response = await axios.post('/users/login', { email, password })
       token.value = response.data.token
       user.value = response.data.user
 
@@ -31,7 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(userData) {
     try {
-      const response = await axios.post('/api/users/register', userData)
+      const response = await axios.post('/users/register', userData)
       return response.data
     } catch (error) {
       throw error.response?.data || error.message

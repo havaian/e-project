@@ -189,7 +189,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { format, addDays, parseISO, subMinutes, addMinutes, isWithinInterval, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, isAfter, addMonths, subMonths } from 'date-fns'
 import { usePaymentStore } from '@/stores/payment'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -365,7 +365,7 @@ const isWithinJoinWindow = (dateTime) => {
 async function fetchProviderProfile() {
     try {
         loading.value = true
-        const response = await axios.get(`/api/users/providers/${route.params.providerId}`)
+        const response = await axios.get(`/users/providers/${route.params.providerId}`)
         provider.value = response.data.provider
     } catch (error) {
         console.error('Error fetching provider profile:', error)
@@ -376,7 +376,7 @@ async function fetchProviderProfile() {
 
 async function fetchAvailableSlots() {
     try {
-        const response = await axios.get(`/api/appointments/availability/${route.params.providerId}`, {
+        const response = await axios.get(`/appointments/availability/${route.params.providerId}`, {
             params: { date: formData.date }
         })
         availableSlots.value = response.data.availableSlots.map(slot => ({
@@ -440,7 +440,7 @@ async function handleSubmit() {
             shortDescription: formData.shortDescription
         }
 
-        const response = await axios.post('/api/appointments', appointmentData)
+        const response = await axios.post('/appointments', appointmentData)
         await paymentStore.createCheckoutSession(response.data.appointment._id)
 
     } catch (err) {

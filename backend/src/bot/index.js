@@ -53,12 +53,12 @@
 //         try {
 //             await ctx.reply(
 //                 "👋 Welcome to e-project.uz bot!\n\n" +
-//                 "I can help you manage your educational appointments and sessions.\n\n" +
+//                 "I can help you manage your appointments and sessions.\n\n" +
 //                 "Here's what you can do:\n" +
 //                 "- Link your e-project.uz account\n" +
 //                 "- View your upcoming appointments\n" +
 //                 "- Get reminders for sessions\n" +
-//                 "- Chat with virtual educational assistant\n\n" +
+//                 "- Chat with virtual assistant\n\n" +
 //                 "To begin, please use the /link command to connect your e-project.uz account."
 //             );
 //         } catch (error) {
@@ -76,7 +76,7 @@
 //                 "/appointments - View your appointments\n" +
 //                 "/profile - View your profile\n" +
 //                 "/unlink - Unlink your account\n" +
-//                 "/assistant - Chat with educational assistant\n\n" +
+//                 "/assistant - Chat with assistant\n\n" +
 //                 "If you need further assistance, contact study@ytech.space"
 //             );
 //         } catch (error) {
@@ -613,7 +613,7 @@
 //             ctx.session.step = 'assistant_chat';
 
 //             await ctx.reply(
-//                 "👨‍⚕️ I'm the e-project.uz virtual educational assistant. I can answer general educational questions and provide academic performance information.\n\n" +
+//                 "👨‍⚕️ I'm the e-project.uz virtual assistant. I can answer general questions and provide academic performance information.\n\n" +
 //                 "What would you like to know about? (Type /stop to end the chat)"
 //             );
 //         } catch (error) {
@@ -676,7 +676,7 @@
 //                 ctx.session.step = 'appointment_specialization';
 //                 ctx.session.appointmentData = {};
 
-//                 let message = "Please select a educational specializations:\n\n";
+//                 let message = "Please select a specializations:\n\n";
 //                 specializations.forEach((spec, index) => {
 //                     message += `${index + 1}. ${spec}\n`;
 //                 });

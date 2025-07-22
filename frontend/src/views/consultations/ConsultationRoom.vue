@@ -78,7 +78,7 @@
                             <div class="flex justify-between items-center mb-2">
                                 <h4 class="text-lg font-medium text-gray-900">Recommendations</h4>
                                 <button type="button" @click="addRecommendation"
-                                    class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-900">
+                                    class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-900">
                                     + Add Recommendation
                                 </button>
                             </div>
@@ -145,7 +145,7 @@
                         <div class="mb-6">
                             <div class="flex items-center mb-2">
                                 <input id="followUpRecommended" v-model="postSessionData.followUp.recommended"
-                                    type="checkbox" class="h-4 w-4 bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  rounded" />
+                                    type="checkbox" class="h-4 w-4 bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  rounded" />
                                 <label for="followUpRecommended" class="ml-2 block text-sm font-medium text-gray-700">
                                     Recommend Follow-up Appointment
                                 </label>
@@ -226,7 +226,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { format, addDays } from 'date-fns'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -412,21 +412,21 @@ async function submitPostSessionForm() {
         submitting.value = true
 
         // 1. Update appointment status to completed and add session summary
-        await axios.patch(`/api/appointments/${route.params.appointmentId}/status`, {
+        await axios.patch(`/appointments/${route.params.appointmentId}/status`, {
             status: 'completed',
             sessionSummary: postSessionData.sessionSummary
         })
 
         // 2. Add recommendations if any
         if (postSessionData.recommendations.length > 0) {
-            await axios.patch(`/api/appointments/${route.params.appointmentId}/recommendations`, {
+            await axios.patch(`/appointments/${route.params.appointmentId}/recommendations`, {
                 recommendations: postSessionData.recommendations
             })
         }
 
         // 3. Schedule follow-up if recommended
         if (postSessionData.followUp.recommended) {
-            await axios.post(`/api/appointments/${route.params.appointmentId}/follow-up`, {
+            await axios.post(`/appointments/${route.params.appointmentId}/follow-up`, {
                 followUpDate: postSessionData.followUp.date,
                 notes: postSessionData.followUp.notes
             })
@@ -460,7 +460,7 @@ function returnToAppointments() {
 onMounted(async () => {
     try {
         // Get session details
-        const response = await axios.get(`/api/sessions/${route.params.appointmentId}/join`)
+        const response = await axios.get(`/sessions/${route.params.appointmentId}/join`)
         session.value = response.data.session
 
         await initializeJitsi()

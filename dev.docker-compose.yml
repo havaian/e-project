@@ -91,6 +91,7 @@ services:
       - API_URL=${PROJECT_URL}/api
     env_file:
       - ./.env
+      - ./.env.local
     ports:
       - "${BACKEND_EXPOSE}:${BACKEND_PORT}"
     volumes:
@@ -116,6 +117,7 @@ services:
         condition: service_healthy
     env_file:
       - ./.env
+      - ./.env.local
     environment:
       - VUE_APP_API_URL=/api
       - VUE_APP_STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
