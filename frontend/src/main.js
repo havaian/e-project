@@ -71,18 +71,15 @@ setCSSVariables()
 
 // Update document title dynamically
 const updateDocumentTitle = () => {
-  const appTitle1 = import.meta.env.VITE_APP_TITLE_1
-  const appTitle2 = import.meta.env.VITE_APP_TITLE_2
-  const appTitle3 = import.meta.env.VITE_APP_TITLE_3
-  const fullTitle = import.meta.env.VITE_APP_TITLE
+  const fullTitle = import.meta.env.VITE_APP_PAGE_TITLE
   
   document.title = fullTitle
 }
 
 // Update meta tags dynamically
 const updateMetaTags = () => {
-  const description = import.meta.env.VITE_APP_DESC
-  const title = import.meta.env.VITE_APP_TITLE
+  const description = import.meta.env.VITE_APP_PAGE_DESC
+  const title = import.meta.env.VITE_APP_PAGE_TITLE
   const url = import.meta.env.VITE_PROJECT_URL
   
   // Update or create meta description
