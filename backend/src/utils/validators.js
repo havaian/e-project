@@ -123,7 +123,7 @@ exports.validateUserInput = (data) => {
 
         languages: Joi.array().items(Joi.string().trim()).optional(),
 
-       : Joi.array().items(
+        education: Joi.array().items(
             Joi.object({
                 degree: Joi.string().trim().required(),
                 institution: Joi.string().trim().required(),
