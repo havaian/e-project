@@ -16,6 +16,10 @@ check_docker_compose() {
 
 DOCKER_COMPOSE=$(check_docker_compose)
 
+# Export environment variables from .env.docker for build args
+echo "📦 Loading environment variables..."
+export $(grep -v '^#' .env.docker | xargs)
+
 # Build new images without affecting running containers
 echo "🏗️  Building new images..."
 $DOCKER_COMPOSE build
