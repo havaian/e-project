@@ -6,7 +6,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label for="search" class="label">Search by name</label>
-            <input id="search" v-model="filters.name" type="text" class="input mt-1" placeholder="Search teachers..."
+            <input id="search" v-model="filters.name" type="text" class="input mt-1" placeholder="Search providers..."
               @input="handleSearch" />
           </div>
           <div>
@@ -30,31 +30,31 @@
         </div>
       </div>
 
-      <!-- Teacher list -->
+      <!-- Provider list -->
       <div class="space-y-4">
         <div v-if="loading" class="text-center py-8">
           <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent">
           </div>
-          <p class="mt-2 text-gray-600">Loading teachers...</p>
+          <p class="mt-2 text-gray-600">Loading providers...</p>
         </div>
 
         <template v-else>
-          <div v-if="teachers.length === 0" class="text-center py-8">
-            <p class="text-gray-600">No teachers found matching your criteria.</p>
+          <div v-if="providers.length === 0" class="text-center py-8">
+            <p class="text-gray-600">No providers found matching your criteria.</p>
           </div>
 
           <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="teacher in teachers" :key="teacher._id" class="bg-white shadow rounded-lg overflow-hidden">
+            <div v-for="provider in providers" :key="provider._id" class="bg-white shadow rounded-lg overflow-hidden">
               <div class="p-6">
                 <div class="flex items-center space-x-4">
-                  <img :src="teacher.profilePicture || '/images/user-placeholder.jpg'" :alt="teacher.firstName"
+                  <img :src="provider.profilePicture || '/images/user-placeholder.jpg'" :alt="provider.firstName"
                     class="h-16 w-16 rounded-full object-cover" />
                   <div>
                     <h3 class="text-lg font-medium text-gray-900">
-                      {{ teacher.firstName }} {{ teacher.lastName }}
+                      {{ provider.firstName }} {{ provider.lastName }}
                     </h3>
                     <div class="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
-                      <span v-for="spec in teacher.specializations" :key="spec"
+                      <span v-for="spec in provider.specializations" :key="spec"
                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                         {{ spec }}
                       </span>
@@ -65,20 +65,20 @@
                 <div class="mt-4 space-y-2">
                   <p class="text-sm">
                     <span class="font-medium">Experience:</span>
-                    {{ teacher.experience }} years
+                    {{ provider.experience }} years
                   </p>
                   <p class="text-sm">
-                    <span class="font-medium">Lesson Fee:</span>
-                    {{ formatCurrency(teacher.lessonFee) }} {{ teacher.lessonFee.currency || 'UZS' }}
+                    <span class="font-medium">Session Fee:</span>
+                    {{ formatCurrency(provider.sessionFee) }} {{ provider.sessionFee.currency || 'UZS' }}
                   </p>
                   <p class="text-sm">
                     <span class="font-medium">Languages:</span>
-                    {{ teacher.languages?.join(', ') || 'Not specified' }}
+                    {{ provider.languages?.join(', ') || 'Not specified' }}
                   </p>
                 </div>
 
                 <div class="mt-6">
-                  <router-link :to="{ name: 'teacher-profile-view', params: { id: teacher._id } }"
+                  <router-link :to="{ name: 'provider-profile-view', params: { id: provider._id } }"
                     class="btn-primary w-full justify-center">
                     View Profile
                   </router-link>
@@ -140,7 +140,7 @@ const cities = [
   'Bukhara'
 ]
 
-const teachers = ref([])
+const providers = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
 const totalPages = ref(1)
@@ -154,7 +154,7 @@ const formatCurrency = (amount) => {
   return new Intl.NumberFormat('uz-UZ').format(amount)
 }
 
-async function fetchTeachers() {
+async function fetchProviders() {
   try {
     loading.value = true
     const params = {
@@ -163,11 +163,11 @@ async function fetchTeachers() {
       ...filters
     }
 
-    const response = await axios.get('/api/users/teachers', { params })
-    teachers.value = response.data.teachers
+    const response = await axios.get('/api/users/providers', { params })
+    providers.value = response.data.providers
     totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
   } catch (error) {
-    console.error('Error fetching teachers:', error)
+    console.error('Error fetching providers:', error)
   } finally {
     loading.value = false
   }
@@ -175,16 +175,16 @@ async function fetchTeachers() {
 
 function handleSearch() {
   currentPage.value = 1
-  fetchTeachers()
+  fetchProviders()
 }
 
 function handlePageChange(page) {
   currentPage.value = page
-  fetchTeachers()
+  fetchProviders()
 }
 
 onMounted(() => {
-  fetchTeachers()
+  fetchProviders()
   fetchSpecializations()
 })
 </script>

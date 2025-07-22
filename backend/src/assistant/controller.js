@@ -206,41 +206,41 @@ exports.getPerformanceInfo = async (req, res) => {
 };
 
 /**
- * Check symptoms (basic guidance only)
+ * Check problems (basic guidance only)
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.checkSymptoms = async (req, res) => {
+exports.checkProblems = async (req, res) => {
     try {
-        const { symptoms } = req.body;
+        const { problems } = req.body;
         // Use authenticated user ID if available, otherwise require it
         const userId = req.user ? req.user.id : req.body.userId;
 
-        if (!symptoms || !Array.isArray(symptoms) || symptoms.length === 0) {
-            return res.status(400).json({ message: 'Valid symptoms array is required' });
+        if (!problems || !Array.isArray(problems) || problems.length === 0) {
+            return res.status(400).json({ message: 'Valid problems array is required' });
         }
 
         if (!userId) {
             return res.status(400).json({ message: 'User authentication required' });
         }
 
-        // Construct a message asking about the symptoms
-        const message = `I'm experiencing the following symptoms: ${symptoms.join(', ')}. What could this mean and what should I do?`;
+        // Construct a message asking about the problems
+        const message = `I'm experiencing the following problems: ${problems.join(', ')}. What could this mean and what should I do?`;
 
         // Generate response from AI assistant
         const result = await EducationalAssistant.generateResponse(message, userId);
 
         res.status(200).json({
-            symptoms,
+            problems,
             guidance: result.reply,
             disclaimer: 'This information is for educational purposes only and is not a substitute for professional educational advice. Please consult with a qualified education provider for diagnosis and treatment.',
             success: true
         });
     } catch (error) {
-        console.error('Error checking symptoms:', error);
+        console.error('Error checking problems:', error);
         res.status(500).json({
             success: false,
-            message: 'An error occurred while checking symptoms',
+            message: 'An error occurred while checking problems',
             error: error.message
         });
     }

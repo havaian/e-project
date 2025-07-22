@@ -9,15 +9,15 @@ const reviewSchema = new mongoose.Schema({
         required: true
     },
     
-    // Student who wrote the review
-    student: {
+    // Client who wrote the review
+    client: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
     
-    // Teacher being reviewed
-    teacher: {
+    // Provider being reviewed
+    provider: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -38,8 +38,8 @@ const reviewSchema = new mongoose.Schema({
         maxlength: 1000
     },
     
-    // Teacher's response to the review (optional)
-    teacherResponse: {
+    // Provider's response to the review (optional)
+    providerResponse: {
         text: {
             type: String,
             maxlength: 500
@@ -81,8 +81,8 @@ const reviewSchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
-reviewSchema.index({ teacher: 1, createdAt: -1 });
-reviewSchema.index({ student: 1, appointment: 1 });
+reviewSchema.index({ provider: 1, createdAt: -1 });
+reviewSchema.index({ client: 1, appointment: 1 });
 reviewSchema.index({ appointment: 1 }, { unique: true }); // One review per appointment
 
 // Virtual for average rating calculation
@@ -92,7 +92,7 @@ reviewSchema.virtual('averageRating').get(function() {
 
 // Instance methods
 reviewSchema.methods.respond = function(responseText) {
-    this.teacherResponse = {
+    this.providerResponse = {
         text: responseText,
         respondedAt: new Date()
     };
@@ -117,9 +117,9 @@ reviewSchema.methods.show = function() {
 };
 
 // Static methods
-reviewSchema.statics.getTeacherAverageRating = async function(teacherId) {
+reviewSchema.statics.getProviderAverageRating = async function(providerId) {
     const pipeline = [
-        { $match: { teacher: teacherId, status: 'active' } },
+        { $match: { provider: providerId, status: 'active' } },
         {
             $group: {
                 _id: null,
@@ -141,7 +141,7 @@ reviewSchema.statics.getTeacherAverageRating = async function(teacherId) {
     };
 };
 
-reviewSchema.statics.getTeacherReviews = async function(teacherId, options = {}) {
+reviewSchema.statics.getProviderReviews = async function(providerId, options = {}) {
     const {
         limit = 10,
         skip = 0,
@@ -153,25 +153,25 @@ reviewSchema.statics.getTeacherReviews = async function(teacherId, options = {})
     sortObj[sortBy] = sortOrder === 'desc' ? -1 : 1;
     
     return this.find({ 
-        teacher: teacherId, 
+        provider: providerId, 
         status: 'active' 
     })
-    .populate('student', 'firstName lastName profilePicture')
+    .populate('client', 'firstName lastName profilePicture')
     .populate('appointment', 'dateTime type')
     .sort(sortObj)
     .skip(skip)
     .limit(limit);
 };
 
-// Pre-save middleware to validate that student actually had appointment with teacher
+// Pre-save middleware to validate that client actually had appointment with provider
 reviewSchema.pre('save', async function(next) {
     if (this.isNew) {
         const Appointment = mongoose.model('Appointment');
         
         const appointment = await Appointment.findOne({
             _id: this.appointment,
-            student: this.student,
-            teacher: this.teacher,
+            client: this.client,
+            provider: this.provider,
             status: 'completed'
         });
         

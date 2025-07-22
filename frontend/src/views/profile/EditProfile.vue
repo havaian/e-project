@@ -41,8 +41,8 @@
                         </div>
                     </div>
 
-                    <!-- Teacher-specific fields -->
-                    <template v-if="authStore.isTeacher">
+                    <!-- Provider-specific fields -->
+                    <template v-if="authStore.isProvider">
                         <div>
                             <h2 class="text-lg font-medium text-gray-900 mb-4">Professional Information</h2>
 
@@ -148,8 +148,8 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="lessonFee" class="label">Lesson Fee (UZS)</label>
-                                    <input id="lessonFee" v-model.number="formData.lessonFee" type="number"
+                                    <label for="sessionFee" class="label">Session Fee (UZS)</label>
+                                    <input id="sessionFee" v-model.number="formData.sessionFee" type="number"
                                         min="0" class="input mt-1" required />
                                 </div>
                                 <div>
@@ -184,14 +184,14 @@
                         </div>
                     </template>
 
-                    <!-- Student-specific fields -->
+                    <!-- Client-specific fields -->
                     <template v-else>
                         <div>
                             <h2 class="text-lg font-medium text-gray-900 mb-4">Educational Information</h2>
                             <div class="space-y-4">
                                 <div>
-                                    <label for="educationalHistory" class="label">Educational Background</label>
-                                    <input id="educationalHistory" v-model="educationalHistoryInput" type="text" class="input mt-1"
+                                    <label for="backgroundInfo" class="label">Educational Background</label>
+                                    <input id="backgroundInfo" v-model="backgroundInfoInput" type="text" class="input mt-1"
                                         placeholder="Separate with commas" />
                                 </div>
                             </div>
@@ -220,7 +220,7 @@
                     </template>
 
                     <div class="flex justify-end space-x-4">
-                        <router-link :to="{ name: authStore.isTeacher ? 'teacher-profile' : 'student-profile' }"
+                        <router-link :to="{ name: authStore.isProvider ? 'provider-profile' : 'client-profile' }"
                             class="btn-secondary">
                             Cancel
                         </router-link>
@@ -260,7 +260,7 @@ const formData = reactive({
     languages: [],
     education: [],
     certifications: [],
-    lessonFee: 0,
+    sessionFee: 0,
     experience: 0,
     bio: '',
     availability: [
@@ -272,7 +272,7 @@ const formData = reactive({
         { dayOfWeek: 6, isAvailable: false, startTime: '09:00', endTime: '17:00' },
         { dayOfWeek: 7, isAvailable: false, startTime: '09:00', endTime: '17:00' }
     ],
-    educationalHistory: '',
+    backgroundInfo: '',
     emergencyContact: {
         name: '',
         phone: '',
@@ -280,7 +280,7 @@ const formData = reactive({
     }
 })
 
-const educationalHistoryInput = ref('')
+const backgroundInfoInput = ref('')
 
 // Get available specializations for a specific dropdown, excluding already selected ones
 const getAvailableSpecializations = (currentIndex) => {
@@ -375,7 +375,7 @@ async function fetchUserProfile() {
         formData.phone = user.phone
         formData.address = user.address || { street: '', city: '' }
 
-        if (authStore.isTeacher) {
+        if (authStore.isProvider) {
             // Handle specializations properly as an array
             formData.specializations = Array.isArray(user.specializations) ? 
                 user.specializations : 
@@ -387,16 +387,16 @@ async function fetchUserProfile() {
                 
             formData.education = user.education || []
             formData.certifications = user.certifications || []
-            formData.lessonFee = user.lessonFee || 0
+            formData.sessionFee= user.sessionFee|| 0
             formData.experience = user.experience || 0
             formData.bio = user.bio || ''
             formData.availability = user.availability || formData.availability
         } else {
-            formData.educationalHistory = user.educationalHistory || ''
+            formData.backgroundInfo = user.backgroundInfo || ''
             formData.emergencyContact = user.emergencyContact || { name: '', phone: '', relationship: '' }
 
             // Update input fields
-            educationalHistoryInput.value = user.educationalHistory || ''
+            backgroundInfoInput.value = user.backgroundInfo || ''
         }
     } catch (error) {
         console.error('Error fetching user profile:', error)
@@ -415,24 +415,24 @@ async function handleSubmit() {
             address: formData.address
         }
 
-        if (authStore.isTeacher) {
+        if (authStore.isProvider) {
             // Ensure specializations is an array of non-empty strings
             updateData.specializations = formData.specializations.filter(Boolean)
             // Ensure languages is an array of non-empty strings  
             updateData.languages = formData.languages.filter(Boolean)
             updateData.education = formData.education.filter(e => e.degree && e.institution && e.year)
             updateData.certifications = formData.certifications.filter(c => c.name && c.issuer && c.year)
-            updateData.lessonFee = formData.lessonFee
+            updateData.sessionFee= formData.sessionFee
             updateData.experience = formData.experience
             updateData.bio = formData.bio
             updateData.availability = formData.availability
         } else {
-            updateData.educationalHistory = educationalHistoryInput.value
+            updateData.backgroundInfo = backgroundInfoInput.value
             updateData.emergencyContact = formData.emergencyContact
         }
 
         await axios.patch('/api/users/me', updateData)
-        router.push({ name: authStore.isTeacher ? 'teacher-profile' : 'student-profile' })
+        router.push({ name: authStore.isProvider ? 'provider-profile' : 'client-profile' })
     } catch (error) {
         console.error('Error updating profile:', error)
     } finally {
@@ -442,8 +442,8 @@ async function handleSubmit() {
 
 onMounted(() => {
     fetchUserProfile()
-    // Fetch specializations if user is a teacher
-    if (authStore.isTeacher) {
+    // Fetch specializations if user is a provider
+    if (authStore.isProvider) {
         fetchSpecializations()
     }
 })

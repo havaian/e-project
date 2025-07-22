@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const amqp = require('amqplib');
 const { telegramBot } = require('../bot');
-const lessonNotification = require('./lessonNotification');
+const sessionNotification = require('./sessionNotification');
 const emailService = require('./emailService');
 
 /**
@@ -423,9 +423,9 @@ class NotificationService {
     */
     async sendAppointmentConfirmation(appointment) {
         try {
-            await appointment.populate('student teacher');
+            await appointment.populate('client provider');
 
-            const { student, teacher, dateTime, type } = appointment;
+            const { client, provider, dateTime, type } = appointment;
             const formattedDateTime = new Date(dateTime).toLocaleString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -435,53 +435,53 @@ class NotificationService {
                 minute: '2-digit'
             });
 
-            // Email to student
-            const studentEmailData = {
-                to: student.email,
+            // Email to client
+            const clientEmailData = {
+                to: client.email,
                 subject: 'Appointment Confirmation - dev.e-stud.uz',
-                text: `Your appointment with ${teacher.firstName} ${teacher.lastName} has been confirmed for ${formattedDateTime}.`,
+                text: `Your appointment with ${provider.firstName} ${provider.lastName} has been confirmed for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Appointment Confirmation</h2>
-            <p>Your appointment with ${teacher.firstName} ${teacher.lastName} has been confirmed.</p>
+            <p>Your appointment with ${provider.firstName} ${provider.lastName} has been confirmed.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName} (${teacher.specializations})</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
-            <p>You can view your appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+            <p>You can view your appointment details and join the session by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
-            // Email to teacher
-            const teacherEmailData = {
-                to: teacher.email,
+            // Email to provider
+            const providerEmailData = {
+                to: provider.email,
                 subject: 'New Appointment - dev.e-stud.uz',
-                text: `You have a new appointment with ${student.firstName} ${student.lastName} scheduled for ${formattedDateTime}.`,
+                text: `You have a new appointment with ${client.firstName} ${client.lastName} scheduled for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">New Appointment</h2>
-            <p>You have a new appointment with ${student.firstName} ${student.lastName}.</p>
+            <p>You have a new appointment with ${client.firstName} ${client.lastName}.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
-            <p>You can view appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+            <p>You can view appointment details and join the session by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
             // Queue emails
-            this.queueEmail(studentEmailData);
-            this.queueEmail(teacherEmailData);
+            this.queueEmail(clientEmailData);
+            this.queueEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
-            if (student.telegramId) {
+            if (client.telegramId) {
                 const telegramData = {
-                    chatId: student.telegramId,
-                    text: `✅ Your appointment with ${teacher.firstName} ${teacher.lastName} has been confirmed for ${formattedDateTime}.`,
+                    chatId: client.telegramId,
+                    text: `✅ Your appointment with ${provider.firstName} ${provider.lastName} has been confirmed for ${formattedDateTime}.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -489,10 +489,10 @@ class NotificationService {
                 this.queueTelegramMessage(telegramData);
             }
 
-            if (teacher.telegramId) {
+            if (provider.telegramId) {
                 const telegramData = {
-                    chatId: teacher.telegramId,
-                    text: `📋 New appointment with ${student.firstName} ${student.lastName} scheduled for ${formattedDateTime}.`,
+                    chatId: provider.telegramId,
+                    text: `📋 New appointment with ${client.firstName} ${client.lastName} scheduled for ${formattedDateTime}.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -510,9 +510,9 @@ class NotificationService {
      */
     async sendAppointmentCancellation(appointment) {
         try {
-            await appointment.populate('student teacher');
+            await appointment.populate('client provider');
 
-            const { student, teacher, dateTime, type } = appointment;
+            const { client, provider, dateTime, type } = appointment;
             const formattedDateTime = new Date(dateTime).toLocaleString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -522,52 +522,52 @@ class NotificationService {
                 minute: '2-digit'
             });
 
-            // Email to student
-            const studentEmailData = {
-                to: student.email,
+            // Email to client
+            const clientEmailData = {
+                to: client.email,
                 subject: 'Appointment Canceled - dev.e-stud.uz',
-                text: `Your appointment with ${teacher.firstName} ${teacher.lastName} scheduled for ${formattedDateTime} has been canceled.`,
+                text: `Your appointment with ${provider.firstName} ${provider.lastName} scheduled for ${formattedDateTime} has been canceled.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #e74c3c;">Appointment Canceled</h2>
-            <p>Your appointment with ${teacher.firstName} ${teacher.lastName} has been canceled.</p>
+            <p>Your appointment with ${provider.firstName} ${provider.lastName} has been canceled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName} (${teacher.specializations})</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
             <p>You can schedule a new appointment by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
-            // Email to teacher
-            const teacherEmailData = {
-                to: teacher.email,
+            // Email to provider
+            const providerEmailData = {
+                to: provider.email,
                 subject: 'Appointment Canceled - dev.e-stud.uz',
-                text: `Your appointment with ${student.firstName} ${student.lastName} scheduled for ${formattedDateTime} has been canceled.`,
+                text: `Your appointment with ${client.firstName} ${client.lastName} scheduled for ${formattedDateTime} has been canceled.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #e74c3c;">Appointment Canceled</h2>
-            <p>Your appointment with ${student.firstName} ${student.lastName} has been canceled.</p>
+            <p>Your appointment with ${client.firstName} ${client.lastName} has been canceled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
           </div>
         `
             };
 
             // Queue emails
-            this.queueEmail(studentEmailData);
-            this.queueEmail(teacherEmailData);
+            this.queueEmail(clientEmailData);
+            this.queueEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
-            if (student.telegramId) {
+            if (client.telegramId) {
                 const telegramData = {
-                    chatId: student.telegramId,
-                    text: `❌ Your appointment with ${teacher.firstName} ${teacher.lastName} scheduled for ${formattedDateTime} has been canceled.`,
+                    chatId: client.telegramId,
+                    text: `❌ Your appointment with ${provider.firstName} ${provider.lastName} scheduled for ${formattedDateTime} has been canceled.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -575,10 +575,10 @@ class NotificationService {
                 this.queueTelegramMessage(telegramData);
             }
 
-            if (teacher.telegramId) {
+            if (provider.telegramId) {
                 const telegramData = {
-                    chatId: teacher.telegramId,
-                    text: `❌ Appointment with ${student.firstName} ${student.lastName} scheduled for ${formattedDateTime} has been canceled.`,
+                    chatId: provider.telegramId,
+                    text: `❌ Appointment with ${client.firstName} ${client.lastName} scheduled for ${formattedDateTime} has been canceled.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -596,20 +596,20 @@ class NotificationService {
      */
     async sendAppointmentCompletionNotification(appointment) {
         try {
-            await appointment.populate('student teacher');
+            await appointment.populate('client provider');
 
-            const { student, teacher } = appointment;
+            const { client, provider } = appointment;
 
-            // Email to student for feedback
-            const studentEmailData = {
-                to: student.email,
+            // Email to client for feedback
+            const clientEmailData = {
+                to: client.email,
                 subject: 'Appointment Completed - dev.e-stud.uz',
-                text: `Your appointment with ${teacher.firstName} ${teacher.lastName} has been completed. Please leave your feedback.`,
+                text: `Your appointment with ${provider.firstName} ${provider.lastName} has been completed. Please leave your feedback.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Appointment Completed</h2>
-            <p>Your appointment with ${teacher.firstName} ${teacher.lastName} has been completed.</p>
-            <p>If any homeworks were provided, you can view them in your dev.e-stud.uz account.</p>
+            <p>Your appointment with ${provider.firstName} ${provider.lastName} has been completed.</p>
+            <p>If any recommendations were provided, you can view them in your dev.e-stud.uz account.</p>
             <a href="${process.env.FRONTEND_URL}/appointments/feedback/${appointment._id}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Leave Feedback</a>
             <p>Your feedback helps us improve our services.</p>
           </div>
@@ -617,13 +617,13 @@ class NotificationService {
             };
 
             // Queue emails
-            this.queueEmail(studentEmailData);
+            this.queueEmail(clientEmailData);
 
-            // If student has Telegram account linked, send notification there too
-            if (student.telegramId) {
+            // If client has Telegram account linked, send notification there too
+            if (client.telegramId) {
                 const telegramData = {
-                    chatId: student.telegramId,
-                    text: `✅ Your appointment with ${teacher.firstName} ${teacher.lastName} has been completed. Any homeworks will be available in your account. Please consider leaving feedback.`,
+                    chatId: client.telegramId,
+                    text: `✅ Your appointment with ${provider.firstName} ${provider.lastName} has been completed. Any recommendations will be available in your account. Please consider leaving feedback.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -636,54 +636,54 @@ class NotificationService {
     }
 
     /**
-     * Send homework notification
-     * @param {Object} appointment Appointment object with homeworks
+     * Send recommendation notification
+     * @param {Object} appointment Appointment object with recommendations
      */
-    async sendHomeworkNotification(appointment) {
+    async sendRecommendationNotification(appointment) {
         try {
-            await appointment.populate('student teacher');
+            await appointment.populate('client provider');
 
-            const { student, teacher, homeworks } = appointment;
+            const { client, provider, recommendations } = appointment;
 
-            // Format homeworks for email
-            let homeworksHtml = '';
-            homeworks.forEach((homework, index) => {
-                homeworksHtml += `
+            // Format recommendations for email
+            let recommendationsHtml = '';
+            recommendations.forEach((recommendation, index) => {
+                recommendationsHtml += `
           <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;">
-            <p><strong>Medication:</strong> ${homework.medication}</p>
-            <p><strong>Dosage:</strong> ${homework.dosage}</p>
-            <p><strong>Frequency:</strong> ${homework.frequency}</p>
-            <p><strong>Duration:</strong> ${homework.duration}</p>
-            <p><strong>Instructions:</strong> ${homework.instructions}</p>
+            <p><strong>Medication:</strong> ${recommendation.title}</p>
+            <p><strong>Dosage:</strong> ${recommendation.description}</p>
+            <p><strong>Frequency:</strong> ${recommendation.frequency}</p>
+            <p><strong>Duration:</strong> ${recommendation.duration}</p>
+            <p><strong>Instructions:</strong> ${recommendation.instructions}</p>
           </div>
         `;
             });
 
-            // Email to student
-            const studentEmailData = {
-                to: student.email,
-                subject: 'New Homeworks - dev.e-stud.uz',
-                text: `${teacher.firstName} ${teacher.lastName} has added homeworks to your recent appointment.`,
+            // Email to client
+            const clientEmailData = {
+                to: client.email,
+                subject: 'New Recommendations - dev.e-stud.uz',
+                text: `${provider.firstName} ${provider.lastName} has added recommendations to your recent appointment.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">New Homeworks</h2>
-            <p>${teacher.firstName} ${teacher.lastName} has added the following homeworks to your recent appointment:</p>
+            <h2 style="color: #4a90e2;">New Recommendations</h2>
+            <p>${provider.firstName} ${provider.lastName} has added the following recommendations to your recent appointment:</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              ${homeworksHtml}
+              ${recommendationsHtml}
             </div>
-            <p>You can view these homeworks anytime by logging into your dev.e-stud.uz account.</p>
+            <p>You can view these recommendations anytime by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
             // Queue email
-            this.queueEmail(studentEmailData);
+            this.queueEmail(clientEmailData);
 
-            // If student has Telegram account linked, send notification there too
-            if (student.telegramId) {
+            // If client has Telegram account linked, send notification there too
+            if (client.telegramId) {
                 const telegramData = {
-                    chatId: student.telegramId,
-                    text: `💊 ${teacher.firstName} ${teacher.lastName} has added homeworks to your recent appointment. Check your email or dev.e-stud.uz account for details.`,
+                    chatId: client.telegramId,
+                    text: `💊 ${provider.firstName} ${provider.lastName} has added recommendations to your recent appointment. Check your email or dev.e-stud.uz account for details.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -691,7 +691,7 @@ class NotificationService {
                 this.queueTelegramMessage(telegramData);
             }
         } catch (error) {
-            console.error('Error sending homework notification:', error);
+            console.error('Error sending recommendation notification:', error);
         }
     }
 
@@ -701,9 +701,9 @@ class NotificationService {
      */
     async sendFollowUpNotification(followUpAppointment) {
         try {
-            await followUpAppointment.populate('student teacher');
+            await followUpAppointment.populate('client provider');
 
-            const { student, teacher, dateTime, type } = followUpAppointment;
+            const { client, provider, dateTime, type } = followUpAppointment;
             const formattedDateTime = new Date(dateTime).toLocaleString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -713,53 +713,53 @@ class NotificationService {
                 minute: '2-digit'
             });
 
-            // Email to student
-            const studentEmailData = {
-                to: student.email,
+            // Email to client
+            const clientEmailData = {
+                to: client.email,
                 subject: 'Follow-up Appointment Scheduled - dev.e-stud.uz',
-                text: `A follow-up appointment with ${teacher.firstName} ${teacher.lastName} has been scheduled for ${formattedDateTime}.`,
+                text: `A follow-up appointment with ${provider.firstName} ${provider.lastName} has been scheduled for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Follow-up Appointment Scheduled</h2>
-            <p>A follow-up appointment with ${teacher.firstName} ${teacher.lastName} has been scheduled.</p>
+            <p>A follow-up appointment with ${provider.firstName} ${provider.lastName} has been scheduled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName} (${teacher.specializations})</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
-            <p>You can view your appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+            <p>You can view your appointment details and join the session by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
-            // Email to teacher
-            const teacherEmailData = {
-                to: teacher.email,
+            // Email to provider
+            const providerEmailData = {
+                to: provider.email,
                 subject: 'Follow-up Appointment Scheduled - dev.e-stud.uz',
-                text: `A follow-up appointment with ${student.firstName} ${student.lastName} has been scheduled for ${formattedDateTime}.`,
+                text: `A follow-up appointment with ${client.firstName} ${client.lastName} has been scheduled for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Follow-up Appointment Scheduled</h2>
-            <p>A follow-up appointment with ${student.firstName} ${student.lastName} has been scheduled.</p>
+            <p>A follow-up appointment with ${client.firstName} ${client.lastName} has been scheduled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
-            <p>You can view appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+            <p>You can view appointment details and join the session by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
             // Queue emails
-            this.queueEmail(studentEmailData);
-            this.queueEmail(teacherEmailData);
+            this.queueEmail(clientEmailData);
+            this.queueEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
-            if (student.telegramId) {
+            if (client.telegramId) {
                 const telegramData = {
-                    chatId: student.telegramId,
-                    text: `📅 A follow-up appointment with ${teacher.firstName} ${teacher.lastName} has been scheduled for ${formattedDateTime}.`,
+                    chatId: client.telegramId,
+                    text: `📅 A follow-up appointment with ${provider.firstName} ${provider.lastName} has been scheduled for ${formattedDateTime}.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -767,10 +767,10 @@ class NotificationService {
                 this.queueTelegramMessage(telegramData);
             }
 
-            if (teacher.telegramId) {
+            if (provider.telegramId) {
                 const telegramData = {
-                    chatId: teacher.telegramId,
-                    text: `📅 Follow-up appointment with ${student.firstName} ${student.lastName} scheduled for ${formattedDateTime}.`,
+                    chatId: provider.telegramId,
+                    text: `📅 Follow-up appointment with ${client.firstName} ${client.lastName} scheduled for ${formattedDateTime}.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -788,9 +788,9 @@ class NotificationService {
      */
     async sendAppointmentReminder(appointment) {
         try {
-            await appointment.populate('student teacher');
+            await appointment.populate('client provider');
 
-            const { student, teacher, dateTime, type } = appointment;
+            const { client, provider, dateTime, type } = appointment;
             const formattedDateTime = new Date(dateTime).toLocaleString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -800,53 +800,53 @@ class NotificationService {
                 minute: '2-digit'
             });
 
-            // Email to student
-            const studentEmailData = {
-                to: student.email,
+            // Email to client
+            const clientEmailData = {
+                to: client.email,
                 subject: 'Appointment Reminder - dev.e-stud.uz',
-                text: `Reminder: Your appointment with ${teacher.firstName} ${teacher.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
+                text: `Reminder: Your appointment with ${provider.firstName} ${provider.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Appointment Reminder</h2>
-            <p>This is a reminder that your appointment with ${teacher.firstName} ${teacher.lastName} is scheduled for tomorrow.</p>
+            <p>This is a reminder that your appointment with ${provider.firstName} ${provider.lastName} is scheduled for tomorrow.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName} (${teacher.specializations})</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
-            <p>You can view your appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+            <p>You can view your appointment details and join the session by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
-            // Email to teacher
-            const teacherEmailData = {
-                to: teacher.email,
+            // Email to provider
+            const providerEmailData = {
+                to: provider.email,
                 subject: 'Appointment Reminder - dev.e-stud.uz',
-                text: `Reminder: Your appointment with ${student.firstName} ${student.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
+                text: `Reminder: Your appointment with ${client.firstName} ${client.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Appointment Reminder</h2>
-            <p>This is a reminder that your appointment with ${student.firstName} ${student.lastName} is scheduled for tomorrow.</p>
+            <p>This is a reminder that your appointment with ${client.firstName} ${client.lastName} is scheduled for tomorrow.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Lesson Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-              <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
-            <p>You can view appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+            <p>You can view appointment details and join the session by logging into your dev.e-stud.uz account.</p>
           </div>
         `
             };
 
             // Queue emails
-            this.queueEmail(studentEmailData);
-            this.queueEmail(teacherEmailData);
+            this.queueEmail(clientEmailData);
+            this.queueEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
-            if (student.telegramId) {
+            if (client.telegramId) {
                 const telegramData = {
-                    chatId: student.telegramId,
-                    text: `⏰ Reminder: Your appointment with ${teacher.firstName} ${teacher.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
+                    chatId: client.telegramId,
+                    text: `⏰ Reminder: Your appointment with ${provider.firstName} ${provider.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -854,10 +854,10 @@ class NotificationService {
                 this.queueTelegramMessage(telegramData);
             }
 
-            if (teacher.telegramId) {
+            if (provider.telegramId) {
                 const telegramData = {
-                    chatId: teacher.telegramId,
-                    text: `⏰ Reminder: Your appointment with ${student.firstName} ${student.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
+                    chatId: provider.telegramId,
+                    text: `⏰ Reminder: Your appointment with ${client.firstName} ${client.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -870,60 +870,60 @@ class NotificationService {
     }
 
     /**
-     * Send lesson start notification (15 minutes before)
+     * Send session start notification (15 minutes before)
      * @param {Object} appointment Appointment object
      */
-    async sendLessonStartNotification(appointment) {
+    async sendSessionStartNotification(appointment) {
         try {
-            await appointment.populate('student teacher');
+            await appointment.populate('client provider');
 
-            const { student, teacher, dateTime, type, _id } = appointment;
+            const { client, provider, dateTime, type, _id } = appointment;
             const formattedTime = new Date(dateTime).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit'
             });
 
-            const lessonLink = `${process.env.FRONTEND_URL}/lesson/${_id}`;
+            const sessionLink = `${process.env.FRONTEND_URL}/session/${_id}`;
 
-            // Email to student
-            const studentEmailData = {
-                to: student.email,
-                subject: 'Your Lesson Starts Soon - dev.e-stud.uz',
-                text: `Your lesson with ${teacher.firstName} ${teacher.lastName} starts in 15 minutes.`,
+            // Email to client
+            const clientEmailData = {
+                to: client.email,
+                subject: 'Your Session Starts Soon - dev.e-stud.uz',
+                text: `Your session with ${provider.firstName} ${provider.lastName} starts in 15 minutes.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">Your Lesson Starts Soon</h2>
-            <p>Your lesson with ${teacher.firstName} ${teacher.lastName} starts in 15 minutes at ${formattedTime}.</p>
-            <a href="${lessonLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join Lesson</a>
-            <p>Please ensure your device has a working camera and microphone for a video lesson.</p>
+            <h2 style="color: #4a90e2;">Your Session Starts Soon</h2>
+            <p>Your session with ${provider.firstName} ${provider.lastName} starts in 15 minutes at ${formattedTime}.</p>
+            <a href="${sessionLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join Session</a>
+            <p>Please ensure your device has a working camera and microphone for a video session.</p>
           </div>
         `
             };
 
-            // Email to teacher
-            const teacherEmailData = {
-                to: teacher.email,
-                subject: 'Lesson Starts Soon - dev.e-stud.uz',
-                text: `Your lesson with ${student.firstName} ${student.lastName} starts in 15 minutes.`,
+            // Email to provider
+            const providerEmailData = {
+                to: provider.email,
+                subject: 'Session Starts Soon - dev.e-stud.uz',
+                text: `Your session with ${client.firstName} ${client.lastName} starts in 15 minutes.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">Lesson Starts Soon</h2>
-            <p>Your lesson with ${student.firstName} ${student.lastName} starts in 15 minutes at ${formattedTime}.</p>
-            <a href="${lessonLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join Lesson</a>
-            <p>Please ensure your device has a working camera and microphone for a video lesson.</p>
+            <h2 style="color: #4a90e2;">Session Starts Soon</h2>
+            <p>Your session with ${client.firstName} ${client.lastName} starts in 15 minutes at ${formattedTime}.</p>
+            <a href="${sessionLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join Session</a>
+            <p>Please ensure your device has a working camera and microphone for a video session.</p>
           </div>
         `
             };
 
             // Queue emails
-            this.queueEmail(studentEmailData);
-            this.queueEmail(teacherEmailData);
+            this.queueEmail(clientEmailData);
+            this.queueEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
-            if (student.telegramId) {
+            if (client.telegramId) {
                 const telegramData = {
-                    chatId: student.telegramId,
-                    text: `🔔 Your lesson with ${teacher.firstName} ${teacher.lastName} starts in 15 minutes. Click here to join: ${lessonLink}`,
+                    chatId: client.telegramId,
+                    text: `🔔 Your session with ${provider.firstName} ${provider.lastName} starts in 15 minutes. Click here to join: ${sessionLink}`,
                     options: {
                         parse_mode: 'HTML',
                         disable_web_page_preview: false
@@ -932,10 +932,10 @@ class NotificationService {
                 this.queueTelegramMessage(telegramData);
             }
 
-            if (teacher.telegramId) {
+            if (provider.telegramId) {
                 const telegramData = {
-                    chatId: teacher.telegramId,
-                    text: `🔔 Your lesson with ${student.firstName} ${student.lastName} starts in 15 minutes. Click here to join: ${lessonLink}`,
+                    chatId: provider.telegramId,
+                    text: `🔔 Your session with ${client.firstName} ${client.lastName} starts in 15 minutes. Click here to join: ${sessionLink}`,
                     options: {
                         parse_mode: 'HTML',
                         disable_web_page_preview: false
@@ -944,7 +944,7 @@ class NotificationService {
                 this.queueTelegramMessage(telegramData);
             }
         } catch (error) {
-            console.error('Error sending lesson start notification:', error);
+            console.error('Error sending session start notification:', error);
         }
     }
 
@@ -955,18 +955,18 @@ class NotificationService {
      */
     async sendPaymentSuccessEmail(paymentId, appointment) {
         try {
-            const { student, teacher } = appointment;
+            const { client, provider } = appointment;
             const formattedDate = new Date(appointment.dateTime).toLocaleString();
 
             const emailData = {
-                to: student.email,
+                to: client.email,
                 subject: 'Payment Successful - dev.e-stud.uz',
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Payment Successful</h2>
             <p>Your payment for the appointment has been processed successfully.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+              <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
               <p><strong>Date & Time:</strong> ${formattedDate}</p>
               <p><strong>Type:</strong> ${appointment.type}</p>
               <p><strong>Payment ID:</strong> ${paymentId}</p>
@@ -983,23 +983,23 @@ class NotificationService {
     }
 
     /**
-     * Send teacher appointment email
+     * Send provider appointment email
      * @param {Object} appointment Appointment object
      */
-    async sendTeacherAppointmentEmail(appointment) {
+    async sendProviderAppointmentEmail(appointment) {
         try {
-            const { student, teacher, dateTime } = appointment;
+            const { client, provider, dateTime } = appointment;
             const formattedDate = new Date(dateTime).toLocaleString();
 
             const emailData = {
-                to: teacher.email,
+                to: provider.email,
                 subject: 'New Appointment Confirmed - dev.e-stud.uz',
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">New Appointment Confirmed</h2>
             <p>A new appointment has been scheduled and payment has been received.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+              <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
               <p><strong>Date & Time:</strong> ${formattedDate}</p>
               <p><strong>Type:</strong> ${appointment.type}</p>
             </div>
@@ -1010,7 +1010,7 @@ class NotificationService {
 
             await this.queueEmail(emailData);
         } catch (error) {
-            console.error('Error sending teacher appointment email:', error);
+            console.error('Error sending provider appointment email:', error);
         }
     }
 
@@ -1021,18 +1021,18 @@ class NotificationService {
      */
     async sendPaymentFailureEmail(paymentId, appointment) {
         try {
-            const { student, teacher } = appointment;
+            const { client, provider } = appointment;
             const formattedDate = new Date(appointment.dateTime).toLocaleString();
 
             const emailData = {
-                to: student.email,
+                to: client.email,
                 subject: 'Payment Failed - dev.e-stud.uz',
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #e74c3c;">Payment Failed</h2>
             <p>We were unable to process your payment for the following appointment:</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+              <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
               <p><strong>Date & Time:</strong> ${formattedDate}</p>
               <p><strong>Type:</strong> ${appointment.type}</p>
             </div>
@@ -1063,7 +1063,7 @@ class NotificationService {
 
     /**
      * Send appointment booking confirmation
-     * @param {Object} appointment - Appointment object with populated student and teacher
+     * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentBookedEmails(appointment) {
         return emailService.sendAppointmentBookedEmails(appointment);
@@ -1071,8 +1071,8 @@ class NotificationService {
 
     /**
      * Send appointment cancellation notification
-     * @param {Object} appointment - Appointment object with populated student and teacher
-     * @param {String} cancelledBy - Who cancelled the appointment ('student', 'teacher', 'system')
+     * @param {Object} appointment - Appointment object with populated client and provider
+     * @param {String} cancelledBy - Who cancelled the appointment ('client', 'provider', 'system')
      */
     async sendAppointmentCancellationNotification(appointment, cancelledBy) {
         return emailService.sendAppointmentCancelledEmails(appointment, cancelledBy);
@@ -1080,7 +1080,7 @@ class NotificationService {
 
     /**
      * Send appointment confirmation notification
-     * @param {Object} appointment - Appointment object with populated student and teacher
+     * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentConfirmedNotification(appointment) {
         return emailService.sendAppointmentConfirmedEmails(appointment);
@@ -1113,34 +1113,34 @@ class NotificationService {
 
     /**
      * Send appointment reminder emails
-     * @param {Object} appointment - Appointment object with populated student and teacher
+     * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentReminderEmails(appointment) {
         return emailService.sendAppointmentReminderEmails(appointment);
     }
 
     /**
-     * Send homework notification
-     * @param {Object} appointment - Appointment object with populated student and teacher
+     * Send recommendation notification
+     * @param {Object} appointment - Appointment object with populated client and provider
      */
-    async sendHomeworkNotification(appointment) {
-        return emailService.sendHomeworkNotification(appointment);
+    async sendRecommendationNotification(appointment) {
+        return emailService.sendRecommendationNotification(appointment);
     }
 
     /**
      * Send follow-up notification
-     * @param {Object} appointment - Appointment object with populated student and teacher
+     * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendFollowUpNotification(appointment) {
         return emailService.sendFollowUpNotification(appointment);
     }
 
     /**
-     * Send lesson completed notification
-     * @param {Object} appointment - Appointment object with populated student and teacher
+     * Send session completed notification
+     * @param {Object} appointment - Appointment object with populated client and provider
      */
-    async sendLessonCompletedNotification(appointment) {
-        return lessonNotification.sendLessonCompletedNotification(appointment);
+    async sendSessionCompletedNotification(appointment) {
+        return sessionNotification.sendSessionCompletedNotification(appointment);
     }
 }
 

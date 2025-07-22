@@ -17,17 +17,17 @@
                     </div>
                     <p class="mt-2 text-gray-900">{{ review.comment }}</p>
                     <p class="mt-1 text-sm text-gray-600">
-                        - {{ review.student.firstName }} {{ review.student.lastName }}
+                        - {{ review.client.firstName }} {{ review.client.lastName }}
                     </p>
                 </div>
             </div>
-            <div v-if="review.teacherResponse" class="mt-4 bg-gray-50 rounded-lg p-4">
+            <div v-if="review.providerResponse" class="mt-4 bg-gray-50 rounded-lg p-4">
                 <p class="text-sm text-gray-900">
-                    <span class="font-medium">Teacher's response:</span>
-                    {{ review.teacherResponse.text }}
+                    <span class="font-medium">Provider's response:</span>
+                    {{ review.providerResponse.text }}
                 </p>
                 <p class="mt-1 text-xs text-gray-500">
-                    {{ formatDate(review.teacherResponse.respondedAt) }}
+                    {{ formatDate(review.providerResponse.respondedAt) }}
                 </p>
             </div>
         </div>

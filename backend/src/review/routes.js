@@ -7,61 +7,61 @@ const { authenticateUser, authorizeRoles } = require('../auth');
 /**
  * @route POST /api/reviews
  * @desc Create a new review for a completed appointment
- * @access Private (Student only)
+ * @access Private (Client only)
  */
 router.post('/',
     authenticateUser,
-    authorizeRoles(['student']),
+    authorizeRoles(['client']),
     reviewController.createReview
 );
 
 /**
- * @route GET /api/reviews/teacher/:teacherId
- * @desc Get all reviews for a specific teacher
+ * @route GET /api/reviews/provider/:providerId
+ * @desc Get all reviews for a specific provider
  * @access Public
  */
-router.get('/teacher/:teacherId',
-    reviewController.getTeacherReviews
+router.get('/provider/:providerId',
+    reviewController.getProviderReviews
 );
 
 /**
- * @route GET /api/reviews/teacher/:teacherId/statistics
- * @desc Get review statistics for a teacher (rating distribution, averages)
+ * @route GET /api/reviews/provider/:providerId/statistics
+ * @desc Get review statistics for a provider (rating distribution, averages)
  * @access Public
  */
-router.get('/teacher/:teacherId/statistics',
+router.get('/provider/:providerId/statistics',
     reviewController.getReviewStatistics
 );
 
 /**
- * @route GET /api/reviews/student/:studentId
- * @desc Get all reviews written by a specific student
- * @access Private (Student can only see own reviews, teachers/admins can see all)
+ * @route GET /api/reviews/client/:clientId
+ * @desc Get all reviews written by a specific client
+ * @access Private (Client can only see own reviews, providers/admins can see all)
  */
-router.get('/student/:studentId',
+router.get('/client/:clientId',
     authenticateUser,
-    reviewController.getStudentReviews
+    reviewController.getClientReviews
 );
 
 /**
  * @route PUT /api/reviews/:reviewId
- * @desc Update a review (only by the student who wrote it, within 24 hours)
- * @access Private (Student only)
+ * @desc Update a review (only by the client who wrote it, within 24 hours)
+ * @access Private (Client only)
  */
 router.put('/:reviewId',
     authenticateUser,
-    authorizeRoles(['student']),
+    authorizeRoles(['client']),
     reviewController.updateReview
 );
 
 /**
  * @route POST /api/reviews/:reviewId/respond
- * @desc Teacher responds to a review
- * @access Private (Teacher only)
+ * @desc Provider responds to a review
+ * @access Private (Provider only)
  */
 router.post('/:reviewId/respond',
     authenticateUser,
-    authorizeRoles(['teacher']),
+    authorizeRoles(['provider']),
     reviewController.respondToReview
 );
 

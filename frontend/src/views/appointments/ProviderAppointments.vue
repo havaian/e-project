@@ -76,24 +76,24 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-4">
                                         <div class="flex-shrink-0">
-                                            <img v-if="appointment.student.profilePicture"
-                                                :src="appointment.student.profilePicture"
-                                                :alt="`${appointment.student.firstName} ${appointment.student.lastName}`"
+                                            <img v-if="appointment.client.profilePicture"
+                                                :src="appointment.client.profilePicture"
+                                                :alt="`${appointment.client.firstName} ${appointment.client.lastName}`"
                                                 class="h-12 w-12 rounded-full object-cover" />
                                             <div v-else
                                                 class="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
                                                 <span class="text-sm font-medium text-gray-700">
-                                                    {{ appointment.student.firstName.charAt(0) }}{{
-                                                    appointment.student.lastName.charAt(0) }}
+                                                    {{ appointment.client.firstName.charAt(0) }}{{
+                                                    appointment.client.lastName.charAt(0) }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div>
                                             <h3 class="text-lg font-semibold text-gray-900">
-                                                {{ appointment.student.firstName }} {{ appointment.student.lastName }}
+                                                {{ appointment.client.firstName }} {{ appointment.client.lastName }}
                                             </h3>
                                             <p class="text-sm text-gray-500">
-                                                Age: {{ calculateAge(appointment.student.dateOfBirth) }} years
+                                                Age: {{ calculateAge(appointment.client.dateOfBirth) }} years
                                             </p>
                                         </div>
                                     </div>
@@ -114,7 +114,7 @@
                                         </p>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-500">Lesson Type</p>
+                                        <p class="text-sm text-gray-500">Session Type</p>
                                         <p class="text-gray-900">{{ appointment.type.charAt(0).toUpperCase() +
                                             appointment.type.slice(1) }}</p>
                                     </div>
@@ -136,8 +136,8 @@
                                     </button>
                                     <button
                                         v-if="appointment.status === 'scheduled' && isWithinJoinWindow(appointment.dateTime)"
-                                        class="btn-primary" @click="joinLesson(appointment._id)">
-                                        Start Lesson
+                                        class="btn-primary" @click="joinSession(appointment._id)">
+                                        Start Session
                                     </button>
                                 </div>
                             </div>
@@ -205,7 +205,7 @@ const getStatusClass = (status) => {
         'completed': 'bg-green-100 text-green-800',
         'canceled': 'bg-red-100 text-red-800',
         'no-show': 'bg-gray-100 text-gray-800',
-        'pending-teacher-confirmation': 'bg-yellow-100 text-yellow-800'
+        'pending-provider-confirmation': 'bg-yellow-100 text-yellow-800'
     }
     return classes[status] || 'bg-gray-100 text-gray-800'
 }
@@ -220,7 +220,7 @@ async function fetchAppointments() {
             ...filters
         }
 
-        const response = await axios.get(`/api/appointments/teacher/${authStore.user._id}`, { params })
+        const response = await axios.get(`/api/appointments/provider/${authStore.user._id}`, { params })
         appointments.value = response.data.appointments
         totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
     } catch (error) {
@@ -232,7 +232,7 @@ async function fetchAppointments() {
 
 async function fetchPendingCount() {
     try {
-        const response = await axios.get(`/api/appointments/pending-confirmation/teacher/${authStore.user._id}`, {
+        const response = await axios.get(`/api/appointments/pending-confirmation/provider/${authStore.user._id}`, {
             params: { limit: 1 } // Just get count, not all data
         })
         pendingCount.value = response.data.pagination.total
@@ -255,17 +255,17 @@ async function markAsNoShow(appointmentId) {
     }
 }
 
-async function joinLesson(appointmentId) {
+async function joinSession(appointmentId) {
     try {
-        const response = await axios.get(`/api/lessons/${appointmentId}/join`)
-        if (response.data.lesson) {
+        const response = await axios.get(`/api/sessions/${appointmentId}/join`)
+        if (response.data.session) {
             router.push({
-                name: 'lesson-room',
+                name: 'session-room',
                 params: { appointmentId }
             })
         }
     } catch (error) {
-        console.error('Error joining lesson:', error)
+        console.error('Error joining session:', error)
     }
 }
 

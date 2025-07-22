@@ -16,8 +16,8 @@ exports.createCheckoutSession = async (req, res) => {
 
         // Find appointment
         const appointment = await Appointment.findById(appointmentId)
-            .populate('teacher', 'lessonFee firstName lastName email specializations')
-            .populate('student', 'firstName lastName email');
+            .populate('provider', 'sessionFeefirstName lastName email specializations')
+            .populate('client', 'firstName lastName email');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
@@ -37,8 +37,8 @@ exports.createCheckoutSession = async (req, res) => {
             });
         }
 
-        // Get lesson fee from teacher's profile
-        const amount = appointment.teacher.lessonFee;
+        // Get session fee from provider's profile
+        const amount = appointment.provider.sessionFee;
         const currency = 'uzs';
 
         // Format appointment date for display
@@ -52,8 +52,8 @@ exports.createCheckoutSession = async (req, res) => {
                     price_data: {
                         currency: currency.toLowerCase(),
                         product_data: {
-                            name: `Educational Lesson with ${appointment.teacher.firstName} ${appointment.teacher.lastName}`,
-                            description: `${appointment.teacher.specializations} - ${appointmentDate}`
+                            name: `Educational Session with ${appointment.provider.firstName} ${appointment.provider.lastName}`,
+                            description: `${appointment.provider.specializations} - ${appointmentDate}`
                         },
                         unit_amount: amount * 100, // Stripe uses smallest currency unit
                     },
@@ -62,11 +62,11 @@ exports.createCheckoutSession = async (req, res) => {
             ],
             metadata: {
                 appointmentId: appointment._id.toString(),
-                studentId: appointment.student._id.toString(),
-                teacherId: appointment.teacher._id.toString(),
+                clientId: appointment.client._id.toString(),
+                providerId: appointment.provider._id.toString(),
                 appointmentDate: appointment.dateTime.toISOString()
             },
-            customer_email: appointment.student.email,
+            customer_email: appointment.client.email,
             mode: 'payment',
             success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.FRONTEND_URL}/payment/cancel?session_id={CHECKOUT_SESSION_ID}`,
@@ -78,8 +78,8 @@ exports.createCheckoutSession = async (req, res) => {
         if (!payment) {
             payment = new Payment({
                 appointment: appointment._id,
-                student: appointment.student._id,
-                teacher: appointment.teacher._id,
+                client: appointment.client._id,
+                provider: appointment.provider._id,
                 amount,
                 currency,
                 stripeSessionId: session.id,
@@ -173,7 +173,7 @@ async function handleCheckoutSessionCompleted(session) {
         if (appointment) {
             // Send success emails
             await NotificationService.sendPaymentSuccessEmail(payment._id, appointment);
-            await NotificationService.sendTeacherAppointmentEmail(appointment);
+            await NotificationService.sendProviderAppointmentEmail(appointment);
 
             appointment.payment.status = 'completed';
             await appointment.save();
@@ -232,8 +232,8 @@ exports.verifySessionStatus = async (req, res) => {
         // Find payment by session ID
         const payment = await Payment.findOne({ stripeSessionId: sessionId })
             .populate('appointment')
-            .populate('student', 'firstName lastName email')
-            .populate('teacher', 'firstName lastName specializations');
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName specializations');
 
         if (!payment) {
             return res.status(404).json({ message: 'Payment not found for this session' });

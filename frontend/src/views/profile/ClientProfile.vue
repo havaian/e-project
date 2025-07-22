@@ -10,7 +10,7 @@
             <h1 class="text-2xl font-bold text-gray-900">
               {{ user?.firstName }} {{ user?.lastName }}
             </h1>
-            <p class="text-gray-600">Student</p>
+            <p class="text-gray-600">Client</p>
           </div>
         </div>
       </div>
@@ -48,8 +48,8 @@
               <div>
                 <dt class="text-sm font-medium text-gray-500">Educational Background</dt>
                 <dd class="mt-1 text-gray-900">
-                  <p v-if="user?.educationalHistory?.length">
-                    {{ user.educationalHistory }}
+                  <p v-if="user?.backgroundInfo?.length">
+                    {{ user.backgroundInfo }}
                   </p>
                   <span v-else class="text-gray-500">Nothing reported</span>
                 </dd>

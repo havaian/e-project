@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const Schema = mongoose.Schema;
 
-// Time slot schema for teacher availability
+// Time slot schema for provider availability
 const timeSlotSchema = new Schema({
     startTime: {
         type: String, // Format: "HH:MM"
@@ -48,17 +48,17 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ['student', 'teacher', 'admin'],
-        default: 'student'
+        enum: ['client', 'provider', 'admin'],
+        default: 'client'
     },
     dateOfBirth: {
         type: Date,
-        required: function () { return this.role === 'student'; }
+        required: function () { return this.role === 'client'; }
     },
     gender: {
         type: String,
         enum: ['male', 'female', 'other', 'prefer not to say'],
-        required: function () { return this.role === 'student'; }
+        required: function () { return this.role === 'client'; }
     },
     profilePicture: {
         type: String,
@@ -71,19 +71,19 @@ const userSchema = new Schema({
         zipCode: String,
         country: String
     },
-    // Teacher-specific fields
+    // Provider-specific fields
     specializations: [{
         type: String,
-        required: function () { return this.role === 'teacher'; }
+        required: function () { return this.role === 'provider'; }
     }],
     licenseNumber: {
         type: String,
-        required: function () { return this.role === 'teacher'; }
+        required: function () { return this.role === 'provider'; }
     },
     experience: {
         type: Number,
         default: 0,
-        required: function () { return this.role === 'teacher'; }
+        required: function () { return this.role === 'provider'; }
     },
     education: [{
         degree: String,
@@ -112,12 +112,12 @@ const userSchema = new Schema({
         // New field - multiple time slots per day
         timeSlots: [timeSlotSchema]
     }],
-    lessonFee: {
+    sessionFee: {
         type: Number,
-        required: function () { return this.role === 'teacher'; }
+        required: function () { return this.role === 'provider'; }
     },
-    // Student-specific fields
-    educationalHistory: {
+    // Client-specific fields
+    backgroundInfo: {
         type: String,
         required: false
     },
@@ -182,7 +182,7 @@ userSchema.virtual('fullName').get(function () {
     return `${this.firstName} ${this.lastName}`;
 });
 
-// Add indexes for searching teachers - removed the duplicate email index
+// Add indexes for searching providers - removed the duplicate email index
 userSchema.index({ specializations: 1 });
 userSchema.index({ 'address.city': 1 });
 userSchema.index({ firstName: 'text', lastName: 'text', specializations: 'text' });
@@ -257,7 +257,7 @@ userSchema.methods.generatePasswordResetToken = function () {
     return resetToken;
 };
 
-// Method to get teacher's basic public profile
+// Method to get provider's basic public profile
 userSchema.methods.getPublicProfile = function () {
     const user = this.toObject();
 
@@ -271,10 +271,10 @@ userSchema.methods.getPublicProfile = function () {
     return user;
 };
 
-// Static method to find available teachers by specializations
-userSchema.statics.findAvailableTeachers = function (specializations) {
+// Static method to find available providers by specializations
+userSchema.statics.findAvailableProviders = function (specializations) {
     return this.find({
-        role: 'teacher',
+        role: 'provider',
         isActive: true,
         isVerified: true,
         specializations: specializations || { $exists: true }

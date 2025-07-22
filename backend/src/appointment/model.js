@@ -18,12 +18,12 @@ const chatMessageSchema = new Schema({
 });
 
 const appointmentSchema = new Schema({
-    student: {
+    client: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    teacher: {
+    provider: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -55,8 +55,8 @@ const appointmentSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['pending-payment', 'pending-teacher-confirmation', 'scheduled', 'completed', 'canceled', 'no-show'],
-        default: 'pending-teacher-confirmation'
+        enum: ['pending-payment', 'pending-provider-confirmation', 'scheduled', 'completed', 'canceled', 'no-show'],
+        default: 'pending-provider-confirmation'
     },
     type: {
         type: String,
@@ -70,14 +70,14 @@ const appointmentSchema = new Schema({
     notes: {
         type: String
     },
-    lessonSummary: {
+    sessionSummary: {
         type: String
     },
     // Added chatLog field to store messages
     chatLog: [chatMessageSchema],
-    homeworks: [{
-        medication: String,
-        dosage: String,
+    recommendations: [{
+        title: String,
+        description: String,
         frequency: String,
         duration: String,
         instructions: String,
@@ -106,7 +106,7 @@ const appointmentSchema = new Schema({
         fileType: String,
         uploadedBy: {
             type: String,
-            enum: ['student', 'teacher']
+            enum: ['client', 'provider']
         },
         uploadedAt: {
             type: Date,
@@ -116,7 +116,7 @@ const appointmentSchema = new Schema({
     cancellationReason: {
         type: String
     },
-    teacherConfirmationExpires: {
+    providerConfirmationExpires: {
         type: Date
     },
     createdAt: {
@@ -132,10 +132,10 @@ const appointmentSchema = new Schema({
 });
 
 // Index for efficient queries
-appointmentSchema.index({ student: 1, dateTime: -1 });
-appointmentSchema.index({ teacher: 1, dateTime: -1 });
+appointmentSchema.index({ client: 1, dateTime: -1 });
+appointmentSchema.index({ provider: 1, dateTime: -1 });
 appointmentSchema.index({ status: 1 });
-appointmentSchema.index({ teacherConfirmationExpires: 1 }, { expireAfterSeconds: 0 }); // For TTL index
+appointmentSchema.index({ providerConfirmationExpires: 1 }, { expireAfterSeconds: 0 }); // For TTL index
 
 // Middleware to update the updatedAt field
 appointmentSchema.pre('save', function (next) {
@@ -161,68 +161,68 @@ appointmentSchema.methods.cancel = function (reason) {
 appointmentSchema.methods.complete = function (summary) {
     this.status = 'completed';
     if (summary) {
-        this.lessonSummary = summary;
+        this.sessionSummary = summary;
     }
     return this.save();
 };
 
-appointmentSchema.methods.confirmTeacher = function () {
-    if (this.status === 'pending-teacher-confirmation') {
+appointmentSchema.methods.confirmProvider = function () {
+    if (this.status === 'pending-provider-confirmation') {
         this.status = 'scheduled';
     }
     return this.save();
 };
 
 // Static methods
-appointmentSchema.statics.findUpcomingForStudent = function (studentId) {
+appointmentSchema.statics.findUpcomingForClient = function (clientId) {
     return this.find({
-        student: studentId,
+        client: clientId,
         dateTime: { $gte: new Date() },
         status: 'scheduled'
-    }).sort({ dateTime: 1 }).populate('teacher');
+    }).sort({ dateTime: 1 }).populate('provider');
 };
 
-appointmentSchema.statics.findUpcomingForTeacher = function (teacherId) {
+appointmentSchema.statics.findUpcomingForProvider = function (providerId) {
     return this.find({
-        teacher: teacherId,
+        provider: providerId,
         dateTime: { $gte: new Date() },
         status: 'scheduled'
-    }).sort({ dateTime: 1 }).populate('student');
+    }).sort({ dateTime: 1 }).populate('client');
 };
 
-// Add method to find pending-payment follow-ups for a student
-appointmentSchema.statics.findPendingFollowUpsForStudent = function (studentId) {
+// Add method to find pending-payment follow-ups for a client
+appointmentSchema.statics.findPendingFollowUpsForClient = function (clientId) {
     return this.find({
-        student: studentId,
+        client: clientId,
         status: 'pending-payment'
-    }).sort({ dateTime: 1 }).populate('teacher');
+    }).sort({ dateTime: 1 }).populate('provider');
 };
 
-// Find appointments pending teacher confirmation
-appointmentSchema.statics.findPendingTeacherConfirmation = function (teacherId) {
+// Find appointments pending provider confirmation
+appointmentSchema.statics.findPendingProviderConfirmation = function (providerId) {
     return this.find({
-        teacher: teacherId,
-        status: 'pending-teacher-confirmation',
-        teacherConfirmationExpires: { $gt: new Date() }
-    }).sort({ teacherConfirmationExpires: 1 }).populate('student');
+        provider: providerId,
+        status: 'pending-provider-confirmation',
+        providerConfirmationExpires: { $gt: new Date() }
+    }).sort({ providerConfirmationExpires: 1 }).populate('client');
 };
 
-// Find expired teacher confirmation appointments
-appointmentSchema.statics.findExpiredTeacherConfirmation = function () {
+// Find expired provider confirmation appointments
+appointmentSchema.statics.findExpiredProviderConfirmation = function () {
     return this.find({
-        status: 'pending-teacher-confirmation',
-        teacherConfirmationExpires: { $lte: new Date() }
-    }).populate('student').populate('teacher');
+        status: 'pending-provider-confirmation',
+        providerConfirmationExpires: { $lte: new Date() }
+    }).populate('client').populate('provider');
 };
 
 // Find appointments for calendar view
 appointmentSchema.statics.findForCalendar = function (userId, userRole, startDate, endDate) {
     const query = {};
 
-    if (userRole === 'student') {
-        query.student = userId;
-    } else if (userRole === 'teacher') {
-        query.teacher = userId;
+    if (userRole === 'client') {
+        query.client = userId;
+    } else if (userRole === 'provider') {
+        query.provider = userId;
     }
 
     if (startDate && endDate) {
@@ -234,7 +234,7 @@ appointmentSchema.statics.findForCalendar = function (userId, userRole, startDat
 
     return this.find(query)
         .sort({ dateTime: 1 })
-        .populate(userRole === 'student' ? 'teacher' : 'student');
+        .populate(userRole === 'client' ? 'provider' : 'client');
 };
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);

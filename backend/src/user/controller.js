@@ -3,19 +3,19 @@ const { validateUserInput } = require('../utils/validators');
 const { NotificationService } = require('../notification');
 const crypto = require('crypto');
 
-// Register a new user (student or teacher)
+// Register a new user (client or provider)
 exports.registerUser = async (req, res) => {
     try {
         // First, we need to preprocess the data to prevent validation issues with role-specific fields
         const userData = { ...req.body };
         
-        // If the user is a student, explicitly remove all teacher-specific fields before validation
-        if (userData.role === 'student' || !userData.role) {
+        // If the user is a client, explicitly remove all provider-specific fields before validation
+        if (userData.role === 'client' || !userData.role) {
             delete userData.specializations;
             delete userData.specializations;
             delete userData.licenseNumber;
             delete userData.experience;
-            delete userData.lessonFee;
+            delete userData.sessionFee;
             delete userData.bio;
             delete userData.languages;
             delete userData.education;
@@ -47,13 +47,13 @@ exports.registerUser = async (req, res) => {
             firstName,
             lastName,
             phone,
-            role: role || 'student',
+            role: role || 'client',
             verificationToken,
             isVerified: false
         });
 
         // Add role-specific fields
-        if (role === 'teacher') {
+        if (role === 'provider') {
             // Handle specializations (array)
             if (userData.specializations) {
                 user.specializations = userData.specializations;
@@ -65,7 +65,7 @@ exports.registerUser = async (req, res) => {
             user.experience = userData.experience || 0;
             user.bio = userData.bio ? decodeURIComponent(userData.bio) : '';
             user.languages = userData.languages || [];
-            user.lessonFee = userData.lessonFee || 0;
+            user.sessionFee= userData.sessionFee|| 0;
             user.education = userData.education || [];
             user.certifications = userData.certifications || [];
 
@@ -80,21 +80,21 @@ exports.registerUser = async (req, res) => {
                 { dayOfWeek: 7, isAvailable: false, startTime: '00:00', endTime: '00:00' }
             ];
         }
-        else if (role === 'student' || !role) {
-            const { dateOfBirth, gender, educationalHistory } = userData;
+        else if (role === 'client' || !role) {
+            const { dateOfBirth, gender, backgroundInfo } = userData;
 
             user.dateOfBirth = dateOfBirth;
             user.gender = gender;
 
-            if (educationalHistory) {
-                user.educationalHistory = educationalHistory;
+            if (backgroundInfo) {
+                user.backgroundInfo = backgroundInfo;
             }
             
-            // Explicitly ensure teacher-specific fields are unset for students
+            // Explicitly ensure provider-specific fields are unset for clients
             user.specializations = undefined;
             user.licenseNumber = undefined;
             user.experience = undefined;
-            user.lessonFee = undefined;
+            user.sessionFee= undefined;
             user.bio = undefined;
             user.languages = undefined;
             user.education = undefined;
@@ -219,7 +219,7 @@ exports.updateUserProfile = async (req, res) => {
         const allowedUpdates = [
             'firstName', 'lastName', 'phone', 'profilePicture',
             'address', 'bio', 'languages', 'availability',
-            'lessonFee', 'educationalHistory', 'emergencyContact',
+            'sessionFee', 'backgroundInfo', 'emergencyContact',
             'specializations', 'education', 'certifications', 'experience'
         ];
 
@@ -363,8 +363,8 @@ exports.resetPassword = async (req, res) => {
     }
 };
 
-// Get all teachers (with optional filters)
-exports.getTeachers = async (req, res) => {
+// Get all providers (with optional filters)
+exports.getProviders = async (req, res) => {
     try {
         const {
             specializations,
@@ -378,7 +378,7 @@ exports.getTeachers = async (req, res) => {
             limit = 10
         } = req.query;
 
-        const query = { role: 'teacher', isActive: true, isVerified: true };
+        const query = { role: 'provider', isActive: true, isVerified: true };
 
         // Apply filters
         if (specializations) {
@@ -408,7 +408,7 @@ exports.getTeachers = async (req, res) => {
         }
 
         if (maxFee) {
-            query['lessonFee'] = { $lte: parseInt(maxFee) };
+            query['sessionFee'] = { $lte: parseInt(maxFee) };
         }
 
         if (language) {
@@ -418,7 +418,7 @@ exports.getTeachers = async (req, res) => {
         // Execute query with pagination
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
-        const teachers = await User.find(query)
+        const providers = await User.find(query)
             .select('-password -verificationToken -resetPasswordToken -resetPasswordExpire')
             .skip(skip)
             .limit(parseInt(limit))
@@ -427,7 +427,7 @@ exports.getTeachers = async (req, res) => {
         const total = await User.countDocuments(query);
 
         res.status(200).json({
-            teachers,
+            providers,
             pagination: {
                 total,
                 page: parseInt(page),
@@ -436,31 +436,31 @@ exports.getTeachers = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching teachers:', error);
-        res.status(500).json({ message: 'An error occurred while fetching teachers' });
+        console.error('Error fetching providers:', error);
+        res.status(500).json({ message: 'An error occurred while fetching providers' });
     }
 };
 
-// Get teacher by ID
-exports.getTeacherById = async (req, res) => {
+// Get provider by ID
+exports.getProviderById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const teacher = await User.findOne({
+        const provider = await User.findOne({
             _id: id,
-            role: 'teacher',
+            role: 'provider',
             isActive: true,
             isVerified: true
         }).select('-password -verificationToken -resetPasswordToken -resetPasswordExpire');
 
-        if (!teacher) {
-            return res.status(404).json({ message: 'Teacher not found' });
+        if (!provider) {
+            return res.status(404).json({ message: 'Provider not found' });
         }
 
-        res.status(200).json({ teacher });
+        res.status(200).json({ provider });
     } catch (error) {
-        console.error('Error fetching teacher details:', error);
-        res.status(500).json({ message: 'An error occurred while fetching teacher details' });
+        console.error('Error fetching provider details:', error);
+        res.status(500).json({ message: 'An error occurred while fetching provider details' });
     }
 };
 
@@ -512,20 +512,20 @@ exports.deactivateAccount = async (req, res) => {
     }
 };
 
-// Get teacher's availability slots
-exports.getTeacherAvailability = async (req, res) => {
+// Get provider's availability slots
+exports.getProviderAvailability = async (req, res) => {
     try {
-        const { teacherId } = req.params;
+        const { providerId } = req.params;
         const { date } = req.query;
 
         if (!date) {
             return res.status(400).json({ message: 'Date parameter is required' });
         }
 
-        // Get teacher's working hours
-        const teacher = await User.findById(teacherId);
-        if (!teacher || teacher.role !== 'teacher') {
-            return res.status(404).json({ message: 'Teacher not found' });
+        // Get provider's working hours
+        const provider = await User.findById(providerId);
+        if (!provider || provider.role !== 'provider') {
+            return res.status(404).json({ message: 'Provider not found' });
         }
 
         // Parse date and get working hours for that day of week
@@ -533,17 +533,17 @@ exports.getTeacherAvailability = async (req, res) => {
         const dayOfWeek = requestedDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
         const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Convert to 0-based (Monday = 0, Sunday = 6)
 
-        const dayAvailability = teacher.availability.find(a => a.dayOfWeek === dayIndex);
+        const dayAvailability = provider.availability.find(a => a.dayOfWeek === dayIndex);
         if (!dayAvailability || !dayAvailability.isAvailable) {
             return res.status(200).json({
-                message: 'Teacher is not available on this day',
+                message: 'Provider is not available on this day',
                 availableSlots: []
             });
         }
 
         let availableSlots = [];
 
-        // Check if the teacher has time slots defined
+        // Check if the provider has time slots defined
         if (Array.isArray(dayAvailability.timeSlots) && dayAvailability.timeSlots.length > 0) {
             // For each time slot, generate available appointment slots
             for (const timeSlot of dayAvailability.timeSlots) {
@@ -551,7 +551,7 @@ exports.getTeacherAvailability = async (req, res) => {
                     requestedDate,
                     timeSlot.startTime,
                     timeSlot.endTime,
-                    teacherId
+                    providerId
                 );
                 availableSlots = [...availableSlots, ...slots];
             }
@@ -561,7 +561,7 @@ exports.getTeacherAvailability = async (req, res) => {
                 requestedDate,
                 dayAvailability.startTime,
                 dayAvailability.endTime,
-                teacherId
+                providerId
             );
         }
 
@@ -572,13 +572,13 @@ exports.getTeacherAvailability = async (req, res) => {
                 { start: dayAvailability.startTime, end: dayAvailability.endTime }
         });
     } catch (error) {
-        console.error('Error fetching teacher availability:', error);
-        res.status(500).json({ message: 'An error occurred while fetching teacher availability' });
+        console.error('Error fetching provider availability:', error);
+        res.status(500).json({ message: 'An error occurred while fetching provider availability' });
     }
 };
 
 // Helper function to generate time slots
-async function generateTimeSlots(date, startTimeStr, endTimeStr, teacherId) {
+async function generateTimeSlots(date, startTimeStr, endTimeStr, providerId) {
     // Parse start and end times
     const [startHour, startMinute] = startTimeStr.split(':').map(Number);
     const [endHour, endMinute] = endTimeStr.split(':').map(Number);
@@ -609,12 +609,12 @@ async function generateTimeSlots(date, startTimeStr, endTimeStr, teacherId) {
 
     // Remove slots that already have appointments
     const bookedAppointments = await Appointment.find({
-        teacher: teacherId,
+        provider: providerId,
         dateTime: {
             $gte: new Date(date.setHours(0, 0, 0, 0)),
             $lt: new Date(date.setHours(23, 59, 59, 999))
         },
-        status: { $in: ['scheduled', 'pending-teacher-confirmation'] }
+        status: { $in: ['scheduled', 'pending-provider-confirmation'] }
     });
 
     // Check for conflicts with each potential slot

@@ -101,7 +101,7 @@
 
                 <div class="mt-3 flex justify-between items-center">
                     <p class="text-xs text-gray-500">
-                        Note: This is for general information only. Always consult a teacher for educational advice.
+                        Note: This is for general information only. Always consult a provider for educational advice.
                     </p>
 
                     <div class="flex space-x-2">

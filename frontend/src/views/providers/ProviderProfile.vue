@@ -3,24 +3,24 @@
         <div v-if="loading" class="text-center py-8">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent">
             </div>
-            <p class="mt-2 text-gray-600">Loading teacher profile...</p>
+            <p class="mt-2 text-gray-600">Loading provider profile...</p>
         </div>
 
-        <template v-else-if="teacher">
+        <template v-else-if="provider">
             <div class="bg-white shadow rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="p-6 sm:p-8 border-b border-gray-200">
                     <div class="flex flex-col sm:flex-row items-center sm:items-start">
-                        <img :src="teacher.profilePicture || '/images/default-avatar.png'" :alt="teacher.firstName"
+                        <img :src="provider.profilePicture || '/images/default-avatar.png'" :alt="provider.firstName"
                             class="h-32 w-32 rounded-full object-cover bg-gray-200" />
                         <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
                             <h1 class="text-2xl font-bold text-gray-900">
-                                {{ teacher.firstName }} {{ teacher.lastName }}
+                                {{ provider.firstName }} {{ provider.lastName }}
                             </h1>
 
                             <!-- Specializations as tags -->
                             <div class="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
-                                <span v-for="spec in teacher.specializations" :key="spec"
+                                <span v-for="spec in provider.specializations" :key="spec"
                                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                     {{ spec }}
                                 </span>
@@ -29,9 +29,9 @@
                             <div class="mt-3 flex flex-wrap gap-2 justify-center sm:justify-start">
                                 <span
                                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
-                                    {{ teacher.experience }} years experience
+                                    {{ provider.experience }} years experience
                                 </span>
-                                <span v-for="lang in teacher.languages" :key="lang"
+                                <span v-for="lang in provider.languages" :key="lang"
                                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                                     {{ lang }}
                                 </span>
@@ -44,13 +44,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                 </svg>
-                                Chat with Teacher
+                                Chat with Provider
                             </button>
                         </div>
 
                         <div class="mt-4 sm:mt-0 sm:ml-auto">
-                            <router-link v-if="authStore.isStudent"
-                                :to="{ name: 'book-appointment', params: { teacherId: teacher._id } }"
+                            <router-link v-if="authStore.isClient"
+                                :to="{ name: 'book-appointment', params: { providerId: provider._id } }"
                                 class="btn-primary">
                                 Book Appointment
                             </router-link>
@@ -66,20 +66,20 @@
 
                         <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">Education</h3>
                         <ul class="space-y-2">
-                            <li v-for="edu in teacher.education" :key="edu.degree" class="text-gray-600">
+                            <li v-for="edu in provider.education" :key="edu.degree" class="text-gray-600">
                                 {{ edu.degree }} - {{ edu.institution }} ({{ edu.year }})
                             </li>
-                            <li v-if="!teacher.education || teacher.education.length === 0" class="text-gray-500">
+                            <li v-if="!provider.education || provider.education.length === 0" class="text-gray-500">
                                 No education information provided.
                             </li>
                         </ul>
 
                         <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">Certification</h3>
                         <ul class="space-y-2">
-                            <li v-for="cert in teacher.certifications" :key="cert.issuer" class="text-gray-600">
+                            <li v-for="cert in provider.certifications" :key="cert.issuer" class="text-gray-600">
                                 {{ cert.issuer }} - {{ cert.name }} ({{ cert.year }})
                             </li>
-                            <li v-if="!teacher.certifications || teacher.certifications.length === 0"
+                            <li v-if="!provider.certifications || provider.certifications.length === 0"
                                 class="text-gray-500">
                                 No certification information provided.
                             </li>
@@ -87,12 +87,12 @@
                     </div>
 
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Lesson Details</h2>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Session Details</h2>
                         <div class="space-y-4">
                             <div>
                                 <h3 class="font-medium text-gray-900">Fee</h3>
                                 <p class="text-gray-600">
-                                    {{ formatLessonFee }}
+                                    {{ formatSessionFee }}
                                 </p>
                             </div>
 
@@ -120,7 +120,7 @@
 
                 <!-- Reviews Section - Only show if reviews exist or review system is working -->
                 <div v-if="reviewsLoaded" class="p-6 sm:p-8 border-t border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Student Reviews</h2>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Client Reviews</h2>
                     
                     <!-- No reviews yet -->
                     <div v-if="reviews.length === 0" class="text-center py-8">
@@ -129,7 +129,7 @@
                                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                         </svg>
                         <h3 class="mt-2 text-sm font-medium text-gray-900">No reviews yet</h3>
-                        <p class="mt-1 text-sm text-gray-500">Be the first to leave a review for this teacher!</p>
+                        <p class="mt-1 text-sm text-gray-500">Be the first to leave a review for this provider!</p>
                     </div>
                     
                     <!-- Reviews list -->
@@ -148,18 +148,18 @@
                                     </div>
                                     <p class="mt-1 text-gray-900">{{ review.comment }}</p>
                                     <p class="mt-1 text-sm text-gray-500">
-                                        {{ review.student?.firstName }} {{ review.student?.lastName }} •
+                                        {{ review.client?.firstName }} {{ review.client?.lastName }} •
                                         {{ formatDate(review.createdAt) }}
                                     </p>
                                 </div>
                             </div>
-                            <div v-if="review.teacherResponse" class="mt-4 ml-6 p-4 bg-gray-50 rounded-lg">
+                            <div v-if="review.providerResponse" class="mt-4 ml-6 p-4 bg-gray-50 rounded-lg">
                                 <p class="text-sm text-gray-900">
-                                    <span class="font-medium">Teacher's response:</span>
-                                    {{ review.teacherResponse.text }}
+                                    <span class="font-medium">Provider's response:</span>
+                                    {{ review.providerResponse.text }}
                                 </p>
                                 <p class="mt-1 text-xs text-gray-500">
-                                    {{ formatDate(review.teacherResponse.respondedAt) }}
+                                    {{ formatDate(review.providerResponse.respondedAt) }}
                                 </p>
                             </div>
                         </div>
@@ -169,7 +169,7 @@
         </template>
 
         <div v-else class="text-center py-8">
-            <p class="text-gray-600">Teacher not found.</p>
+            <p class="text-gray-600">Provider not found.</p>
         </div>
     </div>
 </template>
@@ -185,32 +185,32 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-const teacher = ref(null)
+const provider = ref(null)
 const reviews = ref([])
 const loading = ref(true)
 const reviewsLoaded = ref(false)
 const hasUpcomingAppointment = ref(false)
 
 const availableDays = computed(() => {
-    if (!teacher.value?.availability) return []
-    return teacher.value.availability.filter(day => day.isAvailable)
+    if (!provider.value?.availability) return []
+    return provider.value.availability.filter(day => day.isAvailable)
 })
 
 // Computed property for decoded bio
 const decodedBio = computed(() => {
-    if (!teacher.value?.bio) return 'No bio provided.'
+    if (!provider.value?.bio) return 'No bio provided.'
 
     // Create a temporary DOM element to decode HTML entities
     const textarea = document.createElement('textarea')
-    textarea.innerHTML = teacher.value.bio
+    textarea.innerHTML = provider.value.bio
     return textarea.value
 })
 
-// Computed property for formatted lesson fee
-const formatLessonFee = computed(() => {
-    const fee = teacher.value?.lessonFee
+// Computed property for formatted session fee
+const formatSessionFee = computed(() => {
+    const fee = provider.value?.sessionFee
 
-    if (!fee) return 'Lesson fee not specified'
+    if (!fee) return 'Session fee not specified'
 
     // If fee is an object with amount property
     if (typeof fee === 'object' && fee !== null && 'amount' in fee) {
@@ -221,12 +221,12 @@ const formatLessonFee = computed(() => {
         return `${new Intl.NumberFormat('uz-UZ').format(fee)} UZS`
     }
 
-    return 'Lesson fee not specified'
+    return 'Session fee not specified'
 })
 
 // Computed property for formatted address
 const formattedAddress = computed(() => {
-    const address = teacher.value?.address
+    const address = provider.value?.address
 
     if (!address) return 'Address not provided'
 
@@ -250,19 +250,19 @@ const formatDate = (date) => {
     return format(new Date(date), 'MMM d, yyyy')
 }
 
-async function fetchTeacherProfile() {
+async function fetchProviderProfile() {
     try {
         loading.value = true
-        const response = await axios.get(`/api/users/teachers/${route.params.id}`)
-        teacher.value = response.data.teacher
+        const response = await axios.get(`/api/users/providers/${route.params.id}`)
+        provider.value = response.data.provider
 
-        // After teacher is loaded, check appointments and fetch reviews
+        // After provider is loaded, check appointments and fetch reviews
         await Promise.all([
             checkUpcomingAppointments(),
             fetchReviews()
         ])
     } catch (error) {
-        console.error('Error fetching teacher profile:', error)
+        console.error('Error fetching provider profile:', error)
     } finally {
         loading.value = false
     }
@@ -270,7 +270,7 @@ async function fetchTeacherProfile() {
 
 async function fetchReviews() {
     try {
-        const reviewsResponse = await axios.get(`/api/reviews/teacher/${route.params.id}`)
+        const reviewsResponse = await axios.get(`/api/reviews/provider/${route.params.id}`)
         reviews.value = reviewsResponse.data.reviews || []
         reviewsLoaded.value = true
     } catch (reviewError) {
@@ -286,16 +286,16 @@ async function fetchReviews() {
 }
 
 async function checkUpcomingAppointments() {
-    // Check if user is authenticated and teacher is loaded
-    if (!authStore.isAuthenticated || !authStore.isStudent || !teacher.value?._id) {
+    // Check if user is authenticated and provider is loaded
+    if (!authStore.isAuthenticated || !authStore.isClient || !provider.value?._id) {
         return
     }
 
     try {
-        const response = await axios.get(`/api/appointments/student/${authStore.user._id}`, {
+        const response = await axios.get(`/api/appointments/client/${authStore.user._id}`, {
             params: { 
                 status: 'scheduled', 
-                teacher: teacher.value._id  // Use teacher filter instead of teacherId
+                provider: provider.value._id  // Use provider filter instead of providerId
             }
         })
         hasUpcomingAppointment.value = response.data.appointments.length > 0
@@ -305,14 +305,14 @@ async function checkUpcomingAppointments() {
 }
 
 async function startChat() {
-    if (!teacher.value?._id) {
-        console.error('Teacher not loaded')
+    if (!provider.value?._id) {
+        console.error('Provider not loaded')
         return
     }
 
     try {
         const response = await axios.post('/api/chat/conversations', {
-            participantId: teacher.value._id
+            participantId: provider.value._id
         })
 
         router.push({
@@ -325,6 +325,6 @@ async function startChat() {
 }
 
 onMounted(() => {
-    fetchTeacherProfile()
+    fetchProviderProfile()
 })
 </script>

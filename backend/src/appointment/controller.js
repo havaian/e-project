@@ -8,9 +8,9 @@ const emailService = require('../notification/emailService.js');
 // Create a new appointment
 exports.createAppointment = async (req, res) => {
     try {
-        const studentId = req.user.id;
+        const clientId = req.user.id;
 
-        const { teacherId, dateTime, type, shortDescription, notes, duration = 30 } = req.body;
+        const { providerId, dateTime, type, shortDescription, notes, duration = 30 } = req.body;
 
         // Validate duration is a multiple of 15 minutes
         if (duration % 15 !== 0 || duration < 15 || duration > 120) {
@@ -20,7 +20,7 @@ exports.createAppointment = async (req, res) => {
         }
 
         const appointmentData = {
-            teacherId,
+            providerId,
             dateTime,
             type,
             shortDescription,
@@ -29,13 +29,13 @@ exports.createAppointment = async (req, res) => {
 
         const { error } = validateAppointmentInput(appointmentData);
         if (error) {
-            // Send failure email to student
-            const student = await User.findById(studentId);
-            const teacher = await User.findById(teacherId);
+            // Send failure email to client
+            const client = await User.findById(clientId);
+            const provider = await User.findById(providerId);
 
             await emailService.sendAppointmentBookingFailed({
-                student,
-                teacher,
+                client,
+                provider,
                 dateTime,
                 type,
                 error: error.details[0].message
@@ -44,16 +44,16 @@ exports.createAppointment = async (req, res) => {
             return res.status(400).json({ message: error.details[0].message });
         }
 
-        // Verify that teacher exists
-        const teacher = await User.findById(teacherId);
-        if (!teacher || teacher.role !== 'teacher') {
-            return res.status(404).json({ message: 'Teacher not found' });
+        // Verify that provider exists
+        const provider = await User.findById(providerId);
+        if (!provider || provider.role !== 'provider') {
+            return res.status(404).json({ message: 'Provider not found' });
         }
 
-        // Verify that student exists
-        const student = await User.findById(studentId);
-        if (!student || student.role !== 'student') {
-            return res.status(404).json({ message: 'Student not found' });
+        // Verify that client exists
+        const client = await User.findById(clientId);
+        if (!client || client.role !== 'client') {
+            return res.status(404).json({ message: 'Client not found' });
         }
 
         // Check appointment type is valid
@@ -66,9 +66,9 @@ exports.createAppointment = async (req, res) => {
         const appointmentDate = new Date(dateTime);
         const endTime = new Date(appointmentDate.getTime() + duration * 60000);
 
-        // Check if the teacher is available for the entire duration
+        // Check if the provider is available for the entire duration
         const conflictingAppointment = await Appointment.findOne({
-            teacher: teacherId,
+            provider: providerId,
             $or: [
                 // Case 1: New appointment starts during an existing appointment
                 {
@@ -90,19 +90,19 @@ exports.createAppointment = async (req, res) => {
         });
 
         if (conflictingAppointment) {
-            // Send failure email to student
+            // Send failure email to client
             await emailService.sendAppointmentBookingFailed({
-                student,
-                teacher,
+                client,
+                provider,
                 dateTime,
                 type,
-                error: 'Teacher is not available at this time'
+                error: 'Provider is not available at this time'
             });
 
-            return res.status(409).json({ message: 'Teacher is not available at this time' });
+            return res.status(409).json({ message: 'Provider is not available at this time' });
         }
 
-        // FIXED: Check if teacher's working hours allow this appointment
+        // FIXED: Check if provider's working hours allow this appointment
         const dayOfWeek = appointmentDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
         
         // Convert JavaScript day (0=Sunday) to your backend format
@@ -113,13 +113,13 @@ exports.createAppointment = async (req, res) => {
         console.log(`JavaScript day of week: ${dayOfWeek} (0=Sunday, 6=Saturday)`);
         console.log(`Backend day index: ${backendDayIndex} (1=Monday, 7=Sunday)`);
 
-        const teacherAvailability = teacher.availability.find(a => a.dayOfWeek === backendDayIndex);
+        const providerAvailability = provider.availability.find(a => a.dayOfWeek === backendDayIndex);
 
-        if (!teacherAvailability || !teacherAvailability.isAvailable) {
-            return res.status(400).json({ message: 'Teacher is not available on this day' });
+        if (!providerAvailability || !providerAvailability.isAvailable) {
+            return res.status(400).json({ message: 'Provider is not available on this day' });
         }
 
-        // FIXED: Check if appointment falls within teacher's working hours
+        // FIXED: Check if appointment falls within provider's working hours
         // Get appointment time in local time (assuming UTC+5 timezone)
         const appointmentHour = appointmentDate.getHours();
         const appointmentMinute = appointmentDate.getMinutes();
@@ -135,10 +135,10 @@ exports.createAppointment = async (req, res) => {
         let isWithinWorkingHours = false;
 
         // Check each working time slot for the day
-        if (Array.isArray(teacherAvailability.timeSlots) && teacherAvailability.timeSlots.length > 0) {
-            console.log('Checking time slots:', teacherAvailability.timeSlots);
+        if (Array.isArray(providerAvailability.timeSlots) && providerAvailability.timeSlots.length > 0) {
+            console.log('Checking time slots:', providerAvailability.timeSlots);
             
-            for (const slot of teacherAvailability.timeSlots) {
+            for (const slot of providerAvailability.timeSlots) {
                 const [startHour, startMinute] = slot.startTime.split(':').map(Number);
                 const [endHour, endMinute] = slot.endTime.split(':').map(Number);
 
@@ -154,12 +154,12 @@ exports.createAppointment = async (req, res) => {
                     break;
                 }
             }
-        } else if (teacherAvailability.startTime && teacherAvailability.endTime) {
+        } else if (providerAvailability.startTime && providerAvailability.endTime) {
             // Fallback to the old format if timeSlots is not available
-            console.log('Using fallback format:', teacherAvailability.startTime, '-', teacherAvailability.endTime);
+            console.log('Using fallback format:', providerAvailability.startTime, '-', providerAvailability.endTime);
             
-            const [startHour, startMinute] = teacherAvailability.startTime.split(':').map(Number);
-            const [endHour, endMinute] = teacherAvailability.endTime.split(':').map(Number);
+            const [startHour, startMinute] = providerAvailability.startTime.split(':').map(Number);
+            const [endHour, endMinute] = providerAvailability.endTime.split(':').map(Number);
 
             const workingStartMinutes = startHour * 60 + startMinute;
             const workingEndMinutes = endHour * 60 + endMinute;
@@ -173,22 +173,22 @@ exports.createAppointment = async (req, res) => {
         }
 
         if (!isWithinWorkingHours) {
-            console.log('❌ Appointment is outside teacher\'s working hours');
-            return res.status(400).json({ message: 'Appointment time is outside teacher\'s working hours' });
+            console.log('❌ Appointment is outside provider\'s working hours');
+            return res.status(400).json({ message: 'Appointment time is outside provider\'s working hours' });
         }
 
-        // Create new appointment with pending-teacher-confirmation status
+        // Create new appointment with pending-provider-confirmation status
         const appointment = new Appointment({
-            student: studentId,
-            teacher: teacherId,
+            client: clientId,
+            provider: providerId,
             dateTime: appointmentDate,
             endTime: endTime,
             duration: duration,
             type,
             shortDescription,
             notes: notes || '',
-            status: 'pending-teacher-confirmation',
-            teacherConfirmationExpires: calculateTeacherConfirmationDeadline(teacher, appointmentDate)
+            status: 'pending-provider-confirmation',
+            providerConfirmationExpires: calculateProviderConfirmationDeadline(provider, appointmentDate)
         });
 
         await appointment.save();
@@ -196,12 +196,12 @@ exports.createAppointment = async (req, res) => {
         // Send confirmation emails
         await emailService.sendAppointmentBookedEmails({
             ...appointment.toObject(),
-            student,
-            teacher
+            client,
+            provider
         });
 
         res.status(201).json({
-            message: 'Appointment created successfully, awaiting teacher confirmation',
+            message: 'Appointment created successfully, awaiting provider confirmation',
             appointment
         });
     } catch (error) {
@@ -210,14 +210,14 @@ exports.createAppointment = async (req, res) => {
     }
 };
 
-// Helper function to calculate teacher confirmation deadline
-function calculateTeacherConfirmationDeadline(teacher, appointmentDate) {
+// Helper function to calculate provider confirmation deadline
+function calculateProviderConfirmationDeadline(provider, appointmentDate) {
     // Get the day of the appointment
     const appointmentDay = appointmentDate.getDay(); // 0 is Sunday, 1 is Monday
     const dayIndex = appointmentDay === 0 ? 6 : appointmentDay - 1; // Convert to 0-based (Monday = 0, Sunday = 6)
 
-    // Find teacher's working hours for this day
-    const workingHours = teacher.availability.find(a => a.dayOfWeek === dayIndex);
+    // Find provider's working hours for this day
+    const workingHours = provider.availability.find(a => a.dayOfWeek === dayIndex);
 
     if (!workingHours || !workingHours.isAvailable) {
         // Fallback: If no working hours defined, set deadline to 1 hour from now
@@ -247,13 +247,13 @@ function calculateTeacherConfirmationDeadline(teacher, appointmentDate) {
     return deadline;
 }
 
-// Get all appointments for a student
-exports.getStudentAppointments = async (req, res) => {
+// Get all appointments for a client
+exports.getClientAppointments = async (req, res) => {
     try {
-        const { studentId } = req.params || req.user.id;
+        const { clientId } = req.params || req.user.id;
         const { status, limit = 10, skip = 0, view = 'list' } = req.query;
 
-        const query = { student: studentId };
+        const query = { client: clientId };
         if (status) {
             query.status = status;
         }
@@ -273,7 +273,7 @@ exports.getStudentAppointments = async (req, res) => {
             .sort({ dateTime: view === 'calendar' ? 1 : -1 }) // Ascending for calendar, descending for list
             .skip(parseInt(skip))
             .limit(parseInt(limit))
-            .populate('teacher', 'firstName lastName specializations profilePicture');
+            .populate('provider', 'firstName lastName specializations profilePicture');
 
         const total = await Appointment.countDocuments(query);
 
@@ -286,18 +286,18 @@ exports.getStudentAppointments = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching student appointments:', error);
+        console.error('Error fetching client appointments:', error);
         res.status(500).json({ message: 'An error occurred while fetching appointments' });
     }
 };
 
-// Get all appointments for a teacher
-exports.getTeacherAppointments = async (req, res) => {
+// Get all appointments for a provider
+exports.getProviderAppointments = async (req, res) => {
     try {
-        const { teacherId } = req.params;
+        const { providerId } = req.params;
         const { status, date, limit = 10, skip = 0, view = 'list' } = req.query;
 
-        const query = { teacher: teacherId };
+        const query = { provider: providerId };
         if (status) {
             query.status = status;
         }
@@ -330,7 +330,7 @@ exports.getTeacherAppointments = async (req, res) => {
             .sort({ dateTime: view === 'calendar' ? 1 : -1 }) // Ascending for calendar, descending for list
             .skip(parseInt(skip))
             .limit(parseInt(limit))
-            .populate('student', 'firstName lastName profilePicture dateOfBirth');
+            .populate('client', 'firstName lastName profilePicture dateOfBirth');
 
         const total = await Appointment.countDocuments(query);
 
@@ -343,40 +343,40 @@ exports.getTeacherAppointments = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching teacher appointments:', error);
+        console.error('Error fetching provider appointments:', error);
         res.status(500).json({ message: 'An error occurred while fetching appointments' });
     }
 };
 
-// Teacher confirms appointment
+// Provider confirms appointment
 exports.confirmAppointment = async (req, res) => {
     try {
         const { id } = req.params;
-        const teacherId = req.user.id;
+        const providerId = req.user.id;
 
         const appointment = await Appointment.findById(id)
-            .populate('student')
-            .populate('teacher');
+            .populate('client')
+            .populate('provider');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        // Verify teacher is assigned to this appointment
-        if (appointment.teacher._id.toString() !== teacherId.toString()) {
+        // Verify provider is assigned to this appointment
+        if (appointment.provider._id.toString() !== providerId.toString()) {
             return res.status(403).json({ message: 'You are not authorized to confirm this appointment' });
         }
 
         // Check appointment status
-        if (appointment.status !== 'pending-teacher-confirmation') {
+        if (appointment.status !== 'pending-provider-confirmation') {
             return res.status(400).json({ message: `Cannot confirm appointment with status "${appointment.status}"` });
         }
 
         // Check confirmation deadline
-        if (appointment.teacherConfirmationExpires && new Date() > new Date(appointment.teacherConfirmationExpires)) {
+        if (appointment.providerConfirmationExpires && new Date() > new Date(appointment.providerConfirmationExpires)) {
             // Auto-cancel appointment if deadline passed
             appointment.status = 'canceled';
-            appointment.cancellationReason = 'Teacher did not confirm in time';
+            appointment.cancellationReason = 'Provider did not confirm in time';
             await appointment.save();
 
             // Refund payment if any
@@ -388,7 +388,7 @@ exports.confirmAppointment = async (req, res) => {
                 }
             }
 
-            // Notify student
+            // Notify client
             await NotificationService.sendAppointmentCancellationNotification(appointment, 'system');
 
             return res.status(400).json({
@@ -400,7 +400,7 @@ exports.confirmAppointment = async (req, res) => {
         appointment.status = 'scheduled';
         await appointment.save();
 
-        // Notify student of confirmed appointment
+        // Notify client of confirmed appointment
         await NotificationService.sendAppointmentConfirmedNotification(appointment);
 
         res.status(200).json({
@@ -417,11 +417,11 @@ exports.confirmAppointment = async (req, res) => {
 exports.updateAppointmentStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status, lessonSummary, cancellationReason } = req.body;
+        const { status, sessionSummary, cancellationReason } = req.body;
 
         const appointment = await Appointment.findById(id)
-            .populate('student')
-            .populate('teacher');
+            .populate('client')
+            .populate('provider');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
@@ -429,7 +429,7 @@ exports.updateAppointmentStatus = async (req, res) => {
 
         // Validate status transition
         const validTransitions = {
-            'pending-teacher-confirmation': ['scheduled', 'canceled'],
+            'pending-provider-confirmation': ['scheduled', 'canceled'],
             'pending-payment': ['scheduled', 'canceled'],
             'scheduled': ['completed', 'canceled', 'no-show'],
             'completed': [],
@@ -446,8 +446,8 @@ exports.updateAppointmentStatus = async (req, res) => {
         const oldStatus = appointment.status;
         appointment.status = status;
 
-        if (status === 'completed' && lessonSummary) {
-            appointment.lessonSummary = lessonSummary;
+        if (status === 'completed' && sessionSummary) {
+            appointment.sessionSummary = sessionSummary;
         }
 
         if (status === 'canceled' && cancellationReason) {
@@ -470,7 +470,7 @@ exports.updateAppointmentStatus = async (req, res) => {
 
         // Send cancellation emails if appointment was canceled
         if (status === 'canceled' && oldStatus === 'scheduled') {
-            const cancelledBy = req.user.role === 'teacher' ? 'teacher' : 'student';
+            const cancelledBy = req.user.role === 'provider' ? 'provider' : 'client';
             await emailService.sendAppointmentCancelledEmails(appointment, cancelledBy);
         }
 
@@ -490,8 +490,8 @@ exports.getAppointmentById = async (req, res) => {
         const { id } = req.params;
 
         const appointment = await Appointment.findById(id)
-            .populate('teacher', 'firstName lastName specializations profilePicture email phone')
-            .populate('student', 'firstName lastName profilePicture dateOfBirth email phone');
+            .populate('provider', 'firstName lastName specializations profilePicture email phone')
+            .populate('client', 'firstName lastName profilePicture dateOfBirth email phone');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
@@ -504,45 +504,45 @@ exports.getAppointmentById = async (req, res) => {
     }
 };
 
-// Add/update homeworks for an appointment
-exports.updateHomeworks = async (req, res) => {
+// Add/update recommendations for an appointment
+exports.updateRecommendations = async (req, res) => {
     try {
         const { id } = req.params;
-        const { homeworks } = req.body;
+        const { recommendations } = req.body;
 
         const appointment = await Appointment.findById(id);
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        // Only allow teachers to update homeworks for completed appointments
+        // Only allow providers to update recommendations for completed appointments
         if (appointment.status !== 'completed') {
             return res.status(400).json({
-                message: 'Homeworks can only be added to completed appointments'
+                message: 'Recommendations can only be added to completed appointments'
             });
         }
 
-        // Validate teacher is assigned to this appointment
-        if (req.user.role === 'teacher' && appointment.teacher.toString() !== req.user.id) {
-            return res.status(403).json({ message: 'You are not authorized to update homeworks for this appointment' });
+        // Validate provider is assigned to this appointment
+        if (req.user.role === 'provider' && appointment.provider.toString() !== req.user.id) {
+            return res.status(403).json({ message: 'You are not authorized to update recommendations for this appointment' });
         }
 
-        // Add new homeworks (preserve existing ones)
-        const existingHomeworks = appointment.homeworks || [];
-        appointment.homeworks = [...existingHomeworks, ...homeworks];
+        // Add new recommendations (preserve existing ones)
+        const existingRecommendations = appointment.recommendations || [];
+        appointment.recommendations = [...existingRecommendations, ...recommendations];
 
         await appointment.save();
 
-        // Notify student about new homeworks
-        await NotificationService.sendHomeworkNotification(appointment);
+        // Notify client about new recommendations
+        await NotificationService.sendRecommendationNotification(appointment);
 
         res.status(200).json({
-            message: 'Homeworks updated successfully',
+            message: 'Recommendations updated successfully',
             appointment
         });
     } catch (error) {
-        console.error('Error updating homeworks:', error);
-        res.status(500).json({ message: 'An error occurred while updating homeworks' });
+        console.error('Error updating recommendations:', error);
+        res.status(500).json({ message: 'An error occurred while updating recommendations' });
     }
 };
 
@@ -560,8 +560,8 @@ exports.scheduleFollowUp = async (req, res) => {
         }
 
         const appointment = await Appointment.findById(id)
-            .populate('teacher')
-            .populate('student');
+            .populate('provider')
+            .populate('client');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
@@ -582,8 +582,8 @@ exports.scheduleFollowUp = async (req, res) => {
 
         // Create a new appointment for the follow-up with pending-payment status
         const followUpAppointment = new Appointment({
-            student: appointment.student._id,
-            teacher: appointment.teacher._id,
+            client: appointment.client._id,
+            provider: appointment.provider._id,
             dateTime: followUpDateObj,
             endTime: endTime,
             duration: duration,
@@ -591,7 +591,7 @@ exports.scheduleFollowUp = async (req, res) => {
             shortDescription: `Follow-up to appointment on ${appointment.dateTime.toLocaleDateString()} - ${notes || 'No notes provided'}`,
             status: 'pending-payment',
             payment: {
-                amount: appointment.teacher.lessonFee,
+                amount: appointment.provider.sessionFee,
                 status: 'pending'
             }
         });
@@ -613,15 +613,15 @@ exports.scheduleFollowUp = async (req, res) => {
 
 exports.getPendingFollowUps = async (req, res) => {
     try {
-        const { studentId } = req.params;
+        const { clientId } = req.params;
 
-        // Find all pending-payment follow-up appointments for the student
+        // Find all pending-payment follow-up appointments for the client
         const appointments = await Appointment.find({
-            student: studentId,
+            client: clientId,
             status: 'pending-payment',
             shortDescription: { $regex: 'Follow-up to appointment on', $options: 'i' }
         })
-            .populate('teacher', 'firstName lastName specializations profilePicture email')
+            .populate('provider', 'firstName lastName specializations profilePicture email')
             .sort({ dateTime: 1 });
 
         res.status(200).json({
@@ -638,20 +638,20 @@ exports.getPendingFollowUps = async (req, res) => {
     }
 };
 
-// Get teacher's availability slots
-exports.getTeacherAvailability = async (req, res) => {
+// Get provider's availability slots
+exports.getProviderAvailability = async (req, res) => {
     try {
-        const { teacherId } = req.params;
+        const { providerId } = req.params;
         const { date } = req.query;
 
         if (!date) {
             return res.status(400).json({ message: 'Date parameter is required' });
         }
 
-        // Get teacher's working hours
-        const teacher = await User.findById(teacherId);
-        if (!teacher || teacher.role !== 'teacher') {
-            return res.status(404).json({ message: 'Teacher not found' });
+        // Get provider's working hours
+        const provider = await User.findById(providerId);
+        if (!provider || provider.role !== 'provider') {
+            return res.status(404).json({ message: 'Provider not found' });
         }
 
         // Parse the date exactly as received from frontend (YYYY-MM-DD)
@@ -666,17 +666,17 @@ exports.getTeacherAvailability = async (req, res) => {
 
         console.log(`Requested date: ${date}, Day of week: ${dayOfWeek}, Day index: ${dayIndex}`);
 
-        const dayAvailability = teacher.availability.find(a => a.dayOfWeek === dayIndex);
+        const dayAvailability = provider.availability.find(a => a.dayOfWeek === dayIndex);
         if (!dayAvailability || !dayAvailability.isAvailable) {
             return res.status(200).json({
-                message: 'Teacher is not available on this day',
+                message: 'Provider is not available on this day',
                 availableSlots: []
             });
         }
 
         let availableSlots = [];
 
-        // Check if the teacher has time slots defined
+        // Check if the provider has time slots defined
         if (Array.isArray(dayAvailability.timeSlots) && dayAvailability.timeSlots.length > 0) {
             // For each time slot, generate available appointment slots
             for (const timeSlot of dayAvailability.timeSlots) {
@@ -684,7 +684,7 @@ exports.getTeacherAvailability = async (req, res) => {
                     requestedDate,
                     timeSlot.startTime,
                     timeSlot.endTime,
-                    teacherId
+                    providerId
                 );
                 availableSlots = [...availableSlots, ...slots];
             }
@@ -694,7 +694,7 @@ exports.getTeacherAvailability = async (req, res) => {
                 requestedDate,
                 dayAvailability.startTime,
                 dayAvailability.endTime,
-                teacherId
+                providerId
             );
         }
 
@@ -705,42 +705,42 @@ exports.getTeacherAvailability = async (req, res) => {
                 { start: dayAvailability.startTime, end: dayAvailability.endTime }
         });
     } catch (error) {
-        console.error('Error fetching teacher availability:', error);
-        res.status(500).json({ message: 'An error occurred while fetching teacher availability' });
+        console.error('Error fetching provider availability:', error);
+        res.status(500).json({ message: 'An error occurred while fetching provider availability' });
     }
 };
 
 /**
- * Get appointments pending teacher confirmation
+ * Get appointments pending provider confirmation
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
 exports.getPendingConfirmations = async (req, res) => {
     try {
-        const { teacherId } = req.params;
+        const { providerId } = req.params;
         const { limit = 10, skip = 0 } = req.query;
 
-        // Find appointments that are pending teacher confirmation for this teacher
+        // Find appointments that are pending provider confirmation for this provider
         const query = {
-            teacher: teacherId,
-            status: 'pending-teacher-confirmation',
+            provider: providerId,
+            status: 'pending-provider-confirmation',
             // Only include appointments that haven't expired yet
-            teacherConfirmationExpires: { $gt: new Date() }
+            providerConfirmationExpires: { $gt: new Date() }
         };
 
         const appointments = await Appointment.find(query)
-            .sort({ teacherConfirmationExpires: 1 }) // Sort by expiration time (most urgent first)
+            .sort({ providerConfirmationExpires: 1 }) // Sort by expiration time (most urgent first)
             .skip(parseInt(skip))
             .limit(parseInt(limit))
-            .populate('student', 'firstName lastName profilePicture dateOfBirth email phone')
-            .populate('teacher', 'firstName lastName specializations');
+            .populate('client', 'firstName lastName profilePicture dateOfBirth email phone')
+            .populate('provider', 'firstName lastName specializations');
 
         const total = await Appointment.countDocuments(query);
 
         // Calculate time remaining for each appointment
         const appointmentsWithTimeRemaining = appointments.map(appointment => {
             const now = new Date();
-            const expiresAt = new Date(appointment.teacherConfirmationExpires);
+            const expiresAt = new Date(appointment.providerConfirmationExpires);
             const timeRemainingMs = expiresAt - now;
             const timeRemainingHours = Math.max(0, Math.floor(timeRemainingMs / (1000 * 60 * 60)));
             const timeRemainingMinutes = Math.max(0, Math.floor((timeRemainingMs % (1000 * 60 * 60)) / (1000 * 60)));
@@ -776,7 +776,7 @@ exports.getPendingConfirmations = async (req, res) => {
 };
 
 // Helper function to generate time slots
-async function generateTimeSlots(date, startTimeStr, endTimeStr, teacherId) {
+async function generateTimeSlots(date, startTimeStr, endTimeStr, providerId) {
     console.log(`Generating slots for date: ${date}, start: ${startTimeStr}, end: ${endTimeStr}`);
     
     // Parse start and end times
@@ -825,12 +825,12 @@ async function generateTimeSlots(date, startTimeStr, endTimeStr, teacherId) {
     endOfDay.setUTCHours(23, 59, 59, 999);
 
     const bookedAppointments = await Appointment.find({
-        teacher: teacherId,
+        provider: providerId,
         dateTime: {
             $gte: startOfDay,
             $lt: endOfDay
         },
-        status: { $in: ['scheduled', 'pending-teacher-confirmation'] }
+        status: { $in: ['scheduled', 'pending-provider-confirmation'] }
     });
 
     console.log(`Found ${bookedAppointments.length} booked appointments for this day`);
@@ -873,14 +873,14 @@ exports.cleanupExpiredAppointments = async () => {
     try {
         // Find appointments past their confirmation deadline
         const expiredAppointments = await Appointment.find({
-            status: 'pending-teacher-confirmation',
-            teacherConfirmationExpires: { $lt: new Date() }
-        }).populate('student').populate('teacher');
+            status: 'pending-provider-confirmation',
+            providerConfirmationExpires: { $lt: new Date() }
+        }).populate('client').populate('provider');
 
         for (const appointment of expiredAppointments) {
             // Update status to canceled
             appointment.status = 'canceled';
-            appointment.cancellationReason = 'Teacher did not confirm in time';
+            appointment.cancellationReason = 'Provider did not confirm in time';
             await appointment.save();
 
             // Process refund if payment exists
@@ -904,64 +904,64 @@ exports.cleanupExpiredAppointments = async () => {
 };
 
 /**
- * Update lesson summary and add new homeworks
+ * Update session summary and add new recommendations
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.updateLessonResults = async (req, res) => {
+exports.updateSessionResults = async (req, res) => {
     try {
         const { id } = req.params;
-        const { lessonSummary, homeworks, followUp } = req.body;
-        const teacherId = req.user.id;
+        const { sessionSummary, recommendations, followUp } = req.body;
+        const providerId = req.user.id;
 
         // Find the appointment
         const appointment = await Appointment.findById(id)
-            .populate('student', 'firstName lastName email telegramId')
-            .populate('teacher', 'firstName lastName email telegramId');
+            .populate('client', 'firstName lastName email telegramId')
+            .populate('provider', 'firstName lastName email telegramId');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        // Verify teacher is assigned to this appointment
-        if (appointment.teacher._id.toString() !== teacherId.toString()) {
-            return res.status(403).json({ message: 'You are not authorized to update this lesson' });
+        // Verify provider is assigned to this appointment
+        if (appointment.provider._id.toString() !== providerId.toString()) {
+            return res.status(403).json({ message: 'You are not authorized to update this session' });
         }
 
         // Verify appointment is completed
         if (appointment.status !== 'completed') {
-            return res.status(400).json({ message: 'Can only update completed lessons' });
+            return res.status(400).json({ message: 'Can only update completed sessions' });
         }
 
-        // Update lesson summary if provided
-        if (lessonSummary) {
-            appointment.lessonSummary = lessonSummary;
+        // Update session summary if provided
+        if (sessionSummary) {
+            appointment.sessionSummary = sessionSummary;
         }
 
-        // Add new homeworks if provided (don't replace existing ones)
-        if (homeworks && Array.isArray(homeworks) && homeworks.length > 0) {
-            // Filter out invalid homeworks
-            const validHomeworks = homeworks.filter(homework => {
-                return homework.medication && homework.dosage &&
-                    homework.frequency && homework.duration;
+        // Add new recommendations if provided (don't replace existing ones)
+        if (recommendations && Array.isArray(recommendations) && recommendations.length > 0) {
+            // Filter out invalid recommendations
+            const validRecommendations = recommendations.filter(recommendation => {
+                return recommendation.title && recommendation.description &&
+                    recommendation.frequency && recommendation.duration;
             });
 
-            // Add timestamp to each new homework
-            const timestampedHomeworks = validHomeworks.map(homework => ({
-                ...homework,
+            // Add timestamp to each new recommendation
+            const timestampedRecommendations = validRecommendations.map(recommendation => ({
+                ...recommendation,
                 createdAt: Date.now()
             }));
 
-            // If appointment already has homeworks, append new ones
-            if (appointment.homeworks && Array.isArray(appointment.homeworks)) {
-                appointment.homeworks = [...appointment.homeworks, ...timestampedHomeworks];
+            // If appointment already has recommendations, append new ones
+            if (appointment.recommendations && Array.isArray(appointment.recommendations)) {
+                appointment.recommendations = [...appointment.recommendations, ...timestampedRecommendations];
             } else {
-                appointment.homeworks = timestampedHomeworks;
+                appointment.recommendations = timestampedRecommendations;
             }
 
-            // Send homework notification
-            if (timestampedHomeworks.length > 0) {
-                await NotificationService.sendHomeworkNotification(appointment);
+            // Send recommendation notification
+            if (timestampedRecommendations.length > 0) {
+                await NotificationService.sendRecommendationNotification(appointment);
             }
         }
 
@@ -982,8 +982,8 @@ exports.updateLessonResults = async (req, res) => {
 
                 // Create a new appointment for the follow-up with pending-payment status
                 const followUpAppointment = new Appointment({
-                    student: appointment.student._id,
-                    teacher: appointment.teacher._id,
+                    client: appointment.client._id,
+                    provider: appointment.provider._id,
                     dateTime: followUpDateObj,
                     endTime: endTime,
                     duration: duration,
@@ -991,7 +991,7 @@ exports.updateLessonResults = async (req, res) => {
                     shortDescription: `Follow-up to appointment on ${appointment.dateTime.toLocaleDateString()} - ${followUp.notes || 'No notes provided'}`,
                     status: 'pending-payment',
                     payment: {
-                        amount: appointment.teacher.lessonFee,
+                        amount: appointment.provider.sessionFee,
                         status: 'pending'
                     }
                 });
@@ -1007,13 +1007,13 @@ exports.updateLessonResults = async (req, res) => {
         await appointment.save();
 
         res.status(200).json({
-            message: 'Lesson results updated successfully',
+            message: 'Session results updated successfully',
             appointment
         });
 
     } catch (error) {
-        console.error('Error updating lesson results:', error);
-        res.status(500).json({ message: 'An error occurred while updating lesson results' });
+        console.error('Error updating session results:', error);
+        res.status(500).json({ message: 'An error occurred while updating session results' });
     }
 };
 
@@ -1038,11 +1038,11 @@ exports.uploadDocument = async (req, res) => {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        // Determine who is uploading (student or teacher)
-        const isTeacher = req.user.role === 'teacher' && appointment.teacher.toString() === userId;
-        const isStudent = req.user.role === 'student' && appointment.student.toString() === userId;
+        // Determine who is uploading (client or provider)
+        const isProvider = req.user.role === 'provider' && appointment.provider.toString() === userId;
+        const isClient = req.user.role === 'client' && appointment.client.toString() === userId;
 
-        if (!isTeacher && !isStudent) {
+        if (!isProvider && !isClient) {
             // Remove uploaded file if user is not authorized
             if (req.file && req.file.path) {
                 fs.unlinkSync(req.file.path);
@@ -1055,7 +1055,7 @@ exports.uploadDocument = async (req, res) => {
             name: req.file.originalname,
             fileUrl: `/uploads/documents/${req.file.filename}`,
             fileType: req.file.mimetype,
-            uploadedBy: isTeacher ? 'teacher' : 'student',
+            uploadedBy: isProvider ? 'provider' : 'client',
             uploadedAt: Date.now()
         };
 
@@ -1067,7 +1067,7 @@ exports.uploadDocument = async (req, res) => {
         await appointment.save();
 
         // Notify the other party about the new document
-        const recipient = isTeacher ? appointment.student : appointment.teacher;
+        const recipient = isProvider ? appointment.client : appointment.provider;
         await NotificationService.sendDocumentUploadNotification(appointment, document, recipient);
 
         res.status(201).json({
@@ -1098,10 +1098,10 @@ exports.getDocuments = async (req, res) => {
         }
 
         // Verify user is involved in the appointment
-        const isTeacher = req.user.role === 'teacher' && appointment.teacher.toString() === userId;
-        const isStudent = req.user.role === 'student' && appointment.student.toString() === userId;
+        const isProvider = req.user.role === 'provider' && appointment.provider.toString() === userId;
+        const isClient = req.user.role === 'client' && appointment.client.toString() === userId;
 
-        if (!isTeacher && !isStudent && req.user.role !== 'admin') {
+        if (!isProvider && !isClient && req.user.role !== 'admin') {
             return res.status(403).json({ message: 'You are not authorized to access documents for this appointment' });
         }
 
@@ -1133,10 +1133,10 @@ exports.getCalendarAppointments = async (req, res) => {
         // Set up query based on user role
         const query = {};
 
-        if (userRole === 'teacher') {
-            query.teacher = userId;
-        } else if (userRole === 'student') {
-            query.student = userId;
+        if (userRole === 'provider') {
+            query.provider = userId;
+        } else if (userRole === 'client') {
+            query.client = userId;
         } else if (userRole !== 'admin') {
             return res.status(403).json({ message: 'Unauthorized access to calendar' });
         }
@@ -1149,8 +1149,8 @@ exports.getCalendarAppointments = async (req, res) => {
 
         // Get appointments
         const appointments = await Appointment.find(query)
-            .populate('teacher', 'firstName lastName specializations')
-            .populate('student', 'firstName lastName')
+            .populate('provider', 'firstName lastName specializations')
+            .populate('client', 'firstName lastName')
             .sort({ dateTime: 1 });
 
         // Format appointments for calendar view
@@ -1159,9 +1159,9 @@ exports.getCalendarAppointments = async (req, res) => {
 
             return {
                 id: appointment._id,
-                title: userRole === 'teacher'
-                    ? `${appointment.student.firstName} ${appointment.student.lastName}`
-                    : `${appointment.teacher.firstName} ${appointment.teacher.lastName}`,
+                title: userRole === 'provider'
+                    ? `${appointment.client.firstName} ${appointment.client.lastName}`
+                    : `${appointment.provider.firstName} ${appointment.provider.lastName}`,
                 start: appointment.dateTime,
                 end: appointment.endTime,
                 backgroundColor: eventColor,
@@ -1186,7 +1186,7 @@ exports.getCalendarAppointments = async (req, res) => {
                     return '#e74c3c'; // Red
                 case 'pending-payment':
                     return '#f39c12'; // Orange
-                case 'pending-teacher-confirmation':
+                case 'pending-provider-confirmation':
                     return '#9b59b6'; // Purple
                 case 'no-show':
                     return '#95a5a6'; // Gray

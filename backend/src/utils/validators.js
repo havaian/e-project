@@ -44,7 +44,7 @@ exports.validateUserInput = (data) => {
                 'string.pattern.base': 'Please provide a valid phone number'
             }),
 
-        role: Joi.string().valid('student', 'teacher').default('student'),
+        role: Joi.string().valid('client', 'provider').default('client'),
 
         // Common optional fields
         address: Joi.object({
@@ -56,24 +56,24 @@ exports.validateUserInput = (data) => {
         }).optional()
     };
 
-    // Define student-specific schema
-    const studentSchema = {
-        // Student-specific required fields
+    // Define client-specific schema
+    const clientSchema = {
+        // Client-specific required fields
         dateOfBirth: Joi.date().max('now').required()
             .messages({
                 'date.base': 'Please provide a valid date of birth',
                 'date.max': 'Date of birth cannot be in the future',
-                'any.required': 'Date of birth is required for students'
+                'any.required': 'Date of birth is required for clients'
             }),
 
         gender: Joi.string().valid('male', 'female', 'other', 'prefer not to say').required()
             .messages({
                 'any.only': 'Gender must be one of: male, female, other, prefer not to say',
-                'any.required': 'Gender is required for students'
+                'any.required': 'Gender is required for clients'
             }),
 
-        // Student-specific optional fields
-        educationalHistory: Joi.string().optional(),
+        // Client-specific optional fields
+        backgroundInfo: Joi.string().optional(),
 
         emergencyContact: Joi.object({
             name: Joi.string().trim().min(2).max(100),
@@ -82,22 +82,22 @@ exports.validateUserInput = (data) => {
         }).optional(),
     };
 
-    // Define teacher-specific schema
-    const teacherSchema = {
-        // Teacher-specific required fields
+    // Define provider-specific schema
+    const providerSchema = {
+        // Provider-specific required fields
         specializations: Joi.string().trim().required()
             .messages({
-                'string.empty': 'Specialization is required for teachers'
+                'string.empty': 'Specialization is required for providers'
             }),
 
         specializations: Joi.array().items(Joi.string().trim()).min(1).required()
             .messages({
-                'array.min': 'At least one specializations is required for teachers'
+                'array.min': 'At least one specializations is required for providers'
             }),
 
         licenseNumber: Joi.string().trim().required()
             .messages({
-                'string.empty': 'License number is required for teachers'
+                'string.empty': 'License number is required for providers'
             }),
 
         experience: Joi.number().integer().min(0).required()
@@ -105,17 +105,17 @@ exports.validateUserInput = (data) => {
                 'number.base': 'Experience must be a number',
                 'number.integer': 'Experience must be an integer',
                 'number.min': 'Experience cannot be negative',
-                'any.required': 'Experience is required for teachers'
+                'any.required': 'Experience is required for providers'
             }),
 
-        lessonFee: Joi.number().positive().required()
+        sessionFee: Joi.number().positive().required()
             .messages({
-                'number.base': 'Lesson fee must be a number',
-                'number.positive': 'Lesson fee must be positive',
-                'any.required': 'Lesson fee is required for teachers'
+                'number.base': 'Session fee must be a number',
+                'number.positive': 'Session fee must be positive',
+                'any.required': 'Session fee is required for providers'
             }),
 
-        // Teacher-specific optional fields
+        // Provider-specific optional fields
         bio: Joi.string().trim().max(500).optional()
             .messages({
                 'string.max': 'Bio cannot exceed 500 characters'
@@ -151,11 +151,11 @@ exports.validateUserInput = (data) => {
 
     // Choose schema based on role
     let schemaToUse;
-    if (data.role === 'teacher') {
-        schemaToUse = { ...baseSchema, ...teacherSchema };
+    if (data.role === 'provider') {
+        schemaToUse = { ...baseSchema, ...providerSchema };
     } else {
-        // Student role
-        schemaToUse = { ...baseSchema, ...studentSchema };
+        // Client role
+        schemaToUse = { ...baseSchema, ...clientSchema };
     }
 
     // Create and return schema
@@ -170,11 +170,11 @@ exports.validateUserInput = (data) => {
  */
 exports.validateAppointmentInput = (data) => {
     const schema = Joi.object({
-        // Remove studentId from validation schema completely
-        teacherId: Joi.string().required()
+        // Remove clientId from validation schema completely
+        providerId: Joi.string().required()
             .messages({
-                'string.empty': 'Teacher ID is required',
-                'any.required': 'Teacher ID is required'
+                'string.empty': 'Provider ID is required',
+                'any.required': 'Provider ID is required'
             }),
 
         dateTime: Joi.date().greater('now').required()
@@ -186,8 +186,8 @@ exports.validateAppointmentInput = (data) => {
 
         type: Joi.string().valid('video', 'chat', 'voice').required()
             .messages({
-                'any.only': 'Lesson type must be one of: video, chat, voice',
-                'any.required': 'Lesson type is required'
+                'any.only': 'Session type must be one of: video, chat, voice',
+                'any.required': 'Session type is required'
             }),
 
         shortDescription: Joi.string().trim().min(5).max(500).required()
@@ -208,19 +208,19 @@ exports.validateAppointmentInput = (data) => {
 };
 
 /**
- * Validate homework input
- * @param {Object} data Homework data for validation
+ * Validate recommendation input
+ * @param {Object} data Recommendation data for validation
  * @returns {Object} Validation result
  */
-exports.validateHomeworkInput = (data) => {
-    const homeworkSchema = Joi.object({
-        medication: Joi.string().trim().required()
+exports.validateRecommendationInput = (data) => {
+    const recommendationSchema = Joi.object({
+        title: Joi.string().trim().required()
             .messages({
                 'string.empty': 'Medication name is required',
                 'any.required': 'Medication name is required'
             }),
 
-        dosage: Joi.string().trim().required()
+        description: Joi.string().trim().required()
             .messages({
                 'string.empty': 'Dosage is required',
                 'any.required': 'Dosage is required'
@@ -245,10 +245,10 @@ exports.validateHomeworkInput = (data) => {
     });
 
     const schema = Joi.object({
-        homeworks: Joi.array().items(homeworkSchema).min(1).required()
+        recommendations: Joi.array().items(recommendationSchema).min(1).required()
             .messages({
-                'array.min': 'At least one homework is required',
-                'any.required': 'Homeworks are required'
+                'array.min': 'At least one recommendation is required',
+                'any.required': 'Recommendations are required'
             })
     });
 
@@ -256,7 +256,7 @@ exports.validateHomeworkInput = (data) => {
 };
 
 /**
- * Validate teacher availability input
+ * Validate provider availability input
  * @param {Object} data Availability data for validation
  * @returns {Object} Validation result
  */
@@ -348,18 +348,18 @@ exports.validateAvailabilityInput = (data) => {
 };
 
 /**
- * Validate lesson summary input
+ * Validate session summary input
  * @param {Object} data Summary data for validation
  * @returns {Object} Validation result
  */
-exports.validateLessonSummaryInput = (data) => {
+exports.validateSessionSummaryInput = (data) => {
     const schema = Joi.object({
-        lessonSummary: Joi.string().trim().min(10).max(2000).required()
+        sessionSummary: Joi.string().trim().min(10).max(2000).required()
             .messages({
-                'string.empty': 'Lesson summary is required',
-                'string.min': 'Lesson summary must be at least 10 characters long',
-                'string.max': 'Lesson summary cannot exceed 2000 characters',
-                'any.required': 'Lesson summary is required'
+                'string.empty': 'Session summary is required',
+                'string.min': 'Session summary must be at least 10 characters long',
+                'string.max': 'Session summary cannot exceed 2000 characters',
+                'any.required': 'Session summary is required'
             })
     });
 

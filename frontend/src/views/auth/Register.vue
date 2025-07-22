@@ -33,8 +33,8 @@
                     <div>
                         <label for="role" class="label">I am a</label>
                         <select id="role" v-model="formData.role" class="input mt-1" required @change="watchRole">
-                            <option value="student">Student</option>
-                            <option value="teacher">Teacher</option>
+                            <option value="client">Client</option>
+                            <option value="provider">Provider</option>
                         </select>
                     </div>
 
@@ -150,7 +150,7 @@
 
                     <!-- Removed: Date of Birth and Gender moved to conditional blocks -->
 
-                    <template v-if="formData.role === 'teacher'">
+                    <template v-if="formData.role === 'provider'">
                         <div>
                             <label for="specializations" class="label">Specializations</label>
                             <div class="space-y-2">
@@ -187,8 +187,8 @@
                         </div>
 
                         <div>
-                            <label for="lessonFee" class="label">Lesson Fee (UZS)</label>
-                            <input id="lessonFee" v-model.number="formData.lessonFee" type="number" min="0"
+                            <label for="sessionFee" class="label">Session Fee (UZS)</label>
+                            <input id="sessionFee" v-model.number="formData.sessionFee" type="number" min="0"
                                 required class="input mt-1" />
                         </div>
 
@@ -216,15 +216,15 @@
                         </div>
                     </template>
 
-                    <!-- Date of Birth - Only for students -->
-                    <div v-if="formData.role === 'student'">
+                    <!-- Date of Birth - Only for clients -->
+                    <div v-if="formData.role === 'client'">
                         <label for="dateOfBirth" class="label">Date of Birth</label>
                         <input id="dateOfBirth" v-model="formData.dateOfBirth" type="date" required class="input mt-1"
                             :max="maxDate" />
                     </div>
 
-                    <!-- Gender - Only for students -->
-                    <div v-if="formData.role === 'student'">
+                    <!-- Gender - Only for clients -->
+                    <div v-if="formData.role === 'client'">
                         <label for="gender" class="label">Gender</label>
                         <select id="gender" v-model="formData.gender" class="input mt-1" required>
                             <option value="">Select gender</option>
@@ -274,7 +274,7 @@ const availableLanguages = ref(['English', 'Russian', 'Uzbek'])
 const showPassword = ref(false)
 
 const formData = reactive({
-    role: 'student',
+    role: 'client',
     firstName: '',
     lastName: '',
     email: '',
@@ -286,7 +286,7 @@ const formData = reactive({
     languages: [],
     licenseNumber: '',
     experience: 0,
-    lessonFee: 0
+    sessionFee: 0
 })
 
 const registrationSuccess = ref(false)
@@ -405,9 +405,9 @@ const removeLanguage = (index) => {
     formData.languages.splice(index, 1)
 }
 
-// Add default empty specialization when switching to teacher role
+// Add default empty specialization when switching to provider role
 const watchRole = () => {
-    if (formData.role === 'teacher' && formData.specializations.length === 0) {
+    if (formData.role === 'provider' && formData.specializations.length === 0) {
         formData.specializations.push('')
         formData.languages.push('')
     }
@@ -421,23 +421,23 @@ async function handleSubmit() {
         // Create a copy of the formData to modify before sending
         const registrationData = { ...formData };
 
-        if (registrationData.role === 'teacher') {
+        if (registrationData.role === 'provider') {
             // Make sure specializations is processed properly
             registrationData.specializations = formData.specializations.filter(s => s !== "");
 
-            // Process languages for teacher registration
+            // Process languages for provider registration
             registrationData.languages = formData.languages.filter(l => l !== "");
 
-            // Remove student-only fields for teacher registration
+            // Remove client-only fields for provider registration
             delete registrationData.dateOfBirth;
             delete registrationData.gender;
         } else {
-            // For student registration, remove all teacher-specific fields
+            // For client registration, remove all provider-specific fields
             delete registrationData.specializations;
             delete registrationData.languages;
             delete registrationData.licenseNumber;
             delete registrationData.experience;
-            delete registrationData.lessonFee;
+            delete registrationData.sessionFee;
         }
 
         await authStore.register(registrationData);

@@ -59,15 +59,15 @@
             </span>
           </h2>
           <p class="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
-            Connect with qualified teachers online for lessons, homeworks, and educational advice from the comfort
+            Connect with qualified providers online for sessions, recommendations, and educational advice from the comfort
             of your home.
           </p>
 
           <!-- Action Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <router-link to="/teachers"
+            <router-link to="/providers"
               class="px-8 py-4 bg-gradient-to-r from-educational-blue to-educational-purple text-white font-semibold rounded-2xl hover:from-educational-teal hover:to-educational-blue focus:ring-4 focus:ring-educational-blue/30 transition-all shadow-lg glow-effect">
-              Find a Teacher
+              Find a Provider
             </router-link>
             <router-link to="/register"
               class="px-8 py-4 bg-white/90 backdrop-blur-sm text-educational-blue font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-educational-blue/30 transition-all shadow-lg border-2 border-educational-blue/20">
@@ -87,7 +87,7 @@
             Better Education Solution
           </h3>
           <p class="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
-            Experience education reimagined with our comprehensive online educational lesson platform.
+            Experience education reimagined with our comprehensive online educational session platform.
           </p>
         </div>
 
@@ -100,7 +100,7 @@
                   d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
             </div>
-            <h4 class="font-bold text-gray-800 mb-3 text-lg">Video Lessons</h4>
+            <h4 class="font-bold text-gray-800 mb-3 text-lg">Video Sessions</h4>
             <p class="text-sm text-gray-600">High-quality video calls with certified education professionals</p>
           </div>
 
@@ -113,7 +113,7 @@
               </svg>
             </div>
             <h4 class="font-bold text-gray-800 mb-3 text-lg">AI Diagnostics</h4>
-            <p class="text-sm text-gray-600">Smart symptom analysis and preliminary diagnosis</p>
+            <p class="text-sm text-gray-600">Smart problem analysis and preliminary diagnosis</p>
           </div>
 
           <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center card-hover shadow-lg">
@@ -123,8 +123,8 @@
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h4 class="font-bold text-gray-800 mb-3 text-lg">Digital Homeworks</h4>
-            <p class="text-sm text-gray-600">Electronic homeworks sent directly to pharmacies</p>
+            <h4 class="font-bold text-gray-800 mb-3 text-lg">Digital Recommendations</h4>
+            <p class="text-sm text-gray-600">Electronic recommendations sent directly to pharmacies</p>
           </div>
 
           <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center card-hover shadow-lg">
@@ -149,7 +149,7 @@
             </div>
             <div>
               <div class="text-2xl font-bold text-educational-green mb-1">500+</div>
-              <div class="text-sm text-gray-600">Certified Teachers</div>
+              <div class="text-sm text-gray-600">Certified Providers</div>
             </div>
             <div>
               <div class="text-2xl font-bold text-educational-teal mb-1">15min</div>
@@ -180,7 +180,7 @@
               class="bg-gradient-to-r from-educational-blue to-sky-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
               <span class="text-white font-bold text-xl">1</span>
             </div>
-            <h4 class="text-xl font-bold text-gray-800 mb-4">Choose a Teacher</h4>
+            <h4 class="text-xl font-bold text-gray-800 mb-4">Choose a Provider</h4>
             <p class="text-gray-600">Browse our network of qualified education professionals and select the right
               specialist for your needs.</p>
           </div>
@@ -191,8 +191,8 @@
               <span class="text-white font-bold text-xl">2</span>
             </div>
             <h4 class="text-xl font-bold text-gray-800 mb-4">Book Appointment</h4>
-            <p class="text-gray-600">Schedule your lesson at a convenient time that works for both you and your
-              chosen teacher.</p>
+            <p class="text-gray-600">Schedule your session at a convenient time that works for both you and your
+              chosen provider.</p>
           </div>
 
           <div class="text-center">
@@ -201,7 +201,7 @@
               <span class="text-white font-bold text-xl">3</span>
             </div>
             <h4 class="text-xl font-bold text-gray-800 mb-4">Get Treatment</h4>
-            <p class="text-gray-600">Join your secure video lesson and receive professional educational care from the
+            <p class="text-gray-600">Join your secure video session and receive professional educational care from the
               comfort of your home.</p>
           </div>
         </div>
@@ -215,17 +215,17 @@
           Ready to Experience the Future of Education?
         </h2>
         <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-          Join thousands of students who have already discovered the convenience and quality of online educational
-          lessons.
+          Join thousands of clients who have already discovered the convenience and quality of online educational
+          sessions.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
           <router-link to="/register"
             class="px-8 py-4 bg-gradient-to-r from-educational-blue to-educational-purple text-white font-semibold rounded-2xl hover:from-educational-teal hover:to-educational-blue focus:ring-4 focus:ring-educational-blue/30 transition-all shadow-lg glow-effect">
             Get Started Today
           </router-link>
-          <router-link to="/teachers"
+          <router-link to="/providers"
             class="px-8 py-4 bg-white/90 backdrop-blur-sm text-educational-blue font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-educational-blue/30 transition-all shadow-lg border-2 border-educational-blue/20">
-            Browse Teachers
+            Browse Providers
           </router-link>
         </div>
       </div>

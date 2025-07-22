@@ -60,9 +60,9 @@
                   <dd class="mt-1 text-gray-900">{{ user.licenseNumber }}</dd>
                 </div>
                 <div>
-                  <dt class="text-sm font-medium text-gray-500">Lesson Fee</dt>
+                  <dt class="text-sm font-medium text-gray-500">Session Fee</dt>
                   <dd class="mt-1 text-gray-900">
-                    {{ formatLessonFee }}
+                    {{ formatSessionFee }}
                   </dd>
                 </div>
               </dl>
@@ -160,11 +160,11 @@ const decodedBio = computed(() => {
   return textarea.value
 })
 
-// Computed property for formatted lesson fee
-const formatLessonFee = computed(() => {
-  const fee = user.value?.lessonFee
+// Computed property for formatted session fee
+const formatSessionFee = computed(() => {
+  const fee = user.value?.sessionFee
 
-  if (!fee) return 'Lesson fee not specified'
+  if (!fee) return 'Session fee not specified'
 
   // If fee is an object with amount property
   if (typeof fee === 'object' && fee !== null && 'amount' in fee) {
@@ -175,7 +175,7 @@ const formatLessonFee = computed(() => {
     return `${new Intl.NumberFormat('uz-UZ').format(fee)} UZS`
   }
 
-  return 'Lesson fee not specified'
+  return 'Session fee not specified'
 })
 
 // Computed property for formatted address

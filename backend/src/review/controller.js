@@ -10,7 +10,7 @@ const { NotificationService } = require('../notification');
 exports.createReview = async (req, res) => {
     try {
         const { appointmentId, rating, comment } = req.body;
-        const studentId = req.user.id;
+        const clientId = req.user.id;
 
         // Validate input
         if (!appointmentId || !rating || !comment) {
@@ -33,14 +33,14 @@ exports.createReview = async (req, res) => {
 
         // Find the appointment and verify it's completed
         const appointment = await Appointment.findById(appointmentId)
-            .populate('teacher', 'firstName lastName email')
-            .populate('student', 'firstName lastName');
+            .populate('provider', 'firstName lastName email')
+            .populate('client', 'firstName lastName');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        if (appointment.student._id.toString() !== studentId) {
+        if (appointment.client._id.toString() !== clientId) {
             return res.status(403).json({
                 message: 'You can only review your own appointments'
             });
@@ -63,8 +63,8 @@ exports.createReview = async (req, res) => {
         // Create the review
         const review = new Review({
             appointment: appointmentId,
-            student: studentId,
-            teacher: appointment.teacher._id,
+            client: clientId,
+            provider: appointment.provider._id,
             rating,
             comment: comment.trim()
         });
@@ -72,11 +72,11 @@ exports.createReview = async (req, res) => {
         await review.save();
 
         // Populate the review for response
-        await review.populate('student', 'firstName lastName profilePicture');
-        await review.populate('teacher', 'firstName lastName');
+        await review.populate('client', 'firstName lastName profilePicture');
+        await review.populate('provider', 'firstName lastName');
         await review.populate('appointment', 'dateTime type');
 
-        // Notify teacher about new review
+        // Notify provider about new review
         try {
             await NotificationService.sendNewReviewNotification(review);
         } catch (notificationError) {
@@ -102,11 +102,11 @@ exports.createReview = async (req, res) => {
 };
 
 /**
- * Get all reviews for a specific teacher
+ * Get all reviews for a specific provider
  */
-exports.getTeacherReviews = async (req, res) => {
+exports.getProviderReviews = async (req, res) => {
     try {
-        const { teacherId } = req.params;
+        const { providerId } = req.params;
         const {
             limit = 10,
             skip = 0,
@@ -114,26 +114,26 @@ exports.getTeacherReviews = async (req, res) => {
             sortOrder = 'desc'
         } = req.query;
 
-        // Verify teacher exists
-        const teacher = await User.findById(teacherId);
-        if (!teacher || teacher.role !== 'teacher') {
-            return res.status(404).json({ message: 'Teacher not found' });
+        // Verify provider exists
+        const provider = await User.findById(providerId);
+        if (!provider || provider.role !== 'provider') {
+            return res.status(404).json({ message: 'Provider not found' });
         }
 
         // Get reviews
-        const reviews = await Review.getTeacherReviews(teacherId, {
+        const reviews = await Review.getProviderReviews(providerId, {
             limit: parseInt(limit),
             skip: parseInt(skip),
             sortBy,
             sortOrder
         });
 
-        // Get teacher's average rating and total reviews
-        const { averageRating, totalReviews } = await Review.getTeacherAverageRating(teacherId);
+        // Get provider's average rating and total reviews
+        const { averageRating, totalReviews } = await Review.getProviderAverageRating(providerId);
 
         // Get total count for pagination
         const totalCount = await Review.countDocuments({
-            teacher: teacherId,
+            provider: providerId,
             status: 'active'
         });
 
@@ -151,7 +151,7 @@ exports.getTeacherReviews = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching teacher reviews:', error);
+        console.error('Error fetching provider reviews:', error);
         res.status(500).json({
             message: 'An error occurred while fetching reviews'
         });
@@ -159,32 +159,32 @@ exports.getTeacherReviews = async (req, res) => {
 };
 
 /**
- * Get reviews written by a specific student
+ * Get reviews written by a specific client
  */
-exports.getStudentReviews = async (req, res) => {
+exports.getClientReviews = async (req, res) => {
     try {
-        const { studentId } = req.params;
+        const { clientId } = req.params;
         const { limit = 10, skip = 0 } = req.query;
 
-        // Verify access (students can only see their own reviews, teachers/admins can see all)
-        if (req.user.role === 'student' && req.user.id !== studentId) {
+        // Verify access (clients can only see their own reviews, providers/admins can see all)
+        if (req.user.role === 'client' && req.user.id !== clientId) {
             return res.status(403).json({
                 message: 'You can only view your own reviews'
             });
         }
 
         const reviews = await Review.find({
-            student: studentId,
-            status: { $in: ['active', 'hidden'] } // Include hidden reviews for the student
+            client: clientId,
+            status: { $in: ['active', 'hidden'] } // Include hidden reviews for the client
         })
-            .populate('teacher', 'firstName lastName profilePicture specializations')
+            .populate('provider', 'firstName lastName profilePicture specializations')
             .populate('appointment', 'dateTime type')
             .sort({ createdAt: -1 })
             .skip(parseInt(skip))
             .limit(parseInt(limit));
 
         const totalCount = await Review.countDocuments({
-            student: studentId,
+            client: clientId,
             status: { $in: ['active', 'hidden'] }
         });
 
@@ -198,7 +198,7 @@ exports.getStudentReviews = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching student reviews:', error);
+        console.error('Error fetching client reviews:', error);
         res.status(500).json({
             message: 'An error occurred while fetching reviews'
         });
@@ -206,13 +206,13 @@ exports.getStudentReviews = async (req, res) => {
 };
 
 /**
- * Teacher responds to a review
+ * Provider responds to a review
  */
 exports.respondToReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
         const { responseText } = req.body;
-        const teacherId = req.user.id;
+        const providerId = req.user.id;
 
         if (!responseText || responseText.trim().length < 10) {
             return res.status(400).json({
@@ -226,22 +226,22 @@ exports.respondToReview = async (req, res) => {
             });
         }
 
-        // Find the review and verify teacher ownership
+        // Find the review and verify provider ownership
         const review = await Review.findById(reviewId)
-            .populate('student', 'firstName lastName email')
-            .populate('teacher', 'firstName lastName');
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName');
 
         if (!review) {
             return res.status(404).json({ message: 'Review not found' });
         }
 
-        if (review.teacher._id.toString() !== teacherId) {
+        if (review.provider._id.toString() !== providerId) {
             return res.status(403).json({
                 message: 'You can only respond to reviews about you'
             });
         }
 
-        if (review.teacherResponse && review.teacherResponse.text) {
+        if (review.providerResponse && review.providerResponse.text) {
             return res.status(409).json({
                 message: 'You have already responded to this review'
             });
@@ -250,7 +250,7 @@ exports.respondToReview = async (req, res) => {
         // Add the response
         await review.respond(responseText.trim());
 
-        // Notify student about teacher's response
+        // Notify client about provider's response
         try {
             await NotificationService.sendReviewResponseNotification(review);
         } catch (notificationError) {
@@ -270,13 +270,13 @@ exports.respondToReview = async (req, res) => {
 };
 
 /**
- * Update a review (only by the student who wrote it, within 24 hours)
+ * Update a review (only by the client who wrote it, within 24 hours)
  */
 exports.updateReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
         const { rating, comment } = req.body;
-        const studentId = req.user.id;
+        const clientId = req.user.id;
 
         // Find the review
         const review = await Review.findById(reviewId);
@@ -285,7 +285,7 @@ exports.updateReview = async (req, res) => {
         }
 
         // Verify ownership
-        if (review.student.toString() !== studentId) {
+        if (review.client.toString() !== clientId) {
             return res.status(403).json({
                 message: 'You can only edit your own reviews'
             });
@@ -317,7 +317,7 @@ exports.updateReview = async (req, res) => {
         if (comment) review.comment = comment.trim();
 
         await review.save();
-        await review.populate('student', 'firstName lastName profilePicture');
+        await review.populate('client', 'firstName lastName profilePicture');
 
         res.status(200).json({
             message: 'Review updated successfully',
@@ -407,21 +407,21 @@ exports.moderateReview = async (req, res) => {
 };
 
 /**
- * Get review statistics for a teacher
+ * Get review statistics for a provider
  */
 exports.getReviewStatistics = async (req, res) => {
     try {
-        const { teacherId } = req.params;
+        const { providerId } = req.params;
 
-        // Verify teacher exists
-        const teacher = await User.findById(teacherId);
-        if (!teacher || teacher.role !== 'teacher') {
-            return res.status(404).json({ message: 'Teacher not found' });
+        // Verify provider exists
+        const provider = await User.findById(providerId);
+        if (!provider || provider.role !== 'provider') {
+            return res.status(404).json({ message: 'Provider not found' });
         }
 
         // Get rating distribution
         const ratingDistribution = await Review.aggregate([
-            { $match: { teacher: teacherId, status: 'active' } },
+            { $match: { provider: providerId, status: 'active' } },
             {
                 $group: {
                     _id: '$rating',
@@ -432,7 +432,7 @@ exports.getReviewStatistics = async (req, res) => {
         ]);
 
         // Get average rating and total reviews
-        const { averageRating, totalReviews } = await Review.getTeacherAverageRating(teacherId);
+        const { averageRating, totalReviews } = await Review.getProviderAverageRating(providerId);
 
         // Create distribution object
         const distribution = {};

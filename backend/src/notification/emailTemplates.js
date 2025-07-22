@@ -10,8 +10,8 @@ const formatDateTime = (date) => {
   return format(new Date(date), 'MMMM d, yyyy h:mm a');
 };
 
-exports.appointmentBookedStudent = (appointment) => {
-  const { teacher, dateTime, type, payment } = appointment;
+exports.appointmentBookedClient = (appointment) => {
+  const { provider, dateTime, type, payment } = appointment;
 
   return {
     subject: 'Appointment Confirmation - dev.e-stud.uz',
@@ -22,22 +22,22 @@ exports.appointmentBookedStudent = (appointment) => {
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <h3 style="margin-top: 0;">Appointment Details</h3>
-          <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
-          <p><strong>Specialization:</strong> ${teacher.specializations.join(', ')}</p>
+          <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
+          <p><strong>Specialization:</strong> ${provider.specializations.join(', ')}</p>
           <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
           <p><strong>Amount Paid:</strong> ${formatCurrency(payment.amount)}</p>
         </div>
         
-        <p>Please make sure to join the lesson 5 minutes before the scheduled time.</p>
-        <p>You can view your appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+        <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
+        <p>You can view your appointment details and join the session by logging into your dev.e-stud.uz account.</p>
       </div>
     `
   };
 };
 
-exports.appointmentBookedTeacher = (appointment) => {
-  const { student, dateTime, type } = appointment;
+exports.appointmentBookedProvider = (appointment) => {
+  const { client, dateTime, type } = appointment;
 
   return {
     subject: 'New Appointment Scheduled - dev.e-stud.uz',
@@ -48,9 +48,9 @@ exports.appointmentBookedTeacher = (appointment) => {
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <h3 style="margin-top: 0;">Appointment Details</h3>
-          <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+          <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
           <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
         </div>
         
         <p>Please log in to your dev.e-stud.uz account to view the complete appointment details.</p>
@@ -60,7 +60,7 @@ exports.appointmentBookedTeacher = (appointment) => {
 };
 
 exports.appointmentBookingFailed = (data) => {
-  const { teacher, dateTime, type, error } = data;
+  const { provider, dateTime, type, error } = data;
 
   return {
     subject: 'Appointment Booking Failed - dev.e-stud.uz',
@@ -71,9 +71,9 @@ exports.appointmentBookingFailed = (data) => {
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <h3 style="margin-top: 0;">Appointment Details</h3>
-          <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+          <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
           <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
           <p><strong>Reason:</strong> ${error}</p>
         </div>
         
@@ -84,8 +84,8 @@ exports.appointmentBookingFailed = (data) => {
 };
 
 exports.appointmentReminder = (appointment) => {
-  const { teacher, student, dateTime, type } = appointment;
-  const isTeacher = Boolean(teacher.email);
+  const { provider, client, dateTime, type } = appointment;
+  const isProvider = Boolean(provider.email);
 
   return {
     subject: 'Appointment Reminder - dev.e-stud.uz',
@@ -96,23 +96,23 @@ exports.appointmentReminder = (appointment) => {
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <h3 style="margin-top: 0;">Appointment Details</h3>
-          ${isTeacher
-        ? `<p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>`
-        : `<p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>`
+          ${isProvider
+        ? `<p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>`
+        : `<p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>`
       }
           <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
         </div>
         
-        <p>Please make sure to join the lesson 5 minutes before the scheduled time.</p>
+        <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
       </div>
     `
   };
 };
 
 exports.appointmentCancelled = (appointment, cancelledBy) => {
-  const { teacher, student, dateTime, type } = appointment;
-  const isTeacher = Boolean(teacher.email);
+  const { provider, client, dateTime, type } = appointment;
+  const isProvider = Boolean(provider.email);
 
   return {
     subject: 'Appointment Cancelled - dev.e-stud.uz',
@@ -123,15 +123,15 @@ exports.appointmentCancelled = (appointment, cancelledBy) => {
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <h3 style="margin-top: 0;">Appointment Details</h3>
-          ${isTeacher
-        ? `<p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>`
-        : `<p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>`
+          ${isProvider
+        ? `<p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>`
+        : `<p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>`
       }
           <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
         </div>
         
-        ${isTeacher
+        ${isProvider
         ? '<p>The time slot is now available for other appointments.</p>'
         : '<p>You can schedule a new appointment through our website.</p>'
       }

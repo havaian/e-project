@@ -7,12 +7,12 @@ const paymentSchema = new Schema({
         ref: 'Appointment',
         required: true
     },
-    student: {
+    client: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    teacher: {
+    provider: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -47,8 +47,8 @@ const paymentSchema = new Schema({
 
 // Indexes for faster queries
 paymentSchema.index({ appointment: 1 });
-paymentSchema.index({ student: 1 });
-paymentSchema.index({ teacher: 1 });
+paymentSchema.index({ client: 1 });
+paymentSchema.index({ provider: 1 });
 paymentSchema.index({ status: 1 });
 paymentSchema.index({ stripeSessionId: 1 });
 

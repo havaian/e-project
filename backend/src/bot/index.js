@@ -53,11 +53,11 @@
 //         try {
 //             await ctx.reply(
 //                 "👋 Welcome to dev.e-stud.uz bot!\n\n" +
-//                 "I can help you manage your educational appointments and lessons.\n\n" +
+//                 "I can help you manage your educational appointments and sessions.\n\n" +
 //                 "Here's what you can do:\n" +
 //                 "- Link your dev.e-stud.uz account\n" +
 //                 "- View your upcoming appointments\n" +
-//                 "- Get reminders for lessons\n" +
+//                 "- Get reminders for sessions\n" +
 //                 "- Chat with virtual educational assistant\n\n" +
 //                 "To begin, please use the /link command to connect your dev.e-stud.uz account."
 //             );
@@ -183,7 +183,7 @@
 //                     if (response.data.message === 'Telegram account linked successfully') {
 //                         await ctx.reply(
 //                             "🎉 Your dev.e-stud.uz account has been successfully linked!\n\n" +
-//                             "You'll now receive notifications about your appointments and lessons.\n\n" +
+//                             "You'll now receive notifications about your appointments and sessions.\n\n" +
 //                             "Use /appointments to view your upcoming appointments or /help to see all available commands."
 //                         );
 
@@ -216,10 +216,10 @@
 //                 ctx.session.appointmentData.shortDescription = ctx.message.text.trim();
 //                 ctx.session.step = 'appointment_confirm';
 
-//                 const { teacherName, date, time, type } = ctx.session.appointmentData;
+//                 const { providerName, date, time, type } = ctx.session.appointmentData;
 
 //                 // Validate required fields
-//                 if (!teacherName || !date || !time || !type) {
+//                 if (!providerName || !date || !time || !type) {
 //                     await ctx.reply(
 //                         "❌ Missing appointment information. Please start the booking process again with /appointment."
 //                     );
@@ -230,7 +230,7 @@
 
 //                 await ctx.reply(
 //                     "📋 Please confirm your appointment details:\n\n" +
-//                     `Teacher: ${teacherName}\n` +
+//                     `Provider: ${providerName}\n` +
 //                     `Date: ${date}\n` +
 //                     `Time: ${time}\n` +
 //                     `Type: ${type}\n` +
@@ -247,10 +247,10 @@
 //                             throw new Error('Missing appointment or user data');
 //                         }
                         
-//                         const { teacherId, dateTime, type, shortDescription } = ctx.session.appointmentData;
+//                         const { providerId, dateTime, type, shortDescription } = ctx.session.appointmentData;
                         
 //                         // Validate required fields
-//                         if (!teacherId || !dateTime || !type || !shortDescription) {
+//                         if (!providerId || !dateTime || !type || !shortDescription) {
 //                             throw new Error('Missing required appointment fields');
 //                         }
                         
@@ -268,7 +268,7 @@
 //                         const response = await axios.post(
 //                             `${process.env.API_URL}/appointments`,
 //                             {
-//                                 teacherId,
+//                                 providerId,
 //                                 dateTime,
 //                                 type,
 //                                 shortDescription
@@ -411,7 +411,7 @@
 //             try {
 //                 // Fetch appointments from API
 //                 const response = await axios.get(
-//                     `${process.env.API_URL}/appointments/student/${ctx.session.userData.userId}`,
+//                     `${process.env.API_URL}/appointments/client/${ctx.session.userData.userId}`,
 //                     {
 //                         headers: {
 //                             'Authorization': `Bearer ${ctx.session.userData.token}`
@@ -430,17 +430,17 @@
 
 //                 appointments.forEach((appointment, index) => {
 //                     // Validate appointment data
-//                     if (!appointment.dateTime || !appointment.teacher) {
+//                     if (!appointment.dateTime || !appointment.provider) {
 //                         return; // Skip invalid appointments
 //                     }
                     
 //                     const date = new Date(appointment.dateTime).toLocaleDateString();
 //                     const time = new Date(appointment.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-//                     const teacherName = appointment.teacher.firstName && appointment.teacher.lastName ? 
-//                         `${appointment.teacher.firstName} ${appointment.teacher.lastName}` : 
-//                         "Unknown teacher";
+//                     const providerName = appointment.provider.firstName && appointment.provider.lastName ? 
+//                         `${appointment.provider.firstName} ${appointment.provider.lastName}` : 
+//                         "Unknown provider";
 
-//                     message += `${index + 1}. Teacher: ${teacherName}\n`;
+//                     message += `${index + 1}. Provider: ${providerName}\n`;
 //                     message += `   Date: ${date} at ${time}\n`;
 //                     message += `   Type: ${appointment.type || 'N/A'}\n`;
 //                     message += `   Status: ${appointment.status || 'scheduled'}\n\n`;
@@ -516,20 +516,20 @@
 //                 message += `Email: ${user.email || 'N/A'}\n`;
 //                 message += `Phone: ${user.phone || 'N/A'}\n`;
 
-//                 if (user.role === 'student') {
-//                     message += `Role: Student\n`;
+//                 if (user.role === 'client') {
+//                     message += `Role: Client\n`;
 //                     message += `Gender: ${user.gender || 'Not specified'}\n`;
 //                     if (user.dateOfBirth) {
 //                         const dob = new Date(user.dateOfBirth).toLocaleDateString();
 //                         message += `Date of Birth: ${dob}\n`;
 //                     }
-//                 } else if (user.role === 'teacher') {
-//                     message += `Role: Teacher\n`;
+//                 } else if (user.role === 'provider') {
+//                     message += `Role: Provider\n`;
 //                     message += `Specialization: ${user.specializations || 'N/A'}\n`;
 //                     message += `Experience: ${user.experience || 0} years\n`;
                     
-//                     if (user.lessonFee) {
-//                         message += `Lesson Fee: ${user.lessonFee} 'UZS'\n`;
+//                     if (user.sessionFee) {
+//                         message += `Session Fee: ${user.sessionFee} 'UZS'\n`;
 //                     }
 //                 }
 
@@ -664,7 +664,7 @@
 //             try {
 //                 // Fetch available specializations
 //                 const response = await axios.get(
-//                     `${process.env.API_URL}/teachers/specializations`
+//                     `${process.env.API_URL}/providers/specializations`
 //                 );
 
 //                 const specializations = response.data.specializations;
@@ -731,9 +731,9 @@
 //             const selectedSpecialization = ctx.session.specializations[selection - 1];
 //             ctx.session.appointmentData.specializations = selectedSpecialization;
             
-//             // Fetch teachers with this specializations
+//             // Fetch providers with this specializations
 //             const response = await axios.get(
-//                 `${process.env.API_URL}/teachers?specializations=${encodeURIComponent(selectedSpecialization)}`,
+//                 `${process.env.API_URL}/providers?specializations=${encodeURIComponent(selectedSpecialization)}`,
 //                 {
 //                     headers: {
 //                         'Authorization': `Bearer ${ctx.session.userData.token}`
@@ -741,24 +741,24 @@
 //                 }
 //             );
             
-//             const teachers = response.data.teachers;
+//             const providers = response.data.providers;
             
-//             if (!teachers || teachers.length === 0) {
+//             if (!providers || providers.length === 0) {
 //                 await ctx.reply(
-//                     `No teachers available for ${selectedSpecialization}. Please select another specializations or try again later.`
+//                     `No providers available for ${selectedSpecialization}. Please select another specializations or try again later.`
 //                 );
 //                 ctx.session.step = 'idle';
 //                 return;
 //             }
             
-//             ctx.session.teachers = teachers;
-//             ctx.session.step = 'appointment_teacher';
+//             ctx.session.providers = providers;
+//             ctx.session.step = 'appointment_provider';
             
-//             let message = `Please select a teacher for ${selectedSpecialization}:\n\n`;
-//             teachers.forEach((teacher, index) => {
-//                 message += `${index + 1}. ${teacher.firstName} ${teacher.lastName}\n`;
-//                 message += `   Experience: ${teacher.experience} years\n`;
-//                 message += `   Fee: ${teacher.lessonFee} 'UZS'\n\n`;
+//             let message = `Please select a provider for ${selectedSpecialization}:\n\n`;
+//             providers.forEach((provider, index) => {
+//                 message += `${index + 1}. ${provider.firstName} ${provider.lastName}\n`;
+//                 message += `   Experience: ${provider.experience} years\n`;
+//                 message += `   Fee: ${provider.sessionFee} 'UZS'\n\n`;
 //             });
             
 //             message += "Reply with the number of your selection.";

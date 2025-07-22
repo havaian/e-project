@@ -17,7 +17,7 @@ const schedulePaymentExpirationChecks = () => {
             const unpaidAppointments = await Appointment.find({
                 status: 'pending-payment',
                 createdAt: { $lt: expirationTime }
-            }).populate('teacher student');
+            }).populate('provider client');
 
             console.log(`Found ${unpaidAppointments.length} expired unpaid appointments`);
 
@@ -43,19 +43,19 @@ const schedulePaymentExpirationChecks = () => {
                 console.log(`Canceled appointment ${appointment._id} due to payment expiration`);
             }
 
-            // Check for pending teacher confirmations that have expired
+            // Check for pending provider confirmations that have expired
             const pendingConfirmationAppointments = await Appointment.find({
-                status: 'pending-teacher-confirmation',
-                teacherConfirmationExpires: { $lt: new Date() }
-            }).populate('teacher student');
+                status: 'pending-provider-confirmation',
+                providerConfirmationExpires: { $lt: new Date() }
+            }).populate('provider client');
 
-            console.log(`Found ${pendingConfirmationAppointments.length} expired teacher confirmation appointments`);
+            console.log(`Found ${pendingConfirmationAppointments.length} expired provider confirmation appointments`);
 
             // Process each expired confirmation
             for (const appointment of pendingConfirmationAppointments) {
                 // Update appointment status
                 appointment.status = 'canceled';
-                appointment.cancellationReason = 'Teacher did not confirm in time';
+                appointment.cancellationReason = 'Provider did not confirm in time';
                 await appointment.save();
 
                 // Process refund if payment exists
@@ -73,7 +73,7 @@ const schedulePaymentExpirationChecks = () => {
                 // Send cancellation notification
                 await NotificationService.sendAppointmentCancellationNotification(appointment, 'system');
 
-                console.log(`Canceled appointment ${appointment._id} due to expired teacher confirmation`);
+                console.log(`Canceled appointment ${appointment._id} due to expired provider confirmation`);
             }
 
             console.log('Payment expiration check job completed');

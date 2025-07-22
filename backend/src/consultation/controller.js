@@ -4,22 +4,22 @@ const JitsiUtils = require('../utils/jitsiUtils');
 const { NotificationService } = require('../notification');
 
 /**
- * Controller for handling lesson-related operations
+ * Controller for handling session-related operations
  */
-class LessonController {
+class SessionController {
     /**
-     * Initialize lesson controller
+     * Initialize session controller
      */
     constructor() {
         // No need for webRTCService with Jitsi integration
     }
 
     /**
-     * Join a lesson session
+     * Join a session session
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
      */
-    joinLesson = async (req, res) => {
+    joinSession = async (req, res) => {
         try {
             const { appointmentId } = req.params;
             const userId = req.user.id;
@@ -30,25 +30,25 @@ class LessonController {
 
             // Find appointment
             const appointment = await Appointment.findById(appointmentId)
-                .populate('teacher', 'firstName lastName profilePicture specializations email')
-                .populate('student', 'firstName lastName profilePicture dateOfBirth email');
+                .populate('provider', 'firstName lastName profilePicture specializations email')
+                .populate('client', 'firstName lastName profilePicture dateOfBirth email');
 
             if (!appointment) {
                 return res.status(404).json({ message: 'Appointment not found' });
             }
 
             // Check if user is involved in the appointment
-            const isTeacher = req.user.role === 'teacher' && appointment.teacher._id.toString() === userId.toString();
-            const isStudent = req.user.role === 'student' && appointment.student._id.toString() === userId.toString();
+            const isProvider = req.user.role === 'provider' && appointment.provider._id.toString() === userId.toString();
+            const isClient = req.user.role === 'client' && appointment.client._id.toString() === userId.toString();
 
-            if (!isTeacher && !isStudent) {
-                return res.status(403).json({ message: 'You are not authorized to join this lesson' });
+            if (!isProvider && !isClient) {
+                return res.status(403).json({ message: 'You are not authorized to join this session' });
             }
 
             // Check if appointment is scheduled or in progress
             if (appointment.status !== 'scheduled') {
                 return res.status(400).json({
-                    message: `Cannot join lesson with status "${appointment.status}"`,
+                    message: `Cannot join session with status "${appointment.status}"`,
                     status: appointment.status
                 });
             }
@@ -61,30 +61,30 @@ class LessonController {
             // Can join 5 minutes before scheduled time
             if (timeDiffMinutes > 5) {
                 return res.status(400).json({
-                    message: 'Lesson is not ready yet',
+                    message: 'Session is not ready yet',
                     startsInMinutes: Math.floor(timeDiffMinutes)
                 });
             }
 
             // Cannot join 30 minutes after scheduled time
             if (timeDiffMinutes < -30) {
-                return res.status(400).json({ message: 'Lesson time has expired' });
+                return res.status(400).json({ message: 'Session time has expired' });
             }
 
-            // Check if lesson has already ended (endTime has passed)
+            // Check if session has already ended (endTime has passed)
             if (appointment.endTime && now > appointment.endTime) {
-                return res.status(400).json({ message: 'Lesson has already ended' });
+                return res.status(400).json({ message: 'Session has already ended' });
             }
 
             // User info for Jitsi token
             const userInfo = {
                 id: userId,
-                name: isTeacher ?
-                    `${appointment.teacher.firstName} ${appointment.teacher.lastName}` :
-                    `${appointment.student.firstName} ${appointment.student.lastName}`,
-                avatar: isTeacher ? appointment.teacher.profilePicture : appointment.student.profilePicture,
-                email: isTeacher ? appointment.teacher.email : appointment.student.email,
-                role: isTeacher ? 'teacher' : 'student'
+                name: isProvider ?
+                    `${appointment.provider.firstName} ${appointment.provider.lastName}` :
+                    `${appointment.client.firstName} ${appointment.client.lastName}`,
+                avatar: isProvider ? appointment.provider.profilePicture : appointment.client.profilePicture,
+                email: isProvider ? appointment.provider.email : appointment.client.email,
+                role: isProvider ? 'provider' : 'client'
             };
 
             // Generate Jitsi configuration
@@ -114,51 +114,51 @@ class LessonController {
             jitsiConfig.jwt = JitsiUtils.generateJitsiToken(jitsiConfig.roomName, userInfo, {
                 maxParticipants: 2,
                 allowedParticipants: [
-                    appointment.teacher._id.toString(),
-                    appointment.student._id.toString()
+                    appointment.provider._id.toString(),
+                    appointment.client._id.toString()
                 ]
             });
 
-            // Prepare response with lesson info
+            // Prepare response with session info
             res.status(200).json({
-                message: 'Joined lesson successfully',
-                lesson: {
+                message: 'Joined session successfully',
+                session: {
                     appointmentId: appointment._id,
                     type: appointment.type,
-                    teacher: {
-                        id: appointment.teacher._id,
-                        name: `${appointment.teacher.firstName} ${appointment.teacher.lastName}`,
-                        profilePicture: appointment.teacher.profilePicture,
-                        specializations: appointment.teacher.specializations
+                    provider: {
+                        id: appointment.provider._id,
+                        name: `${appointment.provider.firstName} ${appointment.provider.lastName}`,
+                        profilePicture: appointment.provider.profilePicture,
+                        specializations: appointment.provider.specializations
                     },
-                    student: {
-                        id: appointment.student._id,
-                        name: `${appointment.student.firstName} ${appointment.student.lastName}`,
-                        profilePicture: appointment.student.profilePicture,
-                        dateOfBirth: appointment.student.dateOfBirth
+                    client: {
+                        id: appointment.client._id,
+                        name: `${appointment.client.firstName} ${appointment.client.lastName}`,
+                        profilePicture: appointment.client.profilePicture,
+                        dateOfBirth: appointment.client.dateOfBirth
                     },
                     dateTime: appointment.dateTime,
                     endTime: appointment.endTime,
                     shortDescription: appointment.shortDescription,
-                    userRole: isTeacher ? 'teacher' : 'student',
+                    userRole: isProvider ? 'provider' : 'client',
                     jitsi: jitsiConfig
                 }
             });
         } catch (error) {
-            console.error('Error joining lesson:', error);
-            res.status(500).json({ message: 'An error occurred while joining the lesson' });
+            console.error('Error joining session:', error);
+            res.status(500).json({ message: 'An error occurred while joining the session' });
         }
     };
 
     /**
-     * End a lesson (teacher only)
+     * End a session (provider only)
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
      */
-    endLesson = async (req, res) => {
+    endSession = async (req, res) => {
         try {
             const { appointmentId } = req.params;
-            const { lessonSummary, chatLog } = req.body;
+            const { sessionSummary, chatLog } = req.body;
 
             if (!appointmentId) {
                 return res.status(400).json({ message: 'Appointment ID is required' });
@@ -171,22 +171,22 @@ class LessonController {
                 return res.status(404).json({ message: 'Appointment not found' });
             }
 
-            // Only teacher or admin can end lesson
-            if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
-                return res.status(403).json({ message: 'Only teachers can end lessons' });
+            // Only provider or admin can end session
+            if (req.user.role !== 'provider' && req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Only providers can end sessions' });
             }
 
-            // Teacher must be assigned to the appointment
-            if (req.user.role === 'teacher' && appointment.teacher.toString() !== req.user.id) {
-                return res.status(403).json({ message: 'You are not the teacher for this appointment' });
+            // Provider must be assigned to the appointment
+            if (req.user.role === 'provider' && appointment.provider.toString() !== req.user.id) {
+                return res.status(403).json({ message: 'You are not the provider for this appointment' });
             }
 
             // Update appointment status
             appointment.status = 'completed';
 
-            // Add lesson summary if provided
-            if (lessonSummary) {
-                appointment.lessonSummary = lessonSummary;
+            // Add session summary if provided
+            if (sessionSummary) {
+                appointment.sessionSummary = sessionSummary;
             }
 
             // Save chat log if provided
@@ -200,31 +200,31 @@ class LessonController {
             await NotificationService.sendAppointmentCompletionNotification(appointment);
 
             res.status(200).json({
-                message: 'Lesson ended successfully',
+                message: 'Session ended successfully',
                 appointment
             });
         } catch (error) {
-            console.error('Error ending lesson:', error);
-            res.status(500).json({ message: 'An error occurred while ending the lesson' });
+            console.error('Error ending session:', error);
+            res.status(500).json({ message: 'An error occurred while ending the session' });
         }
     };
 
     /**
-     * Add homeworks to a completed appointment
+     * Add recommendations to a completed appointment
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
      */
-    addHomeworks = async (req, res) => {
+    addRecommendations = async (req, res) => {
         try {
             const { appointmentId } = req.params;
-            const { homeworks } = req.body;
+            const { recommendations } = req.body;
 
             if (!appointmentId) {
                 return res.status(400).json({ message: 'Appointment ID is required' });
             }
 
-            if (!homeworks || !Array.isArray(homeworks) || homeworks.length === 0) {
-                return res.status(400).json({ message: 'Valid homeworks array is required' });
+            if (!recommendations || !Array.isArray(recommendations) || recommendations.length === 0) {
+                return res.status(400).json({ message: 'Valid recommendations array is required' });
             }
 
             // Find appointment
@@ -234,39 +234,39 @@ class LessonController {
                 return res.status(404).json({ message: 'Appointment not found' });
             }
 
-            // Only teacher or admin can add homeworks
-            if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
-                return res.status(403).json({ message: 'Only teachers can add homeworks' });
+            // Only provider or admin can add recommendations
+            if (req.user.role !== 'provider' && req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Only providers can add recommendations' });
             }
 
-            // Teacher must be assigned to the appointment
-            if (req.user.role === 'teacher' && appointment.teacher.toString() !== req.user.id) {
-                return res.status(403).json({ message: 'You are not the teacher for this appointment' });
+            // Provider must be assigned to the appointment
+            if (req.user.role === 'provider' && appointment.provider.toString() !== req.user.id) {
+                return res.status(403).json({ message: 'You are not the provider for this appointment' });
             }
 
-            // Validate homework data
-            const validHomeworks = homeworks.filter(homework => {
-                return homework.medication && homework.dosage && homework.frequency && homework.duration;
+            // Validate recommendation data
+            const validRecommendations = recommendations.filter(recommendation => {
+                return recommendation.title && recommendation.description && recommendation.frequency && recommendation.duration;
             });
 
-            if (validHomeworks.length === 0) {
-                return res.status(400).json({ message: 'No valid homeworks provided' });
+            if (validRecommendations.length === 0) {
+                return res.status(400).json({ message: 'No valid recommendations provided' });
             }
 
-            // Add homeworks to appointment
-            appointment.homeworks = validHomeworks;
+            // Add recommendations to appointment
+            appointment.recommendations = validRecommendations;
             await appointment.save();
 
-            // Send homework notification
-            await NotificationService.sendHomeworkNotification(appointment);
+            // Send recommendation notification
+            await NotificationService.sendRecommendationNotification(appointment);
 
             res.status(200).json({
-                message: 'Homeworks added successfully',
-                homeworks: appointment.homeworks
+                message: 'Recommendations added successfully',
+                recommendations: appointment.recommendations
             });
         } catch (error) {
-            console.error('Error adding homeworks:', error);
-            res.status(500).json({ message: 'An error occurred while adding homeworks' });
+            console.error('Error adding recommendations:', error);
+            res.status(500).json({ message: 'An error occurred while adding recommendations' });
         }
     };
 
@@ -297,21 +297,21 @@ class LessonController {
 
             // Find the original appointment
             const originalAppointment = await Appointment.findById(appointmentId)
-                .populate('teacher', 'firstName lastName lessonFee')
-                .populate('student', 'firstName lastName');
+                .populate('provider', 'firstName lastName sessionFee')
+                .populate('client', 'firstName lastName');
 
             if (!originalAppointment) {
                 return res.status(404).json({ message: 'Original appointment not found' });
             }
 
-            // Only teacher or admin can create follow-up
-            if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
-                return res.status(403).json({ message: 'Only teachers can create follow-up appointments' });
+            // Only provider or admin can create follow-up
+            if (req.user.role !== 'provider' && req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Only providers can create follow-up appointments' });
             }
 
-            // Teacher must be assigned to the appointment
-            if (req.user.role === 'teacher' && originalAppointment.teacher._id.toString() !== req.user.id.toString()) {
-                return res.status(403).json({ message: 'You are not the teacher for this appointment' });
+            // Provider must be assigned to the appointment
+            if (req.user.role === 'provider' && originalAppointment.provider._id.toString() !== req.user.id.toString()) {
+                return res.status(403).json({ message: 'You are not the provider for this appointment' });
             }
 
             // Update original appointment with follow-up recommendation
@@ -324,21 +324,21 @@ class LessonController {
 
             // Create new follow-up appointment with 'pending-payment' status
             const followUpAppointment = new Appointment({
-                student: originalAppointment.student._id,
-                teacher: originalAppointment.teacher._id,
+                client: originalAppointment.client._id,
+                provider: originalAppointment.provider._id,
                 dateTime: followUpDateObj,
                 type: originalAppointment.type,
                 shortDescription: `Follow-up to appointment on ${new Date(originalAppointment.dateTime).toLocaleDateString()} - ${notes || 'No notes provided'}`,
                 status: 'pending-payment', // Special status for follow-ups pending payment
                 payment: {
-                    amount: originalAppointment.teacher.lessonFee,
+                    amount: originalAppointment.provider.sessionFee,
                     status: 'pending'
                 }
             });
 
             await followUpAppointment.save();
 
-            // Notify student about follow-up
+            // Notify client about follow-up
             await NotificationService.sendFollowUpNotification(followUpAppointment);
 
             res.status(201).json({
@@ -352,11 +352,11 @@ class LessonController {
     };
 
     /**
-     * Get lesson status
+     * Get session status
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
      */
-    getLessonStatus = async (req, res) => {
+    getSessionStatus = async (req, res) => {
         try {
             const { appointmentId } = req.params;
 
@@ -378,13 +378,13 @@ class LessonController {
                 timestamp: new Date().toISOString()
             });
         } catch (error) {
-            console.error('Error getting lesson status:', error);
-            res.status(500).json({ message: 'An error occurred while checking lesson status' });
+            console.error('Error getting session status:', error);
+            res.status(500).json({ message: 'An error occurred while checking session status' });
         }
     };
 
     /**
-     * Save chat log from lesson
+     * Save chat log from session
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
      */
@@ -409,10 +409,10 @@ class LessonController {
             }
 
             // Check if user is involved in the appointment
-            const isTeacher = req.user.role === 'teacher' && appointment.teacher.toString() === req.user.id;
-            const isStudent = req.user.role === 'student' && appointment.student.toString() === req.user.id;
+            const isProvider = req.user.role === 'provider' && appointment.provider.toString() === req.user.id;
+            const isClient = req.user.role === 'client' && appointment.client.toString() === req.user.id;
 
-            if (!isTeacher && !isStudent && req.user.role !== 'admin') {
+            if (!isProvider && !isClient && req.user.role !== 'admin') {
                 return res.status(403).json({ message: 'You are not authorized to save chat logs for this appointment' });
             }
 
@@ -430,7 +430,7 @@ class LessonController {
     };
 
     /**
-     * Handle lesson room exit
+     * Handle session room exit
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
     */
@@ -469,12 +469,12 @@ class LessonController {
             };
 
             // Check if both participants have left
-            const teacherId = appointment.teacher.toString();
-            const studentId = appointment.student.toString();
+            const providerId = appointment.provider.toString();
+            const clientId = appointment.client.toString();
 
             const bothParticipantsLeft =
-                appointment.participantStatus[teacherId]?.status === 'left' &&
-                appointment.participantStatus[studentId]?.status === 'left';
+                appointment.participantStatus[providerId]?.status === 'left' &&
+                appointment.participantStatus[clientId]?.status === 'left';
 
             // If both have left and at least 10 minutes have passed since appointment start time
             const appointmentStartTime = new Date(appointment.dateTime);
@@ -485,15 +485,15 @@ class LessonController {
                 // Auto-complete the appointment
                 appointment.status = 'completed';
 
-                // Add default lesson summary if none exists
-                if (!appointment.lessonSummary) {
-                    appointment.lessonSummary = 'This lesson was automatically marked as completed when both participants left the session.';
+                // Add default session summary if none exists
+                if (!appointment.sessionSummary) {
+                    appointment.sessionSummary = 'This session was automatically marked as completed when both participants left the session.';
                 }
 
                 // Send notification
-                await NotificationService.sendLessonCompletedNotification(appointment);
+                await NotificationService.sendSessionCompletedNotification(appointment);
 
-                console.log(`Auto-completed lesson ${appointment._id} after both participants left the room`);
+                console.log(`Auto-completed session ${appointment._id} after both participants left the room`);
             }
 
             await appointment.save();
@@ -510,64 +510,64 @@ class LessonController {
     }
 
     /**
-     * Update lesson summary and add new homeworks
+     * Update session summary and add new recommendations
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
     */
-    updateLessonResults = async (req, res) => {
+    updateSessionResults = async (req, res) => {
         try {
             const { id } = req.params;
-            const { lessonSummary, homeworks, followUp } = req.body;
-            const teacherId = req.user.id;
+            const { sessionSummary, recommendations, followUp } = req.body;
+            const providerId = req.user.id;
 
             // Find the appointment
             const appointment = await Appointment.findById(id)
-                .populate('student', 'firstName lastName email telegramId')
-                .populate('teacher', 'firstName lastName email telegramId');
+                .populate('client', 'firstName lastName email telegramId')
+                .populate('provider', 'firstName lastName email telegramId');
 
             if (!appointment) {
                 return res.status(404).json({ message: 'Appointment not found' });
             }
 
-            // Verify teacher is assigned to this appointment
-            if (appointment.teacher._id.toString() !== teacherId.toString()) {
-                return res.status(403).json({ message: 'You are not authorized to update this lesson' });
+            // Verify provider is assigned to this appointment
+            if (appointment.provider._id.toString() !== providerId.toString()) {
+                return res.status(403).json({ message: 'You are not authorized to update this session' });
             }
 
             // Verify appointment is completed
             if (appointment.status !== 'completed') {
-                return res.status(400).json({ message: 'Can only update completed lessons' });
+                return res.status(400).json({ message: 'Can only update completed sessions' });
             }
 
-            // Update lesson summary if provided
-            if (lessonSummary) {
-                appointment.lessonSummary = lessonSummary;
+            // Update session summary if provided
+            if (sessionSummary) {
+                appointment.sessionSummary = sessionSummary;
             }
 
-            // Add new homeworks if provided (don't replace existing ones)
-            if (homeworks && Array.isArray(homeworks) && homeworks.length > 0) {
-                // Filter out invalid homeworks
-                const validHomeworks = homeworks.filter(homework => {
-                    return homework.medication && homework.dosage &&
-                        homework.frequency && homework.duration;
+            // Add new recommendations if provided (don't replace existing ones)
+            if (recommendations && Array.isArray(recommendations) && recommendations.length > 0) {
+                // Filter out invalid recommendations
+                const validRecommendations = recommendations.filter(recommendation => {
+                    return recommendation.title && recommendation.description &&
+                        recommendation.frequency && recommendation.duration;
                 });
 
-                // Add timestamp to each new homework
-                const timestampedHomeworks = validHomeworks.map(homework => ({
-                    ...homework,
+                // Add timestamp to each new recommendation
+                const timestampedRecommendations = validRecommendations.map(recommendation => ({
+                    ...recommendation,
                     createdAt: Date.now()
                 }));
 
-                // If appointment already has homeworks, append new ones
-                if (appointment.homeworks && Array.isArray(appointment.homeworks)) {
-                    appointment.homeworks = [...appointment.homeworks, ...timestampedHomeworks];
+                // If appointment already has recommendations, append new ones
+                if (appointment.recommendations && Array.isArray(appointment.recommendations)) {
+                    appointment.recommendations = [...appointment.recommendations, ...timestampedRecommendations];
                 } else {
-                    appointment.homeworks = timestampedHomeworks;
+                    appointment.recommendations = timestampedRecommendations;
                 }
 
-                // Send homework notification
-                if (timestampedHomeworks.length > 0) {
-                    await NotificationService.sendHomeworkNotification(appointment);
+                // Send recommendation notification
+                if (timestampedRecommendations.length > 0) {
+                    await NotificationService.sendRecommendationNotification(appointment);
                 }
             }
 
@@ -588,8 +588,8 @@ class LessonController {
 
                     // Create a new appointment for the follow-up with pending-payment status
                     const followUpAppointment = new Appointment({
-                        student: appointment.student._id,
-                        teacher: appointment.teacher._id,
+                        client: appointment.client._id,
+                        provider: appointment.provider._id,
                         dateTime: followUpDateObj,
                         endTime: endTime,
                         duration: duration,
@@ -597,7 +597,7 @@ class LessonController {
                         shortDescription: `Follow-up to appointment on ${appointment.dateTime.toLocaleDateString()} - ${followUp.notes || 'No notes provided'}`,
                         status: 'pending-payment',
                         payment: {
-                            amount: appointment.teacher.lessonFee,
+                            amount: appointment.provider.sessionFee,
                             status: 'pending'
                         }
                     });
@@ -613,15 +613,15 @@ class LessonController {
             await appointment.save();
 
             res.status(200).json({
-                message: 'Lesson results updated successfully',
+                message: 'Session results updated successfully',
                 appointment
             });
 
         } catch (error) {
-            console.error('Error updating lesson results:', error);
-            res.status(500).json({ message: 'An error occurred while updating lesson results' });
+            console.error('Error updating session results:', error);
+            res.status(500).json({ message: 'An error occurred while updating session results' });
         }
     }
 }
 
-module.exports = LessonController;
+module.exports = SessionController;

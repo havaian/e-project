@@ -32,11 +32,11 @@ router.get('/history', authenticateUser, assistantController.getChatHistory);
 router.get('/performance/:topic', assistantController.getPerformanceInfo);
 
 /**
- * @route POST /api/assistant/symptoms
- * @desc Check symptoms (basic guidance only)
+ * @route POST /api/assistant/problems
+ * @desc Check problems (basic guidance only)
  * @access Private (uses authenticated user ID when available)
  */
-router.post('/symptoms', assistantController.checkSymptoms);
+router.post('/problems', assistantController.checkProblems);
 
 /**
  * @route POST /api/assistant/feedback

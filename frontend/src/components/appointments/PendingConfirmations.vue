@@ -36,22 +36,22 @@
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
                             <div class="flex-shrink-0">
-                                <img v-if="appointment.student.profilePicture" :src="appointment.student.profilePicture"
-                                    :alt="`${appointment.student.firstName} ${appointment.student.lastName}`"
+                                <img v-if="appointment.client.profilePicture" :src="appointment.client.profilePicture"
+                                    :alt="`${appointment.client.firstName} ${appointment.client.lastName}`"
                                     class="h-10 w-10 rounded-full object-cover" />
                                 <div v-else class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                                     <span class="text-sm font-medium text-gray-700">
-                                        {{ appointment.student.firstName.charAt(0) }}{{
-                                        appointment.student.lastName.charAt(0) }}
+                                        {{ appointment.client.firstName.charAt(0) }}{{
+                                        appointment.client.lastName.charAt(0) }}
                                     </span>
                                 </div>
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900">
-                                    {{ appointment.student.firstName }} {{ appointment.student.lastName }}
+                                    {{ appointment.client.firstName }} {{ appointment.client.lastName }}
                                 </h3>
                                 <p class="text-sm text-gray-500">
-                                    Age: {{ calculateAge(appointment.student.dateOfBirth) }} years
+                                    Age: {{ calculateAge(appointment.client.dateOfBirth) }} years
                                 </p>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                             <p class="text-gray-900">{{ appointment.duration || 30 }} minutes</p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Lesson Type</p>
+                            <p class="text-sm text-gray-500">Session Type</p>
                             <p class="text-gray-900">
                                 {{ appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1) }}
                             </p>
@@ -99,15 +99,15 @@
                         <p class="text-gray-900 bg-gray-50 p-3 rounded-md">{{ appointment.shortDescription }}</p>
                     </div>
 
-                    <!-- Student Contact Info -->
+                    <!-- Client Contact Info -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-md">
-                        <div v-if="appointment.student.email">
+                        <div v-if="appointment.client.email">
                             <p class="text-sm text-gray-500">Email</p>
-                            <p class="text-gray-900">{{ appointment.student.email }}</p>
+                            <p class="text-gray-900">{{ appointment.client.email }}</p>
                         </div>
-                        <div v-if="appointment.student.phone">
+                        <div v-if="appointment.client.phone">
                             <p class="text-sm text-gray-500">Phone</p>
-                            <p class="text-gray-900">{{ appointment.student.phone }}</p>
+                            <p class="text-gray-900">{{ appointment.client.phone }}</p>
                         </div>
                     </div>
 
@@ -166,7 +166,7 @@
                         <div class="mt-2">
                             <p class="text-sm text-gray-500">
                                 Are you sure you want to reject this appointment? This action cannot be undone and the
-                                student will be notified.
+                                client will be notified.
                             </p>
                         </div>
                         <div class="mt-4">
@@ -271,7 +271,7 @@ async function fetchPendingConfirmations() {
             limit: 10
         }
 
-        const response = await axios.get(`/api/appointments/pending-confirmation/teacher/${authStore.user._id}`, { params })
+        const response = await axios.get(`/api/appointments/pending-confirmation/provider/${authStore.user._id}`, { params })
         appointments.value = response.data.appointments
         totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
     } catch (error) {
@@ -284,7 +284,7 @@ async function fetchPendingConfirmations() {
 }
 
 async function confirmAppointment(appointment) {
-    if (!confirm(`Confirm appointment with ${appointment.student.firstName} ${appointment.student.lastName}?`)) {
+    if (!confirm(`Confirm appointment with ${appointment.client.firstName} ${appointment.client.lastName}?`)) {
         return
     }
 
@@ -297,7 +297,7 @@ async function confirmAppointment(appointment) {
         appointments.value = appointments.value.filter(app => app._id !== appointment._id)
 
         // Show success message
-        alert('Appointment confirmed successfully! The student has been notified.')
+        alert('Appointment confirmed successfully! The client has been notified.')
 
     } catch (error) {
         console.error('Error confirming appointment:', error)
@@ -336,14 +336,14 @@ async function rejectAppointment() {
         // Use the updateAppointmentStatus endpoint to cancel the appointment
         await axios.patch(`/api/appointments/${selectedAppointment.value._id}/status`, {
             status: 'canceled',
-            cancellationReason: rejectionReason.value || 'Rejected by teacher'
+            cancellationReason: rejectionReason.value || 'Rejected by provider'
         })
 
         // Remove from list after successful rejection
         appointments.value = appointments.value.filter(app => app._id !== selectedAppointment.value._id)
 
         closeRejectModal()
-        alert('Appointment rejected successfully. The student has been notified and refunded.')
+        alert('Appointment rejected successfully. The client has been notified and refunded.')
 
     } catch (error) {
         console.error('Error rejecting appointment:', error)

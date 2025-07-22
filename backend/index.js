@@ -23,7 +23,7 @@ const appointmentRoutes = require('./src/appointment/routes');
 const telegramRoutes = require('./src/bot/routes');
 // const assistantRoutes = require('./src/assistant/routes');
 const paymentRoutes = require('./src/payment/routes');
-const lessonRoutes = require('./src/lesson/routes');
+const sessionRoutes = require('./src/session/routes');
 const adminRoutes = require('./src/admin/routes');
 const specializationRoutes = require('./src/specializations/routes');
 const chatRoutes = require('./src/chat/routes');
@@ -141,7 +141,7 @@ app.use((req, res, next) => {
         // Only sanitize fields that could contain HTML/script tags
         // For text fields like bio, we should preserve apostrophes and quotes
         const fieldsToFullySanitize = ['html', 'script', 'code', 'content'];
-        const fieldsToPreserveQuotes = ['bio', 'shortDescription', 'lessonSummary', 'notes', 'text', 'comment'];
+        const fieldsToPreserveQuotes = ['bio', 'shortDescription', 'sessionSummary', 'notes', 'text', 'comment'];
 
         // Check if this field should preserve quotes and apostrophes
         const shouldPreserveQuotes = fieldsToPreserveQuotes.some(field =>
@@ -253,7 +253,7 @@ app.use((req, res, next) => {
 
     //         // These fields should have HTML entities decoded
     //         const fieldsToProcess = [
-    //             'bio', 'shortDescription', 'lessonSummary',
+    //             'bio', 'shortDescription', 'sessionSummary',
     //             'notes', 'text', 'comment', 'message'
     //         ];
 
@@ -315,7 +315,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/telegram', telegramRoutes);
 // app.use('/api/assistant', assistantRoutes);
 app.use('/api/payments', paymentRoutes);
-app.use('/api/lessons', lessonRoutes);
+app.use('/api/sessions', sessionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/specializations', specializationRoutes);
 app.use('/api/chat', chatRoutes);

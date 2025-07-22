@@ -12,11 +12,11 @@ exports.getActiveSpecializations = async (req, res) => {
             .sort({ name: 1 })
             .select('name description icon');
 
-        // Get count of active teachers for each specializations
-        const specializationsWithTeacherCount = await Promise.all(
+        // Get count of active providers for each specializations
+        const specializationsWithProviderCount = await Promise.all(
             specializations.map(async (spec) => {
-                const teacherCount = await User.countDocuments({
-                    role: 'teacher',
+                const providerCount = await User.countDocuments({
+                    role: 'provider',
                     specializations: spec.name,
                     isActive: true,
                     isVerified: true
@@ -24,13 +24,13 @@ exports.getActiveSpecializations = async (req, res) => {
 
                 return {
                     ...spec.toObject(),
-                    teacherCount
+                    providerCount
                 };
             })
         );
 
         res.status(200).json({
-            specializations: specializationsWithTeacherCount
+            specializations: specializationsWithProviderCount
         });
     } catch (error) {
         console.error('Error fetching specializations:', error);
@@ -60,9 +60,9 @@ exports.getSpecializationById = async (req, res) => {
             return res.status(404).json({ message: 'Specialization is not active' });
         }
 
-        // Get count of active teachers for this specializations
-        const teacherCount = await User.countDocuments({
-            role: 'teacher',
+        // Get count of active providers for this specializations
+        const providerCount = await User.countDocuments({
+            role: 'provider',
             specializations: specializations.name,
             isActive: true,
             isVerified: true
@@ -71,7 +71,7 @@ exports.getSpecializationById = async (req, res) => {
         res.status(200).json({
             specializations: {
                 ...specializations.toObject(),
-                teacherCount
+                providerCount
             }
         });
     } catch (error) {
@@ -84,11 +84,11 @@ exports.getSpecializationById = async (req, res) => {
 };
 
 /**
- * Get teachers by specializations
+ * Get providers by specializations
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.getTeachersBySpecialization = async (req, res) => {
+exports.getProvidersBySpecialization = async (req, res) => {
     try {
         const { id } = req.params;
         const { page = 1, limit = 10 } = req.query;
@@ -103,22 +103,22 @@ exports.getTeachersBySpecialization = async (req, res) => {
             return res.status(404).json({ message: 'Specialization is not active' });
         }
 
-        // Query for teachers with this specializations
+        // Query for providers with this specializations
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
-        const teachers = await User.find({
-            role: 'teacher',
+        const providers = await User.find({
+            role: 'provider',
             specializations: specializations.name,
             isActive: true,
             isVerified: true
         })
-            .select('firstName lastName profilePicture experience lessonFee bio languages address')
+            .select('firstName lastName profilePicture experience sessionFeebio languages address')
             .skip(skip)
             .limit(parseInt(limit))
             .sort({ experience: -1 });
 
         const total = await User.countDocuments({
-            role: 'teacher',
+            role: 'provider',
             specializations: specializations.name,
             isActive: true,
             isVerified: true
@@ -131,7 +131,7 @@ exports.getTeachersBySpecialization = async (req, res) => {
                 description: specializations.description,
                 icon: specializations.icon
             },
-            teachers,
+            providers,
             pagination: {
                 total,
                 page: parseInt(page),
@@ -140,9 +140,9 @@ exports.getTeachersBySpecialization = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching teachers by specializations:', error);
+        console.error('Error fetching providers by specializations:', error);
         res.status(500).json({
-            message: 'An error occurred while fetching teachers',
+            message: 'An error occurred while fetching providers',
             error: error.message
         });
     }

@@ -12,20 +12,20 @@ exports.sendDocumentUploadNotification = async (appointment, document, recipient
         }
 
         // Get uploader information
-        const uploader = document.uploadedBy === 'teacher' ? appointment.teacher : appointment.student;
+        const uploader = document.uploadedBy === 'provider' ? appointment.provider : appointment.client;
 
         // Make sure we have the populated objects
         let uploaderName, recipientEmail;
 
         if (typeof uploader === 'object') {
-            uploaderName = document.uploadedBy === 'teacher' ?
+            uploaderName = document.uploadedBy === 'provider' ?
                 `${uploader.firstName} ${uploader.lastName}` :
                 `${uploader.firstName} ${uploader.lastName}`;
         } else {
             // Fetch user data if not populated
             const User = require('../user/model');
             const uploaderUser = await User.findById(uploader);
-            uploaderName = document.uploadedBy === 'teacher' ?
+            uploaderName = document.uploadedBy === 'provider' ?
                 `${uploaderUser.firstName} ${uploaderUser.lastName}` :
                 `${uploaderUser.firstName} ${uploaderUser.lastName}`;
         }

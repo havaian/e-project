@@ -6,14 +6,14 @@
             <p class="mt-2 text-gray-600">Loading...</p>
         </div>
 
-        <template v-else-if="teacher">
+        <template v-else-if="provider">
             <div class="bg-white shadow rounded-lg overflow-hidden">
                 <div class="p-6">
                     <h1 class="text-2xl font-bold text-gray-900">
-                        Book Appointment with Dr. {{ teacher.firstName }} {{ teacher.lastName }}
+                        Book Appointment with Dr. {{ provider.firstName }} {{ provider.lastName }}
                     </h1>
                     <div class="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
-                        <span v-for="spec in teacher.specializations" :key="spec"
+                        <span v-for="spec in provider.specializations" :key="spec"
                             class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                             {{ spec }}
                         </span>
@@ -103,11 +103,11 @@
                             </p>
                         </div>
 
-                        <!-- Consultation Type -->
+                        <!-- Session Type -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Consultation Type</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Session Type</label>
                             <div class="grid grid-cols-3 gap-3">
-                                <button v-for="type in lessonTypes" :key="type.value" type="button"
+                                <button v-for="type in sessionTypes" :key="type.value" type="button"
                                     class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     :class="{
                                         'ring-2 ring-blue-500 bg-blue-50 border-blue-500 text-blue-700': formData.type === type.value,
@@ -129,7 +129,7 @@
                             <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Short description</label>
                             <textarea id="description" v-model="formData.shortDescription" rows="3" 
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
-                                placeholder="Please describe what you'd like to discuss in this consultation..."
+                                placeholder="Please describe what you'd like to discuss in this session..."
                                 :class="{ 'border-red-500': validationErrors.shortDescription }"></textarea>
                             <p v-if="validationErrors.shortDescription" class="mt-2 text-sm text-red-600">
                                 {{ validationErrors.shortDescription }}
@@ -145,7 +145,7 @@
                                     </svg>
                                 </div> -->
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Consultation Fee</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900">Session Fee</h3>
                                     <p class="text-2xl font-bold text-blue-600">
                                         {{ formatFee() }} UZS
                                     </p>
@@ -179,7 +179,7 @@
         </template>
 
         <div v-else class="text-center py-8">
-            <p class="text-gray-600">Teacher not found.</p>
+            <p class="text-gray-600">Provider not found.</p>
         </div>
     </div>
 </template>
@@ -195,7 +195,7 @@ const route = useRoute()
 const router = useRouter()
 const paymentStore = usePaymentStore()
 
-const teacher = ref(null)
+const provider = ref(null)
 const loading = ref(true)
 const submitting = ref(false)
 const error = ref('')
@@ -210,7 +210,7 @@ const validationErrors = reactive({
     shortDescription: ''
 })
 
-// Icons for consultation types
+// Icons for session types
 const VideoIcon = {
     template: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`
 }
@@ -223,7 +223,7 @@ const ChatIcon = {
     template: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>`
 }
 
-const lessonTypes = [
+const sessionTypes = [
     { value: 'video', label: 'Video', icon: VideoIcon },
     { value: 'voice', label: 'Voice', icon: VoiceIcon },
     { value: 'chat', label: 'Chat', icon: ChatIcon }
@@ -326,8 +326,8 @@ const formatCurrency = (amount) => {
 }
 
 const formatFee = () => {
-    if (!teacher.value) return '0'
-    return formatCurrency(teacher.value.lessonFee)
+    if (!provider.value) return '0'
+    return formatCurrency(provider.value.sessionFee)
 }
 
 const formatTime = (time) => {
@@ -362,13 +362,13 @@ const isWithinJoinWindow = (dateTime) => {
     })
 }
 
-async function fetchTeacherProfile() {
+async function fetchProviderProfile() {
     try {
         loading.value = true
-        const response = await axios.get(`/api/users/teachers/${route.params.teacherId}`)
-        teacher.value = response.data.teacher
+        const response = await axios.get(`/api/users/providers/${route.params.providerId}`)
+        provider.value = response.data.provider
     } catch (error) {
-        console.error('Error fetching teacher profile:', error)
+        console.error('Error fetching provider profile:', error)
     } finally {
         loading.value = false
     }
@@ -376,7 +376,7 @@ async function fetchTeacherProfile() {
 
 async function fetchAvailableSlots() {
     try {
-        const response = await axios.get(`/api/appointments/availability/${route.params.teacherId}`, {
+        const response = await axios.get(`/api/appointments/availability/${route.params.providerId}`, {
             params: { date: formData.date }
         })
         availableSlots.value = response.data.availableSlots.map(slot => ({
@@ -410,7 +410,7 @@ function validateForm() {
     }
 
     if (!formData.type) {
-        validationErrors.type = 'Please select a lesson type'
+        validationErrors.type = 'Please select a session type'
         isValid = false
     }
 
@@ -434,7 +434,7 @@ async function handleSubmit() {
         const selectedDateTime = formData.time
 
         const appointmentData = {
-            teacherId: route.params.teacherId,
+            providerId: route.params.providerId,
             dateTime: selectedDateTime,
             type: formData.type,
             shortDescription: formData.shortDescription
@@ -452,6 +452,6 @@ async function handleSubmit() {
 }
 
 onMounted(() => {
-    fetchTeacherProfile()
+    fetchProviderProfile()
 })
 </script>

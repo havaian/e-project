@@ -23,20 +23,20 @@
                             :class="{ 'text-educational-blue border-b-2 border-educational-blue': $route.path === '/' }">
                             Home
                         </router-link>
-                        <router-link to="/teachers"
+                        <router-link to="/providers"
                             class="text-gray-700 hover:text-educational-blue px-3 py-2 text-sm font-medium transition-colors duration-200"
-                            :class="{ 'text-educational-blue border-b-2 border-educational-blue': $route.path === '/teachers' }">
-                            Find Teachers
+                            :class="{ 'text-educational-blue border-b-2 border-educational-blue': $route.path === '/providers' }">
+                            Find Providers
                         </router-link>
                         <template v-if="authStore.isAuthenticated">
-                            <router-link v-if="authStore.isStudent" to="/appointments/student"
+                            <router-link v-if="authStore.isClient" to="/appointments/client"
                                 class="text-gray-700 hover:text-educational-blue px-3 py-2 text-sm font-medium transition-colors duration-200"
-                                :class="{ 'text-educational-blue border-b-2 border-educational-blue': $route.path.includes('/appointments/student') }">
+                                :class="{ 'text-educational-blue border-b-2 border-educational-blue': $route.path.includes('/appointments/client') }">
                                 My Appointments
                             </router-link>
-                            <router-link v-if="authStore.isTeacher" to="/appointments/teacher"
+                            <router-link v-if="authStore.isProvider" to="/appointments/provider"
                                 class="text-gray-700 hover:text-educational-blue px-3 py-2 text-sm font-medium transition-colors duration-200"
-                                :class="{ 'text-educational-blue border-b-2 border-educational-blue': $route.path.includes('/appointments/teacher') }">
+                                :class="{ 'text-educational-blue border-b-2 border-educational-blue': $route.path.includes('/appointments/provider') }">
                                 My Schedule
                             </router-link>
                         </template>
@@ -84,7 +84,7 @@
                             <div v-if="showProfileMenu"
                                 class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white/95 backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-educational-blue/10">
                                 <div class="py-1">
-                                    <router-link :to="authStore.isTeacher ? '/profile/teacher' : '/profile/student'"
+                                    <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
                                         class="block px-4 py-3 text-sm text-gray-700 hover:bg-educational-blue/5 hover:text-educational-blue transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,22 +142,22 @@
                     @click="closeMobileMenu">
                     Home
                 </router-link>
-                <router-link to="/teachers"
+                <router-link to="/providers"
                     class="text-gray-700 hover:text-educational-blue block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    :class="{ 'text-educational-blue bg-educational-blue/5': $route.path === '/teachers' }"
+                    :class="{ 'text-educational-blue bg-educational-blue/5': $route.path === '/providers' }"
                     @click="closeMobileMenu">
-                    Find Teachers
+                    Find Providers
                 </router-link>
                 <template v-if="authStore.isAuthenticated">
-                    <router-link v-if="authStore.isStudent" to="/appointments/student"
+                    <router-link v-if="authStore.isClient" to="/appointments/client"
                         class="text-gray-700 hover:text-educational-blue block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                        :class="{ 'text-educational-blue bg-educational-blue/5': $route.path.includes('/appointments/student') }"
+                        :class="{ 'text-educational-blue bg-educational-blue/5': $route.path.includes('/appointments/client') }"
                         @click="closeMobileMenu">
                         My Appointments
                     </router-link>
-                    <router-link v-if="authStore.isTeacher" to="/appointments/teacher"
+                    <router-link v-if="authStore.isProvider" to="/appointments/provider"
                         class="text-gray-700 hover:text-educational-blue block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                        :class="{ 'text-educational-blue bg-educational-blue/5': $route.path.includes('/appointments/teacher') }"
+                        :class="{ 'text-educational-blue bg-educational-blue/5': $route.path.includes('/appointments/provider') }"
                         @click="closeMobileMenu">
                         My Schedule
                     </router-link>
@@ -173,7 +173,7 @@
                                 <div class="text-sm font-medium text-gray-500">{{ authStore.user?.email }}</div>
                             </div>
                         </div>
-                        <router-link :to="authStore.isTeacher ? '/profile/teacher' : '/profile/student'"
+                        <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-educational-blue hover:bg-educational-blue/5 transition-colors duration-200"
                             @click="closeMobileMenu">
                             My Profile

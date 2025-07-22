@@ -6,8 +6,8 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <h1 class="text-xl font-bold text-gray-900">
-                            Lesson with {{ lesson?.student?.name ||
-                                lesson?.teacher?.name }}
+                            Session with {{ session?.client?.name ||
+                                session?.provider?.name }}
                         </h1>
                         <span class="ml-4 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" :class="{
                             'bg-green-100 text-green-800': isConnected,
@@ -16,8 +16,8 @@
                             {{ isConnected ? 'Connected' : 'Connecting...' }}
                         </span>
                     </div>
-                    <button class="btn-secondary text-red-600 hover:text-red-700" @click="showEndLessonConfirm">
-                        End Lesson
+                    <button class="btn-secondary text-red-600 hover:text-red-700" @click="showEndSessionConfirm">
+                        End Session
                     </button>
                 </div>
             </div>
@@ -34,72 +34,72 @@
             </div>
         </main>
 
-        <!-- End Lesson Confirmation Modal -->
+        <!-- End Session Confirmation Modal -->
         <div v-if="showEndConfirmation"
             class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
             <div class="bg-white rounded-lg overflow-hidden shadow-xl max-w-md w-full mx-4">
                 <div class="p-6">
-                    <h3 class="text-lg font-medium text-gray-900">End Lesson</h3>
+                    <h3 class="text-lg font-medium text-gray-900">End Session</h3>
                     <p class="mt-2 text-sm text-gray-500">
-                        Are you sure you want to end this lesson?
-                        {{ isTeacher ? 'You\'ll be asked to provide a summary and homeworks.' : '' }}
+                        Are you sure you want to end this session?
+                        {{ isProvider ? 'You\'ll be asked to provide a summary and recommendations.' : '' }}
                     </p>
                     <div class="mt-4 flex justify-end space-x-3">
                         <button @click="showEndConfirmation = false" class="btn-secondary">
                             Cancel
                         </button>
-                        <button @click="confirmEndLesson" class="btn-primary bg-red-600 hover:bg-red-700">
-                            End Lesson
+                        <button @click="confirmEndSession" class="btn-primary bg-red-600 hover:bg-red-700">
+                            End Session
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Post-Lesson Form for Teachers -->
-        <div v-if="showPostLessonForm && isTeacher"
+        <!-- Post-Session Form for Providers -->
+        <div v-if="showPostSessionForm && isProvider"
             class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
             <div class="bg-white rounded-lg overflow-hidden shadow-xl max-w-4xl w-full mx-4 my-8">
                 <div class="p-6 max-h-[90vh] overflow-y-auto">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Lesson Summary</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Session Summary</h3>
 
-                    <form @submit.prevent="submitPostLessonForm">
-                        <!-- Lesson Summary -->
+                    <form @submit.prevent="submitPostSessionForm">
+                        <!-- Session Summary -->
                         <div class="mb-6">
-                            <label for="lessonSummary" class="block text-sm font-medium text-gray-700 mb-1">
-                                Lesson Summary
+                            <label for="sessionSummary" class="block text-sm font-medium text-gray-700 mb-1">
+                                Session Summary
                             </label>
-                            <textarea id="lessonSummary" v-model="postLessonData.lessonSummary"
+                            <textarea id="sessionSummary" v-model="postSessionData.sessionSummary"
                                 rows="4" class="input w-full" required></textarea>
                         </div>
 
-                        <!-- Homeworks -->
+                        <!-- Recommendations -->
                         <div class="mb-6">
                             <div class="flex justify-between items-center mb-2">
-                                <h4 class="text-lg font-medium text-gray-900">Homeworks</h4>
-                                <button type="button" @click="addHomework"
+                                <h4 class="text-lg font-medium text-gray-900">Recommendations</h4>
+                                <button type="button" @click="addRecommendation"
                                     class="text-sm bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  hover:text-indigo-900">
-                                    + Add Homework
+                                    + Add Recommendation
                                 </button>
                             </div>
 
-                            <div v-for="(homework, index) in postLessonData.homeworks" :key="index"
+                            <div v-for="(recommendation, index) in postSessionData.recommendations" :key="index"
                                 class="bg-gray-50 p-4 rounded-lg mb-3">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
                                     <div>
-                                        <label :for="`medication-${index}`"
+                                        <label :for="`title-${index}`"
                                             class="block text-sm font-medium text-gray-700 mb-1">
                                             Medication
                                         </label>
-                                        <input :id="`medication-${index}`" v-model="homework.medication" type="text"
+                                        <input :id="`title-${index}`" v-model="recommendation.title" type="text"
                                             class="input w-full" required />
                                     </div>
                                     <div>
-                                        <label :for="`dosage-${index}`"
+                                        <label :for="`description-${index}`"
                                             class="block text-sm font-medium text-gray-700 mb-1">
                                             Dosage
                                         </label>
-                                        <input :id="`dosage-${index}`" v-model="homework.dosage" type="text"
+                                        <input :id="`description-${index}`" v-model="recommendation.description" type="text"
                                             class="input w-full" required />
                                     </div>
                                 </div>
@@ -109,7 +109,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">
                                             Frequency
                                         </label>
-                                        <input :id="`frequency-${index}`" v-model="homework.frequency" type="text"
+                                        <input :id="`frequency-${index}`" v-model="recommendation.frequency" type="text"
                                             class="input w-full" required />
                                     </div>
                                     <div>
@@ -117,7 +117,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">
                                             Duration
                                         </label>
-                                        <input :id="`duration-${index}`" v-model="homework.duration" type="text"
+                                        <input :id="`duration-${index}`" v-model="recommendation.duration" type="text"
                                             class="input w-full" required />
                                     </div>
                                 </div>
@@ -126,43 +126,43 @@
                                         class="block text-sm font-medium text-gray-700 mb-1">
                                         Instructions
                                     </label>
-                                    <textarea :id="`instructions-${index}`" v-model="homework.instructions" rows="2"
+                                    <textarea :id="`instructions-${index}`" v-model="recommendation.instructions" rows="2"
                                         class="input w-full"></textarea>
                                 </div>
-                                <button type="button" @click="removeHomework(index)"
+                                <button type="button" @click="removeRecommendation(index)"
                                     class="text-sm text-red-600 hover:text-red-900">
                                     Remove
                                 </button>
                             </div>
 
-                            <div v-if="postLessonData.homeworks.length === 0"
+                            <div v-if="postSessionData.recommendations.length === 0"
                                 class="bg-gray-50 p-4 rounded-lg text-center text-gray-500">
-                                No homeworks added. Click "Add Homework" to add one.
+                                No recommendations added. Click "Add Recommendation" to add one.
                             </div>
                         </div>
 
                         <!-- Follow-up Recommendation -->
                         <div class="mb-6">
                             <div class="flex items-center mb-2">
-                                <input id="followUpRecommended" v-model="postLessonData.followUp.recommended"
+                                <input id="followUpRecommended" v-model="postSessionData.followUp.recommended"
                                     type="checkbox" class="h-4 w-4 bg-gradient-to-r from-educational-blue to-educational-purple bg-clip-text text-transparent  rounded" />
                                 <label for="followUpRecommended" class="ml-2 block text-sm font-medium text-gray-700">
                                     Recommend Follow-up Appointment
                                 </label>
                             </div>
 
-                            <div v-if="postLessonData.followUp.recommended" class="ml-6 mt-3">
+                            <div v-if="postSessionData.followUp.recommended" class="ml-6 mt-3">
                                 <label for="followUpDate" class="block text-sm font-medium text-gray-700 mb-1">
                                     Recommended Follow-up Date
                                 </label>
-                                <input id="followUpDate" v-model="postLessonData.followUp.date" type="date"
+                                <input id="followUpDate" v-model="postSessionData.followUp.date" type="date"
                                     class="input w-full" :min="minFollowUpDate" required />
 
                                 <div class="mt-3">
                                     <label for="followUpNotes" class="block text-sm font-medium text-gray-700 mb-1">
                                         Follow-up Notes
                                     </label>
-                                    <textarea id="followUpNotes" v-model="postLessonData.followUp.notes" rows="2"
+                                    <textarea id="followUpNotes" v-model="postSessionData.followUp.notes" rows="2"
                                         class="input w-full"></textarea>
                                 </div>
                             </div>
@@ -180,11 +180,11 @@
                         </div>
 
                         <div class="mt-6 flex justify-end space-x-3">
-                            <button type="button" @click="skipPostLesson" class="btn-secondary">
+                            <button type="button" @click="skipPostSession" class="btn-secondary">
                                 Skip
                             </button>
                             <button type="submit" class="btn-primary" :disabled="submitting">
-                                {{ submitting ? 'Saving...' : 'Save and End Lesson' }}
+                                {{ submitting ? 'Saving...' : 'Save and End Session' }}
                             </button>
                         </div>
                     </form>
@@ -208,7 +208,7 @@
                     <h3 class="text-lg font-medium text-gray-900 text-center">Follow-up Appointment Created</h3>
                     <p class="mt-2 text-sm text-gray-500 text-center">
                         A follow-up appointment has been created and is now pending payment.
-                        The student will need to pay to confirm the appointment.
+                        The client will need to pay to confirm the appointment.
                     </p>
                     <div class="mt-4 flex justify-center">
                         <button @click="returnToAppointments" class="btn-primary">
@@ -233,20 +233,20 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const isConnected = ref(false)
-const lesson = ref(null)
+const session = ref(null)
 const api = ref(null)
 const chatLog = ref([])
 const submitting = ref(false)
 
 // Modal states
 const showEndConfirmation = ref(false)
-const showPostLessonForm = ref(false)
+const showPostSessionForm = ref(false)
 const showFollowUpNotification = ref(false)
 
-// Post-lesson form data
-const postLessonData = reactive({
-    lessonSummary: '',
-    homeworks: [],
+// Post-session form data
+const postSessionData = reactive({
+    sessionSummary: '',
+    recommendations: [],
     followUp: {
         recommended: false,
         date: '',
@@ -254,7 +254,7 @@ const postLessonData = reactive({
     }
 })
 
-const isTeacher = computed(() => authStore.isTeacher)
+const isProvider = computed(() => authStore.isProvider)
 
 const minFollowUpDate = computed(() => {
     const tomorrow = addDays(new Date(), 1)
@@ -280,7 +280,7 @@ function loadJitsiScript() {
 
 async function initializeJitsi() {
     try {
-        if (!lesson.value?.jitsi) {
+        if (!session.value?.jitsi) {
             throw new Error('Jitsi configuration not available')
         }
 
@@ -291,7 +291,7 @@ async function initializeJitsi() {
             throw new Error('Jitsi Meet External API not loaded')
         }
 
-        const { domain, roomName, token } = lesson.value.jitsi
+        const { domain, roomName, token } = session.value.jitsi
 
         // Configure Jitsi options
         const options = {
@@ -319,7 +319,7 @@ async function initializeJitsi() {
                 ]
             },
             userInfo: {
-                displayName: authStore.isTeacher ?
+                displayName: authStore.isProvider ?
                     `${authStore.user.firstName} ${authStore.user.lastName}` :
                     `${authStore.user.firstName} ${authStore.user.lastName}`
             }
@@ -334,10 +334,10 @@ async function initializeJitsi() {
         })
 
         api.value.on('videoConferenceLeft', () => {
-            if (isTeacher.value) {
-                // If teacher hasn't completed the form yet, show it
-                if (!showPostLessonForm.value) {
-                    showPostLessonForm.value = true
+            if (isProvider.value) {
+                // If provider hasn't completed the form yet, show it
+                if (!showPostSessionForm.value) {
+                    showPostSessionForm.value = true
                 }
             } else {
                 router.push({ name: 'appointment-details', params: { id: route.params.appointmentId } })
@@ -360,11 +360,11 @@ async function initializeJitsi() {
     }
 }
 
-function showEndLessonConfirm() {
+function showEndSessionConfirm() {
     showEndConfirmation.value = true
 }
 
-function confirmEndLesson() {
+function confirmEndSession() {
     showEndConfirmation.value = false
 
     // Dispose Jitsi API 
@@ -386,86 +386,86 @@ function confirmEndLesson() {
         api.value.dispose()
     }
 
-    if (isTeacher.value) {
-        showPostLessonForm.value = true
+    if (isProvider.value) {
+        showPostSessionForm.value = true
     } else {
         router.push({ name: 'appointment-details', params: { id: route.params.appointmentId } })
     }
 }
 
-function addHomework() {
-    postLessonData.homeworks.push({
-        medication: '',
-        dosage: '',
+function addRecommendation() {
+    postSessionData.recommendations.push({
+        title: '',
+        description: '',
         frequency: '',
         duration: '',
         instructions: ''
     })
 }
 
-function removeHomework(index) {
-    postLessonData.homeworks.splice(index, 1)
+function removeRecommendation(index) {
+    postSessionData.recommendations.splice(index, 1)
 }
 
-async function submitPostLessonForm() {
+async function submitPostSessionForm() {
     try {
         submitting.value = true
 
-        // 1. Update appointment status to completed and add lesson summary
+        // 1. Update appointment status to completed and add session summary
         await axios.patch(`/api/appointments/${route.params.appointmentId}/status`, {
             status: 'completed',
-            lessonSummary: postLessonData.lessonSummary
+            sessionSummary: postSessionData.sessionSummary
         })
 
-        // 2. Add homeworks if any
-        if (postLessonData.homeworks.length > 0) {
-            await axios.patch(`/api/appointments/${route.params.appointmentId}/homeworks`, {
-                homeworks: postLessonData.homeworks
+        // 2. Add recommendations if any
+        if (postSessionData.recommendations.length > 0) {
+            await axios.patch(`/api/appointments/${route.params.appointmentId}/recommendations`, {
+                recommendations: postSessionData.recommendations
             })
         }
 
         // 3. Schedule follow-up if recommended
-        if (postLessonData.followUp.recommended) {
+        if (postSessionData.followUp.recommended) {
             await axios.post(`/api/appointments/${route.params.appointmentId}/follow-up`, {
-                followUpDate: postLessonData.followUp.date,
-                notes: postLessonData.followUp.notes
+                followUpDate: postSessionData.followUp.date,
+                notes: postSessionData.followUp.notes
             })
 
             // Show follow-up notification
-            showPostLessonForm.value = false
+            showPostSessionForm.value = false
             showFollowUpNotification.value = true
         } else {
             returnToAppointments()
         }
     } catch (error) {
-        console.error('Error submitting post-lesson data:', error)
-        alert('An error occurred while saving the lesson data. Please try again.')
+        console.error('Error submitting post-session data:', error)
+        alert('An error occurred while saving the session data. Please try again.')
     } finally {
         submitting.value = false
     }
 }
 
-function skipPostLesson() {
-    // Just end the lesson without saving any data
-    router.push({ name: 'teacher-appointments' })
+function skipPostSession() {
+    // Just end the session without saving any data
+    router.push({ name: 'provider-appointments' })
 }
 
 function returnToAppointments() {
-    router.push(isTeacher.value ?
-        { name: 'teacher-appointments' } :
-        { name: 'student-appointments' }
+    router.push(isProvider.value ?
+        { name: 'provider-appointments' } :
+        { name: 'client-appointments' }
     )
 }
 
 onMounted(async () => {
     try {
-        // Get lesson details
-        const response = await axios.get(`/api/lessons/${route.params.appointmentId}/join`)
-        lesson.value = response.data.lesson
+        // Get session details
+        const response = await axios.get(`/api/sessions/${route.params.appointmentId}/join`)
+        session.value = response.data.session
 
         await initializeJitsi()
     } catch (error) {
-        console.error('Error joining lesson:', error)
+        console.error('Error joining session:', error)
         router.push({ name: 'appointment-details', params: { id: route.params.appointmentId } })
     }
 })

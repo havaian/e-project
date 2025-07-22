@@ -43,38 +43,38 @@ class EmailService {
         }
     }
 
-    // Appointment booked - send to both teacher and student
+    // Appointment booked - send to both provider and client
     async sendAppointmentBookedEmails(appointment) {
         try {
-            const { teacher, student, dateTime, type, payment } = appointment;
+            const { provider, client, dateTime, type, payment } = appointment;
 
-            // Email to student
+            // Email to client
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Appointment Confirmation - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Appointment Confirmed</h2>
-                    <p>Your appointment with ${teacher.firstName} ${teacher.lastName} has been successfully booked.</p>
+                    <p>Your appointment with ${provider.firstName} ${provider.lastName} has been successfully booked.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
-                        <p><strong>Specialization:</strong> ${teacher.specializations.join(', ')}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
+                        <p><strong>Specialization:</strong> ${provider.specializations.join(', ')}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                         ${payment && payment.amount ? `<p><strong>Amount Paid:</strong> ${formatCurrency(payment.amount)}</p>` : ''}
                     </div>
                     
-                    <p>Please make sure to join the lesson 5 minutes before the scheduled time.</p>
-                    <p>You can view your appointment details and join the lesson by logging into your dev.e-stud.uz account.</p>
+                    <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
+                    <p>You can view your appointment details and join the session by logging into your dev.e-stud.uz account.</p>
                 </div>
                 `
             });
 
-            // Email to teacher
+            // Email to provider
             await this.sendEmail({
-                to: teacher.email,
+                to: provider.email,
                 subject: 'New Appointment Scheduled - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -83,9 +83,9 @@ class EmailService {
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+                        <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
                     <p>Please log in to your dev.e-stud.uz account to view the complete appointment details.</p>
@@ -101,13 +101,13 @@ class EmailService {
         }
     }
 
-    // Appointment booking failed - send to student
+    // Appointment booking failed - send to client
     async sendAppointmentBookingFailed(data) {
         try {
-            const { student, teacher, dateTime, type, error } = data;
+            const { client, provider, dateTime, type, error } = data;
 
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Appointment Booking Failed - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -116,9 +116,9 @@ class EmailService {
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                         <p><strong>Reason:</strong> ${error}</p>
                     </div>
                     
@@ -135,14 +135,14 @@ class EmailService {
         }
     }
 
-    // Appointment reminder - send to both teacher and student
+    // Appointment reminder - send to both provider and client
     async sendAppointmentReminderEmails(appointment) {
         try {
-            const { teacher, student, dateTime, type } = appointment;
+            const { provider, client, dateTime, type } = appointment;
 
-            // Email to student
+            // Email to client
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Appointment Reminder - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -151,19 +151,19 @@ class EmailService {
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
-                    <p>Please make sure to join the lesson 5 minutes before the scheduled time.</p>
+                    <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
                 </div>
                 `
             });
 
-            // Email to teacher
+            // Email to provider
             await this.sendEmail({
-                to: teacher.email,
+                to: provider.email,
                 subject: 'Appointment Reminder - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -172,12 +172,12 @@ class EmailService {
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+                        <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
-                    <p>Please make sure to join the lesson 5 minutes before the scheduled time.</p>
+                    <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
                 </div>
                 `
             });
@@ -193,11 +193,11 @@ class EmailService {
     // Appointment cancelled - send to affected party
     async sendAppointmentCancelledEmails(appointment, cancelledBy) {
         try {
-            const { teacher, student, dateTime, type } = appointment;
+            const { provider, client, dateTime, type } = appointment;
 
-            // Email to student
+            // Email to client
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Appointment Cancelled - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -206,9 +206,9 @@ class EmailService {
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
                     <p>You can schedule a new appointment through our website.</p>
@@ -216,9 +216,9 @@ class EmailService {
                 `
             });
 
-            // Email to teacher
+            // Email to provider
             await this.sendEmail({
-                to: teacher.email,
+                to: provider.email,
                 subject: 'Appointment Cancelled - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -227,9 +227,9 @@ class EmailService {
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+                        <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
                     <p>The time slot is now available for other appointments.</p>
@@ -245,25 +245,25 @@ class EmailService {
         }
     }
 
-    // Send confirmation to teacher about appointment being confirmed
+    // Send confirmation to provider about appointment being confirmed
     async sendAppointmentConfirmedEmails(appointment) {
         try {
-            const { teacher, student, dateTime, type } = appointment;
+            const { provider, client, dateTime, type } = appointment;
 
-            // Email to student
+            // Email to client
             await this.sendEmail({
-                to: student.email,
-                subject: 'Appointment Confirmed by Teacher - dev.e-stud.uz',
+                to: client.email,
+                subject: 'Appointment Confirmed by Provider - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #4a90e2;">Appointment Confirmed by Teacher</h2>
-                    <p>Your appointment has been confirmed by ${teacher.firstName} ${teacher.lastName}.</p>
+                    <h2 style="color: #4a90e2;">Appointment Confirmed by Provider</h2>
+                    <p>Your appointment has been confirmed by ${provider.firstName} ${provider.lastName}.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
                     <p>Your appointment is now fully scheduled. You'll receive a reminder before the appointment time.</p>
@@ -271,20 +271,20 @@ class EmailService {
                 `
             });
 
-            // Email confirmation to teacher
+            // Email confirmation to provider
             await this.sendEmail({
-                to: teacher.email,
+                to: provider.email,
                 subject: 'Appointment Confirmation Successful - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Appointment Confirmed</h2>
-                    <p>You have successfully confirmed the appointment with ${student.firstName} ${student.lastName}.</p>
+                    <p>You have successfully confirmed the appointment with ${client.firstName} ${client.lastName}.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+                        <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
                     <p>The appointment is now scheduled in your calendar. You'll receive a reminder before the appointment time.</p>
@@ -300,13 +300,13 @@ class EmailService {
         }
     }
 
-    // Send payment success email to student
+    // Send payment success email to client
     async sendPaymentSuccessEmail(paymentId, appointment) {
         try {
-            const { student, teacher, dateTime, type } = appointment;
+            const { client, provider, dateTime, type } = appointment;
 
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Payment Successful - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -315,13 +315,13 @@ class EmailService {
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                         <p><strong>Payment ID:</strong> ${paymentId}</p>
                     </div>
                     
-                    <p>Your appointment is now awaiting teacher confirmation. You'll receive a notification once confirmed.</p>
+                    <p>Your appointment is now awaiting provider confirmation. You'll receive a notification once confirmed.</p>
                 </div>
                 `
             });
@@ -343,7 +343,7 @@ class EmailService {
                 .populate({
                     path: 'appointment',
                     populate: {
-                        path: 'student teacher',
+                        path: 'client provider',
                         select: 'firstName lastName email specializations'
                     }
                 });
@@ -352,10 +352,10 @@ class EmailService {
                 throw new Error('Payment or appointment information not found');
             }
 
-            const { student, teacher, dateTime, type } = payment.appointment;
+            const { client, provider, dateTime, type } = payment.appointment;
 
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Payment Confirmation - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -367,9 +367,9 @@ class EmailService {
                         <p><strong>Payment ID:</strong> ${payment._id}</p>
                         <p><strong>Amount:</strong> ${formatCurrency(payment.amount)}</p>
                         <p><strong>Status:</strong> ${payment.status}</p>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
                     <p>Thank you for your payment. Your appointment is now confirmed.</p>
@@ -391,15 +391,15 @@ class EmailService {
             await payment.populate({
                 path: 'appointment',
                 populate: {
-                    path: 'student teacher',
+                    path: 'client provider',
                     select: 'firstName lastName email specializations'
                 }
             });
 
-            const { student, teacher, dateTime, type } = payment.appointment;
+            const { client, provider, dateTime, type } = payment.appointment;
 
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Payment Refund - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -410,9 +410,9 @@ class EmailService {
                         <h3 style="margin-top: 0;">Refund Details</h3>
                         <p><strong>Payment ID:</strong> ${payment._id}</p>
                         <p><strong>Amount:</strong> ${formatCurrency(payment.amount)}</p>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                     </div>
                     
                     <p>The refund will be processed according to your payment method's standard processing times.</p>
@@ -429,49 +429,49 @@ class EmailService {
         }
     }
 
-    // Send homework notification
-    async sendHomeworkNotification(appointment) {
+    // Send recommendation notification
+    async sendRecommendationNotification(appointment) {
         try {
-            await appointment.populate('student teacher');
+            await appointment.populate('client provider');
 
-            const { student, teacher, homeworks } = appointment;
+            const { client, provider, recommendations } = appointment;
 
-            // Format homeworks for email
-            let homeworksHtml = '';
-            homeworks.forEach((homework, index) => {
-                homeworksHtml += `
+            // Format recommendations for email
+            let recommendationsHtml = '';
+            recommendations.forEach((recommendation, index) => {
+                recommendationsHtml += `
                 <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;">
-                    <p><strong>Medication:</strong> ${homework.medication}</p>
-                    <p><strong>Dosage:</strong> ${homework.dosage}</p>
-                    <p><strong>Frequency:</strong> ${homework.frequency}</p>
-                    <p><strong>Duration:</strong> ${homework.duration}</p>
-                    ${homework.instructions ? `<p><strong>Instructions:</strong> ${homework.instructions}</p>` : ''}
+                    <p><strong>Medication:</strong> ${recommendation.title}</p>
+                    <p><strong>Dosage:</strong> ${recommendation.description}</p>
+                    <p><strong>Frequency:</strong> ${recommendation.frequency}</p>
+                    <p><strong>Duration:</strong> ${recommendation.duration}</p>
+                    ${recommendation.instructions ? `<p><strong>Instructions:</strong> ${recommendation.instructions}</p>` : ''}
                 </div>
                 `;
             });
 
             await this.sendEmail({
-                to: student.email,
-                subject: 'New Homeworks from Your Teacher - dev.e-stud.uz',
+                to: client.email,
+                subject: 'New Recommendations from Your Provider - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #4a90e2;">New Homeworks</h2>
-                    <p>${teacher.firstName} ${teacher.lastName} has prescribed the following medication(s) after your lesson:</p>
+                    <h2 style="color: #4a90e2;">New Recommendations</h2>
+                    <p>${provider.firstName} ${provider.lastName} has prescribed the following title(s) after your session:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        ${homeworksHtml}
+                        ${recommendationsHtml}
                     </div>
                     
-                    <p>You can view these homeworks at any time by logging into your dev.e-stud.uz account.</p>
-                    <p><strong>Note:</strong> Always follow your teacher's instructions when taking medications.</p>
+                    <p>You can view these recommendations at any time by logging into your dev.e-stud.uz account.</p>
+                    <p><strong>Note:</strong> Always follow your provider's instructions when taking titles.</p>
                 </div>
                 `
             });
 
-            console.log('Homework notification email sent successfully');
+            console.log('Recommendation notification email sent successfully');
             return true;
         } catch (error) {
-            console.error('Error sending homework notification email:', error);
+            console.error('Error sending recommendation notification email:', error);
             return false;
         }
     }
@@ -479,23 +479,23 @@ class EmailService {
     // Send follow-up notification
     async sendFollowUpNotification(followUpAppointment) {
         try {
-            await followUpAppointment.populate('student teacher');
+            await followUpAppointment.populate('client provider');
 
-            const { student, teacher, dateTime, type, shortDescription } = followUpAppointment;
+            const { client, provider, dateTime, type, shortDescription } = followUpAppointment;
 
             await this.sendEmail({
-                to: student.email,
+                to: client.email,
                 subject: 'Follow-up Appointment Recommended - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Follow-up Appointment</h2>
-                    <p>${teacher.firstName} ${teacher.lastName} has recommended a follow-up appointment:</p>
+                    <p>${provider.firstName} ${provider.lastName} has recommended a follow-up appointment:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Teacher:</strong> ${teacher.firstName} ${teacher.lastName}</p>
+                        <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                         <p><strong>Reason:</strong> ${shortDescription}</p>
                     </div>
                     
@@ -505,22 +505,22 @@ class EmailService {
             });
 
             await this.sendEmail({
-                to: teacher.email,
+                to: provider.email,
                 subject: 'Follow-up Appointment Created - dev.e-stud.uz',
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Follow-up Appointment Created</h2>
-                    <p>You have successfully created a follow-up appointment for ${student.firstName} ${student.lastName}:</p>
+                    <p>You have successfully created a follow-up appointment for ${client.firstName} ${client.lastName}:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="margin-top: 0;">Appointment Details</h3>
-                        <p><strong>Student:</strong> ${student.firstName} ${student.lastName}</p>
+                        <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
                         <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Lesson</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
                         <p><strong>Reason:</strong> ${shortDescription}</p>
                     </div>
                     
-                    <p>The student has been notified and needs to confirm the appointment by completing payment.</p>
+                    <p>The client has been notified and needs to confirm the appointment by completing payment.</p>
                 </div>
                 `
             });
