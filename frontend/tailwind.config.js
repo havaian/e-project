@@ -20,12 +20,12 @@ export default {
         'error': 'rgb(var(--color-error))',
         
         // Legacy support for theme
-        'color1': 'var(--color-brand-1)',
+        'color1': 'rgb(var(--color-brand-1) / <alpha-value>)',
+        'color2': 'rgb(var(--color-brand-2) / <alpha-value>)',
+        'color3': 'rgb(var(--color-brand-3) / <alpha-value>)',
+        'color4': 'rgb(var(--color-brand-4) / <alpha-value>)',
+        'color5': 'rgb(var(--color-brand-5) / <alpha-value>)',
         'success': 'rgb(var(--color-success))',
-        'color2': 'var(--color-brand-2)',
-        'color3': 'var(--color-brand-3)',
-        'color4': 'var(--color-brand-4)',
-        'color5': 'var(--color-brand-5)',
 
         // Legacy primary/secondary/accent
         'primary': 'var(--color-brand-1)',
