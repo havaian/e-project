@@ -1,5 +1,5 @@
 // frontend/src/plugins/axios.js
-import axios from '@/plugins/axios'
+import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 // Create axios instance with environment variables
