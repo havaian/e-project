@@ -64,26 +64,6 @@ function setCSSVariables() {
   root.style.setProperty('--shadow-glow', `0 20px 40px color-mix(in srgb, ${color1} 15%, transparent)`)
   root.style.setProperty('--shadow-glow-brand', `0 20px 40px color-mix(in srgb, ${color2} 15%, transparent)`)
   root.style.setProperty('--shadow-glow-success', `0 20px 40px rgba(${success}, 0.15)`)
-  
-  console.log('🎨 CSS Variables set from environment:', {
-    'Brand Colors': {
-      brand1: color1,
-      brand2: color2,
-      brand3: color3,
-      brand4: color4,
-      brand5: color5,
-    },
-    'Semantic Colors': {
-      success: success,
-      warning: warning,
-      error: error,
-    },
-    'Environment': {
-      title: import.meta.env.VITE_APP_TITLE,
-      desc: import.meta.env.VITE_APP_DESC,
-      url: import.meta.env.VITE_PROJECT_URL,
-    }
-  })
 }
 
 // Set CSS variables on app initialization
