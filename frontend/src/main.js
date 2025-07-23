@@ -42,9 +42,6 @@ function setCSSVariables() {
   const color3Rgb = hexToRgb(color3)
   const color4Rgb = hexToRgb(color4)
   const color5Rgb = hexToRgb(color5)
-  const successRgb = hexToRgb(success)
-  const warningRgb = hexToRgb(warning)
-  const errorRgb = hexToRgb(error)
   
   // Debug log to see what we're getting
   console.log('Environment variables loaded:', {
@@ -90,9 +87,6 @@ function setCSSVariables() {
   if (color3Rgb) root.style.setProperty('--color3-rgb', color3Rgb)
   if (color4Rgb) root.style.setProperty('--color4-rgb', color4Rgb)
   if (color5Rgb) root.style.setProperty('--color5-rgb', color5Rgb)
-  if (successRgb) root.style.setProperty('--success-rgb', successRgb)
-  if (warningRgb) root.style.setProperty('--warning-rgb', warningRgb)
-  if (errorRgb) root.style.setProperty('--error-rgb', errorRgb)
   
   // Handle success color properly (comma-separated RGB values)
   if (success) {

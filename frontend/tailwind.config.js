@@ -36,13 +36,9 @@ export default {
         'brand-gradient': 'linear-gradient(135deg, var(--color-brand-1), var(--color-brand-2))',
         'brand-gradient-reverse': 'linear-gradient(135deg, var(--color-brand-2), var(--color-brand-1))',
         'brand-gradient-multi': 'linear-gradient(135deg, var(--color-brand-1), var(--color-brand-2), var(--color-brand-3))',
-        
-        // Legacy gradients
-        'element-gradient': 'var(--gradient-element)',
       },
       animation: {
         'float-element': 'floatElement 4s ease-in-out infinite',
-        'float-element': 'floatElement 4s ease-in-out infinite', // Legacy alias
         'pulse-animation': 'pulse 3s ease-in-out infinite',
         'slide-in': 'slideIn 1.2s ease-out',
         'heartbeat': 'heartbeat 2s ease-in-out infinite',
@@ -63,11 +59,11 @@ export default {
           },
         },
         slideIn: {
-          'from': {
+          from: {
             opacity: '0',
             transform: 'translateY(50px)',
           },
-          'to': {
+          to: {
             opacity: '1',
             transform: 'translateY(0)',
           },
@@ -81,16 +77,7 @@ export default {
           },
         },
       },
-      boxShadow: {
-        'glow': '0 20px 40px color-mix(in srgb, var(--color-brand-1) 15%, transparent)',
-        'glow-brand': '0 20px 40px color-mix(in srgb, var(--color-brand-2) 15%, transparent)',
-        'glow-success': '0 20px 40px rgba(var(--color-success), 0.15)',
-        'glow-green': '0 20px 40px rgba(var(--color-success), 0.15)', // Legacy alias
-        'glow-effect': '0 20px 40px color-mix(in srgb, var(--color-brand-1) 15%, transparent)', // Legacy alias
-      },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [],
 }
