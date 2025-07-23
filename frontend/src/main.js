@@ -10,6 +10,18 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
+// Helper function to convert hex to RGB
+function hexToRgb(hex) {
+  if (!hex) return null
+  // Remove # if present
+  hex = hex.replace('#', '')
+  // Parse hex values
+  const r = parseInt(hex.substr(0, 2), 16)
+  const g = parseInt(hex.substr(2, 2), 16)
+  const b = parseInt(hex.substr(4, 2), 16)
+  return `${r} ${g} ${b}`
+}
+
 // Set CSS custom properties from environment variables
 function setCSSVariables() {
   const root = document.documentElement
@@ -24,15 +36,40 @@ function setCSSVariables() {
   const warning = import.meta.env.VITE_COLOR_WARNING
   const error = import.meta.env.VITE_COLOR_ERROR
   
+  // Convert hex colors to RGB format for Tailwind
+  const color1Rgb = hexToRgb(color1)
+  const color2Rgb = hexToRgb(color2)
+  const color3Rgb = hexToRgb(color3)
+  const color4Rgb = hexToRgb(color4)
+  const color5Rgb = hexToRgb(color5)
+  
+  // Debug log to see what we're getting
+  console.log('Environment variables loaded:', {
+    color1, color2, color3, color4, color5, success, warning, error
+  })
+  
+  // Debug title/description vars
+  console.log('Title/Description vars:', {
+    title: import.meta.env.VITE_APP_PAGE_TITLE,
+    description: import.meta.env.VITE_APP_PAGE_DESC,
+    projectUrl: import.meta.env.VITE_PROJECT_URL,
+    appTitle1: import.meta.env.VITE_APP_TITLE_1,
+    appTitle2: import.meta.env.VITE_APP_TITLE_2,
+    appTitle3: import.meta.env.VITE_APP_TITLE_3
+  })
+  
+  // Debug ALL VITE environment variables
+  console.log('ALL VITE vars:', import.meta.env)
+  
   // Set brand color variables (only if they exist)
   if (color1) root.style.setProperty('--color-brand-1', color1)
   if (color2) root.style.setProperty('--color-brand-2', color2)
   if (color3) root.style.setProperty('--color-brand-3', color3)
   if (color4) root.style.setProperty('--color-brand-4', color4)
   if (color5) root.style.setProperty('--color-brand-5', color5)
-  if (success) root.style.setProperty('--color-success', `rgb(${success})`)
-  if (warning) root.style.setProperty('--color-warning', `rgb(${warning})`)
-  if (error) root.style.setProperty('--color-error', `rgb(${error})`)
+  if (success) root.style.setProperty('--color-success', success)
+  if (warning) root.style.setProperty('--color-warning', warning)
+  if (error) root.style.setProperty('--color-error', error)
   
   // Set legacy variables for backwards compatibility
   if (color1) root.style.setProperty('--primary', color1)
@@ -43,6 +80,13 @@ function setCSSVariables() {
   if (color3) root.style.setProperty('--color3', color3)
   if (color4) root.style.setProperty('--color4', color4)
   if (color5) root.style.setProperty('--color5', color5)
+  
+  // Set RGB versions for Tailwind classes
+  if (color1Rgb) root.style.setProperty('--color1-rgb', color1Rgb)
+  if (color2Rgb) root.style.setProperty('--color2-rgb', color2Rgb)
+  if (color3Rgb) root.style.setProperty('--color3-rgb', color3Rgb)
+  if (color4Rgb) root.style.setProperty('--color4-rgb', color4Rgb)
+  if (color5Rgb) root.style.setProperty('--color5-rgb', color5Rgb)
   
   // Handle success color properly (comma-separated RGB values)
   if (success) {
@@ -86,6 +130,14 @@ function setCSSVariables() {
     const successRgb = success.includes(',') ? success : success.trim().split(/\s+/).join(',')
     root.style.setProperty('--shadow-glow-success', `0 20px 40px rgba(${successRgb}, 0.15)`)
   }
+  
+  // Log final CSS variables for debugging
+  console.log('CSS variables set:', {
+    '--color-brand-1': root.style.getPropertyValue('--color-brand-1'),
+    '--color-brand-2': root.style.getPropertyValue('--color-brand-2'),
+    '--color-brand-3': root.style.getPropertyValue('--color-brand-3'),
+    '--success': root.style.getPropertyValue('--success')
+  })
 }
 
 // Set CSS variables on app initialization

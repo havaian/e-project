@@ -7,27 +7,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand colors using CSS variables
-        'brand-1': 'var(--color-brand-1)',
-        'brand-2': 'var(--color-brand-2)',
-        'brand-3': 'var(--color-brand-3)',
-        'brand-4': 'var(--color-brand-4)',
-        'brand-5': 'var(--color-brand-5)',
+        // Brand colors using CSS variables - RGB format for Tailwind
+        'brand-1': 'rgb(var(--color-brand-1-rgb) / <alpha-value>)',
+        'brand-2': 'rgb(var(--color-brand-2-rgb) / <alpha-value>)',
+        'brand-3': 'rgb(var(--color-brand-3-rgb) / <alpha-value>)',
+        'brand-4': 'rgb(var(--color-brand-4-rgb) / <alpha-value>)',
+        'brand-5': 'rgb(var(--color-brand-5-rgb) / <alpha-value>)',
         
         // Semantic colors using CSS variables
-        'success': 'rgb(var(--color-success))',
-        'warning': 'rgb(var(--color-warning))',
-        'error': 'rgb(var(--color-error))',
+        'success': 'rgb(var(--color-success) / <alpha-value>)',
+        'warning': 'rgb(var(--color-warning) / <alpha-value>)',
+        'error': 'rgb(var(--color-error) / <alpha-value>)',
         
-        // Legacy support for theme
-        'color1': 'rgb(var(--color-brand-1) / <alpha-value>)',
-        'color2': 'rgb(var(--color-brand-2) / <alpha-value>)',
-        'color3': 'rgb(var(--color-brand-3) / <alpha-value>)',
-        'color4': 'rgb(var(--color-brand-4) / <alpha-value>)',
-        'color5': 'rgb(var(--color-brand-5) / <alpha-value>)',
-        'success': 'rgb(var(--color-success))',
+        // Legacy support for theme - RGB format
+        'color1': 'rgb(var(--color1-rgb) / <alpha-value>)',
+        'color2': 'rgb(var(--color2-rgb) / <alpha-value>)',
+        'color3': 'rgb(var(--color3-rgb) / <alpha-value>)',
+        'color4': 'rgb(var(--color4-rgb) / <alpha-value>)',
+        'color5': 'rgb(var(--color5-rgb) / <alpha-value>)',
 
-        // Legacy primary/secondary/accent
+        // Legacy primary/secondary/accent - use hex directly for these
         'primary': 'var(--color-brand-1)',
         'secondary': 'var(--color-brand-2)',
         'accent': 'var(--color-brand-3)',
