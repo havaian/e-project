@@ -22,11 +22,17 @@ function hexToRgb(hex) {
   return `${r} ${g} ${b}`
 }
 
+// Helper function to convert comma-separated RGB to space-separated
+function commaToSpaceRgb(rgb) {
+  if (!rgb) return null
+  return rgb.replace(/,/g, ' ').trim()
+}
+
 // Set CSS custom properties from environment variables
 function setCSSVariables() {
   const root = document.documentElement
   
-  // Get colors from environment variables with fallbacks
+  // Get all color environment variables
   const color1 = import.meta.env.VITE_COLOR_1
   const color2 = import.meta.env.VITE_COLOR_2
   const color3 = import.meta.env.VITE_COLOR_3
@@ -36,6 +42,24 @@ function setCSSVariables() {
   const warning = import.meta.env.VITE_COLOR_WARNING
   const error = import.meta.env.VITE_COLOR_ERROR
   
+  // Get gradient background colors from environment (use main colors as defaults)
+  const gradientBg1 = import.meta.env.VITE_GRADIENT_BG_1 || color4
+  const gradientBg2 = import.meta.env.VITE_GRADIENT_BG_2 || color5
+  const gradientBg3 = import.meta.env.VITE_GRADIENT_BG_3 || color4
+  const gradientBg4 = import.meta.env.VITE_GRADIENT_BG_4 || color4
+  const gradientBg5 = import.meta.env.VITE_GRADIENT_BG_5 || color5
+  
+  // Get gradient percentages from environment
+  const gradientPercent1 = import.meta.env.VITE_GRADIENT_PERCENT_1 || '20%'
+  const gradientPercent2 = import.meta.env.VITE_GRADIENT_PERCENT_2 || '10%'
+  const gradientPercent3 = import.meta.env.VITE_GRADIENT_PERCENT_3 || '15%'
+  const gradientPercent4 = import.meta.env.VITE_GRADIENT_PERCENT_4 || '25%'
+  
+  // Get shadow opacity from environment
+  const shadowOpacity = import.meta.env.VITE_SHADOW_OPACITY || '15%'
+  const shadowBlur = import.meta.env.VITE_SHADOW_BLUR || '20px'
+  const shadowSpread = import.meta.env.VITE_SHADOW_SPREAD || '40px'
+  
   // Convert hex colors to RGB format for Tailwind
   const color1Rgb = hexToRgb(color1)
   const color2Rgb = hexToRgb(color2)
@@ -43,25 +67,22 @@ function setCSSVariables() {
   const color4Rgb = hexToRgb(color4)
   const color5Rgb = hexToRgb(color5)
   
-  // Debug log to see what we're getting
+  // Convert comma-separated RGB to space-separated for CSS
+  const successRgb = commaToSpaceRgb(success)
+  const warningRgb = commaToSpaceRgb(warning)
+  const errorRgb = commaToSpaceRgb(error)
+  
+  // Debug logging
   console.log('Environment variables loaded:', {
     color1, color2, color3, color4, color5, success, warning, error
   })
   
-  // Debug title/description vars
-  console.log('Title/Description vars:', {
-    title: import.meta.env.VITE_APP_PAGE_TITLE,
-    description: import.meta.env.VITE_APP_PAGE_DESC,
-    projectUrl: import.meta.env.VITE_PROJECT_URL,
-    appTitle1: import.meta.env.VITE_APP_TITLE_1,
-    appTitle2: import.meta.env.VITE_APP_TITLE_2,
-    appTitle3: import.meta.env.VITE_APP_TITLE_3
+  console.log('RGB converted colors:', {
+    color1Rgb, color2Rgb, color3Rgb, color4Rgb, color5Rgb,
+    successRgb, warningRgb, errorRgb
   })
   
-  // Debug ALL VITE environment variables
-  console.log('ALL VITE vars:', import.meta.env)
-  
-  // Set brand color variables (only if they exist)
+  // Set brand color variables (hex format for direct CSS use)
   if (color1) root.style.setProperty('--color-brand-1', color1)
   if (color2) root.style.setProperty('--color-brand-2', color2)
   if (color3) root.style.setProperty('--color-brand-3', color3)
@@ -81,34 +102,43 @@ function setCSSVariables() {
   if (color4) root.style.setProperty('--color4', color4)
   if (color5) root.style.setProperty('--color5', color5)
   
-  // Set RGB versions for Tailwind classes
+  // Set RGB versions for Tailwind classes (space-separated)
   if (color1Rgb) root.style.setProperty('--color1-rgb', color1Rgb)
   if (color2Rgb) root.style.setProperty('--color2-rgb', color2Rgb)
   if (color3Rgb) root.style.setProperty('--color3-rgb', color3Rgb)
   if (color4Rgb) root.style.setProperty('--color4-rgb', color4Rgb)
   if (color5Rgb) root.style.setProperty('--color5-rgb', color5Rgb)
   
-  // Handle success color properly (comma-separated RGB values)
+  // Set RGB variables for brand colors (same as color1-5 but with brand naming)
+  if (color1Rgb) root.style.setProperty('--color-brand-1-rgb', color1Rgb)
+  if (color2Rgb) root.style.setProperty('--color-brand-2-rgb', color2Rgb)
+  if (color3Rgb) root.style.setProperty('--color-brand-3-rgb', color3Rgb)
+  if (color4Rgb) root.style.setProperty('--color-brand-4-rgb', color4Rgb)
+  if (color5Rgb) root.style.setProperty('--color-brand-5-rgb', color5Rgb)
+  
+  // Set semantic color RGB variables
+  if (successRgb) root.style.setProperty('--color-success-rgb', successRgb)
+  if (warningRgb) root.style.setProperty('--color-warning-rgb', warningRgb)
+  if (errorRgb) root.style.setProperty('--color-error-rgb', errorRgb)
+  
+  // Handle success color properly (comma-separated RGB values for legacy support)
   if (success) {
-    // If it contains commas, it's already in the right format
     if (success.includes(',')) {
       root.style.setProperty('--success', `rgb(${success})`)
     } else {
-      // If it's space-separated, convert to comma-separated
       const rgbValues = success.trim().split(/\s+/).join(',')
       root.style.setProperty('--success', `rgb(${rgbValues})`)
     }
   }
   
-  // Only create gradients if we have the required colors
+  // Create dynamic element gradient based on environment variables
   if (color1 && color2 && color3) {
-    // Create dynamic element gradient based on brand colors
     const elementGradient = `linear-gradient(135deg, 
-      color-mix(in srgb, ${color1} 20%, #f0f9ff 80%) 0%, 
-      color-mix(in srgb, ${color2} 10%, #ecfdf5 90%) 25%, 
-      color-mix(in srgb, ${color3} 15%, #f0f9ff 85%) 50%, 
-      color-mix(in srgb, ${color1} 25%, #e0f2fe 75%) 75%, 
-      #f0f9ff 100%)`
+      color-mix(in srgb, ${color1} ${gradientPercent1}, ${gradientBg1} ${100 - parseInt(gradientPercent1)}%) 0%, 
+      color-mix(in srgb, ${color2} ${gradientPercent2}, ${gradientBg2} ${100 - parseInt(gradientPercent2)}%) 25%, 
+      color-mix(in srgb, ${color3} ${gradientPercent3}, ${gradientBg3} ${100 - parseInt(gradientPercent3)}%) 50%, 
+      color-mix(in srgb, ${color1} ${gradientPercent4}, ${gradientBg4} ${100 - parseInt(gradientPercent4)}%) 75%, 
+      ${gradientBg5} 100%)`
     
     root.style.setProperty('--gradient-element', elementGradient)
     
@@ -118,17 +148,16 @@ function setCSSVariables() {
     root.style.setProperty('--gradient-brand-multi', `linear-gradient(135deg, ${color1}, ${color2}, ${color3})`)
   }
   
-  // Set dynamic box shadows only if colors exist
+  // Set dynamic box shadows using environment variables
   if (color1) {
-    root.style.setProperty('--shadow-glow', `0 20px 40px color-mix(in srgb, ${color1} 15%, transparent)`)
+    root.style.setProperty('--shadow-glow', `0 ${shadowBlur} ${shadowSpread} color-mix(in srgb, ${color1} ${shadowOpacity}, transparent)`)
   }
   if (color2) {
-    root.style.setProperty('--shadow-glow-brand', `0 20px 40px color-mix(in srgb, ${color2} 15%, transparent)`)
+    root.style.setProperty('--shadow-glow-brand', `0 ${shadowBlur} ${shadowSpread} color-mix(in srgb, ${color2} ${shadowOpacity}, transparent)`)
   }
   if (success) {
-    // Handle success shadow with proper RGB format
-    const successRgb = success.includes(',') ? success : success.trim().split(/\s+/).join(',')
-    root.style.setProperty('--shadow-glow-success', `0 20px 40px rgba(${successRgb}, 0.15)`)
+    const successRgbComma = success.includes(',') ? success : success.trim().split(/\s+/).join(',')
+    root.style.setProperty('--shadow-glow-success', `0 ${shadowBlur} ${shadowSpread} rgba(${successRgbComma}, ${parseFloat(shadowOpacity) / 100})`)
   }
   
   // Log final CSS variables for debugging
