@@ -2,54 +2,28 @@ FROM node:20-alpine as build
 
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
 RUN npm ci
 
-# Copy app source
 COPY . .
+RUN chmod +x generate-config.sh
 
-# Set build-time environment variables
-ARG VITE_APP_PAGE_TITLE
-ARG VITE_APP_PAGE_DESC  
-ARG VITE_PROJECT_URL
-ARG VITE_COLOR_1
-ARG VITE_COLOR_2
-ARG VITE_COLOR_3
-ARG VITE_COLOR_4
-ARG VITE_COLOR_5
-ARG VITE_COLOR_SUCCESS
-ARG VITE_COLOR_WARNING
-ARG VITE_COLOR_ERROR
-
-ENV VITE_APP_PAGE_TITLE=$VITE_APP_PAGE_TITLE
-ENV VITE_APP_PAGE_DESC=$VITE_APP_PAGE_DESC
-ENV VITE_PROJECT_URL=$VITE_PROJECT_URL
-ENV VITE_COLOR_1=$VITE_COLOR_1
-ENV VITE_COLOR_2=$VITE_COLOR_2
-ENV VITE_COLOR_3=$VITE_COLOR_3
-ENV VITE_COLOR_4=$VITE_COLOR_4
-ENV VITE_COLOR_5=$VITE_COLOR_5
-ENV VITE_COLOR_SUCCESS=$VITE_COLOR_SUCCESS
-ENV VITE_COLOR_WARNING=$VITE_COLOR_WARNING
-ENV VITE_COLOR_ERROR=$VITE_COLOR_ERROR
-
-# Set environment variables
 ENV NODE_ENV=production
 
-# Build the app
+# Build without env vars first
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-# Copy built files from the build stage to nginx
+# Copy built files
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/generate-config.sh /docker-entrypoint.d/
 
-# Copy nginx configuration
+# Copy nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# Generate config at runtime then start nginx
+CMD ["sh", "-c", "/docker-entrypoint.d/generate-config.sh && nginx -g 'daemon off;'"]
