@@ -14,16 +14,22 @@ check_docker_compose() {
 
 DOCKER_COMPOSE=$(check_docker_compose)
 
-# Load from BOTH env files to get all variables
+# Load from BOTH env files to get all variables - PROPERLY handle quotes
 echo "📦 Loading environment variables..."
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    set -a
+    source .env
+    set +a
 fi
 if [ -f .env.docker ]; then
-    export $(grep -v '^#' .env.docker | xargs)
+    set -a
+    source .env.docker
+    set +a
 fi
 if [ -f .env.local ]; then
-    export $(grep -v '^#' .env.local | xargs)
+    set -a
+    source .env.local  
+    set +a
 fi
 
 # Build new images
