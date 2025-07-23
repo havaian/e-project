@@ -607,8 +607,8 @@
   /* Override default transition-all with smoother, more natural transitions */
   .transition-all {
     transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-duration: 2s;
   }
 
   /* Enhanced smooth transition variants */
