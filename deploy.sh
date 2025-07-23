@@ -3,6 +3,15 @@ set -e
 
 echo "🚀 Starting deployment process..."
 
+# Function to check if docker compose command exists and use appropriate version
+check_docker_compose() {
+    if command -v docker-compose &> /dev/null; then
+        echo "docker-compose"
+    else
+        echo "docker compose"
+    fi
+}
+
 DOCKER_COMPOSE=$(check_docker_compose)
 
 # Load from BOTH env files to get all variables
