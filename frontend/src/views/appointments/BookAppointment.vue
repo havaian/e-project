@@ -60,7 +60,7 @@
                                     <button v-for="day in calendarDays" :key="day.key" type="button"
                                         :disabled="!day.isCurrentMonth || day.isPast || day.isTooFar"
                                         @click="selectDate(day)"
-                                        class="relative p-2 h-12 text-sm transition duration-200 ease-in-out duration-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+                                        class="relative p-2 h-12 text-sm transition-buttery duration-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
                                         :class="{
                                             'text-gray-400 cursor-not-allowed': !day.isCurrentMonth,
                                             'text-gray-300 cursor-not-allowed bg-gray-50': day.isPast || day.isTooFar,
@@ -87,7 +87,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-3">Available Time Slots</label>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                                 <button v-for="slot in availableSlots" :key="slot.start" type="button"
-                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition duration-200 ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-buttery duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     :class="{ 
                                         'ring-2 ring-blue-500 bg-blue-50 border-blue-500 text-blue-700': formData.time === slot.start 
                                     }"
@@ -108,7 +108,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-3">Session Type</label>
                             <div class="grid grid-cols-3 gap-3">
                                 <button v-for="type in sessionTypes" :key="type.value" type="button"
-                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition duration-200 ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-buttery duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     :class="{
                                         'ring-2 ring-blue-500 bg-blue-50 border-blue-500 text-blue-700': formData.type === type.value,
                                         'border-red-500': validationErrors.type

@@ -76,7 +76,7 @@
                 </form>
 
                 <div class="text-center mt-6">
-                    <router-link to="/login" class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-brand-1 hover:to-brand-2 transition duration-200 ease-in-out">
+                    <router-link to="/login" class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-brand-1 hover:to-brand-2 transition-buttery">
                         ← Back to login
                     </router-link>
                 </div>
