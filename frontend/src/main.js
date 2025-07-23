@@ -136,6 +136,10 @@ function setCSSVariables() {
     '--color-brand-1': root.style.getPropertyValue('--color-brand-1'),
     '--color-brand-2': root.style.getPropertyValue('--color-brand-2'),
     '--color-brand-3': root.style.getPropertyValue('--color-brand-3'),
+    '--color1-rgb': root.style.getPropertyValue('--color1-rgb'),
+    '--color2-rgb': root.style.getPropertyValue('--color2-rgb'),
+    '--color3-rgb': root.style.getPropertyValue('--color3-rgb'),
+    '--color-success-rgb': root.style.getPropertyValue('--color-success-rgb'),
     '--success': root.style.getPropertyValue('--success')
   })
 }

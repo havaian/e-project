@@ -349,3 +349,100 @@
     transform: scale(1.1);
   }
 }
+
+@layer utilities {
+  /* Background colors */
+  .bg-success {
+    background-color: rgb(var(--color-success-rgb));
+  }
+  
+  .bg-color1 {
+    background-color: rgb(var(--color1-rgb));
+  }
+  
+  .bg-color2 {
+    background-color: rgb(var(--color2-rgb));
+  }
+  
+  .bg-color3 {
+    background-color: rgb(var(--color3-rgb));
+  }
+  
+  /* Text colors */
+  .text-success {
+    color: rgb(var(--color-success-rgb));
+  }
+  
+  .text-color1 {
+    color: rgb(var(--color1-rgb));
+  }
+  
+  .text-color2 {
+    color: rgb(var(--color2-rgb));
+  }
+  
+  .text-color3 {
+    color: rgb(var(--color3-rgb));
+  }
+  
+  /* Gradient from colors */
+  .from-success {
+    --tw-gradient-from: rgb(var(--color-success-rgb));
+    --tw-gradient-to: rgb(var(--color-success-rgb) / 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .from-color1 {
+    --tw-gradient-from: rgb(var(--color1-rgb));
+    --tw-gradient-to: rgb(var(--color1-rgb) / 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .from-color2 {
+    --tw-gradient-from: rgb(var(--color2-rgb));
+    --tw-gradient-to: rgb(var(--color2-rgb) / 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  .from-color3 {
+    --tw-gradient-from: rgb(var(--color3-rgb));
+    --tw-gradient-to: rgb(var(--color3-rgb) / 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  
+  /* Gradient to colors */
+  .to-success {
+    --tw-gradient-to: rgb(var(--color-success-rgb));
+  }
+  
+  .to-color1 {
+    --tw-gradient-to: rgb(var(--color1-rgb));
+  }
+  
+  .to-color2 {
+    --tw-gradient-to: rgb(var(--color2-rgb));
+  }
+  
+  .to-color3 {
+    --tw-gradient-to: rgb(var(--color3-rgb));
+  }
+  
+  /* Border colors */
+  .border-color1\/20 {
+    border-color: rgb(var(--color1-rgb) / 0.2);
+  }
+  
+  .border-color1\/30 {
+    border-color: rgb(var(--color1-rgb) / 0.3);
+  }
+  
+  /* Ring colors */
+  .ring-color1\/30 {
+    --tw-ring-color: rgb(var(--color1-rgb) / 0.3);
+  }
+  
+  /* Focus ring colors */
+  .focus\:ring-color1\/30:focus {
+    --tw-ring-color: rgb(var(--color1-rgb) / 0.3);
+  }
+}
