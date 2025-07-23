@@ -105,7 +105,7 @@ services:
       retries: 3
       start_period: 30s
 
-  # Frontend service (production)
+  # Frontend service
   frontend-prod:
     build:
       context: ./frontend
