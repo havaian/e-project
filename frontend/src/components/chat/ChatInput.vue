@@ -1,8 +1,18 @@
 <template>
-    <form @submit.prevent="handleSubmit" class="flex space-x-2">
-        <input v-model="message" type="text" class="input flex-1" placeholder="Type your message..."
-            :disabled="disabled" @keydown.enter="handleSubmit" />
-        <button type="submit" class="btn-primary" :disabled="disabled || !message.trim()">
+    <form @submit.prevent="handleSubmit" class="flex space-x-3">
+        <div class="flex-1 input-group">
+            <input v-model="message" type="text" class="input pr-12" placeholder="Type your message..."
+                :disabled="disabled" @keydown.enter="handleSubmit"
+                :class="disabled ? 'opacity-50 cursor-not-allowed' : ''" />
+            <button v-if="message.trim()" type="button" @click="clearMessage"
+                class="input-icon text-gray-400 hover:text-gray-600">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <button type="submit" class="btn-primary px-4 py-4 flex items-center justify-center min-w-[3rem]"
+            :disabled="disabled || !message.trim()">
             <svg v-if="!loading" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -38,6 +48,10 @@ function handleSubmit() {
     if (!message.value.trim() || props.disabled) return
 
     emit('submit', message.value)
+    message.value = ''
+}
+
+function clearMessage() {
     message.value = ''
 }
 </script>

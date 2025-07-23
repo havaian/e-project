@@ -233,41 +233,54 @@
                             {{ authStore.isProvider ? 'Start Session' : 'Join Session' }}
                         </button>
                         <div v-if="showFollowUpModal"
-                            class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-                            <div class="bg-white rounded-lg overflow-hidden shadow-xl max-w-md w-full mx-4">
+                            class="fixed inset-0 bg-gray-500 bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
+                            <div
+                                class="bg-white/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl max-w-md w-full mx-4 border border-gray-200">
                                 <div class="p-6">
-                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Schedule Follow-up Appointment
-                                    </h3>
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="text-xl font-semibold text-gray-900">Schedule Follow-up Appointment
+                                        </h3>
+                                        <button type="button" @click="showFollowUpModal = false"
+                                            class="text-gray-400 hover:text-gray-600 transition-colors">
+                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
 
-                                    <form @submit.prevent="createFollowUp">
-                                        <div class="space-y-4">
-                                            <div>
-                                                <label for="followUpDate"
-                                                    class="block text-sm font-medium text-gray-700">
-                                                    Follow-up Date
-                                                </label>
-                                                <input id="followUpDate" v-model="followUpDate" type="date"
-                                                    class="input mt-1" :min="minFollowUpDate" required />
-                                            </div>
-
-                                            <div>
-                                                <label for="followUpNotes"
-                                                    class="block text-sm font-medium text-gray-700">
-                                                    Notes
-                                                </label>
-                                                <textarea id="followUpNotes" v-model="followUpNotes" rows="3"
-                                                    class="input mt-1"
-                                                    placeholder="Add any notes about the follow-up appointment"></textarea>
-                                            </div>
+                                    <form @submit.prevent="createFollowUp" class="form-container">
+                                        <div class="form-group">
+                                            <label for="followUpDate" class="label">Follow-up Date</label>
+                                            <input id="followUpDate" v-model="followUpDate" type="date" class="input"
+                                                :min="minFollowUpDate" required />
                                         </div>
 
-                                        <div class="mt-6 flex justify-end space-x-3">
+                                        <div class="form-group">
+                                            <label for="followUpNotes" class="label">Notes</label>
+                                            <textarea id="followUpNotes" v-model="followUpNotes" rows="3" class="input"
+                                                placeholder="Add any notes about the follow-up appointment"></textarea>
+                                        </div>
+
+                                        <div class="flex justify-end space-x-3 pt-4">
                                             <button type="button" class="btn-secondary"
                                                 @click="showFollowUpModal = false">
                                                 Cancel
                                             </button>
                                             <button type="submit" class="btn-primary" :disabled="submitting">
-                                                {{ submitting ? 'Scheduling...' : 'Schedule Follow-up' }}
+                                                <span v-if="submitting" class="flex items-center">
+                                                    <svg class="animate-spin -ml-1 mr-3 h-4 w-4"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                            stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor"
+                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                        </path>
+                                                    </svg>
+                                                    Scheduling...
+                                                </span>
+                                                <span v-else>Schedule Follow-up</span>
                                             </button>
                                         </div>
                                     </form>
@@ -314,53 +327,53 @@ const minFollowUpDate = computed(() => {
 
 const formatDateTime = (dateTime) => {
     const date = new Date(dateTime)
-    
+
     // Use UTC methods to avoid any timezone conversion
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
     const month = months[date.getUTCMonth()]
     const day = date.getUTCDate()
     const year = date.getUTCFullYear()
     let hours = date.getUTCHours()
     const minutes = date.getUTCMinutes()
-    
+
     const ampm = hours >= 12 ? 'PM' : 'AM'
     hours = hours % 12
     hours = hours ? hours : 12 // 0 should be 12
     const minutesStr = minutes < 10 ? '0' + minutes : minutes
-    
+
     return `${month} ${day}, ${year} ${hours}:${minutesStr} ${ampm}`
 }
 
 const formatDate = (date) => {
     if (!date) return 'Not specified'
     const dateObj = new Date(date)
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
     const month = months[dateObj.getUTCMonth()]
     const day = dateObj.getUTCDate()
     const year = dateObj.getUTCFullYear()
-    
+
     return `${month} ${day}, ${year}`
 }
 
 const formatChatTime = (timestamp) => {
     const date = new Date(timestamp)
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
     const month = months[date.getUTCMonth()]
     const day = date.getUTCDate()
     let hours = date.getUTCHours()
     const minutes = date.getUTCMinutes()
-    
+
     const ampm = hours >= 12 ? 'PM' : 'AM'
     hours = hours % 12
     hours = hours ? hours : 12
     const minutesStr = minutes < 10 ? '0' + minutes : minutes
-    
+
     return `${month} ${day}, ${hours}:${minutesStr} ${ampm}`
 }
 

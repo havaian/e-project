@@ -10,7 +10,7 @@
                 </p>
             </div>
 
-            <div v-if="success" class="rounded-md bg-green-50 p-4">
+            <div v-if="success" class="rounded-2xl bg-green-50/80 backdrop-blur-sm p-4 border border-green-200">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -27,183 +27,185 @@
                 </div>
             </div>
 
-            <form v-if="!success" class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-                <div class="space-y-4">
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">New password</label>
-                        <div class="relative mt-1">
-                            <input id="password" v-model="password" name="password"
-                                :type="showPassword ? 'text' : 'password'" required class="input rounded-md pr-10"
-                                placeholder="New password" @input="validatePassword" />
-                            <button type="button" @click="togglePassword"
-                                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700">
-                                <!-- Eye with diagonal stroke (password hidden) -->
-                                <svg v-if="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <!-- Complete eye shape -->
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    <!-- Diagonal stroke -->
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                        d="M4 4l16 16" />
-                                </svg>
-                                <!-- Regular eye (password visible) -->
-                                <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <!-- Password Requirements -->
-                        <div class="mt-2 text-sm">
-                            <p class="text-gray-600 mb-2">Password must contain:</p>
-                            <div class="space-y-1">
-                                <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span :class="passwordValidation.minLength ? 'text-green-600' : 'text-gray-500'">
-                                        At least 8 characters
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasUppercase ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span :class="passwordValidation.hasUppercase ? 'text-green-600' : 'text-gray-500'">
-                                        One uppercase letter
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasLowercase ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span :class="passwordValidation.hasLowercase ? 'text-green-600' : 'text-gray-500'">
-                                        One lowercase letter
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasNumber ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span :class="passwordValidation.hasNumber ? 'text-green-600' : 'text-gray-500'">
-                                        One number
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasSpecialChar ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span
-                                        :class="passwordValidation.hasSpecialChar ? 'text-green-600' : 'text-gray-500'">
-                                        One special character (!@#$%^&*)
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+            <form v-if="!success" class="form-container" @submit.prevent="handleSubmit">
+                <div class="form-group">
+                    <label for="password" class="label">New password</label>
+                    <div class="input-group">
+                        <input id="password" v-model="password" name="password"
+                            :type="showPassword ? 'text' : 'password'" required class="input"
+                            placeholder="Enter new password" @input="validatePassword" />
+                        <button type="button" @click="togglePassword" class="input-icon"
+                            :class="showPassword ? 'active' : ''">
+                            <!-- Eye with diagonal stroke (password hidden) -->
+                            <svg v-if="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4l16 16" />
+                            </svg>
+                            <!-- Regular eye (password visible) -->
+                            <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
 
-                    <div>
-                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm
-                            password</label>
-                        <div class="relative mt-1">
-                            <input id="confirmPassword" v-model="confirmPassword" name="confirmPassword"
-                                :type="showConfirmPassword ? 'text' : 'password'" required
-                                class="input rounded-md pr-10" placeholder="Confirm password" />
-                            <button type="button" @click="toggleConfirmPassword"
-                                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700">
-                                <svg v-if="showConfirmPassword" class="h-5 w-5" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21">
-                                    </path>
-                                </svg>
-                                <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <!-- Password Match Indicator -->
-                        <div v-if="confirmPassword" class="mt-2 text-sm">
+                    <!-- Password Requirements -->
+                    <div class="mt-3 text-sm">
+                        <p class="text-gray-600 mb-2">Password must contain:</p>
+                        <div class="space-y-1">
                             <div class="flex items-center gap-2">
-                                <svg v-if="passwordsMatch" class="h-4 w-4 text-green-500" fill="currentColor"
-                                    viewBox="0 0 20 20">
+                                <svg class="h-4 w-4"
+                                    :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'"
+                                    fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                         clip-rule="evenodd"></path>
                                 </svg>
-                                <svg v-else class="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                <span :class="passwordValidation.minLength ? 'text-green-600' : 'text-gray-500'">
+                                    At least 8 characters
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="h-4 w-4"
+                                    :class="passwordValidation.hasUppercase ? 'text-green-500' : 'text-gray-400'"
+                                    fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                         clip-rule="evenodd"></path>
                                 </svg>
-                                <span :class="passwordsMatch ? 'text-green-600' : 'text-red-600'">
-                                    {{ passwordsMatch ? 'Passwords match' : 'Passwords do not match' }}
+                                <span :class="passwordValidation.hasUppercase ? 'text-green-600' : 'text-gray-500'">
+                                    One uppercase letter
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="h-4 w-4"
+                                    :class="passwordValidation.hasLowercase ? 'text-green-500' : 'text-gray-400'"
+                                    fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span :class="passwordValidation.hasLowercase ? 'text-green-600' : 'text-gray-500'">
+                                    One lowercase letter
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="h-4 w-4"
+                                    :class="passwordValidation.hasNumber ? 'text-green-500' : 'text-gray-400'"
+                                    fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span :class="passwordValidation.hasNumber ? 'text-green-600' : 'text-gray-500'">
+                                    One number
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="h-4 w-4"
+                                    :class="passwordValidation.hasSpecialChar ? 'text-green-500' : 'text-gray-400'"
+                                    fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span :class="passwordValidation.hasSpecialChar ? 'text-green-600' : 'text-gray-500'">
+                                    One special character (!@#$%^&*)
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="confirmPassword" class="label">Confirm password</label>
+                    <div class="input-group">
+                        <input id="confirmPassword" v-model="confirmPassword" name="confirmPassword"
+                            :type="showConfirmPassword ? 'text' : 'password'" required class="input"
+                            placeholder="Confirm new password" />
+                        <button type="button" @click="toggleConfirmPassword" class="input-icon"
+                            :class="showConfirmPassword ? 'active' : ''">
+                            <!-- Eye with diagonal stroke (password hidden) -->
+                            <svg v-if="!showConfirmPassword" class="h-5 w-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4l16 16" />
+                            </svg>
+                            <!-- Regular eye (password visible) -->
+                            <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Password Match Indicator -->
+                    <div v-if="confirmPassword" class="mt-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <svg v-if="passwordsMatch" class="h-4 w-4 text-green-500" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <svg v-else class="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <span :class="passwordsMatch ? 'text-green-600' : 'text-red-600'">
+                                {{ passwordsMatch ? 'Passwords match' : 'Passwords do not match' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <button type="submit" class="btn-primary w-full" :disabled="loading || !isValid">
-                        {{ loading ? 'Resetting...' : 'Reset Password' }}
+                        <span v-if="loading" class="flex items-center justify-center">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            Resetting...
+                        </span>
+                        <span v-else>Reset Password</span>
                     </button>
                     <p v-if="!isValid && (password || confirmPassword)" class="mt-2 text-sm text-red-600 text-center">
                         Please ensure your password meets all requirements and passwords match
                     </p>
                 </div>
 
-                <div v-if="error" class="rounded-md bg-red-50 p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800">
-                                {{ error }}
-                            </p>
-                        </div>
+                <div v-if="error"
+                    class="mt-4 bg-red-50/80 backdrop-blur-sm border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm text-center shadow-sm">
+                    <div class="flex items-center justify-center">
+                        <svg class="h-4 w-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {{ error }}
                     </div>
                 </div>
             </form>
 
             <div class="text-sm text-center">
                 <router-link to="/login"
-                    class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-500">
+                    class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:text-indigo-500">
                     Back to login
                 </router-link>
             </div>

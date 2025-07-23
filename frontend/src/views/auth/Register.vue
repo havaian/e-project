@@ -5,7 +5,8 @@
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
             </div>
 
-            <div v-if="registrationSuccess" class="rounded-md bg-green-50 p-4">
+            <div v-if="registrationSuccess"
+                class="rounded-2xl bg-green-50/80 backdrop-blur-sm p-4 border border-green-200">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -28,69 +29,70 @@
                 </div>
             </div>
 
-            <form v-else class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-                <div class="rounded-md shadow-sm space-y-4">
-                    <div>
+            <form v-else class="form-container" @submit.prevent="handleSubmit">
+                <div class="space-y-4">
+                    <div class="form-group">
                         <label for="role" class="label">I am a</label>
-                        <select id="role" v-model="formData.role" class="input mt-1" required @change="watchRole">
+                        <select id="role" v-model="formData.role" class="input" required @change="watchRole">
                             <option value="client">Client</option>
                             <option value="provider">Provider</option>
                         </select>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
+                        <div class="form-group">
                             <label for="firstName" class="label">First Name</label>
-                            <input id="firstName" v-model="formData.firstName" type="text" required
-                                class="input mt-1" />
+                            <input id="firstName" v-model="formData.firstName" type="text" required class="input"
+                                placeholder="Enter first name" />
                         </div>
-                        <div>
+                        <div class="form-group">
                             <label for="lastName" class="label">Last Name</label>
-                            <input id="lastName" v-model="formData.lastName" type="text" required class="input mt-1" />
+                            <input id="lastName" v-model="formData.lastName" type="text" required class="input"
+                                placeholder="Enter last name" />
                         </div>
                     </div>
 
-                    <div>
+                    <div class="form-group">
                         <label for="email" class="label">Email address</label>
-                        <input id="email" v-model="formData.email" type="email" required class="input mt-1" />
+                        <input id="email" v-model="formData.email" type="email" required class="input"
+                            placeholder="Enter your email" />
                     </div>
 
-                    <div>
+                    <div class="form-group">
                         <label for="phone" class="label">Phone number</label>
-                        <input id="phone" v-model="formData.phone" type="tel" required class="input mt-1"
+                        <input id="phone" v-model="formData.phone" type="tel" required class="input"
                             placeholder="+998901234567" />
                     </div>
 
-                    <div>
+                    <div class="form-group">
                         <label for="password" class="label">Password</label>
-                        <div class="relative">
+                        <div class="input-group">
                             <input id="password" v-model="formData.password" :type="showPassword ? 'text' : 'password'"
-                                required class="input mt-1 pr-10" @input="validatePassword" />
-                            <button type="button" @click="togglePassword"
-                                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700">
+                                required class="input" placeholder="Enter your password" @input="validatePassword" />
+                            <button type="button" @click="togglePassword" class="input-icon"
+                                :class="showPassword ? 'active' : ''">
                                 <!-- Eye with diagonal stroke (password hidden) -->
-                                <svg v-if="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <!-- Complete eye shape -->
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                <svg v-if="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    <!-- Diagonal stroke -->
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 4l16 16" />
                                 </svg>
                                 <!-- Regular eye (password visible) -->
                                 <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </button>
                         </div>
 
                         <!-- Password Requirements -->
-                        <div class="mt-2 text-sm">
+                        <div class="mt-3 text-sm">
                             <p class="text-gray-600 mb-2">Password must contain:</p>
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
@@ -173,10 +175,8 @@
                         </div>
                     </div>
 
-                    <!-- Removed: Date of Birth and Gender moved to conditional blocks -->
-
                     <template v-if="formData.role === 'provider'">
-                        <div>
+                        <div class="form-group">
                             <label for="specializations" class="label">Specializations</label>
                             <div class="space-y-2">
                                 <div v-for="(spec, index) in formData.specializations" :key="index" class="flex gap-2">
@@ -188,37 +188,37 @@
                                         </option>
                                     </select>
                                     <button type="button" @click="removeSpecialization(index)"
-                                        class="px-2 py-1 text-red-600 hover:text-red-800">
+                                        class="px-3 py-2 text-red-600 hover:text-red-800 transition-colors">
                                         Remove
                                     </button>
                                 </div>
                                 <button type="button" @click="addSpecialization"
-                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-800"
+                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-brand-1 hover:to-brand-2"
                                     :disabled="availableSpecializations.length <= formData.specializations.filter(s => s !== '').length">
                                     + Add Specialization
                                 </button>
                             </div>
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="licenseNumber" class="label">License Number</label>
                             <input id="licenseNumber" v-model="formData.licenseNumber" type="text" required
-                                class="input mt-1" />
+                                class="input" placeholder="Enter license number" />
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="experience" class="label">Years of Experience</label>
                             <input id="experience" v-model.number="formData.experience" type="number" min="0" required
-                                class="input mt-1" />
+                                class="input" placeholder="0" />
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="sessionFee" class="label">Session Fee (UZS)</label>
                             <input id="sessionFee" v-model.number="formData.sessionFee" type="number" min="0" required
-                                class="input mt-1" />
+                                class="input" placeholder="0" />
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="languages" class="label">Languages</label>
                             <div class="space-y-2">
                                 <div v-for="(lang, index) in formData.languages" :key="index" class="flex gap-2">
@@ -230,12 +230,12 @@
                                         </option>
                                     </select>
                                     <button type="button" @click="removeLanguage(index)"
-                                        class="px-2 py-1 text-red-600 hover:text-red-800">
+                                        class="px-3 py-2 text-red-600 hover:text-red-800 transition-colors">
                                         Remove
                                     </button>
                                 </div>
                                 <button type="button" @click="addLanguage"
-                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-800"
+                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-brand-1 hover:to-brand-2"
                                     :disabled="availableLanguages.length <= formData.languages.filter(l => l !== '').length">
                                     + Add Language
                                 </button>
@@ -244,16 +244,16 @@
                     </template>
 
                     <!-- Date of Birth - Only for clients -->
-                    <div v-if="formData.role === 'client'">
+                    <div v-if="formData.role === 'client'" class="form-group">
                         <label for="dateOfBirth" class="label">Date of Birth</label>
-                        <input id="dateOfBirth" v-model="formData.dateOfBirth" type="date" required class="input mt-1"
+                        <input id="dateOfBirth" v-model="formData.dateOfBirth" type="date" required class="input"
                             :max="maxDate" />
                     </div>
 
                     <!-- Gender - Only for clients -->
-                    <div v-if="formData.role === 'client'">
+                    <div v-if="formData.role === 'client'" class="form-group">
                         <label for="gender" class="label">Gender</label>
-                        <select id="gender" v-model="formData.gender" class="input mt-1" required>
+                        <select id="gender" v-model="formData.gender" class="input" required>
                             <option value="">Select gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -265,7 +265,18 @@
 
                 <div>
                     <button type="submit" class="btn-primary w-full" :disabled="loading || !isPasswordValid">
-                        {{ loading ? 'Creating account...' : 'Create account' }}
+                        <span v-if="loading" class="flex items-center justify-center">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            Creating account...
+                        </span>
+                        <span v-else>Create account</span>
                     </button>
                     <p v-if="!isPasswordValid && formData.password" class="mt-2 text-sm text-red-600 text-center">
                         Please ensure your password meets all requirements
@@ -276,13 +287,20 @@
             <p class="mt-2 text-center text-sm text-gray-600">
                 Already have an account?
                 <router-link to="/login"
-                    class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-500">
+                    class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:text-indigo-500">
                     Sign in
                 </router-link>
             </p>
 
-            <div v-if="error" class="mt-4 text-sm text-center text-red-600">
-                {{ error }}
+            <div v-if="error"
+                class="mt-4 bg-red-50/80 backdrop-blur-sm border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm text-center shadow-sm">
+                <div class="flex items-center justify-center">
+                    <svg class="h-4 w-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ error }}
+                </div>
             </div>
         </div>
     </div>

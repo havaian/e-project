@@ -1,28 +1,54 @@
 <template>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white shadow rounded-lg overflow-hidden h-[600px] flex flex-col">
-            <!-- Chat Header -->
-            <div class="p-4 border-b border-gray-200">
-                <div class="flex items-center">
-                    <div class="relative">
-                        <img :src="recipientAvatar" :alt="recipientName" class="h-10 w-10 rounded-full object-cover" />
-                        <!-- Online Status Indicator -->
-                        <div v-if="recipientOnlineStatus.isOnline"
-                            class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full">
+        <div class="card-element overflow-hidden h-[600px] flex flex-col">
+            <!-- Enhanced Chat Header -->
+            <div class="p-6 border-b border-gray-200/50 bg-gradient-to-r from-brand-1/5 to-brand-2/5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <img :src="recipientAvatar" :alt="recipientName"
+                                class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-md" />
+                            <!-- Enhanced Online Status Indicator -->
+                            <div v-if="recipientOnlineStatus.isOnline"
+                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse">
+                            </div>
+                            <div v-else
+                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-gray-400 border-2 border-white rounded-full">
+                            </div>
                         </div>
-                        <div v-else
-                            class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full">
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">{{ recipientName }}</h3>
+                            <p class="text-sm text-gray-500 flex items-center">
+                                <span class="w-2 h-2 rounded-full mr-2"
+                                    :class="recipientOnlineStatus.isOnline ? 'bg-green-500' : 'bg-gray-400'"></span>
+                                {{ recipientStatus }}
+                            </p>
                         </div>
                     </div>
-                    <div class="ml-3">
-                        <h3 class="text-lg font-medium text-gray-900">{{ recipientName }}</h3>
-                        <p class="text-sm text-gray-500">{{ recipientStatus }}</p>
+
+                    <!-- Chat Actions -->
+                    <div class="flex items-center space-x-2">
+                        <button
+                            class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Messages Container -->
-            <div ref="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4" @scroll="handleScroll">
+            <!-- Enhanced Messages Container -->
+            <div ref="messagesContainer" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30"
+                @scroll="handleScroll">
                 <template v-for="message in messages" :key="message._id">
                     <!-- Message Bubble -->
                     <div class="flex mb-4" :class="[
@@ -31,40 +57,49 @@
                         <!-- Other Person's Avatar -->
                         <div v-if="message.sender._id !== authStore.user._id" class="flex-shrink-0 mr-3">
                             <img :src="message.sender.profilePicture || '/images/user-placeholder.jpg'"
-                                :alt="message.sender.firstName" class="h-10 w-10 rounded-full object-cover" />
+                                :alt="message.sender.firstName"
+                                class="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-sm" />
                         </div>
 
-                        <!-- Message Content -->
-                        <div class="rounded-lg px-4 py-2 max-w-[70%] shadow relative" :class="[
+                        <!-- Enhanced Message Content -->
+                        <div class="rounded-2xl px-4 py-3 max-w-[70%] shadow-sm relative" :class="[
                             message.sender._id === authStore.user._id
-                                ? 'bg-indigo-600 text-white'
-                                : 'bg-gray-100 text-gray-900'
+                                ? 'bg-gradient-to-r from-brand-1 to-brand-2 text-white'
+                                : 'bg-white text-gray-900 border border-gray-100'
                         ]">
                             <!-- Sender Label -->
-                            <div class="text-xs opacity-75 mb-1">
+                            <div class="text-xs mb-1"
+                                :class="message.sender._id === authStore.user._id ? 'opacity-75' : 'text-gray-500'">
                                 {{ formatSenderLabel(message.sender) }}
                             </div>
 
                             <!-- Message Text -->
-                            <div class="text-sm">{{ message.text }}</div>
+                            <div class="text-sm leading-relaxed">{{ message.text }}</div>
 
-                            <!-- Timestamp and Read Status -->
-                            <div class="flex items-center justify-between mt-1">
-                                <div class="text-xs opacity-70">
+                            <!-- Enhanced Timestamp and Read Status -->
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-xs"
+                                    :class="message.sender._id === authStore.user._id ? 'opacity-70' : 'text-gray-500'">
                                     {{ formatTime(message.createdAt) }}
                                 </div>
 
-                                <!-- Read Status (only for sent messages) -->
+                                <!-- Enhanced Read Status (only for sent messages) -->
                                 <div v-if="message.sender._id === authStore.user._id" class="ml-2">
-                                    <div v-if="message.isRead" class="flex items-center space-x-0.5">
-                                        <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    <div v-if="message.isRead" class="flex items-center space-x-0.5" title="Read">
+                                        <svg class="w-4 h-4 text-white/70" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd" />
                                         </svg>
-                                        <svg class="w-4 h-4 text-gray-300 -ml-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        <svg class="w-4 h-4 text-white/70 -ml-1" fill="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <svg v-else class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg v-else class="w-4 h-4 text-white/70" fill="currentColor" viewBox="0 0 20 20"
+                                        title="Sent">
                                         <path fill-rule="evenodd"
                                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                             clip-rule="evenodd" />
@@ -76,32 +111,52 @@
                         <!-- User's Avatar -->
                         <div v-if="message.sender._id === authStore.user._id" class="flex-shrink-0 ml-3">
                             <div
-                                class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                                class="h-10 w-10 rounded-full bg-gradient-to-r from-brand-1 to-brand-2 flex items-center justify-center text-white font-semibold ring-2 ring-white shadow-sm">
                                 {{ userInitials }}
                             </div>
                         </div>
                     </div>
                 </template>
 
-                <!-- Typing Indicator -->
-                <div v-if="isTyping" class="flex items-center space-x-2 text-gray-500">
-                    <span>{{ recipientName }} is typing</span>
-                    <div class="flex space-x-1">
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s">
-                        </div>
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s">
+                <!-- Enhanced Typing Indicator -->
+                <div v-if="isTyping" class="flex items-center space-x-3 text-gray-500">
+                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                    <div class="bg-white rounded-2xl px-4 py-3 border border-gray-100 shadow-sm">
+                        <div class="flex items-center space-x-1">
+                            <span class="text-sm text-gray-600">{{ recipientName }} is typing</span>
+                            <div class="flex space-x-1 ml-2">
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                                    style="animation-delay: 0.2s"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                                    style="animation-delay: 0.4s"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Input Area -->
-            <div class="p-4 border-t border-gray-200">
-                <form @submit.prevent="sendMessage" class="flex space-x-2">
-                    <input v-model="newMessage" @input="handleTyping" @keydown="handleKeyDown" type="text"
-                        class="input flex-1" placeholder="Type your message..." :disabled="loading || sending" />
-                    <button type="submit" class="btn-primary" :disabled="loading || sending || !newMessage.trim()">
+            <!-- Enhanced Input Area -->
+            <div class="p-4 border-t border-gray-200/50 bg-white">
+                <form @submit.prevent="sendMessage" class="flex space-x-3">
+                    <div class="flex-1 input-group">
+                        <input v-model="newMessage" @input="handleTyping" @keydown="handleKeyDown" type="text"
+                            class="input pr-12" placeholder="Type your message..." :disabled="loading || sending" />
+                        <button v-if="newMessage.trim()" type="button" @click="newMessage = ''"
+                            class="input-icon text-gray-400 hover:text-gray-600">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="submit" class="btn-primary px-4 py-4 flex items-center justify-center min-w-[3rem]"
+                        :disabled="loading || sending || !newMessage.trim()">
                         <svg v-if="!sending" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 19l9 2-9-18-9 18l9-2zm0 0v-8" />

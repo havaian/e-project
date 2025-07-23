@@ -1,13 +1,13 @@
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-8">My Appointments</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">My Appointments</h1>
 
         <!-- Filters -->
-        <div class="bg-white shadow rounded-lg p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label for="status" class="label">Status</label>
-                    <select id="status" v-model="filters.status" class="input mt-1" @change="fetchAppointments">
+        <div class="card-element p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="form-group">
+                    <label for="status" class="label">Filter by Status</label>
+                    <select id="status" v-model="filters.status" class="input" @change="fetchAppointments">
                         <option value="">All Status</option>
                         <option value="scheduled">Scheduled</option>
                         <option value="completed">Completed</option>
@@ -20,34 +20,46 @@
 
         <!-- Appointments List -->
         <div class="space-y-6">
-            <div v-if="loading" class="text-center py-8">
+            <div v-if="loading" class="text-center py-12">
                 <div
-                    class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent">
+                    class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-1 border-t-transparent">
                 </div>
-                <p class="mt-2 text-gray-600">Loading appointments...</p>
+                <p class="mt-4 text-gray-600">Loading your appointments...</p>
             </div>
 
             <template v-else>
-                <div v-if="appointments.length === 0" class="text-center py-8">
-                    <p class="text-gray-600">No appointments found.</p>
+                <div v-if="appointments.length === 0" class="text-center py-12">
+                    <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m2 0h2a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2h2m6 4v2m0 4v2">
+                            </path>
+                        </svg>
+                    </div>
+                    <p class="text-gray-600 text-lg">No appointments found</p>
+                    <p class="text-gray-500 text-sm mt-1">Schedule an appointment to get started</p>
                 </div>
 
                 <div v-else class="space-y-4">
                     <div v-for="appointment in appointments" :key="appointment._id"
-                        class="bg-white shadow rounded-lg overflow-hidden">
+                        class="card-element overflow-hidden transition-all duration-300 hover:shadow-lg">
                         <div class="p-6">
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center space-x-4">
-                                    <img :src="appointment.provider.profilePicture || '/images/user-placeholder.jpg'"
-                                        :alt="appointment.provider.firstName"
-                                        class="h-12 w-12 rounded-full object-cover" />
+                                    <div class="relative">
+                                        <img :src="appointment.provider.profilePicture || '/images/user-placeholder.jpg'"
+                                            :alt="appointment.provider.firstName"
+                                            class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100" />
+                                        <div class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-green-400 border-2 border-white"
+                                            v-if="appointment.status === 'scheduled'"></div>
+                                    </div>
                                     <div>
-                                        <h3 class="text-lg font-medium text-gray-900">
+                                        <h3 class="text-lg font-semibold text-gray-900">
                                             {{ appointment.provider.firstName }} {{ appointment.provider.lastName }}
                                         </h3>
-                                        <div class="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
+                                        <div class="mt-2 flex flex-wrap gap-2">
                                             <span v-for="spec in appointment.provider.specializations" :key="spec"
-                                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                                class="status-info text-xs">
                                                 {{ spec }}
                                             </span>
                                         </div>
@@ -57,7 +69,7 @@
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                                         :class="{
                                             'bg-green-100 text-green-800': appointment.status === 'completed',
-                                            'bg-yellow-100 text-yellow-800': appointment.status === 'scheduled',
+                                            'bg-blue-100 text-blue-800': appointment.status === 'scheduled',
                                             'bg-red-100 text-red-800': appointment.status === 'canceled' || appointment.status === 'no-show'
                                         }">
                                         {{ appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1) }}
@@ -65,31 +77,70 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-500">Date & Time</p>
-                                    <p class="text-gray-900">{{ formatDateTime(appointment.dateTime) }}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="flex items-center space-x-3">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m2 0h2a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2h2m6 4v2m0 4v2">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Date & Time</p>
+                                        <p class="font-medium text-gray-900">{{ formatDateTime(appointment.dateTime) }}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Session Type</p>
-                                    <p class="text-gray-900">{{ appointment.type.charAt(0).toUpperCase() +
-                                        appointment.type.slice(1) }}</p>
+                                <div class="flex items-center space-x-3">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Session Type</p>
+                                        <p class="font-medium text-gray-900">{{ appointment.type.charAt(0).toUpperCase()
+                                            + appointment.type.slice(1) }}</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mt-6 flex justify-end space-x-4">
+                            <div class="flex justify-end space-x-3">
                                 <router-link :to="{ name: 'appointment-details', params: { id: appointment._id } }"
                                     class="btn-secondary">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                        </path>
+                                    </svg>
                                     View Details
                                 </router-link>
                                 <button v-if="appointment.status === 'scheduled'"
-                                    class="btn-secondary text-red-600 hover:text-red-700"
+                                    class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50"
                                     @click="cancelAppointment(appointment._id)">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
                                     Cancel
                                 </button>
                                 <button
                                     v-if="appointment.status === 'scheduled' && isWithinJoinWindow(appointment.dateTime)"
-                                    class="btn-primary" @click="joinSession(appointment._id)">
+                                    class="btn-primary">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
                                     Join Now
                                 </button>
                             </div>
@@ -97,11 +148,31 @@
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <div v-if="totalPages > 1" class="flex justify-center space-x-2 mt-8">
-                    <button v-for="page in totalPages" :key="page" class="btn-secondary"
-                        :class="{ 'bg-indigo-600 text-white': currentPage === page }" @click="handlePageChange(page)">
-                        {{ page }}
+                <!-- Enhanced Pagination -->
+                <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 mt-8">
+                    <button v-if="currentPage > 1" @click="handlePageChange(currentPage - 1)"
+                        class="btn-secondary px-3 py-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                    </button>
+
+                    <div class="flex space-x-1">
+                        <button v-for="page in totalPages" :key="page"
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                            :class="currentPage === page ? 'bg-brand-1 text-white' : 'text-gray-700 hover:bg-gray-100'"
+                            @click="handlePageChange(page)">
+                            {{ page }}
+                        </button>
+                    </div>
+
+                    <button v-if="currentPage < totalPages" @click="handlePageChange(currentPage + 1)"
+                        class="btn-secondary px-3 py-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
                     </button>
                 </div>
             </template>
