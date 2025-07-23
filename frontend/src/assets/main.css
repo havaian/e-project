@@ -388,25 +388,25 @@
   /* Gradient from colors */
   .from-success {
     --tw-gradient-from: rgb(var(--color-success-rgb));
-    --tw-gradient-to: rgb(var(--color-success-rgb) / 0);
+    --tw-gradient-to: rgb(var(--color1-rgb) / 50);
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   }
   
   .from-color1 {
     --tw-gradient-from: rgb(var(--color1-rgb));
-    --tw-gradient-to: rgb(var(--color1-rgb) / 0);
+    --tw-gradient-to: rgb(var(--color-success-rgb) / 50);
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   }
   
   .from-color2 {
     --tw-gradient-from: rgb(var(--color2-rgb));
-    --tw-gradient-to: rgb(var(--color2-rgb) / 0);
+    --tw-gradient-to: rgb(var(--color2-rgb) / 50);
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   }
   
   .from-color3 {
     --tw-gradient-from: rgb(var(--color3-rgb));
-    --tw-gradient-to: rgb(var(--color3-rgb) / 0);
+    --tw-gradient-to: rgb(var(--color3-rgb) / 50);
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   }
   

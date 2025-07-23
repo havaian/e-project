@@ -13,6 +13,7 @@ export default {
         'brand-3': 'rgb(var(--color-brand-3-rgb) / <alpha-value>)',
         'brand-4': 'rgb(var(--color-brand-4-rgb) / <alpha-value>)',
         'brand-5': 'rgb(var(--color-brand-5-rgb) / <alpha-value>)',
+        'brand-6': 'rgb(var(--color-brand-6-rgb) / <alpha-value>)',
         
         // Semantic colors using CSS variables
         'success': 'rgb(var(--color-success-rgb) / <alpha-value>)',
@@ -25,6 +26,7 @@ export default {
         'color3': 'rgb(var(--color3-rgb) / <alpha-value>)',
         'color4': 'rgb(var(--color4-rgb) / <alpha-value>)',
         'color5': 'rgb(var(--color5-rgb) / <alpha-value>)',
+        'color6': 'rgb(var(--color6-rgb) / <alpha-value>)',
 
         // Legacy primary/secondary/accent - use hex directly for these
         'primary': 'var(--color-brand-1)',

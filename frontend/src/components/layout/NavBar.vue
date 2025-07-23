@@ -1,5 +1,5 @@
 <template>
-    <nav class="bg-white/95 backdrop-blur-md shadow-lg border-b border-color1/10 sticky top-0 z-50">
+    <nav class="bg-white/95 backdrop-blur-md shadow-lg border-b border-sky-500/10 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <!-- Logo and main navigation -->
@@ -11,7 +11,7 @@
                         </div>
                         <span class="text-xl font-bold">
                             {{ appTitle1 }}<span
-                                class="bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent">{{ appTitle2 }}</span><span
+                                class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">{{ appTitle2 }}</span><span
                                 class="text-success">{{ appTitle3 }}</span>
                         </span>
                     </router-link>
@@ -19,24 +19,24 @@
                     <!-- Desktop Navigation -->
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
                         <router-link to="/"
-                            class="text-gray-700 hover:text-color1 px-3 py-2 text-sm font-medium transition-colors duration-200"
-                            :class="{ 'text-color1 border-b-2 border-color1': $route.path === '/' }">
+                            class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                            :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path === '/' }">
                             Home
                         </router-link>
                         <router-link to="/providers"
-                            class="text-gray-700 hover:text-color1 px-3 py-2 text-sm font-medium transition-colors duration-200"
-                            :class="{ 'text-color1 border-b-2 border-color1': $route.path === '/providers' }">
+                            class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                            :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path === '/providers' }">
                             Find Providers
                         </router-link>
                         <template v-if="authStore.isAuthenticated">
                             <router-link v-if="authStore.isClient" to="/appointments/client"
-                                class="text-gray-700 hover:text-color1 px-3 py-2 text-sm font-medium transition-colors duration-200"
-                                :class="{ 'text-color1 border-b-2 border-color1': $route.path.includes('/appointments/client') }">
+                                class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/client') }">
                                 My Appointments
                             </router-link>
                             <router-link v-if="authStore.isProvider" to="/appointments/provider"
-                                class="text-gray-700 hover:text-color1 px-3 py-2 text-sm font-medium transition-colors duration-200"
-                                :class="{ 'text-color1 border-b-2 border-color1': $route.path.includes('/appointments/provider') }">
+                                class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/provider') }">
                                 My Schedule
                             </router-link>
                         </template>
@@ -46,7 +46,7 @@
                 <!-- Mobile menu button -->
                 <div class="sm:hidden flex items-center">
                     <button @click="toggleMobileMenu" type="button"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-color1 hover:bg-color1/5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-color1 transition-colors duration-200">
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-sky-500 hover:bg-sky-500/5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500 transition-colors duration-200">
                         <span class="sr-only">Open main menu</span>
                         <!-- Icon when menu is closed -->
                         <svg v-if="!showMobileMenu" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -68,9 +68,9 @@
                     <template v-if="authStore.isAuthenticated">
                         <div class="relative">
                             <button @click="toggleProfileMenu"
-                                class="flex items-center space-x-3 px-4 py-2 rounded-xl bg-gradient-to-r from-color1/10 to-color2/10 hover:from-color1/20 hover:to-color2/20 transition-all duration-200 border border-color1/20">
+                                class="flex items-center space-x-3 px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500/10 to-emerald-500/10 hover:from-sky-500/20 hover:to-emerald-500/20 transition-all duration-200 border border-sky-500/20">
                                 <div
-                                    class="w-8 h-8 bg-gradient-to-r from-color1 to-color3 rounded-full flex items-center justify-center">
+                                    class="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                                     <span class="text-white font-semibold text-sm">{{ authStore.user?.firstName?.[0]
                                     }}</span>
                                 </div>
@@ -82,10 +82,10 @@
                                 </svg>
                             </button>
                             <div v-if="showProfileMenu"
-                                class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white/95 backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-color1/10">
+                                class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white/95 backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-sky-500/10">
                                 <div class="py-1">
                                     <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
-                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-color1/5 hover:text-color1 transition-colors duration-200">
+                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -95,7 +95,7 @@
                                         </div>
                                     </router-link>
                                     <router-link to="/profile/edit"
-                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-color1/5 hover:text-color1 transition-colors duration-200">
+                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -122,7 +122,7 @@
                     </template>
                     <template v-else>
                         <router-link to="/login"
-                            class="text-color1 hover:text-color2 font-medium px-4 py-2 rounded-xl transition-colors duration-200">
+                            class="text-sky-500 hover:text-emerald-500 font-medium px-4 py-2 rounded-xl transition-colors duration-200">
                             Sign In
                         </router-link>
                         <router-link to="/register" class="btn-element-primary text-sm">
@@ -134,37 +134,37 @@
         </div>
 
         <!-- Mobile menu -->
-        <div v-if="showMobileMenu" class="sm:hidden bg-white/95 backdrop-blur-md border-t border-color1/10">
+        <div v-if="showMobileMenu" class="sm:hidden bg-white/95 backdrop-blur-md border-t border-sky-500/10">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <router-link to="/"
-                    class="text-gray-700 hover:text-color1 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    :class="{ 'text-color1 bg-color1/5': $route.path === '/' }"
+                    class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                    :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/' }"
                     @click="closeMobileMenu">
                     Home
                 </router-link>
                 <router-link to="/providers"
-                    class="text-gray-700 hover:text-color1 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    :class="{ 'text-color1 bg-color1/5': $route.path === '/providers' }"
+                    class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                    :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/providers' }"
                     @click="closeMobileMenu">
                     Find Providers
                 </router-link>
                 <template v-if="authStore.isAuthenticated">
                     <router-link v-if="authStore.isClient" to="/appointments/client"
-                        class="text-gray-700 hover:text-color1 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                        :class="{ 'text-color1 bg-color1/5': $route.path.includes('/appointments/client') }"
+                        class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/client') }"
                         @click="closeMobileMenu">
                         My Appointments
                     </router-link>
                     <router-link v-if="authStore.isProvider" to="/appointments/provider"
-                        class="text-gray-700 hover:text-color1 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                        :class="{ 'text-color1 bg-color1/5': $route.path.includes('/appointments/provider') }"
+                        class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/provider') }"
                         @click="closeMobileMenu">
                         My Schedule
                     </router-link>
                     <div class="border-t border-gray-200 pt-4 pb-3">
                         <div class="flex items-center px-3 mb-3">
                             <div
-                                class="w-10 h-10 bg-gradient-to-r from-color1 to-color3 rounded-full flex items-center justify-center">
+                                class="w-10 h-10 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                                 <span class="text-white font-semibold">{{ authStore.user?.firstName?.[0] }}</span>
                             </div>
                             <div class="ml-3">
@@ -174,12 +174,12 @@
                             </div>
                         </div>
                         <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
-                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-color1 hover:bg-color1/5 transition-colors duration-200"
+                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
                             My Profile
                         </router-link>
                         <router-link to="/profile/edit"
-                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-color1 hover:bg-color1/5 transition-colors duration-200"
+                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
                             Edit Profile
                         </router-link>
@@ -192,7 +192,7 @@
                 <template v-else>
                     <div class="border-t border-gray-200 pt-4 pb-3 space-y-2">
                         <router-link to="/login"
-                            class="block px-3 py-2 text-base font-medium text-color1 hover:text-color2 transition-colors duration-200"
+                            class="block px-3 py-2 text-base font-medium text-sky-500 hover:text-emerald-500 transition-colors duration-200"
                             @click="closeMobileMenu">
                             Sign In
                         </router-link>

@@ -188,7 +188,7 @@
                                     </button>
                                 </div>
                                 <button type="button" @click="addSpecialization"
-                                    class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800"
+                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-800"
                                     :disabled="availableSpecializations.length <= formData.specializations.filter(s => s !== '').length">
                                     + Add Specialization
                                 </button>
@@ -230,7 +230,7 @@
                                     </button>
                                 </div>
                                 <button type="button" @click="addLanguage"
-                                    class="text-sm bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-800"
+                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-800"
                                     :disabled="availableLanguages.length <= formData.languages.filter(l => l !== '').length">
                                     + Add Language
                                 </button>
@@ -271,7 +271,7 @@
             <p class="mt-2 text-center text-sm text-gray-600">
                 Already have an account?
                 <router-link to="/login"
-                    class="font-medium bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-500">
+                    class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-500">
                     Sign in
                 </router-link>
             </p>

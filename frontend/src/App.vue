@@ -124,12 +124,12 @@ body {
 
 /* Custom button styles */
 .btn-element-primary {
-  @apply px-8 py-4 bg-gradient-to-r from-color1 to-color3 text-white font-semibold rounded-2xl hover:from-color2 hover:to-color1 focus:ring-4 focus:ring-color1/30 transition-all shadow-lg;
+  @apply px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-all shadow-lg;
   box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
 }
 
 .btn-element-secondary {
-  @apply px-8 py-4 bg-white/90 backdrop-blur-sm text-color1 font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-color1/30 transition-all shadow-lg border-2 border-color1/20;
+  @apply px-8 py-4 bg-white/90 backdrop-blur-sm text-sky-500 font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-sky-500/30 transition-all shadow-lg border-2 border-sky-500/20;
 }
 
 /* Page transitions */

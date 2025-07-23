@@ -28,7 +28,7 @@
                 </form>
 
                 <div class="text-sm text-center">
-                    <router-link to="/login" class="font-medium bg-gradient-to-r from-color1 to-color3 bg-clip-text text-transparent  hover:text-indigo-500">
+                    <router-link to="/login" class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-500">
                         Back to login
                     </router-link>
                 </div>

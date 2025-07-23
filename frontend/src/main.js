@@ -38,6 +38,7 @@ function setCSSVariables() {
   const color3 = import.meta.env.VITE_COLOR_3
   const color4 = import.meta.env.VITE_COLOR_4
   const color5 = import.meta.env.VITE_COLOR_5
+  const color6 = import.meta.env.VITE_COLOR_6
   const success = import.meta.env.VITE_COLOR_SUCCESS
   const warning = import.meta.env.VITE_COLOR_WARNING
   const error = import.meta.env.VITE_COLOR_ERROR
@@ -48,6 +49,7 @@ function setCSSVariables() {
   const gradientBg3 = import.meta.env.VITE_GRADIENT_BG_3 || color4
   const gradientBg4 = import.meta.env.VITE_GRADIENT_BG_4 || color4
   const gradientBg5 = import.meta.env.VITE_GRADIENT_BG_5 || color5
+  const gradientBg6 = import.meta.env.VITE_GRADIENT_BG_6 || color6
   
   // Get gradient percentages from environment
   const gradientPercent1 = import.meta.env.VITE_GRADIENT_PERCENT_1 || '20%'
@@ -66,6 +68,7 @@ function setCSSVariables() {
   const color3Rgb = hexToRgb(color3)
   const color4Rgb = hexToRgb(color4)
   const color5Rgb = hexToRgb(color5)
+  const color6Rgb = hexToRgb(color6)
   
   // Convert comma-separated RGB to space-separated for CSS
   const successRgb = commaToSpaceRgb(success)
@@ -88,6 +91,7 @@ function setCSSVariables() {
   if (color3) root.style.setProperty('--color-brand-3', color3)
   if (color4) root.style.setProperty('--color-brand-4', color4)
   if (color5) root.style.setProperty('--color-brand-5', color5)
+  if (color6) root.style.setProperty('--color-brand-5', color6)
   if (success) root.style.setProperty('--color-success', success)
   if (warning) root.style.setProperty('--color-warning', warning)
   if (error) root.style.setProperty('--color-error', error)
@@ -101,6 +105,7 @@ function setCSSVariables() {
   if (color3) root.style.setProperty('--color3', color3)
   if (color4) root.style.setProperty('--color4', color4)
   if (color5) root.style.setProperty('--color5', color5)
+  if (color6) root.style.setProperty('--color5', color6)
   
   // Set RGB versions for Tailwind classes (space-separated)
   if (color1Rgb) root.style.setProperty('--color1-rgb', color1Rgb)
@@ -108,6 +113,7 @@ function setCSSVariables() {
   if (color3Rgb) root.style.setProperty('--color3-rgb', color3Rgb)
   if (color4Rgb) root.style.setProperty('--color4-rgb', color4Rgb)
   if (color5Rgb) root.style.setProperty('--color5-rgb', color5Rgb)
+  if (color6Rgb) root.style.setProperty('--color6-rgb', color6Rgb)
   
   // Set RGB variables for brand colors (same as color1-5 but with brand naming)
   if (color1Rgb) root.style.setProperty('--color-brand-1-rgb', color1Rgb)
@@ -115,6 +121,7 @@ function setCSSVariables() {
   if (color3Rgb) root.style.setProperty('--color-brand-3-rgb', color3Rgb)
   if (color4Rgb) root.style.setProperty('--color-brand-4-rgb', color4Rgb)
   if (color5Rgb) root.style.setProperty('--color-brand-5-rgb', color5Rgb)
+  if (color6Rgb) root.style.setProperty('--color-brand-6-rgb', color6Rgb)
   
   // Set semantic color RGB variables
   if (successRgb) root.style.setProperty('--color-success-rgb', successRgb)
