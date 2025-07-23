@@ -15,9 +15,9 @@ export default {
         'brand-5': 'rgb(var(--color-brand-5-rgb) / <alpha-value>)',
         
         // Semantic colors using CSS variables
-        'success': 'rgb(var(--color-success) / <alpha-value>)',
-        'warning': 'rgb(var(--color-warning) / <alpha-value>)',
-        'error': 'rgb(var(--color-error) / <alpha-value>)',
+        'success': 'rgb(var(--color-success-rgb) / <alpha-value>)',
+        'warning': 'rgb(var(--color-warning-rgb) / <alpha-value>)',
+        'error': 'rgb(var(--color-error-rgb) / <alpha-value>)',
         
         // Legacy support for theme - RGB format
         'color1': 'rgb(var(--color1-rgb) / <alpha-value>)',
