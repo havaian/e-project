@@ -163,7 +163,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm text-gray-600">Strength:</span>
                                     <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="h-2 rounded-full transition-all duration-300"
+                                        <div class="h-2 rounded-full transition duration-200 ease-in-out duration-300"
                                             :class="passwordStrengthColor" :style="{ width: passwordStrengthWidth }">
                                         </div>
                                     </div>

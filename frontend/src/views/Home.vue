@@ -66,11 +66,11 @@
           <!-- Action Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
             <router-link to="/providers"
-              class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-all shadow-lg glow-effect">
+              class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition duration-200 ease-in-out shadow-lg glow-effect">
               Find a Provider
             </router-link>
             <router-link to="/register"
-              class="px-8 py-4 bg-white/90 backdrop-blur-sm text-sky-500 font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-sky-500/30 transition-all shadow-lg border-2 border-sky-500/20">
+              class="px-8 py-4 bg-white/90 backdrop-blur-sm text-sky-500 font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-sky-500/30 transition duration-200 ease-in-out shadow-lg border-2 border-sky-500/20">
               Register Now
             </router-link>
           </div>
@@ -220,11 +220,11 @@
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
           <router-link to="/register"
-            class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-all shadow-lg glow-effect">
+            class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition duration-200 ease-in-out shadow-lg glow-effect">
             Get Started Today
           </router-link>
           <router-link to="/providers"
-            class="px-8 py-4 bg-white/90 backdrop-blur-sm text-sky-500 font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-sky-500/30 transition-all shadow-lg border-2 border-sky-500/20">
+            class="px-8 py-4 bg-white/90 backdrop-blur-sm text-sky-500 font-semibold rounded-2xl hover:bg-white focus:ring-4 focus:ring-sky-500/30 transition duration-200 ease-in-out shadow-lg border-2 border-sky-500/20">
             Browse Providers
           </router-link>
         </div>

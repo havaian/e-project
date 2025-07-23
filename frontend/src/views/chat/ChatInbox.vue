@@ -58,7 +58,7 @@
                             <div class="relative flex-shrink-0">
                                 <img :src="getOtherParticipant(conversation).profilePicture || '/images/user-placeholder.jpg'"
                                     :alt="getOtherParticipant(conversation).firstName"
-                                    class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-all" />
+                                    class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition duration-200 ease-in-out" />
                                 <!-- Online Status Indicator (you could add this based on real-time data) -->
                                 <div
                                     class="absolute -bottom-1 -right-1 w-4 h-4 bg-gray-300 border-2 border-white rounded-full">

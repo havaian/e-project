@@ -68,7 +68,7 @@
                     <template v-if="authStore.isAuthenticated">
                         <div class="relative">
                             <button @click="toggleProfileMenu"
-                                class="flex items-center space-x-3 px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500/10 to-emerald-500/10 hover:from-sky-500/20 hover:to-emerald-500/20 transition-all duration-200 border border-sky-500/20">
+                                class="flex items-center space-x-3 px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500/10 to-emerald-500/10 hover:from-sky-500/20 hover:to-emerald-500/20 transition duration-200 ease-in-out duration-200 border border-sky-500/20">
                                 <div
                                     class="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                                     <span class="text-white font-semibold text-sm">{{ authStore.user?.firstName?.[0]

@@ -42,7 +42,7 @@
 
                 <div v-else class="space-y-4">
                     <div v-for="appointment in appointments" :key="appointment._id"
-                        class="card-element overflow-hidden transition-all duration-300 hover:shadow-lg">
+                        class="card-element overflow-hidden transition duration-200 ease-in-out duration-300 hover:shadow-lg">
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center space-x-4">

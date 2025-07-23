@@ -224,13 +224,13 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div v-for="provider in providers" :key="provider._id"
-                class="card-element overflow-hidden group hover:shadow-lg transition-all duration-300">
+                class="card-element overflow-hidden group hover:shadow-lg transition duration-200 ease-in-out duration-300">
                 <div class="p-6">
                   <!-- Provider Header -->
                   <div class="flex items-start space-x-4 mb-4">
                     <div class="relative flex-shrink-0">
                       <img :src="provider.profilePicture || '/images/user-placeholder.jpg'" :alt="provider.firstName"
-                        class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-all" />
+                        class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition duration-200 ease-in-out" />
                       <!-- Online Status Indicator -->
                       <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full">
                       </div>
@@ -308,7 +308,7 @@
 
                   <!-- Action Button -->
                   <router-link :to="{ name: 'provider-profile-view', params: { id: provider._id } }"
-                    class="btn-primary w-full justify-center group-hover:shadow-lg transition-all">
+                    class="btn-primary w-full justify-center group-hover:shadow-lg transition duration-200 ease-in-out">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
