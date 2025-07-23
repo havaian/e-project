@@ -462,13 +462,16 @@ const clearPriceRange = () => {
   filters.maxPrice = ''
 }
 
-const toggleSort = (field, direction) => {
-  if (sorts[field] === direction) {
-    // If clicking the same sort direction, clear it
-    sorts[field] = null
+const toggleSort = (field) => {
+  if (!sorts[field]) {
+    // First click: ascending
+    sorts[field] = 'asc'
+  } else if (sorts[field] === 'asc') {
+    // Second click: descending
+    sorts[field] = 'desc'
   } else {
-    // Set the new sort direction
-    sorts[field] = direction
+    // Third click: clear
+    sorts[field] = null
   }
   handleSearch()
 }
