@@ -9,7 +9,7 @@
 
       <!-- Enhanced Search and filters -->
       <div class="card-element p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="form-group">
             <label for="search" class="label">Search by name</label>
             <div class="input-group">
@@ -44,58 +44,161 @@
                 @input="handleSearch" />
             </div>
           </div>
+        </div>
 
-          <!-- Sort Options -->
-          <div class="form-group">
-            <label for="sortBy" class="label">Sort by</label>
-            <select id="sortBy" v-model="filters.sortBy" class="input" @change="handleSearch">
-              <option value="">Relevance</option>
-              <option value="experience_desc">Experience (High to Low)</option>
-              <option value="experience_asc">Experience (Low to High)</option>
-              <option value="price_asc">Price (Low to High)</option>
-              <option value="price_desc">Price (High to Low)</option>
-              <option value="rating_desc">Rating (High to Low)</option>
-              <option value="rating_asc">Rating (Low to High)</option>
-            </select>
+        <!-- Sort Controls -->
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <label class="label mb-3 block">Sort Options</label>
+          <div class="flex flex-wrap gap-4">
+            <!-- Experience Sort -->
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-medium text-gray-700">Experience:</span>
+              <button @click="toggleSort('experience', 'asc')" :class="[
+                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                sorts.experience === 'asc'
+                  ? 'bg-brand-1 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                </svg>
+                Low to High
+              </button>
+              <button @click="toggleSort('experience', 'desc')" :class="[
+                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                sorts.experience === 'desc'
+                  ? 'bg-brand-1 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+                High to Low
+              </button>
+            </div>
+
+            <!-- Price Sort -->
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-medium text-gray-700">Price:</span>
+              <button @click="toggleSort('price', 'asc')" :class="[
+                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                sorts.price === 'asc'
+                  ? 'bg-brand-1 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                </svg>
+                Low to High
+              </button>
+              <button @click="toggleSort('price', 'desc')" :class="[
+                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                sorts.price === 'desc'
+                  ? 'bg-brand-1 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+                High to Low
+              </button>
+            </div>
+
+            <!-- Rating Sort -->
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-medium text-gray-700">Rating:</span>
+              <button @click="toggleSort('rating', 'asc')" :class="[
+                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                sorts.rating === 'asc'
+                  ? 'bg-brand-1 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                </svg>
+                Low to High
+              </button>
+              <button @click="toggleSort('rating', 'desc')" :class="[
+                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                sorts.rating === 'desc'
+                  ? 'bg-brand-1 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+                High to Low
+              </button>
+            </div>
+
+            <!-- Clear Sorts Button -->
+            <button v-if="hasActiveSorts" @click="clearSorts"
+              class="flex items-center px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear Sorts
+            </button>
           </div>
         </div>
 
         <!-- Filter Summary -->
-        <div v-if="hasActiveFilters" class="mt-4 flex items-center space-x-2">
-          <span class="text-sm text-gray-500">Active filters:</span>
+        <div v-if="hasActiveFilters || hasActiveSorts" class="mt-4 flex items-center space-x-2">
+          <span class="text-sm text-gray-500">Active filters & sorts:</span>
           <div class="flex flex-wrap gap-2">
+            <!-- Filter Tags -->
             <span v-if="filters.name"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               Name: {{ filters.name }}
-              <button @click="filters.name = ''; handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
+              <button @click="filters.name = ''; handleSearch()" class="ml-1 text-blue-800 hover:text-blue-900">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </span>
             <span v-if="filters.specializations"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               {{ filters.specializations }}
               <button @click="filters.specializations = ''; handleSearch()"
-                class="ml-1 text-brand-1 hover:text-brand-2">
+                class="ml-1 text-blue-800 hover:text-blue-900">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </span>
             <span v-if="filters.minPrice || filters.maxPrice"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               Price: {{ getPriceRangeText() }}
-              <button @click="clearPriceRange(); handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
+              <button @click="clearPriceRange(); handleSearch()" class="ml-1 text-blue-800 hover:text-blue-900">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </span>
-            <span v-if="filters.sortBy"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
-              Sort: {{ getSortText() }}
-              <button @click="filters.sortBy = ''; handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
+
+            <!-- Sort Tags -->
+            <span v-if="sorts.experience"
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Experience: {{ sorts.experience === 'asc' ? 'Low to High' : 'High to Low' }}
+              <button @click="toggleSort('experience', null)" class="ml-1 text-green-800 hover:text-green-900">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </span>
+            <span v-if="sorts.price"
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Price: {{ sorts.price === 'asc' ? 'Low to High' : 'High to Low' }}
+              <button @click="toggleSort('price', null)" class="ml-1 text-green-800 hover:text-green-900">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </span>
+            <span v-if="sorts.rating"
+              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Rating: {{ sorts.rating === 'asc' ? 'Low to High' : 'High to Low' }}
+              <button @click="toggleSort('rating', null)" class="ml-1 text-green-800 hover:text-green-900">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -123,8 +226,8 @@
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No providers found</h3>
             <p class="text-gray-500">Try adjusting your search criteria or browse all providers</p>
-            <button @click="clearFilters" class="mt-4 btn-secondary">
-              Clear All Filters
+            <button @click="clearAll" class="mt-4 btn-secondary">
+              Clear All Filters & Sorts
             </button>
           </div>
 
@@ -137,7 +240,7 @@
               </p>
               <div class="flex items-center space-x-4">
                 <span class="text-sm text-gray-500">
-                  {{ filters.sortBy ? `Sorted by ${getSortText()}` : 'Default sorting' }}
+                  {{ getActiveSortsText() }}
                 </span>
               </div>
             </div>
@@ -307,16 +410,27 @@ const providers = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
 const totalPages = ref(1)
+
+// Separate filters and sorts
 const filters = reactive({
   name: '',
   specializations: '',
   minPrice: '',
-  maxPrice: '',
-  sortBy: ''
+  maxPrice: ''
+})
+
+const sorts = reactive({
+  experience: null, // 'asc', 'desc', or null
+  price: null,
+  rating: null
 })
 
 const hasActiveFilters = computed(() => {
-  return filters.name || filters.specializations || filters.minPrice || filters.maxPrice || filters.sortBy
+  return filters.name || filters.specializations || filters.minPrice || filters.maxPrice
+})
+
+const hasActiveSorts = computed(() => {
+  return sorts.experience || sorts.price || sorts.rating
 })
 
 const formatCurrency = (amount) => {
@@ -334,21 +448,51 @@ const getPriceRangeText = () => {
   return ''
 }
 
-const getSortText = () => {
-  const sortOptions = {
-    'experience_desc': 'Experience (High to Low)',
-    'experience_asc': 'Experience (Low to High)',
-    'price_asc': 'Price (Low to High)',
-    'price_desc': 'Price (High to Low)',
-    'rating_desc': 'Rating (High to Low)',
-    'rating_asc': 'Rating (Low to High)'
-  }
-  return sortOptions[filters.sortBy] || 'Relevance'
+const getActiveSortsText = () => {
+  const activeSorts = []
+  if (sorts.experience) activeSorts.push(`Experience: ${sorts.experience === 'asc' ? 'Low to High' : 'High to Low'}`)
+  if (sorts.price) activeSorts.push(`Price: ${sorts.price === 'asc' ? 'Low to High' : 'High to Low'}`)
+  if (sorts.rating) activeSorts.push(`Rating: ${sorts.rating === 'asc' ? 'Low to High' : 'High to Low'}`)
+
+  return activeSorts.length > 0 ? `Sorted by: ${activeSorts.join(', ')}` : 'No sorting applied'
 }
 
 const clearPriceRange = () => {
   filters.minPrice = ''
   filters.maxPrice = ''
+}
+
+const toggleSort = (field, direction) => {
+  if (sorts[field] === direction) {
+    // If clicking the same sort direction, clear it
+    sorts[field] = null
+  } else {
+    // Set the new sort direction
+    sorts[field] = direction
+  }
+  handleSearch()
+}
+
+const clearSorts = () => {
+  sorts.experience = null
+  sorts.price = null
+  sorts.rating = null
+  handleSearch()
+}
+
+const clearAll = () => {
+  // Clear filters
+  filters.name = ''
+  filters.specializations = ''
+  filters.minPrice = ''
+  filters.maxPrice = ''
+
+  // Clear sorts
+  sorts.experience = null
+  sorts.price = null
+  sorts.rating = null
+
+  handleSearch()
 }
 
 async function fetchProviders() {
@@ -357,7 +501,8 @@ async function fetchProviders() {
     const params = {
       page: currentPage.value,
       limit: 9,
-      ...filters
+      ...filters,
+      ...sorts
     }
 
     // Clean up empty parameters
@@ -385,15 +530,6 @@ function handleSearch() {
 function handlePageChange(page) {
   currentPage.value = page
   fetchProviders()
-}
-
-function clearFilters() {
-  filters.name = ''
-  filters.specializations = ''
-  filters.minPrice = ''
-  filters.maxPrice = ''
-  filters.sortBy = ''
-  handleSearch()
 }
 
 onMounted(() => {
