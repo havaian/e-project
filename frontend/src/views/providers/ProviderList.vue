@@ -23,7 +23,7 @@
               </div>
             </div>
           </div>
-
+          
           <div class="form-group">
             <label for="specializations" class="label">Specialization</label>
             <select id="specializations" v-model="filters.specializations" class="input" @change="handleSearch">
@@ -33,15 +33,25 @@
               </option>
             </select>
           </div>
-
+          
           <!-- Price Range Filter -->
           <div class="form-group">
             <label class="label">Price Range (UZS)</label>
             <div class="grid grid-cols-2 gap-2">
-              <input v-model="filters.minPrice" type="number" class="input text-sm" placeholder="Min price"
-                @input="handleSearch" />
-              <input v-model="filters.maxPrice" type="number" class="input text-sm" placeholder="Max price"
-                @input="handleSearch" />
+              <input 
+                v-model="filters.minPrice" 
+                type="number" 
+                class="input text-sm" 
+                placeholder="Min price"
+                @input="handleSearch"
+              />
+              <input 
+                v-model="filters.maxPrice" 
+                type="number" 
+                class="input text-sm" 
+                placeholder="Max price"
+                @input="handleSearch"
+              />
             </div>
           </div>
         </div>
@@ -51,85 +61,52 @@
           <label class="label mb-3 block">Sort Options</label>
           <div class="flex flex-wrap gap-4">
             <!-- Experience Sort -->
-            <div class="flex items-center space-x-2">
-              <span class="text-sm font-medium text-gray-700">Experience:</span>
-              <button @click="toggleSort('experience', 'asc')" :class="[
-                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
-                sorts.experience === 'asc'
-                  ? 'bg-brand-1 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                </svg>
-                Low to High
-              </button>
-              <button @click="toggleSort('experience', 'desc')" :class="[
-                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
-                sorts.experience === 'desc'
-                  ? 'bg-brand-1 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-                High to Low
-              </button>
-            </div>
+            <button @click="toggleSort('experience')" :class="[
+              'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+              sorts.experience
+                ? 'bg-brand-1 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            ]">
+              Experience
+              <svg v-if="sorts.experience === 'asc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+              </svg>
+              <svg v-else-if="sorts.experience === 'desc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
             <!-- Price Sort -->
-            <div class="flex items-center space-x-2">
-              <span class="text-sm font-medium text-gray-700">Price:</span>
-              <button @click="toggleSort('price', 'asc')" :class="[
-                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
-                sorts.price === 'asc'
-                  ? 'bg-brand-1 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                </svg>
-                Low to High
-              </button>
-              <button @click="toggleSort('price', 'desc')" :class="[
-                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
-                sorts.price === 'desc'
-                  ? 'bg-brand-1 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-                High to Low
-              </button>
-            </div>
+            <button @click="toggleSort('price')" :class="[
+              'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+              sorts.price
+                ? 'bg-brand-1 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            ]">
+              Price
+              <svg v-if="sorts.price === 'asc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+              </svg>
+              <svg v-else-if="sorts.price === 'desc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
             <!-- Rating Sort -->
-            <div class="flex items-center space-x-2">
-              <span class="text-sm font-medium text-gray-700">Rating:</span>
-              <button @click="toggleSort('rating', 'asc')" :class="[
-                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
-                sorts.rating === 'asc'
-                  ? 'bg-brand-1 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                </svg>
-                Low to High
-              </button>
-              <button @click="toggleSort('rating', 'desc')" :class="[
-                'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
-                sorts.rating === 'desc'
-                  ? 'bg-brand-1 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-                High to Low
-              </button>
-            </div>
+            <button @click="toggleSort('rating')" :class="[
+              'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
+              sorts.rating
+                ? 'bg-brand-1 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            ]">
+              Rating
+              <svg v-if="sorts.rating === 'asc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+              </svg>
+              <svg v-else-if="sorts.rating === 'desc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
             <!-- Clear Sorts Button -->
             <button v-if="hasActiveSorts" @click="clearSorts"
@@ -179,8 +156,8 @@
             <!-- Sort Tags -->
             <span v-if="sorts.experience"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Experience: {{ sorts.experience === 'asc' ? 'Low to High' : 'High to Low' }}
-              <button @click="toggleSort('experience', null)" class="ml-1 text-green-800 hover:text-green-900">
+              Experience {{ sorts.experience === 'asc' ? '↑' : '↓' }}
+              <button @click="sorts.experience = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -188,8 +165,8 @@
             </span>
             <span v-if="sorts.price"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Price: {{ sorts.price === 'asc' ? 'Low to High' : 'High to Low' }}
-              <button @click="toggleSort('price', null)" class="ml-1 text-green-800 hover:text-green-900">
+              Price {{ sorts.price === 'asc' ? '↑' : '↓' }}
+              <button @click="sorts.price = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -197,8 +174,8 @@
             </span>
             <span v-if="sorts.rating"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Rating: {{ sorts.rating === 'asc' ? 'Low to High' : 'High to Low' }}
-              <button @click="toggleSort('rating', null)" class="ml-1 text-green-800 hover:text-green-900">
+              Rating {{ sorts.rating === 'asc' ? '↑' : '↓' }}
+              <button @click="sorts.rating = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -450,10 +427,10 @@ const getPriceRangeText = () => {
 
 const getActiveSortsText = () => {
   const activeSorts = []
-  if (sorts.experience) activeSorts.push(`Experience: ${sorts.experience === 'asc' ? 'Low to High' : 'High to Low'}`)
-  if (sorts.price) activeSorts.push(`Price: ${sorts.price === 'asc' ? 'Low to High' : 'High to Low'}`)
-  if (sorts.rating) activeSorts.push(`Rating: ${sorts.rating === 'asc' ? 'Low to High' : 'High to Low'}`)
-
+  if (sorts.experience) activeSorts.push(`Experience ${sorts.experience === 'asc' ? '↑' : '↓'}`)
+  if (sorts.price) activeSorts.push(`Price ${sorts.price === 'asc' ? '↑' : '↓'}`)
+  if (sorts.rating) activeSorts.push(`Rating ${sorts.rating === 'asc' ? '↑' : '↓'}`)
+  
   return activeSorts.length > 0 ? `Sorted by: ${activeSorts.join(', ')}` : 'No sorting applied'
 }
 
@@ -489,12 +466,12 @@ const clearAll = () => {
   filters.specializations = ''
   filters.minPrice = ''
   filters.maxPrice = ''
-
+  
   // Clear sorts
   sorts.experience = null
   sorts.price = null
   sorts.rating = null
-
+  
   handleSearch()
 }
 
