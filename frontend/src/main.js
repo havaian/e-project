@@ -29,6 +29,13 @@ function setCSSVariables() {
     color1, color2, color3, color4, color5, success, warning, error
   })
   
+  // Debug title/description vars
+  console.log('Title/Description vars:', {
+    title: import.meta.env.VITE_APP_PAGE_TITLE,
+    description: import.meta.env.VITE_APP_PAGE_DESC,
+    projectUrl: import.meta.env.VITE_PROJECT_URL
+  })
+  
   // Set brand color variables (only if they exist)
   if (color1) root.style.setProperty('--color-brand-1', color1)
   if (color2) root.style.setProperty('--color-brand-2', color2)
