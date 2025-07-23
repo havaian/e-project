@@ -509,6 +509,9 @@
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
     padding-right: 3rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
   }
 
   /* Input group styling for inputs with icons/buttons */

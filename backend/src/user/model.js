@@ -64,13 +64,6 @@ const userSchema = new Schema({
         type: String,
         default: '/images/user-placeholder.jpg'
     },
-    address: {
-        street: String,
-        city: String,
-        state: String,
-        zipCode: String,
-        country: String
-    },
     // Provider-specific fields
     specializations: [{
         type: String,
@@ -184,7 +177,6 @@ userSchema.virtual('fullName').get(function () {
 
 // Add indexes for searching providers - removed the duplicate email index
 userSchema.index({ specializations: 1 });
-userSchema.index({ 'address.city': 1 });
 userSchema.index({ firstName: 'text', lastName: 'text', specializations: 'text' });
 
 // Encrypt password before saving

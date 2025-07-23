@@ -45,15 +45,6 @@ exports.validateUserInput = (data) => {
             }),
 
         role: Joi.string().valid('client', 'provider').default('client'),
-
-        // Common optional fields
-        address: Joi.object({
-            street: Joi.string().trim().max(100).optional(),
-            city: Joi.string().trim().max(50).optional(),
-            state: Joi.string().trim().max(50).optional(),
-            zipCode: Joi.string().trim().max(20).optional(),
-            country: Joi.string().trim().max(50).optional()
-        }).optional()
     };
 
     // Define client-specific schema

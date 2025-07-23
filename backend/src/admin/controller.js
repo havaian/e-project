@@ -155,7 +155,6 @@ exports.updateUser = async (req, res) => {
             specializations,
             experience,
             sessionFee,
-            address,
             bio,
             languages
         } = req.body;
@@ -185,9 +184,6 @@ exports.updateUser = async (req, res) => {
             if (bio) user.bio = bio;
             if (languages) user.languages = languages;
         }
-
-        // Address for any user
-        if (address) user.address = address;
 
         await user.save();
 

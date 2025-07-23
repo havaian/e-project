@@ -217,8 +217,7 @@ exports.getCurrentUser = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
     try {
         const allowedUpdates = [
-            'firstName', 'lastName', 'phone', 'profilePicture',
-            'address', 'bio', 'languages', 'availability',
+            'firstName', 'lastName', 'phone', 'profilePicture', 'bio', 'languages', 'availability',
             'sessionFee', 'backgroundInfo', 'emergencyContact',
             'specializations', 'education', 'certifications', 'experience'
         ];
@@ -369,7 +368,6 @@ exports.getProviders = async (req, res) => {
         const {
             specializations,
             name,
-            city,
             availableDay,
             minExperience,
             maxFee,
@@ -390,10 +388,6 @@ exports.getProviders = async (req, res) => {
                 { firstName: { $regex: name, $options: 'i' } },
                 { lastName: { $regex: name, $options: 'i' } }
             ];
-        }
-
-        if (city) {
-            query['address.city'] = { $regex: city, $options: 'i' };
         }
 
         if (availableDay) {

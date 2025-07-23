@@ -112,7 +112,7 @@ exports.getProvidersBySpecialization = async (req, res) => {
             isActive: true,
             isVerified: true
         })
-            .select('firstName lastName profilePicture experience sessionFeebio languages address')
+            .select('firstName lastName profilePicture experience sessionFee bio languages')
             .skip(skip)
             .limit(parseInt(limit))
             .sort({ experience: -1 });

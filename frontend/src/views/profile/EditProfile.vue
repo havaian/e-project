@@ -60,18 +60,6 @@
                             </div>
                             <h2 class="text-xl font-semibold text-gray-900">Location</h2>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="form-group">
-                                <label for="city" class="label">City</label>
-                                <input id="city" v-model="formData.address.city" type="text" class="input"
-                                    placeholder="Enter your city" />
-                            </div>
-                            <div class="form-group">
-                                <label for="street" class="label">Street Address</label>
-                                <input id="street" v-model="formData.address.street" type="text" class="input"
-                                    placeholder="Enter your street address" />
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Provider-specific fields -->
@@ -358,10 +346,6 @@ const formData = reactive({
     firstName: '',
     lastName: '',
     phone: '',
-    address: {
-        street: '',
-        city: ''
-    },
     specializations: [],
     languages: [],
     education: [],
@@ -479,7 +463,6 @@ async function fetchUserProfile() {
         formData.firstName = user.firstName
         formData.lastName = user.lastName
         formData.phone = user.phone
-        formData.address = user.address || { street: '', city: '' }
 
         if (authStore.isProvider) {
             // Handle specializations properly as an array
@@ -518,7 +501,6 @@ async function handleSubmit() {
             firstName: formData.firstName,
             lastName: formData.lastName,
             phone: formData.phone,
-            address: formData.address
         }
 
         if (authStore.isProvider) {

@@ -178,22 +178,6 @@ const formatSessionFee = computed(() => {
   return 'Session fee not specified'
 })
 
-// Computed property for formatted address
-const formattedAddress = computed(() => {
-  const address = user.value?.address
-
-  if (!address) return 'Address not provided'
-
-  const parts = []
-  if (address.street) parts.push(address.street)
-  if (address.city) parts.push(address.city)
-  if (address.state) parts.push(address.state)
-  if (address.zipCode) parts.push(address.zipCode)
-  if (address.country) parts.push(address.country)
-
-  return parts.length > 0 ? parts.join(', ') : 'Address not provided'
-})
-
 const formatDay = (dayOfWeek) => {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   return days[dayOfWeek]

@@ -9,16 +9,21 @@
 
       <!-- Enhanced Search and filters -->
       <div class="card-element p-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div class="form-group">
             <label for="search" class="label">Search by name</label>
             <div class="input-group">
-              <input id="search" v-model="filters.name" type="text" class="input pr-12"
-                placeholder="Search providers..." @input="handleSearch" />
+              <input 
+                id="search" 
+                v-model="filters.name" 
+                type="text" 
+                class="input pr-12" 
+                placeholder="Search providers..."
+                @input="handleSearch" 
+              />
               <div class="input-icon">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
             </div>
@@ -33,22 +38,32 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="city" class="label">City</label>
-            <select id="city" v-model="filters.city" class="input" @change="handleSearch">
-              <option value="">All Cities</option>
-              <option v-for="city in cities" :key="city" :value="city">
-                {{ city }}
-              </option>
+            <label for="rating" class="label">Minimum Rating</label>
+            <select id="rating" v-model="filters.rating" class="input" @change="handleSearch">
+              <option value="">Any Rating</option>
+              <option value="4.5">4.5+ Stars</option>
+              <option value="4.0">4.0+ Stars</option>
+              <option value="3.5">3.5+ Stars</option>
+              <option value="3.0">3.0+ Stars</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="maxFee" class="label">Maximum Fee (UZS)</label>
+            <select id="maxFee" v-model="filters.maxFee" class="input" @change="handleSearch">
+              <option value="">Any Price</option>
+              <option value="100000">Under 100,000</option>
+              <option value="200000">Under 200,000</option>
+              <option value="300000">Under 300,000</option>
+              <option value="500000">Under 500,000</option>
             </select>
           </div>
         </div>
-
+        
         <!-- Filter Summary -->
         <div v-if="hasActiveFilters" class="mt-4 flex items-center space-x-2">
           <span class="text-sm text-gray-500">Active filters:</span>
           <div class="flex flex-wrap gap-2">
-            <span v-if="filters.name"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
+            <span v-if="filters.name" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
               Name: {{ filters.name }}
               <button @click="filters.name = ''; handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,20 +71,25 @@
                 </svg>
               </button>
             </span>
-            <span v-if="filters.specializations"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
+            <span v-if="filters.specializations" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
               {{ filters.specializations }}
-              <button @click="filters.specializations = ''; handleSearch()"
-                class="ml-1 text-brand-1 hover:text-brand-2">
+              <button @click="filters.specializations = ''; handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </span>
-            <span v-if="filters.city"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
-              {{ filters.city }}
-              <button @click="filters.city = ''; handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
+            <span v-if="filters.rating" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
+              {{ filters.rating }}+ Stars
+              <button @click="filters.rating = ''; handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </span>
+            <span v-if="filters.maxFee" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-1/10 text-brand-1">
+              Under {{ formatCurrency(filters.maxFee) }} UZS
+              <button @click="filters.maxFee = ''; handleSearch()" class="ml-1 text-brand-1 hover:text-brand-2">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -82,8 +102,7 @@
       <!-- Provider list -->
       <div class="space-y-6">
         <div v-if="loading" class="text-center py-12">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-1 border-t-transparent">
-          </div>
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-1 border-t-transparent"></div>
           <p class="mt-4 text-gray-600">Finding the best providers for you...</p>
         </div>
 
@@ -91,8 +110,7 @@
           <div v-if="providers.length === 0" class="text-center py-12">
             <div class="mx-auto h-16 w-16 text-gray-400 mb-4">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No providers found</h3>
@@ -106,7 +124,7 @@
             <!-- Results Summary -->
             <div class="flex items-center justify-between">
               <p class="text-gray-600">
-                <span class="font-medium text-gray-900">{{ providers.length }}</span>
+                <span class="font-medium text-gray-900">{{ providers.length }}</span> 
                 {{ providers.length === 1 ? 'provider' : 'providers' }} found
               </p>
               <div class="flex items-center space-x-4">
@@ -121,8 +139,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div v-for="provider in providers" :key="provider._id"
-                class="card-element overflow-hidden group hover:shadow-lg transition-all duration-300">
+              <div v-for="provider in providers" :key="provider._id" class="card-element overflow-hidden group hover:shadow-lg transition-all duration-300">
                 <div class="p-6">
                   <!-- Provider Header -->
                   <div class="flex items-start space-x-4 mb-4">
@@ -130,8 +147,7 @@
                       <img :src="provider.profilePicture || '/images/user-placeholder.jpg'" :alt="provider.firstName"
                         class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-all" />
                       <!-- Online Status Indicator -->
-                      <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full">
-                      </div>
+                      <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
                     </div>
                     <div class="flex-1 min-w-0">
                       <h3 class="text-lg font-semibold text-gray-900 group-hover:text-brand-1 transition-colors">
@@ -142,7 +158,7 @@
                           class="status-info text-xs">
                           {{ spec }}
                         </span>
-                        <span v-if="provider.specializations.length > 2"
+                        <span v-if="provider.specializations.length > 2" 
                           class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                           +{{ provider.specializations.length - 2 }} more
                         </span>
@@ -155,33 +171,29 @@
                     <div class="flex items-center text-sm">
                       <div class="w-6 h-6 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
                         <svg class="w-3 h-3 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                         </svg>
                       </div>
                       <span class="text-gray-600">
                         <span class="font-medium text-gray-900">{{ provider.experience }}</span> years experience
                       </span>
                     </div>
-
+                    
                     <div class="flex items-center text-sm">
                       <div class="w-6 h-6 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
                         <svg class="w-3 h-3 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                         </svg>
                       </div>
                       <span class="text-gray-600">
-                        <span class="font-medium text-gray-900">{{ formatCurrency(provider.sessionFee) }}</span> UZS per
-                        session
+                        <span class="font-medium text-gray-900">{{ formatCurrency(provider.sessionFee) }}</span> UZS per session
                       </span>
                     </div>
-
+                    
                     <div class="flex items-center text-sm">
                       <div class="w-6 h-6 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
                         <svg class="w-3 h-3 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                         </svg>
                       </div>
                       <span class="text-gray-600">
@@ -194,10 +206,8 @@
                   <div class="flex items-center mb-4">
                     <div class="flex items-center">
                       <div class="flex">
-                        <svg v-for="n in 5" :key="n" class="w-4 h-4 text-yellow-400" fill="currentColor"
-                          viewBox="0 0 20 20">
-                          <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        <svg v-for="n in 5" :key="n" class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                       </div>
                       <span class="ml-2 text-sm text-gray-600">4.9 (127 reviews)</span>
@@ -208,10 +218,8 @@
                   <router-link :to="{ name: 'provider-profile-view', params: { id: provider._id } }"
                     class="btn-primary w-full justify-center group-hover:shadow-lg transition-all">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                     View Profile & Book
                   </router-link>
@@ -222,23 +230,33 @@
 
           <!-- Enhanced Pagination -->
           <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 mt-8">
-            <button v-if="currentPage > 1" @click="handlePageChange(currentPage - 1)" class="btn-secondary px-3 py-2">
+            <button 
+              v-if="currentPage > 1"
+              @click="handlePageChange(currentPage - 1)" 
+              class="btn-secondary px-3 py-2"
+            >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-
+            
             <div class="flex space-x-1">
-              <button v-for="page in totalPages" :key="page"
+              <button 
+                v-for="page in totalPages" 
+                :key="page" 
                 class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
                 :class="currentPage === page ? 'bg-brand-1 text-white' : 'text-gray-700 hover:bg-gray-100'"
-                @click="handlePageChange(page)">
+                @click="handlePageChange(page)"
+              >
                 {{ page }}
               </button>
             </div>
-
-            <button v-if="currentPage < totalPages" @click="handlePageChange(currentPage + 1)"
-              class="btn-secondary px-3 py-2">
+            
+            <button 
+              v-if="currentPage < totalPages"
+              @click="handlePageChange(currentPage + 1)" 
+              class="btn-secondary px-3 py-2"
+            >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
@@ -281,15 +299,6 @@ async function fetchSpecializations() {
   }
 }
 
-const cities = [
-  'Tashkent',
-  'Namangan',
-  'Andijan',
-  'Fergana',
-  'Samarkand',
-  'Bukhara'
-]
-
 const providers = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
@@ -297,11 +306,12 @@ const totalPages = ref(1)
 const filters = reactive({
   name: '',
   specializations: '',
-  city: ''
+  rating: '',
+  maxFee: ''
 })
 
 const hasActiveFilters = computed(() => {
-  return filters.name || filters.specializations || filters.city
+  return filters.name || filters.specializations || filters.rating || filters.maxFee
 })
 
 const formatCurrency = (amount) => {
@@ -340,7 +350,8 @@ function handlePageChange(page) {
 function clearFilters() {
   filters.name = ''
   filters.specializations = ''
-  filters.city = ''
+  filters.rating = ''
+  filters.maxFee = ''
   handleSearch()
 }
 
