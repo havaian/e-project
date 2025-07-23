@@ -19,7 +19,6 @@ echo "📦 Loading environment variables..."
 if [ -f .env ]; then
     set -a
     source .env
-    set +a
 fi
 if [ -f .env.docker ]; then
     set -a
