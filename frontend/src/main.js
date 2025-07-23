@@ -24,27 +24,15 @@ function setCSSVariables() {
   const warning = import.meta.env.VITE_COLOR_WARNING
   const error = import.meta.env.VITE_COLOR_ERROR
   
-  // Debug log to see what we're getting
-  console.log('Environment variables loaded:', {
-    color1, color2, color3, color4, color5, success, warning, error
-  })
-  
-  // Debug title/description vars
-  console.log('Title/Description vars:', {
-    title: import.meta.env.VITE_APP_PAGE_TITLE,
-    description: import.meta.env.VITE_APP_PAGE_DESC,
-    projectUrl: import.meta.env.VITE_PROJECT_URL
-  })
-  
   // Set brand color variables (only if they exist)
   if (color1) root.style.setProperty('--color-brand-1', color1)
   if (color2) root.style.setProperty('--color-brand-2', color2)
   if (color3) root.style.setProperty('--color-brand-3', color3)
   if (color4) root.style.setProperty('--color-brand-4', color4)
   if (color5) root.style.setProperty('--color-brand-5', color5)
-  if (success) root.style.setProperty('--color-success', success)
-  if (warning) root.style.setProperty('--color-warning', warning)
-  if (error) root.style.setProperty('--color-error', error)
+  if (success) root.style.setProperty('--color-success', `rgb(${success})`)
+  if (warning) root.style.setProperty('--color-warning', `rgb(${warning})`)
+  if (error) root.style.setProperty('--color-error', `rgb(${error})`)
   
   // Set legacy variables for backwards compatibility
   if (color1) root.style.setProperty('--primary', color1)
@@ -98,14 +86,6 @@ function setCSSVariables() {
     const successRgb = success.includes(',') ? success : success.trim().split(/\s+/).join(',')
     root.style.setProperty('--shadow-glow-success', `0 20px 40px rgba(${successRgb}, 0.15)`)
   }
-  
-  // Log final CSS variables for debugging
-  console.log('CSS variables set:', {
-    '--color-brand-1': root.style.getPropertyValue('--color-brand-1'),
-    '--color-brand-2': root.style.getPropertyValue('--color-brand-2'),
-    '--color-brand-3': root.style.getPropertyValue('--color-brand-3'),
-    '--success': root.style.getPropertyValue('--success')
-  })
 }
 
 // Set CSS variables on app initialization
