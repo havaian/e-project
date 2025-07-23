@@ -111,8 +111,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
       args:
-        - VITE_APP_PAGE_TITLE=${VITE_APP_PAGE_TITLE}
-        - VITE_APP_PAGE_DESC=${VITE_APP_PAGE_DESC}
+        - VITE_APP_TITLE=${VITE_APP_TITLE}
+        - VITE_PROJECT_NAME=${VITE_PROJECT_NAME}
         - VITE_PROJECT_URL=${VITE_PROJECT_URL}
         - VITE_COLOR_1=${VITE_COLOR_1}
         - VITE_COLOR_2=${VITE_COLOR_2}
@@ -122,6 +122,11 @@ services:
         - VITE_COLOR_SUCCESS=${VITE_COLOR_SUCCESS}
         - VITE_COLOR_WARNING=${VITE_COLOR_WARNING}
         - VITE_COLOR_ERROR=${VITE_COLOR_ERROR}
+        - VITE_APP_TITLE_1=${VITE_APP_TITLE_1}
+        - VITE_APP_TITLE_2=${VITE_APP_TITLE_2}
+        - VITE_APP_TITLE_3=${VITE_APP_TITLE_3}
+        - VITE_APP_PAGE_TITLE=${VITE_APP_PAGE_TITLE}
+        - VITE_APP_PAGE_DESC=${VITE_APP_PAGE_DESC}
     container_name: frontend
     restart: always
     depends_on:
