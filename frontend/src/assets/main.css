@@ -681,7 +681,6 @@
     transform: translateY(0) scale(0.98);
     transition-duration: 150ms;
   }
-
   
   /* Smooth card element override */
   .card-element {
