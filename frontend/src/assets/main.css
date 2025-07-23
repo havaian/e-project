@@ -445,4 +445,159 @@
   .focus\:ring-color1\/30:focus {
     --tw-ring-color: rgb(var(--color1-rgb) / 0.3);
   }
+
+  /* Base input styling - applies to all inputs */
+  .input {
+    @apply block w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-gray-900 text-base transition-all duration-200 placeholder-gray-400;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    font-weight: 500;
+  }
+
+  .input:focus {
+    @apply ring-2 outline-none;
+    border-color: var(--color-brand-1);
+    ring-color: color-mix(in srgb, var(--color-brand-1) 20%, transparent);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-1) 10%, transparent);
+  }
+
+  .input:hover {
+    border-color: color-mix(in srgb, var(--color-brand-1) 30%, #d1d5db);
+  }
+
+  /* Input validation states */
+  .input.error {
+    border-color: rgb(var(--color-error));
+    ring-color: color-mix(in srgb, rgb(var(--color-error)) 20%, transparent);
+  }
+
+  .input.error:focus {
+    border-color: rgb(var(--color-error));
+    ring-color: color-mix(in srgb, rgb(var(--color-error)) 20%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, rgb(var(--color-error)) 10%, transparent);
+  }
+
+  .input.success {
+    border-color: rgb(var(--color-success));
+    ring-color: color-mix(in srgb, rgb(var(--color-success)) 20%, transparent);
+  }
+
+  .input.success:focus {
+    border-color: rgb(var(--color-success));
+    ring-color: color-mix(in srgb, rgb(var(--color-success)) 20%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, rgb(var(--color-success)) 10%, transparent);
+  }
+
+  /* Enhanced labels */
+  .label {
+    @apply block text-base font-semibold mb-2;
+    color: var(--color-brand-1);
+  }
+
+  /* Textarea styling to match inputs */
+  textarea.input {
+    @apply resize-none;
+    min-height: 120px;
+  }
+
+  /* Select styling to match inputs */
+  select.input {
+    @apply cursor-pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 3rem;
+  }
+
+  /* Input group styling for inputs with icons/buttons */
+  .input-group {
+    @apply relative;
+  }
+
+  .input-group .input {
+    padding-right: 3rem;
+  }
+
+  .input-group .input-icon {
+    @apply absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 transition-colors duration-200;
+  }
+
+  .input-group .input-icon:hover {
+    color: var(--color-brand-1);
+  }
+
+  .input-group .input-icon.active {
+    color: var(--color-brand-1);
+  }
+
+  /* Enhanced button styling to match the new input design */
+  .btn-primary {
+    @apply btn text-white font-semibold rounded-2xl shadow-lg transition-all duration-200;
+    background: linear-gradient(135deg, var(--color-brand-1), var(--color-brand-2));
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--color-brand-1) 15%, transparent);
+    padding: 1rem 2rem;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-brand-2), var(--color-brand-1));
+    transform: translateY(-1px);
+    box-shadow: 0 15px 35px color-mix(in srgb, var(--color-brand-1) 20%, transparent);
+  }
+
+  .btn-primary:focus {
+    @apply ring-4 outline-none;
+    ring-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
+  }
+
+  .btn-primary:disabled {
+    @apply opacity-60 cursor-not-allowed;
+    transform: none;
+    box-shadow: 0 5px 15px color-mix(in srgb, var(--color-brand-1) 10%, transparent);
+  }
+
+  /* Error message styling */
+  .error-message {
+    @apply mt-2 text-sm text-red-600 flex items-center;
+  }
+
+  .error-message svg {
+    @apply h-4 w-4 mr-1 flex-shrink-0;
+  }
+
+  /* Success message styling */
+  .success-message {
+    @apply mt-2 text-sm flex items-center;
+    color: rgb(var(--color-success));
+  }
+
+  .success-message svg {
+    @apply h-4 w-4 mr-1 flex-shrink-0;
+  }
+
+  /* Enhanced form containers */
+  .form-container {
+    @apply space-y-6;
+  }
+
+  .form-group {
+    @apply space-y-2;
+  }
+
+  /* Loading states */
+  .input:disabled {
+    @apply opacity-60 cursor-not-allowed;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  /* Compact input variant */
+  .input-compact {
+    @apply px-4 py-3 text-sm rounded-xl;
+  }
+
+  /* Large input variant */
+  .input-large {
+    @apply px-8 py-5 text-lg rounded-3xl;
+  }
 }
