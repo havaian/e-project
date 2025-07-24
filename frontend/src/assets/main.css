@@ -84,10 +84,13 @@
   }
 
   .btn-primary:hover {
-    @apply ring-4;
     background: linear-gradient(135deg, var(--color-brand-2), var(--color-brand-1));
     transform: translateY(-1px);
     box-shadow: 0 15px 35px color-mix(in srgb, var(--color-brand-1) 20%, transparent);
+  }
+
+  .btn-primary:focus {
+    @apply ring-4;
     ring-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
   }
 
@@ -104,6 +107,9 @@
     border-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
     transform: translateY(-1px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-secondary:focus {
     ring-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
   }
 
@@ -116,10 +122,13 @@
   }
 
   .btn-element-primary:hover {
-    @apply ring-4;
     background: linear-gradient(135deg, var(--color-brand-3), var(--color-brand-1));
     transform: translateY(-2px);
     box-shadow: 0 25px 50px color-mix(in srgb, var(--color-brand-1) 20%, transparent);
+  }
+
+  .btn-element-primary:focus {
+    @apply ring-4;
     ring-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
   }
 
@@ -133,11 +142,14 @@
   }
 
   .btn-element-secondary:hover {
-    @apply ring-4;
     background: rgba(255, 255, 255, 1);
     border-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
     transform: translateY(-2px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-element-secondary:focus {
+    @apply ring-4;
     ring-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
   }
 
