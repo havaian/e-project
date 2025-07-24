@@ -104,7 +104,7 @@
       <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
         <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
           <p class="text-gray-400 text-sm">
-            © {{ new Date().getFullYear() }} {{ appTitle }}. All rights reserved.
+            © {{ new Date().getFullYear() }} {{ companyName }}. All rights reserved.
           </p>
           <div class="flex space-x-6">
             <a :href="privacyPolicyUrl" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-sky-500 text-sm transition-colors duration-200">
@@ -141,7 +141,7 @@
 
 <script setup>
 // Import environment variables
-const appTitle = import.meta.env.VITE_APP_TITLE
+const companyName = import.meta.env.VITE_COMPANY_NAME
 const appTitle1 = import.meta.env.VITE_APP_TITLE_1
 const appTitle2 = import.meta.env.VITE_APP_TITLE_2
 const appTitle3 = import.meta.env.VITE_APP_TITLE_3
