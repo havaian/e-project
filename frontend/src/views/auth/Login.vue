@@ -11,9 +11,6 @@
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                     Sign in to your account
                 </h2>
-                <p class="mt-2 text-center text-sm text-gray-600">
-                    Welcome back! Please sign in to continue
-                </p>
             </div>
             <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
                 <div class="space-y-4">
@@ -22,7 +19,7 @@
                             Email address
                         </label>
                         <input id="email" v-model="email" name="email" type="email" autocomplete="email" required
-                            class="input-element" placeholder="Enter your email"
+                            class="input" placeholder="Enter your email"
                             :class="{ 'border-red-300': email && !isValidEmail }" />
                         <p v-if="email && !isValidEmail" class="mt-1 text-sm text-red-600">
                             Please enter a valid email address
@@ -35,7 +32,7 @@
                         </label>
                         <div class="relative">
                             <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
-                                name="password" autocomplete="current-password" required class="input-element pr-12"
+                                name="password" autocomplete="current-password" required class="input pr-12"
                                 placeholder="Enter your password" />
                             <button type="button" @click="togglePassword"
                                 class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
@@ -65,7 +62,7 @@
                 </div>
 
                 <div>
-                    <button type="submit" class="btn-element-primary w-full" :disabled="loading">
+                    <button type="submit" class="btn-element-primary py-2 w-full" :disabled="loading">
                         <span v-if="loading" class="flex items-center justify-center">
                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                                 fill="none" viewBox="0 0 24 24">
