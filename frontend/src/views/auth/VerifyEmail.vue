@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen flex items-center justify-center element-gradient py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full text-center">
+        <div class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10 text-center">
             <div v-if="loading" class="flex flex-col items-center">
                 <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
                 <p class="mt-4 text-gray-600">Verifying your email...</p>

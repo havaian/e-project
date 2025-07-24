@@ -26,11 +26,11 @@
                         </p>
                     </div>
 
-                    <div>
+                    <div class="form-group">
                         <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
                             Password
                         </label>
-                        <div class="relative">
+                        <div class="input-group">
                             <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
                                 name="password" autocomplete="current-password" required class="input pr-12"
                                 placeholder="Enter your password" />

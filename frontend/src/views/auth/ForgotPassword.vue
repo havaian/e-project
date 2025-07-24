@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen flex items-center justify-center element-gradient py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
+        <div class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10">
             <div v-if="!success">
                 <div class="text-center mb-8">
                     <div class="mx-auto h-16 w-16 bg-brand-1/10 rounded-full flex items-center justify-center mb-4">
