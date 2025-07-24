@@ -75,16 +75,6 @@ function setCSSVariables() {
   const warningRgb = commaToSpaceRgb(warning)
   const errorRgb = commaToSpaceRgb(error)
   
-  // Debug logging
-  console.log('Environment variables loaded:', {
-    color1, color2, color3, color4, color5, success, warning, error
-  })
-  
-  console.log('RGB converted colors:', {
-    color1Rgb, color2Rgb, color3Rgb, color4Rgb, color5Rgb,
-    successRgb, warningRgb, errorRgb
-  })
-  
   // Set brand color variables (hex format for direct CSS use)
   if (color1) root.style.setProperty('--color-brand-1', color1)
   if (color2) root.style.setProperty('--color-brand-2', color2)
@@ -166,18 +156,6 @@ function setCSSVariables() {
     const successRgbComma = success.includes(',') ? success : success.trim().split(/\s+/).join(',')
     root.style.setProperty('--shadow-glow-success', `0 ${shadowBlur} ${shadowSpread} rgba(${successRgbComma}, ${parseFloat(shadowOpacity) / 100})`)
   }
-  
-  // Log final CSS variables for debugging
-  console.log('CSS variables set:', {
-    '--color-brand-1': root.style.getPropertyValue('--color-brand-1'),
-    '--color-brand-2': root.style.getPropertyValue('--color-brand-2'),
-    '--color-brand-3': root.style.getPropertyValue('--color-brand-3'),
-    '--color1-rgb': root.style.getPropertyValue('--color1-rgb'),
-    '--color2-rgb': root.style.getPropertyValue('--color2-rgb'),
-    '--color3-rgb': root.style.getPropertyValue('--color3-rgb'),
-    '--color-success-rgb': root.style.getPropertyValue('--color-success-rgb'),
-    '--success': root.style.getPropertyValue('--success')
-  })
 }
 
 // Set CSS variables on app initialization
