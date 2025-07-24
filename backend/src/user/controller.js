@@ -12,10 +12,10 @@ exports.registerUser = async (req, res) => {
         // If the user is a client, explicitly remove all provider-specific fields before validation
         if (userData.role === 'client' || !userData.role) {
             delete userData.specializations;
-            delete userData.specializations;
             delete userData.licenseNumber;
             delete userData.experience;
             delete userData.sessionFee;
+            delete userData.sessionDuration;
             delete userData.bio;
             delete userData.languages;
             delete userData.education;
@@ -23,7 +23,7 @@ exports.registerUser = async (req, res) => {
             delete userData.availability;
         }
         
-        // Now validate the processed data
+        // Validate the processed data
         const { error } = validateUserInput(userData);
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
@@ -58,14 +58,15 @@ exports.registerUser = async (req, res) => {
             if (userData.specializations) {
                 user.specializations = userData.specializations;
             } else {
-                user.specializations = []; // Default empty array
+                user.specializations = [];
             }
             
             user.licenseNumber = userData.licenseNumber || '';
             user.experience = userData.experience || 0;
             user.bio = userData.bio ? decodeURIComponent(userData.bio) : '';
             user.languages = userData.languages || [];
-            user.sessionFee= userData.sessionFee|| 0;
+            user.sessionFee = userData.sessionFee || 0;
+            user.sessionDuration = userData.sessionDuration || 60; // Default 60 minutes
             user.education = userData.education || [];
             user.certifications = userData.certifications || [];
 
@@ -79,6 +80,9 @@ exports.registerUser = async (req, res) => {
                 { dayOfWeek: 6, isAvailable: false, startTime: '00:00', endTime: '00:00' },
                 { dayOfWeek: 7, isAvailable: false, startTime: '00:00', endTime: '00:00' }
             ];
+
+            // Set initial profile completion step
+            user.profileSetupStep = 1; // Start at step 1 (Education)
         }
         else if (role === 'client' || !role) {
             const { dateOfBirth, gender, backgroundInfo } = userData;
@@ -94,7 +98,8 @@ exports.registerUser = async (req, res) => {
             user.specializations = undefined;
             user.licenseNumber = undefined;
             user.experience = undefined;
-            user.sessionFee= undefined;
+            user.sessionFee = undefined;
+            user.sessionDuration = undefined;
             user.bio = undefined;
             user.languages = undefined;
             user.education = undefined;
@@ -102,7 +107,7 @@ exports.registerUser = async (req, res) => {
             user.availability = undefined;
         }
 
-        // Save user to database
+        // Save user to database (this will trigger profile completion calculation for providers)
         await user.save();
 
         // Send verification email
@@ -113,13 +118,28 @@ exports.registerUser = async (req, res) => {
             message: 'User registered successfully. Please verify your email before logging in.',
             user: {
                 id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
                 email: user.email,
                 role: user.role,
-                isVerified: false
+                ...(user.role === 'provider' && {
+                    needsOnboarding: user.needsOnboarding(),
+                    profileCompletion: {
+                        percentage: user.profileCompletionPercentage,
+                        currentStep: user.profileSetupStep
+                    }
+                })
             }
         });
     } catch (error) {
         console.error('Error registering user:', error);
+        
+        // Handle specific validation errors
+        if (error.name === 'ValidationError') {
+            const message = Object.values(error.errors)[0]?.message || 'Validation failed';
+            return res.status(400).json({ message });
+        }
+        
         res.status(500).json({ message: 'An error occurred while registering user' });
     }
 };
@@ -129,16 +149,18 @@ exports.verifyEmail = async (req, res) => {
     try {
         const { token } = req.params;
 
+        if (!token) {
+            return res.status(400).json({ message: 'Verification token is required' });
+        }
+
         const user = await User.findOne({ verificationToken: token });
 
         if (!user) {
-            return res.status(400).json({ message: 'Invalid verification token' });
+            return res.status(400).json({ message: 'Invalid or expired verification token' });
         }
 
-        // Update user verification status
         user.isVerified = true;
         user.verificationToken = undefined;
-
         await user.save();
 
         res.status(200).json({ message: 'Email verified successfully' });
@@ -153,43 +175,57 @@ exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validate input
         if (!email || !password) {
-            return res.status(400).json({ message: 'Please provide email and password' });
+            return res.status(400).json({ message: 'Email and password are required' });
         }
 
-        // Find user (include password field which is excluded by default)
+        // Find user and include password for verification
         const user = await User.findOne({ email }).select('+password');
 
-        // Check if user exists and password is correct
-        if (!user || !(await user.matchPassword(password))) {
-            console.log('Invalid credentials');
+        if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Check if user is verified
         if (!user.isVerified) {
-            console.log('Please verify your email first');
-            return res.status(401).json({ message: 'Please verify your email first' });
+            return res.status(401).json({ message: 'Please verify your email before logging in.' });
         }
 
         // Check if user is active
         if (!user.isActive) {
-            console.log('Your account has been deactivated. Please contact support.');
             return res.status(401).json({ message: 'Your account has been deactivated. Please contact support.' });
         }
 
         // Update last login time
-        user.lastLogin = Date.now();
+        user.lastLoginAt = new Date();
+        
+        // For providers, check if profile completion calculation is needed
+        if (user.role === 'provider') {
+            user.calculateProfileCompletion();
+        }
+        
         await user.save();
 
         // Generate token
         const token = user.generateAuthToken();
 
-        res.status(200).json({
+        // Prepare response with onboarding info for providers
+        const response = {
             token,
             user: user.getPublicProfile()
-        });
+        };
+
+        // Add onboarding status for providers
+        if (user.role === 'provider') {
+            response.needsOnboarding = user.needsOnboarding();
+            response.profileCompletion = {
+                percentage: user.profileCompletionPercentage,
+                isComplete: user.isProfileComplete,
+                currentStep: user.profileSetupStep
+            };
+        }
+
+        res.status(200).json(response);
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).json({ message: 'An error occurred while logging in' });
@@ -205,8 +241,19 @@ exports.getCurrentUser = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // res.status(200).json({ user: user.getPublicProfile() });
-        res.status(200).json(user);
+        const response = user.getPublicProfile();
+
+        // Add provider-specific information
+        if (user.role === 'provider') {
+            response.needsOnboarding = user.needsOnboarding();
+            response.profileCompletion = {
+                percentage: user.profileCompletionPercentage,
+                isComplete: user.isProfileComplete,
+                currentStep: user.profileSetupStep
+            };
+        }
+
+        res.status(200).json(response);
     } catch (error) {
         console.error('Error fetching current user:', error);
         res.status(500).json({ message: 'An error occurred while fetching user profile' });
@@ -218,7 +265,7 @@ exports.updateUserProfile = async (req, res) => {
     try {
         const allowedUpdates = [
             'firstName', 'lastName', 'phone', 'profilePicture', 'bio', 'languages', 'availability',
-            'sessionFee', 'backgroundInfo', 'emergencyContact',
+            'sessionFee', 'backgroundInfo', 'emergencyContact', 'sessionDuration',
             'specializations', 'education', 'certifications', 'experience'
         ];
 
@@ -236,6 +283,13 @@ exports.updateUserProfile = async (req, res) => {
             updates.bio = decodeURIComponent(updates.bio);
         }
 
+        // Validate session duration if provided
+        if (updates.sessionDuration && ![15, 30, 45, 60].includes(updates.sessionDuration)) {
+            return res.status(400).json({ 
+                message: 'Session duration must be 15, 30, 45, or 60 minutes' 
+            });
+        }
+
         // Update user
         const user = await User.findByIdAndUpdate(
             req.user.id,
@@ -247,12 +301,25 @@ exports.updateUserProfile = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        // Recalculate profile completion for providers
+        if (user.role === 'provider') {
+            user.calculateProfileCompletion();
+            await user.save();
+        }
+
         res.status(200).json({
             message: 'Profile updated successfully',
-            user: user.getPublicProfile()
+            user: user.getPublicProfile(),
+            ...(user.role === 'provider' && {
+                profileCompletion: {
+                    percentage: user.profileCompletionPercentage,
+                    isComplete: user.isProfileComplete,
+                    currentStep: user.profileSetupStep
+                }
+            })
         });
     } catch (error) {
-        console.error('Error updating profile:', error);
+        console.error('Error updating user profile:', error);
         res.status(500).json({ message: 'An error occurred while updating profile' });
     }
 };
@@ -366,59 +433,61 @@ exports.resetPassword = async (req, res) => {
 exports.getProviders = async (req, res) => {
     try {
         const {
-            specializations,
-            name,
-            availableDay,
+            specialization,
             minExperience,
-            maxFee,
+            maxSessionFee,
             language,
+            sortBy = 'experience',
+            order = 'desc',
             page = 1,
-            limit = 10
+            limit = 12
         } = req.query;
 
-        const query = { role: 'provider', isActive: true, isVerified: true };
+        // Build filter query - ONLY complete profiles
+        const filter = {
+            role: 'provider',
+            isActive: true,
+            isVerified: true,
+            isProfileComplete: true  // NEW: Only show complete profiles
+        };
 
-        // Apply filters
-        if (specializations) {
-            query.specializations = specializations;
-        }
-
-        if (name) {
-            query.$or = [
-                { firstName: { $regex: name, $options: 'i' } },
-                { lastName: { $regex: name, $options: 'i' } }
-            ];
-        }
-
-        if (availableDay) {
-            const day = parseInt(availableDay);
-            query.availability = {
-                $elemMatch: { dayOfWeek: day, isAvailable: true }
-            };
+        if (specialization) {
+            filter.specializations = { $in: [new RegExp(specialization, 'i')] };
         }
 
         if (minExperience) {
-            query.experience = { $gte: parseInt(minExperience) };
+            filter.experience = { $gte: parseInt(minExperience) };
         }
 
-        if (maxFee) {
-            query['sessionFee'] = { $lte: parseInt(maxFee) };
+        if (maxSessionFee) {
+            filter.sessionFee = { $lte: parseFloat(maxSessionFee) };
         }
 
         if (language) {
-            query.languages = language;
+            filter.languages = { $in: [new RegExp(language, 'i')] };
+        }
+
+        // Build sort options
+        const sortOptions = {};
+        const validSortFields = ['experience', 'sessionFee', 'createdAt', 'firstName'];
+        
+        if (validSortFields.includes(sortBy)) {
+            sortOptions[sortBy] = order === 'asc' ? 1 : -1;
+        } else {
+            sortOptions.experience = -1; // Default sort
         }
 
         // Execute query with pagination
         const skip = (parseInt(page) - 1) * parseInt(limit);
-
-        const providers = await User.find(query)
-            .select('-password -verificationToken -resetPasswordToken -resetPasswordExpire')
-            .skip(skip)
-            .limit(parseInt(limit))
-            .sort({ experience: -1 });
-
-        const total = await User.countDocuments(query);
+        
+        const [providers, total] = await Promise.all([
+            User.find(filter)
+                .select('firstName lastName specializations experience sessionFee languages profilePicture bio profileCompletionPercentage')
+                .sort(sortOptions)
+                .skip(skip)
+                .limit(parseInt(limit)),
+            User.countDocuments(filter)
+        ]);
 
         res.status(200).json({
             providers,
@@ -426,8 +495,9 @@ exports.getProviders = async (req, res) => {
                 total,
                 page: parseInt(page),
                 limit: parseInt(limit),
-                pages: Math.ceil(total / parseInt(limit))
-            }
+                totalPages: Math.ceil(total / parseInt(limit))
+            },
+            filters: { specialization, minExperience, maxSessionFee, language, sortBy, order }
         });
     } catch (error) {
         console.error('Error fetching providers:', error);
@@ -444,8 +514,9 @@ exports.getProviderById = async (req, res) => {
             _id: id,
             role: 'provider',
             isActive: true,
-            isVerified: true
-        }).select('-password -verificationToken -resetPasswordToken -resetPasswordExpire');
+            isVerified: true,
+            isProfileComplete: true
+        }).select('firstName lastName specializations experience sessionFee sessionDuration languages profilePicture bio education certifications availability profileCompletionPercentage');
 
         if (!provider) {
             return res.status(404).json({ message: 'Provider not found' });

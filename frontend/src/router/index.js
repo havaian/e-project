@@ -45,6 +45,7 @@ const router = createRouter({
       name: 'reset-password',
       component: () => import('@/views/auth/ResetPassword.vue')
     },
+
     // Profile routes
     {
       path: '/profile/client',
@@ -61,9 +62,35 @@ const router = createRouter({
       component: () => import('@/views/profile/ProviderProfile.vue'),
       meta: {
         requiresAuth: true,
-        requiresProvider: true
+        requiresProvider: true,
+        requiresCompleteProfile: true // NEW: Only allow complete profiles
       }
     },
+
+    // NEW: Provider onboarding routes
+    {
+      path: '/profile/provider/onboarding',
+      name: 'provider-onboarding',
+      component: () => import('@/views/profile/ProviderOnboarding.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresProvider: true,
+        requiresIncompleteProfile: true // NEW: Only allow incomplete profiles
+      }
+    },
+
+    // NEW: Provider dashboard with earnings
+    {
+      path: '/profile/provider/dashboard',
+      name: 'provider-dashboard',
+      component: () => import('@/views/profile/ProviderDashboard.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresProvider: true,
+        requiresCompleteProfile: true
+      }
+    },
+
     {
       path: '/profile/edit',
       name: 'profile-edit',
@@ -72,6 +99,7 @@ const router = createRouter({
         requiresAuth: true
       }
     },
+
     // Provider routes
     {
       path: '/providers',
@@ -83,6 +111,7 @@ const router = createRouter({
       name: 'provider-profile-view',
       component: () => import('@/views/providers/ProviderProfile.vue')
     },
+
     // Appointment routes
     {
       path: '/appointments/book/:providerId',
@@ -108,7 +137,8 @@ const router = createRouter({
       component: () => import('@/views/appointments/ProviderAppointments.vue'),
       meta: {
         requiresAuth: true,
-        requiresProvider: true
+        requiresProvider: true,
+        requiresCompleteProfile: true
       }
     },
     {
@@ -119,6 +149,7 @@ const router = createRouter({
         requiresAuth: true
       }
     },
+
     // Payment routes
     {
       path: '/payment/success',
@@ -136,6 +167,7 @@ const router = createRouter({
         requiresAuth: true
       }
     },
+
     // Chat routes
     {
       path: '/chat',
@@ -161,6 +193,7 @@ const router = createRouter({
         requiresAuth: true
       }
     },
+
     // Session routes
     {
       path: '/session/:appointmentId',
@@ -172,6 +205,7 @@ const router = createRouter({
         hideFooter: true
       }
     },
+
     // Error routes
     {
       path: '/:pathMatch(.*)*',
@@ -181,20 +215,67 @@ const router = createRouter({
   ]
 })
 
-// Navigation guards
-router.beforeEach((to, from, next) => {
+// Enhanced navigation guards
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
+  // Basic authentication check
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
-  } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    return
+  }
+
+  if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next('/')
-  } else if (to.meta.requiresClient && !authStore.isClient) {
+    return
+  }
+
+  // Role-based access control
+  if (to.meta.requiresClient && !authStore.isClient) {
     next('/')
-  } else if (to.meta.requiresProvider && !authStore.isProvider) {
+    return
+  }
+
+  if (to.meta.requiresProvider && !authStore.isProvider) {
     next('/')
-  } else {
-    next()
+    return
+  }
+
+  // NEW: Provider profile completion checks
+  if (authStore.isProvider && authStore.isAuthenticated) {
+    // Refresh profile completion status if it's stale
+    await authStore.updateProfileCompletion()
+
+    // If provider needs onboarding and tries to access routes requiring complete profile
+    if (to.meta.requiresCompleteProfile && authStore.needsOnboarding) {
+      next('/profile/provider/onboarding')
+      return
+    }
+
+    // If provider has complete profile and tries to access onboarding
+    if (to.meta.requiresIncompleteProfile && !authStore.needsOnboarding) {
+      next('/profile/provider')
+      return
+    }
+
+    // Special handling for provider login redirect
+    if (to.path === '/profile/provider' && authStore.needsOnboarding) {
+      next('/profile/provider/onboarding')
+      return
+    }
+  }
+
+  next()
+})
+
+// NEW: After each route change, update the auth store if needed
+router.afterEach((to, from) => {
+  const authStore = useAuthStore()
+
+  // Refresh user data periodically when navigating to important pages
+  if (authStore.isAuthenticated &&
+    (to.path.includes('/profile') || to.path.includes('/appointments'))) {
+    authStore.refreshUserData()
   }
 })
 

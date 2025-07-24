@@ -1,75 +1,71 @@
 <template>
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
+    <div class="min-h-screen flex items-center justify-center element-gradient py-12 px-4 sm:px-6 lg:px-8">
+        <div
+            class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10">
             <div>
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-            </div>
-            <form class="form-container" @submit.prevent="handleSubmit" novalidate>
-                <div class="form-group">
-                    <label for="email" class="label">Email address</label>
-                    <div class="input-group">
-                        <input id="email" v-model="email" name="email" type="email" required class="input" :class="[
-                            email && !isValidEmail ? 'error' :
-                                email && isValidEmail ? 'success' : ''
-                        ]" placeholder="Enter your email" />
-                    </div>
-                    <div v-if="email && !isValidEmail" class="error-message">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Please enter a valid email address
+                <div class="flex justify-center mb-6">
+                    <div class="rounded-xl shadow-lg">
+                        <img src="/images/logo.svg" alt="Logo" width="60" height="60" class="w-15 h-15" />
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="password" class="label">Password</label>
-                    <div class="input-group">
-                        <input id="password" v-model="password" name="password"
-                            :type="showPassword ? 'text' : 'password'" required class="input" :class="[
-                                password && password.length < 6 ? 'error' :
-                                    password && password.length >= 6 ? 'success' : ''
-                            ]" placeholder="Enter your password" />
-                        <button type="button" @click="togglePassword" class="input-icon"
-                            :class="showPassword ? 'active' : ''">
-                            <!-- Eye with diagonal stroke (password hidden) -->
-                            <svg v-if="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4l16 16" />
-                            </svg>
-                            <!-- Regular eye (password visible) -->
-                            <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </button>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Sign in to your account
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Welcome back! Please sign in to continue
+                </p>
+            </div>
+            <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
+                <div class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email address
+                        </label>
+                        <input id="email" v-model="email" name="email" type="email" autocomplete="email" required
+                            class="input-element" placeholder="Enter your email"
+                            :class="{ 'border-red-300': email && !isValidEmail }" />
+                        <p v-if="email && !isValidEmail" class="mt-1 text-sm text-red-600">
+                            Please enter a valid email address
+                        </p>
                     </div>
-                    <div v-if="password && password.length < 6" class="error-message">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Password must be at least 6 characters
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Password
+                        </label>
+                        <div class="relative">
+                            <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
+                                name="password" autocomplete="current-password" required class="input-element pr-12"
+                                placeholder="Enter your password" />
+                            <button type="button" @click="togglePassword"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                                <svg v-if="showPassword" class="h-5 w-5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.222 6.222M14.12 14.12l3.536 3.536M9.88 9.88l-3.536-3.536m7.07 7.07l-3.535-3.536" />
+                                </svg>
+                                <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between">
                     <div class="text-sm">
-                        <a href="#" @click.prevent="forgotPassword"
-                            class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-500">
+                        <a href="#" @click.prevent="goToForgotPassword"
+                            class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-emerald-500 hover:to-sky-500 transition-colors duration-200">
                             Forgot your password?
                         </a>
                     </div>
                 </div>
 
                 <div>
-                    <button type="submit" class="btn-primary w-full" :disabled="loading">
+                    <button type="submit" class="btn-element-primary w-full" :disabled="loading">
                         <span v-if="loading" class="flex items-center justify-center">
                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                                 fill="none" viewBox="0 0 24 24">
@@ -89,10 +85,22 @@
             <p class="mt-2 text-center text-sm text-gray-600">
                 Don't have an account?
                 <a href="#" @click.prevent="goToRegister"
-                    class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-500">
+                    class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:text-indigo-500">
                     Sign up
                 </a>
             </p>
+
+            <!-- NEW: Provider onboarding notification -->
+            <div v-if="showOnboardingNotification"
+                class="mt-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200 text-blue-800 px-4 py-3 rounded-2xl text-sm text-center shadow-sm">
+                <div class="flex items-center justify-center">
+                    <svg class="h-4 w-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Welcome! We'll help you complete your profile setup.
+                </div>
+            </div>
 
             <div v-if="error"
                 class="mt-4 bg-red-50/80 backdrop-blur-sm border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm text-center shadow-sm">
@@ -121,6 +129,7 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 const showPassword = ref(false)
+const showOnboardingNotification = ref(false)
 
 // Email validation computed property
 const isValidEmail = computed(() => {
@@ -128,38 +137,55 @@ const isValidEmail = computed(() => {
     return emailRegex.test(email.value)
 })
 
-// Toggle password visibility
 const togglePassword = () => {
     showPassword.value = !showPassword.value
 }
 
-async function handleSubmit(event) {
-    if (loading.value) return
-
-    try {
-        loading.value = true
-        error.value = ''
-
-        // Attempt login - will return response.data on success or throw on error
-        await authStore.login(email.value, password.value)
-
-        // If we get here, login was successful, so navigate
-        router.push({ path: '/' })
-    } catch (err) {
-        console.error('Login error:', err)
-        // Your authStore throws either error.response.data or error.message
-        error.value = typeof err === 'string' ? err : (err.message || 'Failed to sign in')
-        // No navigation here, so errors will be visible on the page
-    } finally {
-        loading.value = false
-    }
+const goToRegister = () => {
+    router.push('/register')
 }
 
-function forgotPassword() {
+const goToForgotPassword = () => {
     router.push('/forgot-password')
 }
 
-function goToRegister() {
-    router.push('/register')
+async function handleSubmit() {
+    try {
+        loading.value = true
+        error.value = ''
+        showOnboardingNotification.value = false
+
+        // Validate inputs
+        if (!isValidEmail.value) {
+            error.value = 'Please enter a valid email address'
+            return
+        }
+
+        if (password.value.length < 8) {
+            error.value = 'Password must be at least 8 characters long'
+            return
+        }
+
+        // Attempt login
+        const response = await authStore.login(email.value, password.value)
+
+        // NEW: Handle provider onboarding notification
+        if (response.needsOnboarding) {
+            showOnboardingNotification.value = true
+            // Show notification briefly before redirect
+            setTimeout(() => {
+                router.push(authStore.getPostLoginRedirect())
+            }, 2000)
+        } else {
+            // Immediate redirect for complete profiles or clients
+            router.push(authStore.getPostLoginRedirect())
+        }
+
+    } catch (err) {
+        error.value = err.message || 'Failed to sign in. Please check your credentials.'
+        console.error('Login error:', err)
+    } finally {
+        loading.value = false
+    }
 }
 </script>

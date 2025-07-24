@@ -61,7 +61,7 @@ router.post('/reset-password/:token', userController.resetPassword);
 
 /**
  * @route GET /api/users/providers
- * @desc Get all providers with optional filters
+ * @desc Get all providers with optional filters - UPDATED to only show complete profiles
  * @access Public
  */
 router.get('/providers', userController.getProviders);
@@ -86,5 +86,8 @@ router.post('/link-telegram', userController.linkTelegramAccount);
  * @access Private
  */
 router.post('/deactivate', authenticateUser, userController.deactivateAccount);
+
+// Include provider dashboard routes
+router.use('/providers', require('./provider/routes'));
 
 module.exports = router;

@@ -2,30 +2,31 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const Schema = mongoose.Schema;
 
-// Time slot schema for provider availability
-const timeSlotSchema = new Schema({
+// Time slot schema for new availability system
+const timeSlotSchema = new mongoose.Schema({
     startTime: {
-        type: String, // Format: "HH:MM"
+        type: String,
         required: true
     },
     endTime: {
-        type: String, // Format: "HH:MM"
+        type: String,
         required: true
     }
 });
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: [true, 'First name is required'],
-        trim: true
+        trim: true,
+        maxlength: [50, 'First name cannot be more than 50 characters']
     },
     lastName: {
         type: String,
         required: [true, 'Last name is required'],
-        trim: true
+        trim: true,
+        maxlength: [50, 'Last name cannot be more than 50 characters']
     },
     email: {
         type: String,
@@ -33,23 +34,27 @@ const userSchema = new Schema({
         unique: true,
         lowercase: true,
         trim: true,
-        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email address']
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
     },
     password: {
         type: String,
         required: [true, 'Password is required'],
-        minlength: [8, 'Password must be at least 8 characters long'],
-        select: false
+        minlength: [8, 'Password must be at least 8 characters long']
     },
     phone: {
         type: String,
         required: [true, 'Phone number is required'],
-        trim: true
+        trim: true,
+        match: [/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number']
     },
     role: {
         type: String,
         enum: ['client', 'provider', 'admin'],
         default: 'client'
+    },
+    profilePicture: {
+        type: String,
+        default: ''
     },
     dateOfBirth: {
         type: Date,
@@ -57,13 +62,10 @@ const userSchema = new Schema({
     },
     gender: {
         type: String,
-        enum: ['male', 'female', 'other', 'prefer not to say'],
+        enum: ['male', 'female', 'other'],
         required: function () { return this.role === 'client'; }
     },
-    profilePicture: {
-        type: String,
-        default: '/images/user-placeholder.jpg'
-    },
+
     // Provider-specific fields
     specializations: [{
         type: String,
@@ -109,6 +111,41 @@ const userSchema = new Schema({
         type: Number,
         required: function () { return this.role === 'provider'; }
     },
+
+    // NEW: Provider Analytics Fields
+    sessionDuration: {
+        type: Number,
+        enum: [15, 30, 45, 60],
+        default: 60,
+        required: function () { return this.role === 'provider'; }
+    },
+    profileCompletionPercentage: {
+        type: Number,
+        min: 0,
+        max: 100,
+        default: 0
+    },
+    isProfileComplete: {
+        type: Boolean,
+        default: false
+    },
+    profileSetupStep: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 6 // Steps: 1-Education, 2-Availability, 3-Session Settings, 4-Profile Info, 5-Review, 6-Complete
+    },
+    profileCompletedAt: {
+        type: Date
+    },
+    lastLoginAt: {
+        type: Date
+    },
+    onboardingCompleted: {
+        type: Boolean,
+        default: false
+    },
+
     // Client-specific fields
     backgroundInfo: {
         type: String,
@@ -119,6 +156,7 @@ const userSchema = new Schema({
         relationship: String,
         phone: String
     },
+
     // Agreement to terms
     termsAccepted: {
         type: Boolean,
@@ -131,6 +169,7 @@ const userSchema = new Schema({
     termsAcceptedAt: {
         type: Date
     },
+
     // Common fields
     isVerified: {
         type: Boolean,
@@ -143,134 +182,165 @@ const userSchema = new Schema({
     telegramId: {
         type: String
     },
-    telegramVerificationCode: String,
-    telegramVerificationExpire: Date,
-    // Token and security related fields
+    verificationToken: String,
     resetPasswordToken: String,
     resetPasswordExpire: Date,
-    verificationToken: String,
+
+    // Security fields
     jwtSecret: {
         type: String,
-        default: function () {
-            return crypto.randomBytes(32).toString('hex');
-        }
+        default: () => crypto.randomBytes(32).toString('hex')
     },
     jwtSecretCreatedAt: {
         type: Date,
         default: Date.now
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
+
+    // Content moderation
+    contentViolations: [{
+        timestamp: Date,
+        matches: [String],
+        contentExcerpt: String
+    }],
+    isSuspended: {
+        type: Boolean,
+        default: false
     },
-    lastLogin: {
-        type: Date
-    }
+    suspensionEnd: Date,
+    suspensionReason: String,
+    hasWarning: {
+        type: Boolean,
+        default: false
+    },
+    warningMessage: String,
+    banReason: String
 }, {
     timestamps: true
 });
 
-// Create a virtual field for full name
-userSchema.virtual('fullName').get(function () {
-    return `${this.firstName} ${this.lastName}`;
-});
+// Index for performance
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1, isActive: 1 });
+userSchema.index({ role: 1, isProfileComplete: 1 }); // NEW: For filtering complete profiles
+userSchema.index({ role: 1, profileSetupStep: 1 }); // NEW: For onboarding tracking
 
-// Add indexes for searching providers - removed the duplicate email index
-userSchema.index({ specializations: 1 });
-userSchema.index({ firstName: 'text', lastName: 'text', specializations: 'text' });
-
-// Encrypt password before saving
+// Password hashing middleware
 userSchema.pre('save', async function (next) {
-    // Only hash the password if it's modified (or new)
     if (!this.isModified('password')) return next();
 
-    try {
-        // Generate salt
-        const salt = await bcrypt.genSalt(10);
-
-        // Hash password
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (error) {
-        next(error);
-    }
-});
-
-// Pre-save middleware to handle accepting terms
-userSchema.pre('save', function (next) {
-    if (this.isModified('termsAccepted') && this.termsAccepted) {
-        this.termsAcceptedAt = Date.now();
-    }
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 
-userSchema.pre('save', function (next) {
-    if (this.specializations) {
-        this.specializations = [...new Set(this.specializations)];
+// NEW: Calculate and update profile completion percentage
+userSchema.methods.calculateProfileCompletion = function () {
+    if (this.role !== 'provider') {
+        this.profileCompletionPercentage = 100;
+        this.isProfileComplete = true;
+        return;
     }
-    next();
-});
 
-// Method to check if password matches
-userSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+    let completed = 0;
+    const totalFields = 10;
+
+    // Check required fields
+    if (this.firstName && this.lastName) completed += 1;
+    if (this.email) completed += 1;
+    if (this.phone) completed += 1;
+    if (this.specializations && this.specializations.length > 0) completed += 1;
+    if (this.licenseNumber) completed += 1;
+    if (this.bio && this.bio.length >= 50) completed += 1; // Minimum bio length
+    if (this.sessionFee && this.sessionFee > 0) completed += 1;
+    if (this.sessionDuration) completed += 1;
+    if (this.availability && this.availability.some(day => day.isAvailable)) completed += 1;
+    if (this.education && this.education.length > 0) completed += 1;
+
+    this.profileCompletionPercentage = Math.round((completed / totalFields) * 100);
+    this.isProfileComplete = this.profileCompletionPercentage >= 90; // 90% threshold
+
+    if (this.isProfileComplete && !this.profileCompletedAt) {
+        this.profileCompletedAt = new Date();
+        this.onboardingCompleted = true;
+        this.profileSetupStep = 6; // Mark as completed
+    }
 };
 
-// Method to generate JWT token
+// Update profile completion before saving
+userSchema.pre('save', function (next) {
+    if (this.role === 'provider') {
+        this.calculateProfileCompletion();
+    }
+    next();
+});
+
+// NEW: Check if provider needs onboarding
+userSchema.methods.needsOnboarding = function () {
+    return this.role === 'provider' && (!this.onboardingCompleted || this.profileSetupStep < 6);
+};
+
+// Compare password method
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Generate JWT token
 userSchema.methods.generateAuthToken = function () {
+    const payload = {
+        id: this._id,
+        role: this.role,
+        email: this.email
+    };
+
     return jwt.sign(
-        { id: this._id, role: this.role },
-        this.jwtSecret || process.env.JWT_SECRET,
-        { expiresIn: '24h' } // Set token expiration to 24 hours
+        payload,
+        process.env.JWT_SECRET + this.jwtSecret,
+        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 };
 
-// Rotate JWT secret
-userSchema.methods.rotateJwtSecret = function () {
-    this.jwtSecret = crypto.randomBytes(32).toString('hex');
-    this.jwtSecretCreatedAt = Date.now();
-    return this.save();
+// Get public profile (exclude sensitive data)
+userSchema.methods.getPublicProfile = function () {
+    const userObject = this.toObject();
+    delete userObject.password;
+    delete userObject.resetPasswordToken;
+    delete userObject.resetPasswordExpire;
+    delete userObject.verificationToken;
+    delete userObject.jwtSecret;
+    delete userObject.contentViolations;
+    return userObject;
 };
 
-// Generate password reset token
-userSchema.methods.generatePasswordResetToken = function () {
-    // Generate token
+// Generate reset password token
+userSchema.methods.getResetPasswordToken = function () {
     const resetToken = crypto.randomBytes(20).toString('hex');
-
-    // Hash token and set to resetPasswordToken field
-    this.resetPasswordToken = crypto
-        .createHash('sha256')
-        .update(resetToken)
-        .digest('hex');
-
-    // Set token expire time (10 minutes)
-    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
-
+    this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
     return resetToken;
 };
 
-// Method to get provider's basic public profile
-userSchema.methods.getPublicProfile = function () {
-    const user = this.toObject();
-
-    // Remove sensitive information
-    delete user.password;
-    delete user.resetPasswordToken;
-    delete user.resetPasswordExpire;
-    delete user.verificationToken;
-    delete user.jwtSecret;
-
-    return user;
-};
-
-// Static method to find available providers by specializations
-userSchema.statics.findAvailableProviders = function (specializations) {
+// Static method to find providers with complete profiles only
+userSchema.statics.findCompleteProviders = function (filters = {}) {
     return this.find({
         role: 'provider',
         isActive: true,
         isVerified: true,
-        specializations: specializations || { $exists: true }
-    }).select('-password');
+        isProfileComplete: true, // NEW: Only complete profiles
+        ...filters
+    });
+};
+
+// Static method to find providers needing onboarding
+userSchema.statics.findProvidersNeedingOnboarding = function () {
+    return this.find({
+        role: 'provider',
+        isActive: true,
+        $or: [
+            { onboardingCompleted: false },
+            { profileSetupStep: { $lt: 6 } },
+            { isProfileComplete: false }
+        ]
+    });
 };
 
 const User = mongoose.model('User', userSchema);
