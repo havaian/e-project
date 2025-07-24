@@ -115,7 +115,7 @@ const userSchema = new mongoose.Schema({
     // NEW: Provider Analytics Fields
     sessionDuration: {
         type: Number,
-        enum: [15, 30, 45, 60],
+        enum: [15, 30, 45, 60, 75, 90, 105, 120],
         default: 60,
         required: function () { return this.role === 'provider'; }
     },
