@@ -15,7 +15,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div v-for="(specialization, index) in modelValue.specializations" :key="index"
                         class="flex items-center space-x-3">
-                        <select v-model="modelValue.specializations[index]" class="input-element flex-1"
+                        <select v-model="modelValue.specializations[index]" class="input flex-1"
                             @change="validateForm">
                             <option value="">Select a specialization</option>
                             <option v-for="spec in getAvailableSpecializations(index)" :key="spec.name"
@@ -51,7 +51,7 @@
 
                 <div class="max-w-md">
                     <input v-model.number="modelValue.experience" type="number" min="0" max="50" placeholder="5"
-                        class="input-element" @input="validateForm" />
+                        class="input" @input="validateForm" />
                     <p class="text-sm text-gray-500 mt-2">
                         This helps clients verify your credentials and qualifications
                     </p>
@@ -66,7 +66,7 @@
                 <div class="space-y-4">
                     <textarea v-model="modelValue.bio" rows="6"
                         placeholder="Tell potential clients about your background, approach, and what makes you unique. This will be displayed on your profile page."
-                        class="input-element resize-none" maxlength="500" @input="validateForm"></textarea>
+                        class="input resize-none" maxlength="500" @input="validateForm"></textarea>
 
                     <div class="flex justify-between items-center text-sm">
                         <span class="text-gray-500">

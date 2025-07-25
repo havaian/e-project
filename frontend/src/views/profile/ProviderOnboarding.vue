@@ -127,9 +127,9 @@
                     <div>
                         <h3 class="text-sm font-medium text-blue-900">Need Help?</h3>
                         <p class="text-sm text-blue-700 mt-1">
-                            Contact our support team at <a href="mailto:support@e-project.ytech.space"
-                                class="underline">support@e-project.ytech.space</a>
-                            or call us at +998 99 123 45 67 if you need assistance completing your profile.
+                            Contact our support team at <a :href="'mailto:{{supportEmail}}'"
+                                class="underline">{{ supportEmail }}</a>
+                            or call us at {{ supportPhone }} if you need assistance completing your profile.
                         </p>
                     </div>
                 </div>
@@ -160,6 +160,9 @@ const currentStep = ref(1)
 const totalSteps = 6
 const loading = ref(false)
 const isStepValid = ref(false)
+
+const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
+const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL
 
 // Steps configuration
 const steps = [

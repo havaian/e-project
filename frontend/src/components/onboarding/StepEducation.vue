@@ -17,19 +17,19 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Degree</label>
                                 <input v-model="edu.degree" type="text" placeholder="e.g., Bachelor's in Psychology"
-                                    class="input-element" @input="validateForm" />
+                                    class="input" @input="validateForm" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Institution</label>
                                 <input v-model="edu.institution" type="text"
-                                    placeholder="e.g., University of California" class="input-element"
+                                    placeholder="e.g., University of California" class="input"
                                     @input="validateForm" />
                             </div>
                             <div class="flex items-end space-x-2">
                                 <div class="flex-1">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
                                     <input v-model.number="edu.year" type="number" :min="1950"
-                                        :max="new Date().getFullYear()" placeholder="2020" class="input-element"
+                                        :max="new Date().getFullYear()" placeholder="2020" class="input"
                                         @input="validateForm" />
                                 </div>
                                 <button v-if="modelValue.education.length > 1" @click="removeEducation(index)"
@@ -64,20 +64,20 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Certification Name</label>
                                 <input v-model="cert.name" type="text"
-                                    placeholder="e.g., Licensed Clinical Social Worker" class="input-element"
+                                    placeholder="e.g., Licensed Clinical Social Worker" class="input"
                                     @input="validateForm" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Issuing Organization</label>
                                 <input v-model="cert.issuer" type="text"
-                                    placeholder="e.g., American Board of Psychology" class="input-element"
+                                    placeholder="e.g., American Board of Psychology" class="input"
                                     @input="validateForm" />
                             </div>
                             <div class="flex items-end space-x-2">
                                 <div class="flex-1">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Year Obtained</label>
                                     <input v-model.number="cert.year" type="number" :min="1950"
-                                        :max="new Date().getFullYear()" placeholder="2020" class="input-element"
+                                        :max="new Date().getFullYear()" placeholder="2020" class="input"
                                         @input="validateForm" />
                                 </div>
                                 <button v-if="modelValue.certifications.length > 1" @click="removeCertification(index)"
@@ -110,7 +110,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div v-for="(language, index) in modelValue.languages" :key="index"
                         class="flex items-center space-x-3">
-                        <select v-model="modelValue.languages[index]" class="input-element flex-1"
+                        <select v-model="modelValue.languages[index]" class="input flex-1"
                             @change="validateForm">
                             <option value="">Select a language</option>
                             <option v-for="lang in getAvailableLanguages(index)" :key="lang" :value="lang">
