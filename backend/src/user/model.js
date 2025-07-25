@@ -291,10 +291,14 @@ userSchema.methods.generateAuthToken = function () {
         role: this.role,
         email: this.email
     };
-
+    
+    // IMPORTANT: Always use the same secret for consistency
+    // Use user's personal secret combined with global secret for security
+    const secret = process.env.JWT_SECRET + (this.jwtSecret || '');
+    
     return jwt.sign(
         payload,
-        process.env.JWT_SECRET + this.jwtSecret,
+        secret,
         { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 };

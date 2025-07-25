@@ -29,42 +29,37 @@ exports.authenticateUser = async (req, res, next) => {
             });
         }
 
-        // First verify with default secret to get user ID
+        // First decode token without verification to get user ID
         let decoded;
+        let unverifiedPayload;
+        
         try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
-        } catch (defaultError) {
-            // If default fails, token may be using personal secret
-            // Find the user by ID in token
-            try {
-                // Extract payload without verification first
-                const unverifiedPayload = jwt.decode(token);
-                if (!unverifiedPayload || !unverifiedPayload.id) {
-                    throw new Error('Invalid token format');
-                }
-
-                // Get user's personal secret
-                const user = await User.findById(unverifiedPayload.id, 'jwtSecret');
-                if (!user || !user.jwtSecret) {
-                    throw new Error('User not found or no JWT secret');
-                }
-
-                // Try to verify with user's personal secret
-                decoded = jwt.verify(token, user.jwtSecret);
-            } catch (personalError) {
-                // Both verification methods failed
-                return res.status(401).json({
-                    message: 'Invalid token. Please log in again.'
-                });
+            unverifiedPayload = jwt.decode(token);
+            if (!unverifiedPayload || !unverifiedPayload.id) {
+                throw new Error('Invalid token format');
             }
+        } catch (decodeError) {
+            return res.status(401).json({
+                message: 'Invalid token format. Please log in again.'
+            });
         }
 
-        // Find user by id
-        const user = await User.findById(decoded.id);
-
+        // Get user to retrieve their JWT secret
+        const user = await User.findById(unverifiedPayload.id);
         if (!user) {
             return res.status(401).json({
                 message: 'The user belonging to this token no longer exists.'
+            });
+        }
+
+        // Verify token with the same secret combination used during generation
+        try {
+            const secret = process.env.JWT_SECRET + (user.jwtSecret || '');
+            decoded = jwt.verify(token, secret);
+        } catch (verifyError) {
+            console.error('JWT verification failed:', verifyError.message);
+            return res.status(401).json({
+                message: 'Invalid token. Please log in again.'
             });
         }
 
@@ -82,29 +77,11 @@ exports.authenticateUser = async (req, res, next) => {
             });
         }
 
-        // Check token expiration
-        const tokenIssuedAt = new Date((decoded.iat || 0) * 1000);
-        const tokenExpiresAt = new Date((decoded.exp || 0) * 1000);
-        const now = new Date();
-
-        // If token is expired
-        if (now >= tokenExpiresAt) {
-            return res.status(401).json({
-                message: 'Your token has expired. Please log in again.'
-            });
-        }
-
-        // If personal JWT secret was rotated after token was issued
-        if (user.jwtSecretCreatedAt && tokenIssuedAt < user.jwtSecretCreatedAt) {
-            return res.status(401).json({
-                message: 'Your session has expired due to security changes. Please log in again.'
-            });
-        }
-
         // Add user to request object
         req.user = {
             id: user._id,
-            role: user.role
+            role: user.role,
+            email: user.email
         };
 
         next();
