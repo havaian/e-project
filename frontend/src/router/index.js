@@ -109,7 +109,14 @@ const router = createRouter({
     {
       path: '/providers/:id',
       name: 'provider-profile-view',
-      component: () => import('@/views/providers/ProviderProfile.vue')
+      component: () => import('@/views/providers/ProviderPublicProfile.vue')
+    },
+
+    // Client routes
+    {
+      path: '/clientss/:id',
+      name: 'client-profile-view',
+      component: () => import('@/views/clients/ClientPublicProfile.vue')
     },
 
     // Appointment routes

@@ -6,8 +6,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Import models
-const User = require('./src/user/model');
-const Specialization = require('./src/specializations/model');
+const User = require('../src/user/model');
+const Specialization = require('../src/specializations/model');
 
 // Set longer timeout for MongoDB operations
 mongoose.set('bufferTimeoutMS', 30000);

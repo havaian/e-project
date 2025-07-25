@@ -15,6 +15,41 @@ const timeSlotSchema = new mongoose.Schema({
     }
 });
 
+// Achievement schema
+const achievementSchema = new mongoose.Schema({
+    id: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: String,
+        enum: ['education', 'professional', 'platform', 'milestone'],
+        required: true
+    },
+    icon: {
+        type: String,
+        required: true
+    },
+    isEarned: {
+        type: Boolean,
+        default: false
+    },
+    earnedAt: {
+        type: Date
+    },
+    requirements: {
+        type: String // Description of how to earn this achievement
+    }
+});
+
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -145,6 +180,15 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+
+    // NEW: Clients field for providers (mentorship relationships)
+    clients: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
+    // NEW: Achievements system
+    achievements: [achievementSchema],
 
     // Client-specific fields
     backgroundInfo: {
@@ -312,7 +356,98 @@ userSchema.methods.getPublicProfile = function () {
     delete userObject.verificationToken;
     delete userObject.jwtSecret;
     delete userObject.contentViolations;
+    
+    // Hide sensitive fields based on role and profile type
+    if (this.role === 'provider') {
+        delete userObject.licenseNumber; // Keep private
+    }
+    
+    // Hide client-specific sensitive data
+    delete userObject.dateOfBirth;
+    delete userObject.gender;
+    delete userObject.backgroundInfo;
+    
     return userObject;
+};
+
+// NEW: Get profile for viewer with appointment checking
+userSchema.methods.getProfileForViewer = async function(viewerRole, viewerId) {
+    const profile = this.getPublicProfile();
+    
+    // Check if viewer has appointment with this user
+    const hasAppointment = await this.hasAppointmentWith(viewerId);
+    
+    // Emergency contact only visible to associated providers/clients with appointments
+    if (!hasAppointment) {
+        delete profile.emergencyContact;
+    }
+    
+    return profile;
+};
+
+// NEW: Check if user has appointment with another user
+userSchema.methods.hasAppointmentWith = async function(otherUserId) {
+    if (!otherUserId) return false;
+    
+    const Appointment = require('../appointment/model');
+    const appointment = await Appointment.findOne({
+        $or: [
+            { client: this._id, provider: otherUserId },
+            { client: otherUserId, provider: this._id }
+        ],
+        status: { $in: ['scheduled', 'completed'] }
+    });
+    return !!appointment;
+};
+
+// NEW: Achievement management methods
+userSchema.methods.addAchievement = function(achievementData) {
+    // Check if achievement already exists
+    const existingAchievement = this.achievements.find(a => a.id === achievementData.id);
+    if (existingAchievement) {
+        return false; // Achievement already exists
+    }
+    
+    this.achievements.push(achievementData);
+    return true;
+};
+
+userSchema.methods.earnAchievement = function(achievementId) {
+    const achievement = this.achievements.find(a => a.id === achievementId);
+    if (achievement && !achievement.isEarned) {
+        achievement.isEarned = true;
+        achievement.earnedAt = new Date();
+        return true;
+    }
+    return false;
+};
+
+userSchema.methods.getEarnedAchievements = function() {
+    return this.achievements.filter(a => a.isEarned);
+};
+
+userSchema.methods.getUnEarnedAchievements = function() {
+    return this.achievements.filter(a => !a.isEarned);
+};
+
+// NEW: Client management methods for providers
+userSchema.methods.addClient = function(clientId) {
+    if (this.role !== 'provider') return false;
+    if (this.clients.includes(clientId)) return false; // Already a client
+    
+    this.clients.push(clientId);
+    return true;
+};
+
+userSchema.methods.removeClient = function(clientId) {
+    if (this.role !== 'provider') return false;
+    
+    const index = this.clients.indexOf(clientId);
+    if (index > -1) {
+        this.clients.splice(index, 1);
+        return true;
+    }
+    return false;
 };
 
 // Generate reset password token
@@ -344,6 +479,62 @@ userSchema.statics.findProvidersNeedingOnboarding = function () {
             { profileSetupStep: { $lt: 6 } },
             { isProfileComplete: false }
         ]
+    });
+};
+
+// NEW: Initialize default achievements for new users
+userSchema.methods.initializeDefaultAchievements = function() {
+    const defaultAchievements = [
+        {
+            id: 'first_profile_complete',
+            name: 'Profile Master',
+            description: 'Complete your profile with all required information',
+            category: 'platform',
+            icon: 'user-check',
+            requirements: 'Fill out all required profile fields'
+        },
+        {
+            id: 'first_appointment',
+            name: 'First Steps',
+            description: 'Complete your first appointment',
+            category: 'milestone',
+            icon: 'calendar-check',
+            requirements: 'Successfully complete your first appointment'
+        },
+        {
+            id: 'verified_provider',
+            name: 'Verified Professional',
+            description: 'Get verified as a professional provider',
+            category: 'professional',
+            icon: 'shield-check',
+            requirements: 'Complete the verification process'
+        }
+    ];
+
+    if (this.role === 'provider') {
+        defaultAchievements.push(
+            {
+                id: 'ten_appointments',
+                name: 'Experienced Professional',
+                description: 'Complete 10 successful appointments',
+                category: 'milestone',
+                icon: 'trophy',
+                requirements: 'Complete 10 appointments with good ratings'
+            },
+            {
+                id: 'first_client',
+                name: 'Mentor',
+                description: 'Take on your first client',
+                category: 'professional',
+                icon: 'users',
+                requirements: 'Accept your first client for mentorship'
+            }
+        );
+    }
+
+    // Add achievements that don't already exist
+    defaultAchievements.forEach(achievement => {
+        this.addAchievement(achievement);
     });
 };
 

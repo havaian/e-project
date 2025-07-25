@@ -32,6 +32,13 @@ router.post('/login', userController.loginUser);
 router.get('/me', authenticateUser, userController.getCurrentUser);
 
 /**
+ * @route GET /api/users/:id
+ * @desc Get user profile by ID with proper visibility controls
+ * @access Private
+ */
+router.get('/:id', authenticateUser, userController.getProfileById);
+
+/**
  * @route PATCH /api/users/me
  * @desc Update user profile
  * @access Private
@@ -59,6 +66,84 @@ router.post('/forgot-password', userController.forgotPassword);
  */
 router.post('/reset-password/:token', userController.resetPassword);
 
+// Achievement Management Routes
+
+/**
+ * @route POST /api/users/achievements
+ * @desc Add achievement to current user
+ * @access Private
+ */
+router.post('/achievements', authenticateUser, userController.addAchievement);
+
+/**
+ * @route POST /api/users/achievements/:achievementId/earn
+ * @desc Mark achievement as earned for current user
+ * @access Private
+ */
+router.post('/achievements/:achievementId/earn', authenticateUser, userController.earnAchievement);
+
+/**
+ * @route GET /api/users/achievements
+ * @desc Get current user's achievements
+ * @access Private
+ */
+router.get('/achievements', authenticateUser, userController.getUserAchievements);
+
+/**
+ * @route GET /api/users/:id/achievements
+ * @desc Get achievements for specific user
+ * @access Private
+ */
+router.get('/:id/achievements', authenticateUser, userController.getUserAchievements);
+
+// Client Management Routes (Provider only)
+
+/**
+ * @route POST /api/users/clients
+ * @desc Add client to provider's list
+ * @access Private (Provider only)
+ */
+router.post('/clients', 
+    authenticateUser, 
+    authorizeRoles(['provider']), 
+    userController.addClient
+);
+
+/**
+ * @route DELETE /api/users/clients/:clientId
+ * @desc Remove client from provider's list
+ * @access Private (Provider only)
+ */
+router.delete('/clients/:clientId', 
+    authenticateUser, 
+    authorizeRoles(['provider']), 
+    userController.removeClient
+);
+
+/**
+ * @route GET /api/users/clients
+ * @desc Get current provider's clients
+ * @access Private (Provider only)
+ */
+router.get('/clients', 
+    authenticateUser, 
+    authorizeRoles(['provider']), 
+    userController.getProviderClients
+);
+
+/**
+ * @route GET /api/users/:id/clients
+ * @desc Get clients for specific provider
+ * @access Private (Provider or Admin only)
+ */
+router.get('/:id/clients', 
+    authenticateUser, 
+    authorizeRoles(['provider', 'admin']), 
+    userController.getProviderClients
+);
+
+// Existing Routes
+
 /**
  * @route GET /api/users/providers
  * @desc Get all providers with optional filters - UPDATED to only show complete profiles
@@ -78,7 +163,7 @@ router.get('/providers/:id', userController.getProviderById);
  * @desc Link Telegram account
  * @access Private
  */
-router.post('/link-telegram', userController.linkTelegramAccount);
+router.post('/link-telegram', authenticateUser, userController.linkTelegramAccount);
 
 /**
  * @route POST /api/users/deactivate

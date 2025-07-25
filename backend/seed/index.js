@@ -1,0 +1,2 @@
+require('./achievements');
+require('./specializations');
