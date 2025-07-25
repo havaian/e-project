@@ -373,7 +373,7 @@ exports.forgotPassword = async (req, res) => {
         }
 
         // Generate reset token
-        const resetToken = user.generatePasswordResetToken();
+        const resetToken = user.getResetPasswordToken();
         await user.save();
 
         // Send password reset email
