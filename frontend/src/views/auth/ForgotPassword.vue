@@ -112,9 +112,6 @@
                     <router-link to="/login" class="btn-primary w-full inline-block text-center">
                         Return to Login
                     </router-link>
-                    <button @click="handleSubmit" class="btn-secondary w-full" :disabled="loading">
-                        Resend Reset Link
-                    </button>
                 </div>
             </div>
         </div>
