@@ -42,11 +42,10 @@
                 </div>
                 
                 <!-- Step Circles -->
-                <div v-for="(step, index) in steps" :key="index" class="flex flex-col items-center relative z-10"
-                    :class="{ 'opacity-50': index + 1 > currentStep }">
+                <div v-for="(step, index) in steps" :key="index" class="flex flex-col items-center relative z-10">
                     <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200 bg-white border-2"
                         :class="index + 1 <= currentStep
-                            ? 'bg-sky-500 text-white border-sky-500'
+                            ? 'bg-white text-sky-500 border-sky-500'
                             : 'bg-white text-gray-500 border-gray-300'">
                         <svg v-if="index + 1 < currentStep" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
