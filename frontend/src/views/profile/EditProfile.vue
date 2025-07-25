@@ -8,15 +8,6 @@
                         <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
                         <p class="text-gray-600 mt-1">Update your information and preferences</p>
                     </div>
-                    <div class="hidden sm:block">
-                        <div class="flex items-center space-x-2 text-sm text-gray-500">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>Changes are saved automatically</span>
-                        </div>
-                    </div>
                 </div>
 
                 <form @submit.prevent="handleSubmit" class="space-y-8">
