@@ -141,7 +141,7 @@
 
 <script setup>
 // Import environment variables
-const companyName = import.meta.env.VITE_COMPANY_NAME
+const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 const appTitle1 = import.meta.env.VITE_APP_TITLE_1
 const appTitle2 = import.meta.env.VITE_APP_TITLE_2
 const appTitle3 = import.meta.env.VITE_APP_TITLE_3
