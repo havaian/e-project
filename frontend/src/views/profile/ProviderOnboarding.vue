@@ -30,13 +30,24 @@
 
         <!-- Step Indicators -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="flex justify-between">
-                <div v-for="(step, index) in steps" :key="index" class="flex flex-col items-center"
+            <div class="flex justify-between items-center relative">
+                <!-- Connecting Lines -->
+                <div class="absolute top-5 left-0 right-0 flex justify-between px-5">
+                    <div v-for="index in steps.length - 1" :key="`line-${index}`" 
+                         class="flex-1 h-0.5 mx-2 transition-colors duration-500"
+                         :class="index < currentStep 
+                             ? 'bg-gradient-to-r from-sky-500 to-emerald-500' 
+                             : 'bg-gray-200'">
+                    </div>
+                </div>
+                
+                <!-- Step Circles -->
+                <div v-for="(step, index) in steps" :key="index" class="flex flex-col items-center relative z-10"
                     :class="{ 'opacity-50': index + 1 > currentStep }">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200"
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200 bg-white border-2"
                         :class="index + 1 <= currentStep
-                            ? 'bg-sky-500 text-white'
-                            : 'bg-gray-200 text-gray-500'">
+                            ? 'bg-sky-500 text-white border-sky-500'
+                            : 'bg-white text-gray-500 border-gray-300'">
                         <svg v-if="index + 1 < currentStep" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -76,7 +87,10 @@
 
                 <!-- Navigation -->
                 <div v-if="currentStep < 6" class="bg-gray-50 px-8 py-4 flex justify-between items-center">
-                    <button v-if="currentStep > 1" @click="prevStep" class="btn-element-secondary" :disabled="loading">
+                    <button v-if="currentStep > 1" @click="prevStep" 
+                            class="btn-element-secondary" 
+                            :class="{ 'cursor-not-allowed': loading }"
+                            :disabled="loading">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
@@ -86,11 +100,19 @@
 
                     <div class="flex items-center space-x-3">
                         <button v-if="currentStep < 5" @click="saveDraft"
-                            class="text-gray-500 hover:text-gray-700 text-sm font-medium" :disabled="loading">
+                                class="mr-4 text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors" 
+                                :class="{ 'cursor-not-allowed opacity-50': loading }"
+                                :disabled="loading">
                             Save Draft
                         </button>
 
-                        <button @click="nextStep" class="btn-element-primary" :disabled="!isStepValid || loading">
+                        <button @click="nextStep" 
+                                class="btn-element-primary transition-all duration-200" 
+                                :class="{ 
+                                    'cursor-not-allowed opacity-50': !isStepValid || loading,
+                                    'hover:shadow-lg': isStepValid && !loading 
+                                }"
+                                :disabled="!isStepValid || loading">
                             <span v-if="loading" class="flex items-center">
                                 <svg class="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -101,7 +123,7 @@
                                 </svg>
                                 Saving...
                             </span>
-                            <span v-else>
+                            <span class="flex items-center" v-else>
                                 {{ currentStep === 5 ? 'Complete Setup' : 'Next' }}
                                 <svg v-if="currentStep < 5" class="w-4 h-4 ml-2" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
