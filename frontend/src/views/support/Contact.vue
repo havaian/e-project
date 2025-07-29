@@ -295,6 +295,7 @@
 import { ref, reactive } from 'vue'
 
 // Environment variables
+const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL
 const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
 
@@ -352,8 +353,6 @@ const openLiveChat = () => {
     // For example, opening a chat widget
     console.log('Opening live chat...')
 }
-
-const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 
 // Meta tags
 import { useMeta } from '@unhead/vue'

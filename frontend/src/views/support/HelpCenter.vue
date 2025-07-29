@@ -234,6 +234,7 @@
 import { ref, reactive } from 'vue'
 
 // Environment variables
+const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL
 const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
 
@@ -466,8 +467,6 @@ const startLiveChat = () => {
     console.log('Starting live chat...')
     // Here you would integrate with your live chat system
 }
-
-const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 
 // Meta tags
 import { useMeta } from '@unhead/vue'

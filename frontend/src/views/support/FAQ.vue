@@ -97,6 +97,8 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 
+const companyName = import.meta.env.VITE_APP_COMPANY_NAME
+
 // State
 const searchQuery = ref('')
 const activeCategory = ref('All')
@@ -433,8 +435,6 @@ const toggleFAQ = (id) => {
         openFAQs.value.push(id)
     }
 }
-
-const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 
 // Meta tags
 import { useMeta } from '@unhead/vue'

@@ -221,8 +221,6 @@ const effectiveDate = computed(() => {
     })
 })
 
-const companyName = import.meta.env.VITE_APP_COMPANY_NAME
-
 // Meta tags
 import { useMeta } from '@unhead/vue'
 useMeta({
