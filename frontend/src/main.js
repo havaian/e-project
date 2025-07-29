@@ -1,13 +1,13 @@
 // frontend/src/main.js
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { injectHead } from '@unhead/vue'
+import { createHead } from '@unhead/vue/client'
 import App from './App.vue'
 import router from './router'
 import './assets/main.css'
 
 const app = createApp(App)
-const head = injectHead() 
+const head = createHead() 
 
 app.use(createPinia())
 app.use(router)
