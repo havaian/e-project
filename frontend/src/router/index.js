@@ -217,78 +217,51 @@ const router = createRouter({
     {
       path: '/privacy',
       name: 'privacy-policy',
-      component: () => import('@/views/legal/PrivacyPolicy.vue'),
-      meta: {
-        title: 'Privacy Policy'
-      }
+      component: () => import('@/views/legal/PrivacyPolicy.vue')
     },
     {
       path: '/terms',
       name: 'terms-of-service',
-      component: () => import('@/views/legal/TermsOfService.vue'),
-      meta: {
-        title: 'Terms of Service'
-      }
+      component: () => import('@/views/legal/TermsOfService.vue')
     },
     {
       path: '/public-offer',
       name: 'public-offer',
-      component: () => import('@/views/legal/PublicOffer.vue'),
-      meta: {
-        title: 'Public Offer Agreement'
-      }
+      component: () => import('@/views/legal/PublicOffer.vue')
     },
     {
       path: '/ferpa',
       name: 'ferpa-compliance',
-      component: () => import('@/views/legal/FerpaCompliance.vue'),
-      meta: {
-        title: 'FERPA Compliance'
-      }
+      component: () => import('@/views/legal/FerpaCompliance.vue')
     },
 
     // Support Routes
     {
       path: '/accessibility',
       name: 'accessibility',
-      component: () => import('@/views/support/Accessibility.vue'),
-      meta: {
-        title: 'Accessibility Statement'
-      }
+      component: () => import('@/views/support/Accessibility.vue')
     },
     {
       path: '/contact',
       name: 'contact',
-      component: () => import('@/views/support/Contact.vue'),
-      meta: {
-        title: 'Contact Us'
-      }
+      component: () => import('@/views/support/Contact.vue')
     },
     {
       path: '/help',
       name: 'help-center',
-      component: () => import('@/views/support/HelpCenter.vue'),
-      meta: {
-        title: 'Help Center'
-      }
+      component: () => import('@/views/support/HelpCenter.vue')
     },
     {
       path: '/faq',
       name: 'faq',
-      component: () => import('@/views/support/FAQ.vue'),
-      meta: {
-        title: 'FAQ'
-      }
+      component: () => import('@/views/support/FAQ.vue')
     },
 
     // Company Routes
     {
       path: '/about',
       name: 'about',
-      component: () => import('@/views/company/About.vue'),
-      meta: {
-        title: 'About Us'
-      }
+      component: () => import('@/views/company/About.vue')
     },
 
     // Error routes
