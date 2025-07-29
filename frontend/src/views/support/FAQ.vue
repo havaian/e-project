@@ -437,8 +437,8 @@ const toggleFAQ = (id) => {
 }
 
 // Meta tags
-import { useHead } from 'unhead'
-useHead(unheadInstance, {
+import { useMeta } from '@unhead/vue'
+useMeta(unheadInstance, {
     title: `FAQ | ${companyName}`,
     meta: [
         { name: 'description', content: `Frequently asked questions about ${companyName} consultation platform.` }

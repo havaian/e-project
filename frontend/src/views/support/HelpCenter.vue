@@ -469,8 +469,8 @@ const startLiveChat = () => {
 }
 
 // Meta tags
-import { useHead } from 'unhead'
-useHead(unheadInstance, {
+import { useMeta } from '@unhead/vue'
+useMeta(unheadInstance, {
     title: `Help Center | ${companyName}`,
     meta: [
         { name: 'description', content: 'Find answers to your questions in our comprehensive help center.' }
