@@ -213,6 +213,84 @@ const router = createRouter({
       }
     },
 
+    // Legal and Compliance Routes
+    {
+      path: '/privacy',
+      name: 'privacy-policy',
+      component: () => import('@/views/legal/PrivacyPolicy.vue'),
+      meta: {
+        title: 'Privacy Policy'
+      }
+    },
+    {
+      path: '/terms',
+      name: 'terms-of-service',
+      component: () => import('@/views/legal/TermsOfService.vue'),
+      meta: {
+        title: 'Terms of Service'
+      }
+    },
+    {
+      path: '/public-offer',
+      name: 'public-offer',
+      component: () => import('@/views/legal/PublicOffer.vue'),
+      meta: {
+        title: 'Public Offer Agreement'
+      }
+    },
+    {
+      path: '/ferpa',
+      name: 'ferpa-compliance',
+      component: () => import('@/views/legal/FerpaCompliance.vue'),
+      meta: {
+        title: 'FERPA Compliance'
+      }
+    },
+
+    // Support Routes
+    {
+      path: '/accessibility',
+      name: 'accessibility',
+      component: () => import('@/views/support/Accessibility.vue'),
+      meta: {
+        title: 'Accessibility Statement'
+      }
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('@/views/support/Contact.vue'),
+      meta: {
+        title: 'Contact Us'
+      }
+    },
+    {
+      path: '/help',
+      name: 'help-center',
+      component: () => import('@/views/support/HelpCenter.vue'),
+      meta: {
+        title: 'Help Center'
+      }
+    },
+    {
+      path: '/faq',
+      name: 'faq',
+      component: () => import('@/views/support/FAQ.vue'),
+      meta: {
+        title: 'FAQ'
+      }
+    },
+
+    // Company Routes
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('@/views/company/About.vue'),
+      meta: {
+        title: 'About Us'
+      }
+    },
+
     // Error routes
     {
       path: '/:pathMatch(.*)*',
