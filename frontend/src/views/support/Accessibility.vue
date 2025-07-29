@@ -372,7 +372,7 @@ const lastUpdated = computed(() => {
 
 // Meta tags
 import { useHead } from '@unhead/vue'
-useHead(unheadInstance, {
+useHead({
     title: `Accessibility Statement | ${companyName}`,
     meta: [
         { name: 'description', content: 'Our commitment to digital accessibility and inclusive design.' }

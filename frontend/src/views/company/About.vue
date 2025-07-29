@@ -331,7 +331,7 @@ const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 
 // Meta tags
 import { useHead } from '@unhead/vue'
-useHead(unheadInstance, {
+useHead({
     title: `About Us | ${companyName}`,
     meta: [
         { name: 'description', content: `Learn about ${companyName}\'s mission to transform education through innovative online consultation services.` }

@@ -259,7 +259,7 @@ const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
 
 // Meta tags
 import { useHead } from '@unhead/vue'
-useHead(unheadInstance, {
+useHead({
     title: `FERPA Compliance | ${companyName}`,
     meta: [
         { name: 'description', content: 'Our commitment to FERPA compliance and student privacy protection.' }
