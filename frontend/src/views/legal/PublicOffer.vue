@@ -223,7 +223,7 @@ const effectiveDate = computed(() => {
 
 // Meta tags
 import { useHead } from 'unhead'
-useHead({
+useHead(unheadInstance, {
     title: `Public Offer Agreement | ${companyName}`,
     meta: [
         { name: 'description', content: `Public Offer Agreement for ${companyName} consultation services.` }

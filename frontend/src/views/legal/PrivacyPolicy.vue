@@ -156,7 +156,7 @@ const lastUpdated = computed(() => {
 
 // Meta tags
 import { useHead } from 'unhead'
-useHead({
+useHead(unheadInstance, {
   title: `Privacy Policy | ${companyName}`,
   meta: [
     { name: 'description', content: 'Our privacy policy explains how we collect, use, and protect your personal information.' }

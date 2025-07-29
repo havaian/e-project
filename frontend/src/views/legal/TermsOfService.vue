@@ -202,7 +202,7 @@ const lastUpdated = computed(() => {
 
 // Meta tags
 import { useHead } from 'unhead'
-useHead({
+useHead(unheadInstance, {
     title: `Terms of Service | ${companyName}`,
     meta: [
         { name: 'description', content: `Terms of Service for ${companyName} online consultation platform.` }
