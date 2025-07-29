@@ -7,7 +7,7 @@ import router from './router'
 import './assets/main.css'
 
 const app = createApp(App)
-const head = createHead() 
+const head = injectHead() 
 
 app.use(createPinia())
 app.use(router)
