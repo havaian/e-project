@@ -222,7 +222,7 @@ const effectiveDate = computed(() => {
 })
 
 // Meta tags
-import { useHead } from '@unhead/vue'
+import { useHead } from 'unhead'
 useHead({
     title: `Public Offer Agreement | ${companyName}`,
     meta: [

@@ -469,7 +469,7 @@ const startLiveChat = () => {
 }
 
 // Meta tags
-import { useHead } from '@unhead/vue'
+import { useHead } from 'unhead'
 useHead({
     title: `Help Center | ${companyName}`,
     meta: [

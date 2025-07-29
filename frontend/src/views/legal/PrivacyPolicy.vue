@@ -155,7 +155,7 @@ const lastUpdated = computed(() => {
 })
 
 // Meta tags
-import { useHead } from '@unhead/vue'
+import { useHead } from 'unhead'
 useHead({
   title: `Privacy Policy | ${companyName}`,
   meta: [

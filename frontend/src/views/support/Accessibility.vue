@@ -371,7 +371,7 @@ const lastUpdated = computed(() => {
 })
 
 // Meta tags
-import { useHead } from '@unhead/vue'
+import { useHead } from 'unhead'
 useHead({
     title: `Accessibility Statement | ${companyName}`,
     meta: [
