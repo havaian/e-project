@@ -201,8 +201,8 @@ const lastUpdated = computed(() => {
 })
 
 // Meta tags
-import { useMeta } from '@unhead/vue'
-useMeta(unheadInstance, {
+import { useHead } from '@unhead/vue'
+useHead(unheadInstance, {
     title: `Terms of Service | ${companyName}`,
     meta: [
         { name: 'description', content: `Terms of Service for ${companyName} online consultation platform.` }

@@ -258,8 +258,8 @@ const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
 
 // Meta tags
-import { useMeta } from '@unhead/vue'
-useMeta(unheadInstance, {
+import { useHead } from '@unhead/vue'
+useHead(unheadInstance, {
     title: `FERPA Compliance | ${companyName}`,
     meta: [
         { name: 'description', content: 'Our commitment to FERPA compliance and student privacy protection.' }

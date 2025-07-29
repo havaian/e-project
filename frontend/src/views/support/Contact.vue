@@ -355,8 +355,8 @@ const openLiveChat = () => {
 }
 
 // Meta tags
-import { useMeta } from '@unhead/vue'
-useMeta(unheadInstance, {
+import { useHead } from '@unhead/vue'
+useHead(unheadInstance, {
     title: `Contact Us | ${companyName}`,
     meta: [
         { name: 'description', content: `Contact ${companyName} support team. We provide 24/7 assistance for all your consultation needs.` }
