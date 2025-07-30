@@ -147,13 +147,11 @@ const faqs = reactive([
         answer: `
       <p>Absolutely! We take your privacy and security very seriously:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
-        <li><strong>FERPA Compliant:</strong> We meet all educational privacy requirements</li>
         <li><strong>Encrypted Data:</strong> All data is encrypted in transit and at rest</li>
         <li><strong>Secure Storage:</strong> Your information is stored on secure, monitored servers</li>
         <li><strong>Limited Access:</strong> Only authorized personnel can access your data</li>
         <li><strong>Regular Audits:</strong> We conduct regular security assessments</li>
       </ul>
-      <p class="mt-3">For more details, please review our <a href="/privacy" class="text-sky-600 hover:text-sky-700 underline">Privacy Policy</a> and <a href="/ferpa" class="text-sky-600 hover:text-sky-700 underline">FERPA Compliance</a> pages.</p>
     `
     },
 
@@ -327,13 +325,11 @@ const faqs = reactive([
         answer: `
       <p>We take educational record protection very seriously:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
-        <li><strong>FERPA Compliance:</strong> We meet all federal educational privacy requirements</li>
         <li><strong>Encryption:</strong> All data is encrypted both in transit and at rest</li>
         <li><strong>Access Controls:</strong> Only authorized personnel can access your records</li>
         <li><strong>Audit Trails:</strong> We maintain detailed logs of all data access</li>
         <li><strong>Data Minimization:</strong> We only collect data necessary for our services</li>
       </ul>
-      <p class="mt-3">For complete details, see our <a href="/ferpa" class="text-sky-600 hover:text-sky-700 underline">FERPA Compliance page</a>.</p>
     `
     },
     {

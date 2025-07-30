@@ -220,19 +220,9 @@ const router = createRouter({
       component: () => import('@/views/legal/PrivacyPolicy.vue')
     },
     {
-      path: '/terms',
-      name: 'terms-of-service',
-      component: () => import('@/views/legal/TermsOfService.vue')
-    },
-    {
       path: '/public-offer',
       name: 'public-offer',
       component: () => import('@/views/legal/PublicOffer.vue')
-    },
-    {
-      path: '/ferpa',
-      name: 'ferpa-compliance',
-      component: () => import('@/views/legal/FerpaCompliance.vue')
     },
 
     // Support Routes

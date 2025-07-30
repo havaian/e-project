@@ -155,10 +155,6 @@
               <div class="text-2xl font-bold text-emerald-500 mb-1">15min</div>
               <div class="text-sm text-gray-600">Average Wait Time</div>
             </div>
-            <div>
-              <div class="text-2xl font-bold text-purple-600 mb-1">FERPA</div>
-              <div class="text-sm text-gray-600">Compliant</div>
-            </div>
           </div>
         </div>
       </div>

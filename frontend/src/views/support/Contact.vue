@@ -114,10 +114,6 @@
                                     <span class="text-gray-600">Provider Support</span>
                                     <span class="text-gray-900">ext. 104</span>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">FERPA Compliance</span>
-                                    <span class="text-gray-900">ext. 105</span>
-                                </div>
                             </div>
                         </div>
                     </div>

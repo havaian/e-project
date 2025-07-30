@@ -56,7 +56,7 @@
                             <li>Appointment scheduling and management tools</li>
                             <li>Payment processing services</li>
                             <li>24/7 technical support</li>
-                            <li>FERPA-compliant data handling for educational records</li>
+                            <li>Secure data handling for educational records</li>
                         </ul>
                     </section>
 
@@ -103,7 +103,6 @@
                             <li>99.9% platform uptime (excluding scheduled maintenance)</li>
                             <li>Secure, encrypted communication channels</li>
                             <li>Verified professional credentials for all providers</li>
-                            <li>FERPA compliance for educational data</li>
                             <li>24/7 technical support availability</li>
                             <li>Data backup and recovery procedures</li>
                         </ul>

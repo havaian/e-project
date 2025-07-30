@@ -7,7 +7,7 @@
                     <h1 class="text-5xl font-bold mb-6">About {{ companyName }}</h1>
                     <p class="text-xl text-sky-100 max-w-3xl mx-auto leading-relaxed">
                         Transforming education through innovative online consultation services that connect students,
-                        educators, and professionals in a secure, FERPA-compliant environment.
+                        educators, and professionals in a secure environment.
                     </p>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 mb-3">Growth & Innovation</h3>
                         <p class="text-gray-600">
-                            Expanded our platform capabilities and achieved FERPA compliance, serving over 10,000
+                            Expanded our platform capabilities serving over 10,000
                             students across 200+ educational institutions.
                         </p>
                     </div>
@@ -187,7 +187,7 @@
                         <p class="text-emerald-600 font-medium mb-3">Chief Technology Officer</p>
                         <p class="text-gray-600 text-sm">
                             Technology leader with expertise in secure platform development and educational compliance
-                            standards including FERPA.
+                            standards.
                         </p>
                     </div>
 
@@ -246,60 +246,6 @@
                     <p class="text-gray-600 max-w-2xl mx-auto">
                         We maintain the highest standards of security, privacy, and educational compliance.
                     </p>
-                </div>
-
-                <div class="grid md:grid-cols-4 gap-8 text-center">
-                    <div class="bg-green-50 rounded-xl p-6">
-                        <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">FERPA Compliant</h3>
-                        <p class="text-gray-600 text-sm">
-                            Full compliance with educational privacy regulations
-                        </p>
-                    </div>
-
-                    <div class="bg-blue-50 rounded-xl p-6">
-                        <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">SOC 2 Certified</h3>
-                        <p class="text-gray-600 text-sm">
-                            Rigorous security and availability standards
-                        </p>
-                    </div>
-
-                    <div class="bg-purple-50 rounded-xl p-6">
-                        <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">WCAG 2.1 AA</h3>
-                        <p class="text-gray-600 text-sm">
-                            Web accessibility compliance for all users
-                        </p>
-                    </div>
-
-                    <div class="bg-orange-50 rounded-xl p-6">
-                        <div class="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">ISO 27001</h3>
-                        <p class="text-gray-600 text-sm">
-                            International security management standards
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>

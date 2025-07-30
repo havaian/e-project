@@ -40,7 +40,7 @@
 
             <h3 class="text-xl font-semibold text-gray-800 mb-3">Educational Records</h3>
             <p class="text-gray-700 mb-6">
-              In compliance with FERPA, we may collect and process educational records as necessary to provide our services. 
+              We may collect and process educational records as necessary to provide our services. 
               All educational records are handled with the highest level of security and confidentiality.
             </p>
           </section>
@@ -71,9 +71,9 @@
           </section>
 
           <section class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">FERPA Compliance</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Data Handling</h2>
             <p class="text-gray-700 mb-6">
-              We are committed to compliance with the Family Educational Rights and Privacy Act (FERPA). Educational records are:
+              Educational records are:
             </p>
             <ul class="list-disc ml-6 text-gray-700 mb-6">
               <li>Kept strictly confidential</li>

@@ -363,7 +363,7 @@ exports.ensureTermsAccepted = (req, res, next) => {
 
     //     if (!termsAccepted || !privacyPolicyAccepted) {
     //         return res.status(400).json({
-    //             message: 'You must accept the Terms of Service and Privacy Policy to register.'
+    //             message: 'You must accept the Public Offer and Privacy Policy to register.'
     //         });
     //     }
     // }

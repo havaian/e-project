@@ -323,10 +323,9 @@ const helpCategories = reactive([
         iconColor: 'text-indigo-600',
         iconPath: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
         articles: [
-            { id: 601, title: 'FERPA Compliance' },
-            { id: 602, title: 'Data Security Measures' },
-            { id: 603, title: 'Privacy Settings' },
-            { id: 604, title: 'Reporting Security Issues' }
+            { id: 601, title: 'Data Security Measures' },
+            { id: 602, title: 'Privacy Settings' },
+            { id: 603, title: 'Reporting Security Issues' }
         ]
     }
 ])
@@ -379,25 +378,6 @@ const popularArticles = reactive([
         <li>Check microphone permissions</li>
         <li>Test your microphone settings</li>
         <li>Use headphones to reduce echo</li>
-      </ul>
-    `
-    },
-    {
-        id: 1003,
-        title: 'Understanding FERPA Compliance',
-        excerpt: 'Learn how we protect your educational records and privacy.',
-        readTime: 4,
-        lastUpdated: 'January 10, 2025',
-        content: `
-      <h3>What is FERPA?</h3>
-      <p>The Family Educational Rights and Privacy Act (FERPA) protects student educational records.</p>
-      <h3>How We Comply</h3>
-      <p>Our platform ensures:</p>
-      <ul>
-        <li>Secure data storage and transmission</li>
-        <li>Access controls and permissions</li>
-        <li>Regular security audits</li>
-        <li>Staff training on privacy requirements</li>
       </ul>
     `
     },

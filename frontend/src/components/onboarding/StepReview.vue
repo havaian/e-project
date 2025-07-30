@@ -176,9 +176,8 @@
                     class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded mt-1"
                     @change="validateForm" />
                 <label for="terms-agreement" class="text-sm text-gray-700">
-                    I confirm that all information provided is accurate and I agree to the
-                    <a href="/terms" target="_blank" class="text-sky-600 hover:text-sky-700 underline">Terms of
-                        Service</a>
+                    I confirm that all information provided is accurate and I have accepted
+                    <a href="/terms" target="_blank" class="text-sky-600 hover:text-sky-700 underline">Public Offer</a>
                     and
                     <a href="/privacy" target="_blank" class="text-sky-600 hover:text-sky-700 underline">Privacy
                         Policy</a>.
