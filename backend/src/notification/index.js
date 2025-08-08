@@ -165,7 +165,7 @@ class NotificationService {
         console.log('📧 Sending email:', { to, subject });
 
         const mailOptions = {
-            from: `"e-project.uz" <${process.env.SMTP_FROM_EMAIL}>`,
+            from: `"${process.env.VITE_PROJECT_URL_SHORT}" <${process.env.SMTP_FROM_EMAIL}>`,
             to,
             subject,
             text: text || '',
@@ -284,18 +284,18 @@ class NotificationService {
 
         const emailData = {
             to: email,
-            subject: 'Verify Your Email - e-project.uz',
+            subject: `Verify Your Email - ${process.env.VITE_PROJECT_URL_SHORT}`,
             text: `Please verify your email by clicking on the following link: ${verificationLink}`,
             html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">e-project.uz Email Verification</h2>
-            <p>Thank you for registering with e-project.uz!</p>
+            <h2 style="color: #4a90e2;">${process.env.VITE_PROJECT_URL_SHORT} Email Verification</h2>
+            <p>Thank you for registering with ${process.env.VITE_PROJECT_URL_SHORT}!</p>
             <p>Please verify your email address by clicking the button below:</p>
             <a href="${verificationLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Verify Email</a>
             <p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
             <p>${verificationLink}</p>
             <p>This link will expire in 24 hours.</p>
-            <p>If you didn't create an account with e-project.uz, please ignore this email.</p>
+            <p>If you didn't create an account with ${process.env.VITE_PROJECT_URL_SHORT}, please ignore this email.</p>
             </div>
         `
         };
@@ -313,11 +313,11 @@ class NotificationService {
 
         const emailData = {
             to: email,
-            subject: 'Reset Your Password - e-project.uz',
+            subject: `Reset Your Password - ${process.env.VITE_PROJECT_URL_SHORT}`,
             text: `You requested a password reset. Please click the following link to reset your password: ${resetLink}`,
             html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">e-project.uz Password Reset</h2>
+            <h2 style="color: #4a90e2;">${process.env.VITE_PROJECT_URL_SHORT} Password Reset</h2>
             <p>We received a request to reset your password. Click the button below to set a new password:</p>
             <a href="${resetLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset Password</a>
             <p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
@@ -352,7 +352,7 @@ class NotificationService {
             // Email to client
             const clientEmailData = {
                 to: client.email,
-                subject: 'Appointment Confirmation - e-project.uz',
+                subject: `Appointment Confirmation - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your appointment with ${provider.firstName} ${provider.lastName} has been confirmed for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -363,7 +363,7 @@ class NotificationService {
               <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
-            <p>You can view your appointment details and join the session by logging into your e-project.uz account.</p>
+            <p>You can view your appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -371,7 +371,7 @@ class NotificationService {
             // Email to provider
             const providerEmailData = {
                 to: provider.email,
-                subject: 'New Appointment - e-project.uz',
+                subject: `New Appointment - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `You have a new appointment with ${client.firstName} ${client.lastName} scheduled for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -382,7 +382,7 @@ class NotificationService {
               <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
-            <p>You can view appointment details and join the session by logging into your e-project.uz account.</p>
+            <p>You can view appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -439,7 +439,7 @@ class NotificationService {
             // Email to client
             const clientEmailData = {
                 to: client.email,
-                subject: 'Appointment Canceled - e-project.uz',
+                subject: `Appointment Canceled - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your appointment with ${provider.firstName} ${provider.lastName} scheduled for ${formattedDateTime} has been canceled.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -450,7 +450,7 @@ class NotificationService {
               <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
-            <p>You can schedule a new appointment by logging into your e-project.uz account.</p>
+            <p>You can schedule a new appointment by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -458,7 +458,7 @@ class NotificationService {
             // Email to provider
             const providerEmailData = {
                 to: provider.email,
-                subject: 'Appointment Canceled - e-project.uz',
+                subject: `Appointment Canceled - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your appointment with ${client.firstName} ${client.lastName} scheduled for ${formattedDateTime} has been canceled.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -517,13 +517,13 @@ class NotificationService {
             // Email to client for feedback
             const clientEmailData = {
                 to: client.email,
-                subject: 'Appointment Completed - e-project.uz',
+                subject: `Appointment Completed - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your appointment with ${provider.firstName} ${provider.lastName} has been completed. Please leave your feedback.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Appointment Completed</h2>
             <p>Your appointment with ${provider.firstName} ${provider.lastName} has been completed.</p>
-            <p>If any recommendations were provided, you can view them in your e-project.uz account.</p>
+            <p>If any recommendations were provided, you can view them in your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
             <a href="${process.env.FRONTEND_URL}/appointments/feedback/${appointment._id}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Leave Feedback</a>
             <p>Your feedback helps us improve our services.</p>
           </div>
@@ -576,7 +576,7 @@ class NotificationService {
             // Email to client
             const clientEmailData = {
                 to: client.email,
-                subject: 'New Recommendations - e-project.uz',
+                subject: `New Recommendations - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `${provider.firstName} ${provider.lastName} has added recommendations to your recent appointment.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -585,7 +585,7 @@ class NotificationService {
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               ${recommendationsHtml}
             </div>
-            <p>You can view these recommendations anytime by logging into your e-project.uz account.</p>
+            <p>You can view these recommendations anytime by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -597,7 +597,7 @@ class NotificationService {
             if (client.telegramId) {
                 const telegramData = {
                     chatId: client.telegramId,
-                    text: `💊 ${provider.firstName} ${provider.lastName} has added recommendations to your recent appointment. Check your email or e-project.uz account for details.`,
+                    text: `💊 ${provider.firstName} ${provider.lastName} has added recommendations to your recent appointment. Check your email or ${process.env.VITE_PROJECT_URL_SHORT} account for details.`,
                     options: {
                         parse_mode: 'HTML'
                     }
@@ -630,7 +630,7 @@ class NotificationService {
             // Email to client
             const clientEmailData = {
                 to: client.email,
-                subject: 'Follow-up Appointment Scheduled - e-project.uz',
+                subject: 'Follow-up Appointment Scheduled - ${process.env.VITE_PROJECT_URL_SHORT}',
                 text: `A follow-up appointment with ${provider.firstName} ${provider.lastName} has been scheduled for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -641,7 +641,7 @@ class NotificationService {
               <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
-            <p>You can view your appointment details and join the session by logging into your e-project.uz account.</p>
+            <p>You can view your appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -649,7 +649,7 @@ class NotificationService {
             // Email to provider
             const providerEmailData = {
                 to: provider.email,
-                subject: 'Follow-up Appointment Scheduled - e-project.uz',
+                subject: `Follow-up Appointment Scheduled - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `A follow-up appointment with ${client.firstName} ${client.lastName} has been scheduled for ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -660,7 +660,7 @@ class NotificationService {
               <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
-            <p>You can view appointment details and join the session by logging into your e-project.uz account.</p>
+            <p>You can view appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -717,7 +717,7 @@ class NotificationService {
             // Email to client
             const clientEmailData = {
                 to: client.email,
-                subject: 'Appointment Reminder - e-project.uz',
+                subject: `Appointment Reminder - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Reminder: Your appointment with ${provider.firstName} ${provider.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -728,7 +728,7 @@ class NotificationService {
               <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
-            <p>You can view your appointment details and join the session by logging into your e-project.uz account.</p>
+            <p>You can view your appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -736,7 +736,7 @@ class NotificationService {
             // Email to provider
             const providerEmailData = {
                 to: provider.email,
-                subject: 'Appointment Reminder - e-project.uz',
+                subject: `Appointment Reminder - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Reminder: Your appointment with ${client.firstName} ${client.lastName} is scheduled for tomorrow at ${formattedDateTime}.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -747,7 +747,7 @@ class NotificationService {
               <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
-            <p>You can view appointment details and join the session by logging into your e-project.uz account.</p>
+            <p>You can view appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -802,7 +802,7 @@ class NotificationService {
             // Email to client
             const clientEmailData = {
                 to: client.email,
-                subject: 'Your Session Starts Soon - e-project.uz',
+                subject: `Your Session Starts Soon - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your session with ${provider.firstName} ${provider.lastName} starts in 15 minutes.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -817,7 +817,7 @@ class NotificationService {
             // Email to provider
             const providerEmailData = {
                 to: provider.email,
-                subject: 'Session Starts Soon - e-project.uz',
+                subject: `Session Starts Soon - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your session with ${client.firstName} ${client.lastName} starts in 15 minutes.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -874,7 +874,7 @@ class NotificationService {
 
             const emailData = {
                 to: client.email,
-                subject: 'Payment Successful - e-project.uz',
+                subject: `Payment Successful - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Payment Successful</h2>
@@ -885,7 +885,7 @@ class NotificationService {
               <p><strong>Type:</strong> ${appointment.type}</p>
               <p><strong>Payment ID:</strong> ${paymentId}</p>
             </div>
-            <p>You can view your appointment details in your e-project.uz account.</p>
+            <p>You can view your appointment details in your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
           </div>
         `
             };
@@ -907,7 +907,7 @@ class NotificationService {
 
             const emailData = {
                 to: provider.email,
-                subject: 'New Appointment Confirmed - e-project.uz',
+                subject: `New Appointment Confirmed - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">New Appointment Confirmed</h2>
@@ -917,7 +917,7 @@ class NotificationService {
               <p><strong>Date & Time:</strong> ${formattedDate}</p>
               <p><strong>Type:</strong> ${appointment.type}</p>
             </div>
-            <p>Please log in to your e-project.uz account to view the appointment details.</p>
+            <p>Please log in to your ${process.env.VITE_PROJECT_URL_SHORT} account to view the appointment details.</p>
           </div>
         `
             };
@@ -940,7 +940,7 @@ class NotificationService {
 
             const emailData = {
                 to: client.email,
-                subject: 'Payment Failed - e-project.uz',
+                subject: `Payment Failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #e74c3c;">Payment Failed</h2>

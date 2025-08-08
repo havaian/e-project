@@ -53,11 +53,11 @@ router.post('/verification', async (req, res) => {
         const { NotificationService } = require('../notification');
         await NotificationService.sendEmail({
             to: email,
-            subject: 'Telegram Verification Code - e-project.uz',
+            subject: `Telegram Verification Code - ${process.env.VITE_PROJECT_URL_SHORT}`,
             text: `Your verification code for linking your Telegram account is: ${verificationCode}. This code is valid for 15 minutes.`,
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #4a90e2;">e-project.uz Telegram Verification</h2>
+          <h2 style="color: #4a90e2;">${process.env.VITE_PROJECT_URL_SHORT} Telegram Verification</h2>
           <p>Your verification code for linking your Telegram account is:</p>
           <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; text-align: center;">
             <h1 style="font-size: 32px; margin: 0; color: #333;">${verificationCode}</h1>

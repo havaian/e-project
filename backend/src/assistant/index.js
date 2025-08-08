@@ -17,7 +17,7 @@ class EducationalAssistant {
      * @returns {String} System prompt
      */
     getSystemPrompt() {
-        return `You are an AI assistant for e-project.uz, an online session platform in Uzbekistan.
+        return `You are an AI assistant for ${process.env.VITE_PROJECT_URL_SHORT}, an online session platform in Uzbekistan.
 Your role is to provide general academic performance information, basic guidance, and answer common academic performance-related questions.
 
 Important guidelines:

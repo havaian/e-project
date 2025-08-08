@@ -14,7 +14,7 @@ exports.appointmentBookedClient = (appointment) => {
   const { provider, dateTime, type, payment } = appointment;
 
   return {
-    subject: 'Appointment Confirmation - e-project.uz',
+    subject: `Appointment Confirmation - ${process.env.VITE_PROJECT_URL_SHORT}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #4a90e2;">Appointment Confirmed</h2>
@@ -30,7 +30,7 @@ exports.appointmentBookedClient = (appointment) => {
         </div>
         
         <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
-        <p>You can view your appointment details and join the session by logging into your e-project.uz account.</p>
+        <p>You can view your appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
       </div>
     `
   };
@@ -40,7 +40,7 @@ exports.appointmentBookedProvider = (appointment) => {
   const { client, dateTime, type } = appointment;
 
   return {
-    subject: 'New Appointment Scheduled - e-project.uz',
+    subject: `New Appointment Scheduled - ${process.env.VITE_PROJECT_URL_SHORT}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #4a90e2;">New Appointment</h2>
@@ -53,7 +53,7 @@ exports.appointmentBookedProvider = (appointment) => {
           <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
         </div>
         
-        <p>Please log in to your e-project.uz account to view the complete appointment details.</p>
+        <p>Please log in to your ${process.env.VITE_PROJECT_URL_SHORT} account to view the complete appointment details.</p>
       </div>
     `
   };
@@ -63,7 +63,7 @@ exports.appointmentBookingFailed = (data) => {
   const { provider, dateTime, type, error } = data;
 
   return {
-    subject: 'Appointment Booking Failed - e-project.uz',
+    subject: `Appointment Booking Failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #e74c3c;">Appointment Booking Failed</h2>
@@ -88,7 +88,7 @@ exports.appointmentReminder = (appointment) => {
   const isProvider = Boolean(provider.email);
 
   return {
-    subject: 'Appointment Reminder - e-project.uz',
+    subject: `Appointment Reminder - ${process.env.VITE_PROJECT_URL_SHORT}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #4a90e2;">Appointment Reminder</h2>
@@ -115,7 +115,7 @@ exports.appointmentCancelled = (appointment, cancelledBy) => {
   const isProvider = Boolean(provider.email);
 
   return {
-    subject: 'Appointment Cancelled - e-project.uz',
+    subject: `Appointment Cancelled - ${process.env.VITE_PROJECT_URL_SHORT}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #e74c3c;">Appointment Cancelled</h2>
