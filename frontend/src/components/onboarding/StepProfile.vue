@@ -44,6 +44,26 @@
                 </button>
             </div>
 
+            <!-- Professional License Number -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional License Number</h3>
+                <p class="text-sm text-gray-600 mb-4">Enter your professional license or certification number</p>
+
+                <div class="max-w-md">
+                    <input 
+                        v-model="modelValue.licenseNumber" 
+                        type="text" 
+                        placeholder="e.g., PSY12345 or LPC-67890"
+                        class="input" 
+                        @input="validateForm" 
+                        maxlength="50"
+                    />
+                    <p class="text-sm text-gray-500 mt-2">
+                        This verifies your professional credentials and builds client trust
+                    </p>
+                </div>
+            </div>
+
             <!-- Years of Experience -->
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Years of Experience</h3>
@@ -116,6 +136,9 @@
                             <p v-if="modelValue.experience > 0">
                                 {{ modelValue.experience }} {{ modelValue.experience === 1 ? 'year' : 'years' }} of
                                 experience
+                            </p>
+                            <p v-if="modelValue.licenseNumber" class="mt-1">
+                                License: {{ modelValue.licenseNumber }}
                             </p>
                         </div>
                         <div class="mt-3 text-sm text-gray-700">
@@ -192,7 +215,7 @@ const userInitials = computed(() => {
 })
 
 const bioLength = computed(() => {
-    return modelValue.bio?.length || 0
+    return props.modelValue.bio?.length || 0
 })
 
 const selectedSpecializations = computed(() => {
