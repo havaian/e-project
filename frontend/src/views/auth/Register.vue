@@ -189,8 +189,8 @@
                             <option value="">Select gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                            <option value="other">Other</option>
-                            <option value="prefer not to say">Prefer not to say</option>
+                            <!-- <option value="other">Other</option>
+                            <option value="prefer not to say">Prefer not to say</option> -->
                         </select>
                     </div>
                 </div>
@@ -347,14 +347,6 @@ async function handleSubmit() {
 
         // Create a copy of the formData to modify before sending
         const registrationData = { ...formData };
-
-        if (registrationData.role === 'provider') {
-            // Make sure specializations is processed properly
-            registrationData.specializations = formData.specializations.filter(s => s !== "");
-
-            // Process languages for provider registration
-            registrationData.languages = formData.languages.filter(l => l !== "");
-        }
 
         await authStore.register(registrationData);
         registrationSuccess.value = true;
