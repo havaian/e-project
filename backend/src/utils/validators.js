@@ -76,22 +76,22 @@ exports.validateUserInput = (data) => {
     // Define provider-specific schema
     const providerSchema = {
         // Provider-specific required fields
-        specializations: Joi.string().trim().required()
+        specializations: Joi.string().trim().optional()
             .messages({
                 'string.empty': 'Specialization is required for providers'
             }),
 
-        specializations: Joi.array().items(Joi.string().trim()).min(1).required()
+        specializations: Joi.array().items(Joi.string().trim()).min(1).optional()
             .messages({
                 'array.min': 'At least one specializations is required for providers'
             }),
 
-        licenseNumber: Joi.string().trim().required()
+        licenseNumber: Joi.string().trim().optional()
             .messages({
                 'string.empty': 'License number is required for providers'
             }),
 
-        experience: Joi.number().integer().min(0).required()
+        experience: Joi.number().integer().min(0).optional()
             .messages({
                 'number.base': 'Experience must be a number',
                 'number.integer': 'Experience must be an integer',
@@ -99,7 +99,7 @@ exports.validateUserInput = (data) => {
                 'any.required': 'Experience is required for providers'
             }),
 
-        sessionFee: Joi.number().positive().required()
+        sessionFee: Joi.number().positive().optional()
             .messages({
                 'number.base': 'Session fee must be a number',
                 'number.positive': 'Session fee must be positive',
