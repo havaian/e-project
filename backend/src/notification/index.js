@@ -10,7 +10,7 @@ const emailService = require('./emailService');
  */
 class NotificationService {
     constructor() {
-        this.emailTransporter = nodemailer.createTransporter({
+        this.emailTransporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: process.env.SMTP_PORT,
             secure: process.env.SMTP_SECURE === 'true',
