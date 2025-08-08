@@ -10,6 +10,7 @@ const emailService = require('./emailService');
  */
 class NotificationService {
     constructor() {
+        // Initialize email transporter
         this.emailTransporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: process.env.SMTP_PORT,
@@ -27,67 +28,47 @@ class NotificationService {
             keepAlive: true
         });
 
-        this.offlineEmailQueue = [];
-        this.isProcessingQueue = false;
         this.rabbitChannel = null;
         this.rabbitConnection = null;
         
+        // Try to initialize RabbitMQ but don't block if it fails
         this.initializeRabbitMQ();
 
-        this.emailService = require('./emailService')(this);
+        console.log('✅ NotificationService initialized with direct SMTP + RabbitMQ fallback');
     }
 
     async initializeRabbitMQ() {
-        const maxRetries = 10;
-        const retryInterval = 10000;
-        let attempts = 0;
-        
-        const tryConnect = async () => {
-            try {
-                attempts++;
-                console.log(`🔄 Attempting to connect to RabbitMQ (Attempt ${attempts}/${maxRetries})...`);
-                
-                if (attempts > 1) {
-                    await new Promise(resolve => setTimeout(resolve, retryInterval));
-                }
-                
-                this.rabbitConnection = await amqp.connect(process.env.RABBITMQ_URI);
-                
-                this.rabbitConnection.on('error', (err) => {
-                    console.error('⚠️ RabbitMQ connection error:', err);
-                    this.rabbitChannel = null;
-                    setTimeout(() => this.initializeRabbitMQ(), retryInterval);
-                });
-                
-                this.rabbitConnection.on('close', () => {
-                    console.warn('⚠️ RabbitMQ connection closed.');
-                    this.rabbitChannel = null;
-                    setTimeout(() => this.initializeRabbitMQ(), retryInterval);
-                });
+        try {
+            console.log('🔄 Attempting to connect to RabbitMQ...');
+            
+            this.rabbitConnection = await amqp.connect(process.env.RABBITMQ_URI);
+            
+            this.rabbitConnection.on('error', (err) => {
+                console.error('⚠️ RabbitMQ connection error:', err.message);
+                this.rabbitChannel = null;
+            });
+            
+            this.rabbitConnection.on('close', () => {
+                console.warn('⚠️ RabbitMQ connection closed.');
+                this.rabbitChannel = null;
+                // Retry after 30 seconds
+                setTimeout(() => this.initializeRabbitMQ(), 30000);
+            });
 
-                this.rabbitChannel = await this.rabbitConnection.createChannel();
-                await this.rabbitChannel.assertQueue('email_notifications', { durable: true });
-                
-                console.log('✅ RabbitMQ connected and channels established');
-                
-                // Process any queued offline emails
-                this.processOfflineQueue();
-                
-                // Start consuming emails
-                this.consumeEmailNotifications();
-                
-            } catch (error) {
-                console.error(`❌ RabbitMQ connection attempt ${attempts} failed:`, error.message);
-                
-                if (attempts < maxRetries) {
-                    setTimeout(tryConnect, retryInterval);
-                } else {
-                    console.error('🚨 Failed to connect to RabbitMQ after maximum retries. Email notifications will be queued offline.');
-                }
-            }
-        };
-
-        await tryConnect();
+            this.rabbitChannel = await this.rabbitConnection.createChannel();
+            await this.rabbitChannel.assertQueue('email_notifications', { durable: true });
+            
+            console.log('✅ RabbitMQ connected and ready as fallback');
+            
+            // Start consuming queued emails
+            this.consumeEmailNotifications();
+            
+        } catch (error) {
+            console.warn(`⚠️ RabbitMQ not available: ${error.message}. Will use direct SMTP only.`);
+            this.rabbitChannel = null;
+            // Retry after 60 seconds
+            setTimeout(() => this.initializeRabbitMQ(), 60000);
+        }
     }
 
     async consumeEmailNotifications() {
@@ -101,174 +82,104 @@ class NotificationService {
                 
                 try {
                     const emailData = JSON.parse(msg.content.toString());
-                    console.log('Processing queued email:', emailData.to);
+                    console.log('📧 Processing queued email:', emailData.to);
                     
-                    // Send the email WITH TIMEOUT
-                    const timeoutPromise = new Promise((_, reject) => {
-                        setTimeout(() => reject(new Error('Email sending timeout')), 25000);
-                    });
-                    
-                    const emailPromise = this.notificationService.queueEmailDirect(emailData);
-                    await Promise.race([emailPromise, timeoutPromise]);
+                    // Send directly via SMTP
+                    await this.sendEmailDirect(emailData);
                     
                     this.rabbitChannel.ack(msg);
                 } catch (error) {
-                    console.error('Error sending queued email:', error);
+                    console.error('❌ Error processing queued email:', error.message);
                     
-                    const isPermanentError = 
-                        error.message.includes('no recipients defined') || 
-                        error.message.includes('authentication failed') ||
-                        error.message.includes('timeout');
+                    // Retry logic
+                    const headers = msg.properties.headers || {};
+                    const retryCount = (headers.retryCount || 0) + 1;
                     
-                    this.rabbitChannel.nack(msg, false, !isPermanentError);
+                    if (retryCount <= 3) {
+                        // Requeue with retry count
+                        setTimeout(() => {
+                            if (this.rabbitChannel) {
+                                this.rabbitChannel.sendToQueue(
+                                    'email_notifications',
+                                    msg.content,
+                                    { 
+                                        persistent: true,
+                                        headers: { retryCount }
+                                    }
+                                );
+                            }
+                        }, retryCount * 5000); // Exponential backoff
+                    }
+                    
+                    this.rabbitChannel.ack(msg); // Remove from queue
                 }
             });
             
-            console.log('Email consumer initialized and listening for messages');
+            console.log('📬 Email queue consumer ready');
         } catch (error) {
-            console.error('Error setting up email consumer:', error);
+            console.error('❌ Error setting up email consumer:', error);
         }
     }
 
     /**
-     * INTERNAL METHOD: Send email directly (only used by queue consumer)
-     */
-    async sendEmailDirect(emailData) {
-        try {
-            const { to, subject, text, html } = emailData;
-
-            console.log('Sending email:');
-            console.log('- To:', to);
-            console.log('- Subject:', subject);
-
-            const mailOptions = {
-                from: `"e-project.uz" <${process.env.SMTP_FROM_EMAIL}>`,
-                to,
-                subject,
-                text,
-                html
-            };
-
-            const info = await this.emailTransporter.sendMail(mailOptions);
-            console.log('Email sent successfully:', info.messageId);
-            return info;
-        } catch (error) {
-            console.error('Error sending email:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * PUBLIC METHOD: Queue an email (ONLY public way to send emails)
-     */
-    queueEmail(emailData) {
-        if (!emailData.to || !emailData.subject) {
-            console.error('Invalid email data: missing required fields');
-            return false;
-        }
-
-        if (!this.rabbitChannel) {
-            console.warn('RabbitMQ not available, storing email in offline queue');
-            this.handleOfflineEmail(emailData);
-            return true;
-        }
-
-        try {
-            this.rabbitChannel.sendToQueue(
-                'email_notifications',
-                Buffer.from(JSON.stringify(emailData)),
-                { persistent: true }
-            );
-            console.log('Email successfully queued to RabbitMQ:', emailData.to);
-            return true;
-        } catch (error) {
-            console.error('Error queueing email to RabbitMQ:', error);
-            this.handleOfflineEmail(emailData);
-            return true;
-        }
-    }
-
-    handleOfflineEmail(emailData) {
-        this.offlineEmailQueue.push({
-            ...emailData,
-            timestamp: new Date()
-        });
-        
-        console.log('Email stored in offline queue:', emailData.to);
-        
-        // Try to process offline queue
-        if (!this.isProcessingQueue) {
-            setTimeout(() => this.processOfflineQueue(), 1000);
-        }
-    }
-
-    async processOfflineQueue() {
-        if (this.isProcessingQueue || this.offlineEmailQueue.length === 0) {
-            return;
-        }
-
-        if (!this.rabbitChannel) {
-            setTimeout(() => this.processOfflineQueue(), 5000);
-            return;
-        }
-
-        this.isProcessingQueue = true;
-        console.log(`Processing ${this.offlineEmailQueue.length} queued emails...`);
-        
-        while (this.offlineEmailQueue.length > 0) {
-            const emailData = this.offlineEmailQueue.shift();
-            
-            // Check if email is not too old (max 1 hour)
-            const emailAge = new Date() - new Date(emailData.timestamp);
-            if (emailAge > 3600000) {
-                console.log('Discarding old email:', emailData.to);
-                continue;
-            }
-            
-            try {
-                this.rabbitChannel.sendToQueue(
-                    'email_notifications',
-                    Buffer.from(JSON.stringify(emailData)),
-                    { persistent: true }
-                );
-                console.log('Offline email processed:', emailData.to);
-            } catch (error) {
-                console.error('Error processing offline email:', error);
-                this.offlineEmailQueue.unshift(emailData); // Put back at front
-                break;
-            }
-        }
-        
-        this.isProcessingQueue = false;
-    }
-
-    /**
-     * Send an email directly
-     * @param {Object} emailData Email data (to, subject, text, html)
+     * MAIN EMAIL METHOD - Try direct SMTP first, queue as fallback
      */
     async sendEmail(emailData) {
         try {
-            const { to, subject, text, html } = emailData;
-
-            console.log('Sending email:');
-            console.log('- To:', to);
-            console.log('- Subject:', subject);
-
-            const mailOptions = {
-                from: `"e-project.uz" <${process.env.SMTP_FROM_EMAIL}>`,
-                to,
-                subject,
-                text,
-                html
-            };
-
-            const info = await this.emailTransporter.sendMail(mailOptions);
-            console.log('Email sent successfully:', info.messageId);
-            return info;
+            // FIRST: Try direct SMTP
+            return await this.sendEmailDirect(emailData);
         } catch (error) {
-            console.error('Error sending email:', error);
-            throw error;
+            console.warn('⚠️ Direct SMTP failed, trying RabbitMQ fallback:', error.message);
+            
+            // FALLBACK: Queue in RabbitMQ
+            if (this.rabbitChannel) {
+                try {
+                    this.rabbitChannel.sendToQueue(
+                        'email_notifications',
+                        Buffer.from(JSON.stringify(emailData)),
+                        { persistent: true }
+                    );
+                    console.log('📬 Email queued for retry:', emailData.to);
+                    return { messageId: 'queued', fallback: true };
+                } catch (queueError) {
+                    console.error('❌ RabbitMQ fallback also failed:', queueError.message);
+                    throw error; // Throw original SMTP error
+                }
+            } else {
+                console.error('❌ No RabbitMQ available for fallback');
+                throw error;
+            }
         }
+    }
+
+    /**
+     * INTERNAL: Direct SMTP sending
+     */
+    async sendEmailDirect(emailData) {
+        const { to, subject, text, html } = emailData;
+
+        if (!to || !subject) {
+            throw new Error('Missing required email fields: to, subject');
+        }
+
+        console.log('📧 Sending email:', { to, subject });
+
+        const mailOptions = {
+            from: `"e-project.uz" <${process.env.SMTP_FROM_EMAIL}>`,
+            to,
+            subject,
+            text: text || '',
+            html: html || ''
+        };
+
+        const info = await this.emailTransporter.sendMail(mailOptions);
+        console.log('✅ Email sent successfully:', info.messageId);
+        return info;
+    }
+
+    // LEGACY COMPATIBILITY
+    queueEmail(emailData) {
+        return this.sendEmail(emailData);
     }
 
     /**
@@ -389,7 +300,7 @@ class NotificationService {
         `
         };
 
-        return this.queueEmail(emailData);
+        return this.sendEmail(emailData);
     }
 
     /**
@@ -417,7 +328,7 @@ class NotificationService {
         `
         };
 
-        return this.queueEmail(emailData);
+        return this.sendEmail(emailData);
     }
 
     /**
@@ -477,8 +388,8 @@ class NotificationService {
             };
 
             // Queue emails
-            this.queueEmail(clientEmailData);
-            this.queueEmail(providerEmailData);
+            this.sendEmail(clientEmailData);
+            this.sendEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
             if (client.telegramId) {
@@ -563,8 +474,8 @@ class NotificationService {
             };
 
             // Queue emails
-            this.queueEmail(clientEmailData);
-            this.queueEmail(providerEmailData);
+            this.sendEmail(clientEmailData);
+            this.sendEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
             if (client.telegramId) {
@@ -620,7 +531,7 @@ class NotificationService {
             };
 
             // Queue emails
-            this.queueEmail(clientEmailData);
+            this.sendEmail(clientEmailData);
 
             // If client has Telegram account linked, send notification there too
             if (client.telegramId) {
@@ -680,7 +591,7 @@ class NotificationService {
             };
 
             // Queue email
-            this.queueEmail(clientEmailData);
+            this.sendEmail(clientEmailData);
 
             // If client has Telegram account linked, send notification there too
             if (client.telegramId) {
@@ -755,8 +666,8 @@ class NotificationService {
             };
 
             // Queue emails
-            this.queueEmail(clientEmailData);
-            this.queueEmail(providerEmailData);
+            this.sendEmail(clientEmailData);
+            this.sendEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
             if (client.telegramId) {
@@ -842,8 +753,8 @@ class NotificationService {
             };
 
             // Queue emails
-            this.queueEmail(clientEmailData);
-            this.queueEmail(providerEmailData);
+            this.sendEmail(clientEmailData);
+            this.sendEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
             if (client.telegramId) {
@@ -919,8 +830,8 @@ class NotificationService {
             };
 
             // Queue emails
-            this.queueEmail(clientEmailData);
-            this.queueEmail(providerEmailData);
+            this.sendEmail(clientEmailData);
+            this.sendEmail(providerEmailData);
 
             // If users have Telegram accounts linked, send notifications there too
             if (client.telegramId) {
@@ -979,7 +890,7 @@ class NotificationService {
         `
             };
 
-            await this.queueEmail(emailData);
+            await this.sendEmail(emailData);
         } catch (error) {
             console.error('Error sending payment success email:', error);
         }
@@ -1011,7 +922,7 @@ class NotificationService {
         `
             };
 
-            await this.queueEmail(emailData);
+            await this.sendEmail(emailData);
         } catch (error) {
             console.error('Error sending provider appointment email:', error);
         }
@@ -1044,7 +955,7 @@ class NotificationService {
         `
             };
 
-            await this.queueEmail(emailData);
+            await this.sendEmail(emailData);
         } catch (error) {
             console.error('Error sending payment failure email:', error);
         }
@@ -1069,7 +980,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentBookedEmails(appointment) {
-        return this.emailService.sendAppointmentBookedEmails(appointment);
+        return require('./emailService').sendAppointmentBookedEmails(appointment);
     }
 
     /**
@@ -1078,7 +989,7 @@ class NotificationService {
      * @param {String} cancelledBy - Who cancelled the appointment ('client', 'provider', 'system')
      */
     async sendAppointmentCancellationNotification(appointment, cancelledBy) {
-        return this.emailService.sendAppointmentCancelledEmails(appointment, cancelledBy);
+        return require('./emailService').sendAppointmentCancelledEmails(appointment, cancelledBy);
     }
 
     /**
@@ -1086,7 +997,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentConfirmedNotification(appointment) {
-        return this.emailService.sendAppointmentConfirmedEmails(appointment);
+        return require('./emailService').sendAppointmentConfirmedEmails(appointment);
     }
 
     /**
@@ -1095,7 +1006,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object
      */
     async sendPaymentSuccessEmail(paymentId, appointment) {
-        return this.emailService.sendPaymentSuccessEmail(paymentId, appointment);
+        return require('./emailService').sendPaymentSuccessEmail(paymentId, appointment);
     }
 
     /**
@@ -1103,7 +1014,7 @@ class NotificationService {
      * @param {String} paymentId - Payment ID
      */
     async sendPaymentConfirmation(paymentId) {
-        return this.emailService.sendPaymentConfirmation(paymentId);
+        return require('./emailService').sendPaymentConfirmation(paymentId);
     }
 
     /**
@@ -1111,7 +1022,7 @@ class NotificationService {
      * @param {Object} payment - Payment object
      */
     async sendPaymentRefundNotification(payment) {
-        return this.emailService.sendPaymentRefundNotification(payment);
+        return require('./emailService').sendPaymentRefundNotification(payment);
     }
 
     /**
@@ -1119,7 +1030,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentReminderEmails(appointment) {
-        return this.emailService.sendAppointmentReminderEmails(appointment);
+        return require('./emailService').sendAppointmentReminderEmails(appointment);
     }
 
     /**
@@ -1127,7 +1038,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendRecommendationNotification(appointment) {
-        return this.emailService.sendRecommendationNotification(appointment);
+        return require('./emailService').sendRecommendationNotification(appointment);
     }
 
     /**
@@ -1135,7 +1046,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendFollowUpNotification(appointment) {
-        return this.emailService.sendFollowUpNotification(appointment);
+        return require('./emailService').sendFollowUpNotification(appointment);
     }
 
     /**
