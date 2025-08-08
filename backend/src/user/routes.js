@@ -32,6 +32,20 @@ router.post('/login', userController.loginUser);
 router.get('/me', authenticateUser, userController.getCurrentUser);
 
 /**
+ * @route GET /api/users/achievements
+ * @desc Get current user's achievements
+ * @access Private
+ */
+router.get('/achievements', authenticateUser, userController.getUserAchievements);
+
+/**
+ * @route POST /api/users/achievements
+ * @desc Add achievement to current user
+ * @access Private
+ */
+router.post('/achievements', authenticateUser, userController.addAchievement);
+
+/**
  * @route GET /api/users/:id
  * @desc Get user profile by ID with proper visibility controls
  * @access Private
@@ -66,28 +80,12 @@ router.post('/forgot-password', userController.forgotPassword);
  */
 router.post('/reset-password/:token', userController.resetPassword);
 
-// Achievement Management Routes
-
-/**
- * @route POST /api/users/achievements
- * @desc Add achievement to current user
- * @access Private
- */
-router.post('/achievements', authenticateUser, userController.addAchievement);
-
 /**
  * @route POST /api/users/achievements/:achievementId/earn
  * @desc Mark achievement as earned for current user
  * @access Private
  */
 router.post('/achievements/:achievementId/earn', authenticateUser, userController.earnAchievement);
-
-/**
- * @route GET /api/users/achievements
- * @desc Get current user's achievements
- * @access Private
- */
-router.get('/achievements', authenticateUser, userController.getUserAchievements);
 
 /**
  * @route GET /api/users/:id/achievements
