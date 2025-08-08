@@ -29,7 +29,7 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ message: error.details[0].message });
         }
 
-        const { email, password, firstName, lastName, phone, role } = userData;
+        const { email, password, firstName, lastName, phone, role, dateOfBirth, gender } = userData;
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -48,6 +48,8 @@ exports.registerUser = async (req, res) => {
             lastName,
             phone,
             role: role || 'client',
+            dateOfBirth,
+            gender,
             verificationToken,
             isVerified: false
         });
@@ -84,16 +86,7 @@ exports.registerUser = async (req, res) => {
             // Set initial profile completion step
             user.profileSetupStep = 1; // Start at step 1 (Education)
         }
-        else if (role === 'client' || !role) {
-            const { dateOfBirth, gender, backgroundInfo } = userData;
-
-            user.dateOfBirth = dateOfBirth;
-            user.gender = gender;
-
-            if (backgroundInfo) {
-                user.backgroundInfo = backgroundInfo;
-            }
-            
+        else if (role === 'client' || !role) {            
             // Explicitly ensure provider-specific fields are unset for clients
             user.specializations = undefined;
             user.licenseNumber = undefined;

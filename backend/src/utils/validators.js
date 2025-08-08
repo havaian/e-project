@@ -45,11 +45,7 @@ exports.validateUserInput = (data) => {
             }),
 
         role: Joi.string().valid('client', 'provider').default('client'),
-    };
-
-    // Define client-specific schema
-    const clientSchema = {
-        // Client-specific required fields
+        
         dateOfBirth: Joi.date().max('now').required()
             .messages({
                 'date.base': 'Please provide a valid date of birth',
@@ -62,7 +58,10 @@ exports.validateUserInput = (data) => {
                 'any.only': 'Gender must be one of: male, female, other, prefer not to say',
                 'any.required': 'Gender is required for clients'
             }),
+    };
 
+    // Define client-specific schema
+    const clientSchema = {
         // Client-specific optional fields
         backgroundInfo: Joi.string().optional(),
 
