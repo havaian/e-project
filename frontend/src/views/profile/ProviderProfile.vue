@@ -595,7 +595,7 @@ const fetchClients = async () => {
 
 const fetchAppointments = async () => {
   try {
-    const response = await axios.get(`/appointments/provider/${authStore.user.id}`)
+    const response = await axios.get(`/appointments/provider/${authStore.user._id}`)
     const appointments = response.data.appointments || []
 
     // Calculate stats
@@ -649,7 +649,7 @@ const fetchAchievements = async () => {
 
 const fetchReviews = async () => {
   try {
-    const response = await axios.get(`/reviews/provider/${authStore.user.id}`)
+    const response = await axios.get(`/reviews/provider/${authStore.user._id}`)
     reviews.value = response.data.reviews || []
     reviewStats.value = response.data.statistics || { average: 0, total: 0 }
   } catch (error) {

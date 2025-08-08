@@ -380,7 +380,7 @@ const fetchUserProfile = async () => {
 const fetchAssociatedProviders = async () => {
   try {
     // Get providers from completed appointments
-    const appointmentsResponse = await axios.get(`/appointments/client/${authStore.user.id}`)
+    const appointmentsResponse = await axios.get(`/appointments/client/${authStore.user._id}`)
     const appointments = appointmentsResponse.data.appointments || []
 
     // Group by provider and count appointments
@@ -408,7 +408,7 @@ const fetchAssociatedProviders = async () => {
 
 const fetchAppointments = async () => {
   try {
-    const response = await axios.get(`/appointments/client/${authStore.user.id}`)
+    const response = await axios.get(`/appointments/client/${authStore.user._id}`)
     const appointments = response.data.appointments || []
 
     // Calculate stats
@@ -441,7 +441,7 @@ const fetchAchievements = async () => {
 
 const fetchReviews = async () => {
   try {
-    const response = await axios.get(`/reviews/client/${authStore.user.id}`)
+    const response = await axios.get(`/reviews/client/${authStore.user._id}`)
     reviews.value = response.data.reviews || []
   } catch (error) {
     console.error('Error fetching reviews:', error)

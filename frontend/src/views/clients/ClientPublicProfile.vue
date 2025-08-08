@@ -602,7 +602,7 @@ const fetchClientStats = async () => {
 
 const checkProviderRelationship = async () => {
   try {
-    const response = await axios.get(`/appointments/provider/${authStore.user.id}`)
+    const response = await axios.get(`/appointments/provider/${authStore.user._id}`)
     const appointments = response.data.appointments || []
     
     // Filter appointments with this specific client
