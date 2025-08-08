@@ -10,8 +10,7 @@ const emailService = require('./emailService');
  */
 class NotificationService {
     constructor() {
-        // Initialize email transporter
-        this.emailTransporter = nodemailer.createTransport({
+        this.emailTransporter = nodemailer.createTransporter({
             host: process.env.SMTP_HOST,
             port: process.env.SMTP_PORT,
             secure: process.env.SMTP_SECURE === 'true',
@@ -28,16 +27,19 @@ class NotificationService {
             keepAlive: true
         });
 
-        // Initialize RabbitMQ connection (for async notifications)
+        this.offlineEmailQueue = [];
+        this.isProcessingQueue = false;
+        this.rabbitChannel = null;
+        this.rabbitConnection = null;
+        
         this.initializeRabbitMQ();
+
+        this.emailService = require('./emailService')(this);
     }
 
-    /**
-     * Initialize RabbitMQ connection and channels with retry logic
-     */
     async initializeRabbitMQ() {
-        const maxRetries = 10;  // Increased retries
-        const retryInterval = 10000; // Increased to 10 seconds
+        const maxRetries = 10;
+        const retryInterval = 10000;
         let attempts = 0;
         
         const tryConnect = async () => {
@@ -45,148 +47,130 @@ class NotificationService {
                 attempts++;
                 console.log(`🔄 Attempting to connect to RabbitMQ (Attempt ${attempts}/${maxRetries})...`);
                 
-                // Wait for RabbitMQ to be fully ready
                 if (attempts > 1) {
                     await new Promise(resolve => setTimeout(resolve, retryInterval));
                 }
                 
                 this.rabbitConnection = await amqp.connect(process.env.RABBITMQ_URI);
                 
-                // Set up event handlers for connection
                 this.rabbitConnection.on('error', (err) => {
                     console.error('⚠️ RabbitMQ connection error:', err);
+                    this.rabbitChannel = null;
                     setTimeout(() => this.initializeRabbitMQ(), retryInterval);
                 });
                 
                 this.rabbitConnection.on('close', () => {
-                    console.warn('⚠️ RabbitMQ connection closed. Attempting to reconnect...');
+                    console.warn('⚠️ RabbitMQ connection closed.');
+                    this.rabbitChannel = null;
                     setTimeout(() => this.initializeRabbitMQ(), retryInterval);
                 });
-                
-                // Create channel
+
                 this.rabbitChannel = await this.rabbitConnection.createChannel();
-                
-                // Set up event handlers for channel
-                this.rabbitChannel.on('error', (err) => {
-                    console.error('⚠️ RabbitMQ channel error:', err);
-                    setTimeout(() => this.createChannel(), retryInterval);
-                });
-                
-                this.rabbitChannel.on('close', () => {
-                    console.warn('⚠️ RabbitMQ channel closed. Attempting to recreate...');
-                    setTimeout(() => this.createChannel(), retryInterval);
-                });
-    
-                // Define notification queues
                 await this.rabbitChannel.assertQueue('email_notifications', { durable: true });
-                await this.rabbitChannel.assertQueue('sms_notifications', { durable: true });
-                await this.rabbitChannel.assertQueue('push_notifications', { durable: true });
-                await this.rabbitChannel.assertQueue('telegram_notifications', { durable: true });
-    
-                console.log('✅ RabbitMQ connection established for notifications');
-                return true;
+                
+                console.log('✅ RabbitMQ connected and channels established');
+                
+                // Process any queued offline emails
+                this.processOfflineQueue();
+                
+                // Start consuming emails
+                this.consumeEmailNotifications();
+                
             } catch (error) {
-                console.error(`❌ Failed to connect to RabbitMQ (Attempt ${attempts}/${maxRetries}):`, error.message);
+                console.error(`❌ RabbitMQ connection attempt ${attempts} failed:`, error.message);
                 
-                if (attempts >= maxRetries) {
-                    console.error('⚠️ Maximum connection attempts reached. System will operate without message queuing.');
-                    return false;
+                if (attempts < maxRetries) {
+                    setTimeout(tryConnect, retryInterval);
+                } else {
+                    console.error('🚨 Failed to connect to RabbitMQ after maximum retries. Email notifications will be queued offline.');
                 }
-                
-                console.log(`⏳ Retrying in ${retryInterval/1000} seconds...`);
-                await new Promise(resolve => setTimeout(resolve, retryInterval));
-                return tryConnect();
             }
         };
-        
-        return tryConnect();
+
+        await tryConnect();
     }
-    
-    /**
-     * Create a RabbitMQ channel (used for reconnection)
-     */
-    async createChannel() {
+
+    async consumeEmailNotifications() {
+        if (!this.rabbitChannel) return;
+
         try {
-            if (!this.rabbitConnection || this.rabbitConnection.closed) {
-                await this.initializeRabbitMQ();
-                return;
-            }
+            await this.rabbitChannel.prefetch(1);
             
-            this.rabbitChannel = await this.rabbitConnection.createChannel();
+            this.rabbitChannel.consume('email_notifications', async (msg) => {
+                if (!msg) return;
+                
+                try {
+                    const emailData = JSON.parse(msg.content.toString());
+                    console.log('Processing queued email:', emailData.to);
+                    
+                    // Send the email WITH TIMEOUT
+                    const timeoutPromise = new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('Email sending timeout')), 25000);
+                    });
+                    
+                    const emailPromise = this.notificationService.queueEmailDirect(emailData);
+                    await Promise.race([emailPromise, timeoutPromise]);
+                    
+                    this.rabbitChannel.ack(msg);
+                } catch (error) {
+                    console.error('Error sending queued email:', error);
+                    
+                    const isPermanentError = 
+                        error.message.includes('no recipients defined') || 
+                        error.message.includes('authentication failed') ||
+                        error.message.includes('timeout');
+                    
+                    this.rabbitChannel.nack(msg, false, !isPermanentError);
+                }
+            });
             
-            // Re-assert queues on channel reconnection
-            await this.rabbitChannel.assertQueue('email_notifications', { durable: true });
-            await this.rabbitChannel.assertQueue('sms_notifications', { durable: true });
-            await this.rabbitChannel.assertQueue('push_notifications', { durable: true });
-            await this.rabbitChannel.assertQueue('telegram_notifications', { durable: true });
-
-            // Start consuming from the email queue
-            this.setupEmailConsumer();
-
-            console.log('RabbitMQ connection established for notifications');
+            console.log('Email consumer initialized and listening for messages');
         } catch (error) {
-            console.error('Error creating RabbitMQ channel:', error);
-            setTimeout(() => this.createChannel(), 5000);
+            console.error('Error setting up email consumer:', error);
         }
     }
 
     /**
-     * Set up consumer for email queue
+     * INTERNAL METHOD: Send email directly (only used by queue consumer)
      */
-    setupEmailConsumer() {
-        if (!this.rabbitChannel) {
-            console.error('Cannot set up email consumer: RabbitMQ channel not available');
-            return;
-        }
+    async sendEmailDirect(emailData) {
+        try {
+            const { to, subject, text, html } = emailData;
 
-        // INCREASE PREFETCH for better performance
-        this.rabbitChannel.prefetch(10); // Process up to 10 messages at once
-        
-        this.rabbitChannel.consume('email_notifications', async (msg) => {
-            if (!msg) return;
-            
-            try {
-                const emailData = JSON.parse(msg.content.toString());
-                console.log(`Processing email to: ${emailData.to}, subject: ${emailData.subject}`);
-                
-                // Send the email WITH TIMEOUT
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('Email sending timeout')), 25000);
-                });
-                
-                const emailPromise = this.sendEmail(emailData);
-                await Promise.race([emailPromise, timeoutPromise]);
-                
-                // Acknowledge message
-                this.rabbitChannel.ack(msg);
-            } catch (error) {
-                console.error('Error sending queued email:', error);
-                
-                // SMART RETRY LOGIC
-                const isPermanentError = 
-                    error.message.includes('no recipients defined') || 
-                    error.message.includes('authentication failed') ||
-                    error.message.includes('timeout');
-                
-                this.rabbitChannel.nack(msg, false, !isPermanentError);
-            }
-        });
-        
-        console.log('Email consumer initialized and listening for messages');
+            console.log('Sending email:');
+            console.log('- To:', to);
+            console.log('- Subject:', subject);
+
+            const mailOptions = {
+                from: `"e-project.uz" <${process.env.SMTP_FROM_EMAIL}>`,
+                to,
+                subject,
+                text,
+                html
+            };
+
+            const info = await this.emailTransporter.sendMail(mailOptions);
+            console.log('Email sent successfully:', info.messageId);
+            return info;
+        } catch (error) {
+            console.error('Error sending email:', error);
+            throw error;
+        }
     }
 
     /**
-     * Queue an email to be sent asynchronously
-     * @param {Object} emailData Email data (to, subject, text, html)
+     * PUBLIC METHOD: Queue an email (ONLY public way to send emails)
      */
     queueEmail(emailData) {
+        if (!emailData.to || !emailData.subject) {
+            console.error('Invalid email data: missing required fields');
+            return false;
+        }
+
         if (!this.rabbitChannel) {
-            console.error('RabbitMQ channel not available for email notifications');
-            // Fallback to direct send
-            this.sendEmail(emailData).catch(err => {
-                console.error('Error in fallback email send:', err);
-            });
-            return;
+            console.warn('RabbitMQ not available, storing email in offline queue');
+            this.handleOfflineEmail(emailData);
+            return true;
         }
 
         try {
@@ -196,13 +180,66 @@ class NotificationService {
                 { persistent: true }
             );
             console.log('Email successfully queued to RabbitMQ:', emailData.to);
+            return true;
         } catch (error) {
             console.error('Error queueing email to RabbitMQ:', error);
-            // Fall back to direct sending
-            this.sendEmail(emailData).catch(err => {
-                console.error('Error in fallback direct email sending:', err);
-            });
+            this.handleOfflineEmail(emailData);
+            return true;
         }
+    }
+
+    handleOfflineEmail(emailData) {
+        this.offlineEmailQueue.push({
+            ...emailData,
+            timestamp: new Date()
+        });
+        
+        console.log('Email stored in offline queue:', emailData.to);
+        
+        // Try to process offline queue
+        if (!this.isProcessingQueue) {
+            setTimeout(() => this.processOfflineQueue(), 1000);
+        }
+    }
+
+    async processOfflineQueue() {
+        if (this.isProcessingQueue || this.offlineEmailQueue.length === 0) {
+            return;
+        }
+
+        if (!this.rabbitChannel) {
+            setTimeout(() => this.processOfflineQueue(), 5000);
+            return;
+        }
+
+        this.isProcessingQueue = true;
+        console.log(`Processing ${this.offlineEmailQueue.length} queued emails...`);
+        
+        while (this.offlineEmailQueue.length > 0) {
+            const emailData = this.offlineEmailQueue.shift();
+            
+            // Check if email is not too old (max 1 hour)
+            const emailAge = new Date() - new Date(emailData.timestamp);
+            if (emailAge > 3600000) {
+                console.log('Discarding old email:', emailData.to);
+                continue;
+            }
+            
+            try {
+                this.rabbitChannel.sendToQueue(
+                    'email_notifications',
+                    Buffer.from(JSON.stringify(emailData)),
+                    { persistent: true }
+                );
+                console.log('Offline email processed:', emailData.to);
+            } catch (error) {
+                console.error('Error processing offline email:', error);
+                this.offlineEmailQueue.unshift(emailData); // Put back at front
+                break;
+            }
+        }
+        
+        this.isProcessingQueue = false;
     }
 
     /**
@@ -352,24 +389,7 @@ class NotificationService {
         `
         };
 
-        // Queue email for reliable delivery
-        this.queueEmail(emailData);
-        
-        // Try immediate send (non-blocking) for faster delivery
-        setImmediate(async () => {
-            try {
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('Immediate send timeout')), 10000);
-                });
-                
-                await Promise.race([this.sendEmail(emailData), timeoutPromise]);
-                console.log('Verification email sent immediately to:', email);
-            } catch (error) {
-                console.log('Immediate verification email failed (queued version will retry):', error.message);
-            }
-        });
-        
-        console.log('Verification email queued and immediate delivery attempted for:', email);
+        return this.queueEmail(emailData);
     }
 
     /**
@@ -397,24 +417,7 @@ class NotificationService {
         `
         };
 
-        // Queue email for reliable delivery
-        this.queueEmail(emailData);
-
-        // Try immediate send (non-blocking) for faster delivery
-        setImmediate(async () => {
-            try {
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('Immediate send timeout')), 10000);
-                });
-                
-                await Promise.race([this.sendEmail(emailData), timeoutPromise]);
-                console.log('Password reset email sent immediately to:', email);
-            } catch (error) {
-                console.log('Immediate password reset email failed (queued version will retry):', error.message);
-            }
-        });
-        
-        console.log('Password reset email queued and immediate delivery attempted for:', email);
+        return this.queueEmail(emailData);
     }
 
     /**
@@ -1066,7 +1069,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentBookedEmails(appointment) {
-        return emailService.sendAppointmentBookedEmails(appointment);
+        return this.emailService.sendAppointmentBookedEmails(appointment);
     }
 
     /**
@@ -1075,7 +1078,7 @@ class NotificationService {
      * @param {String} cancelledBy - Who cancelled the appointment ('client', 'provider', 'system')
      */
     async sendAppointmentCancellationNotification(appointment, cancelledBy) {
-        return emailService.sendAppointmentCancelledEmails(appointment, cancelledBy);
+        return this.emailService.sendAppointmentCancelledEmails(appointment, cancelledBy);
     }
 
     /**
@@ -1083,7 +1086,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentConfirmedNotification(appointment) {
-        return emailService.sendAppointmentConfirmedEmails(appointment);
+        return this.emailService.sendAppointmentConfirmedEmails(appointment);
     }
 
     /**
@@ -1092,7 +1095,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object
      */
     async sendPaymentSuccessEmail(paymentId, appointment) {
-        return emailService.sendPaymentSuccessEmail(paymentId, appointment);
+        return this.emailService.sendPaymentSuccessEmail(paymentId, appointment);
     }
 
     /**
@@ -1100,7 +1103,7 @@ class NotificationService {
      * @param {String} paymentId - Payment ID
      */
     async sendPaymentConfirmation(paymentId) {
-        return emailService.sendPaymentConfirmation(paymentId);
+        return this.emailService.sendPaymentConfirmation(paymentId);
     }
 
     /**
@@ -1108,7 +1111,7 @@ class NotificationService {
      * @param {Object} payment - Payment object
      */
     async sendPaymentRefundNotification(payment) {
-        return emailService.sendPaymentRefundNotification(payment);
+        return this.emailService.sendPaymentRefundNotification(payment);
     }
 
     /**
@@ -1116,7 +1119,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendAppointmentReminderEmails(appointment) {
-        return emailService.sendAppointmentReminderEmails(appointment);
+        return this.emailService.sendAppointmentReminderEmails(appointment);
     }
 
     /**
@@ -1124,7 +1127,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendRecommendationNotification(appointment) {
-        return emailService.sendRecommendationNotification(appointment);
+        return this.emailService.sendRecommendationNotification(appointment);
     }
 
     /**
@@ -1132,7 +1135,7 @@ class NotificationService {
      * @param {Object} appointment - Appointment object with populated client and provider
      */
     async sendFollowUpNotification(appointment) {
-        return emailService.sendFollowUpNotification(appointment);
+        return this.emailService.sendFollowUpNotification(appointment);
     }
 
     /**

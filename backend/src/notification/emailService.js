@@ -12,16 +12,8 @@ const formatDateTime = (date) => {
 };
 
 class EmailService {
-    constructor() {
-        this.transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT,
-            secure: process.env.SMTP_SECURE === 'true',
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD
-            }
-        });
+    constructor(notificationService) {
+        this.notificationService = notificationService;
     }
 
     async sendEmail(options) {
@@ -49,7 +41,7 @@ class EmailService {
             const { provider, client, dateTime, type, payment } = appointment;
 
             // Email to client
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Appointment Confirmation - e-project.uz',
                 html: `
@@ -73,7 +65,7 @@ class EmailService {
             });
 
             // Email to provider
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: provider.email,
                 subject: 'New Appointment Scheduled - e-project.uz',
                 html: `
@@ -106,7 +98,7 @@ class EmailService {
         try {
             const { client, provider, dateTime, type, error } = data;
 
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Appointment Booking Failed - e-project.uz',
                 html: `
@@ -141,7 +133,7 @@ class EmailService {
             const { provider, client, dateTime, type } = appointment;
 
             // Email to client
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Appointment Reminder - e-project.uz',
                 html: `
@@ -162,7 +154,7 @@ class EmailService {
             });
 
             // Email to provider
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: provider.email,
                 subject: 'Appointment Reminder - e-project.uz',
                 html: `
@@ -196,7 +188,7 @@ class EmailService {
             const { provider, client, dateTime, type } = appointment;
 
             // Email to client
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Appointment Cancelled - e-project.uz',
                 html: `
@@ -217,7 +209,7 @@ class EmailService {
             });
 
             // Email to provider
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: provider.email,
                 subject: 'Appointment Cancelled - e-project.uz',
                 html: `
@@ -251,7 +243,7 @@ class EmailService {
             const { provider, client, dateTime, type } = appointment;
 
             // Email to client
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Appointment Confirmed by Provider - e-project.uz',
                 html: `
@@ -272,7 +264,7 @@ class EmailService {
             });
 
             // Email confirmation to provider
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: provider.email,
                 subject: 'Appointment Confirmation Successful - e-project.uz',
                 html: `
@@ -305,7 +297,7 @@ class EmailService {
         try {
             const { client, provider, dateTime, type } = appointment;
 
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Payment Successful - e-project.uz',
                 html: `
@@ -354,7 +346,7 @@ class EmailService {
 
             const { client, provider, dateTime, type } = payment.appointment;
 
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Payment Confirmation - e-project.uz',
                 html: `
@@ -398,7 +390,7 @@ class EmailService {
 
             const { client, provider, dateTime, type } = payment.appointment;
 
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Payment Refund - e-project.uz',
                 html: `
@@ -450,7 +442,7 @@ class EmailService {
                 `;
             });
 
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'New Recommendations from Your Provider - e-project.uz',
                 html: `
@@ -483,7 +475,7 @@ class EmailService {
 
             const { client, provider, dateTime, type, shortDescription } = followUpAppointment;
 
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: client.email,
                 subject: 'Follow-up Appointment Recommended - e-project.uz',
                 html: `
@@ -504,7 +496,7 @@ class EmailService {
                 `
             });
 
-            await this.sendEmail({
+            await this.notificationService.queueEmail({
                 to: provider.email,
                 subject: 'Follow-up Appointment Created - e-project.uz',
                 html: `
@@ -534,7 +526,4 @@ class EmailService {
     }
 }
 
-// Create a singleton instance
-const emailService = new EmailService();
-
-module.exports = emailService;
+module.exports = (notificationService) => new EmailService(notificationService);
