@@ -175,83 +175,15 @@
                         </div>
                     </div>
 
-                    <template v-if="formData.role === 'provider'">
-                        <div class="form-group">
-                            <label for="specializations" class="label">Specializations</label>
-                            <div class="space-y-2">
-                                <div v-for="(spec, index) in formData.specializations" :key="index" class="flex gap-2">
-                                    <select v-model="formData.specializations[index]" class="input flex-1">
-                                        <option value="">Select Specialization</option>
-                                        <option v-for="spec in getAvailableSpecializations(index)" :key="spec"
-                                            :value="spec">
-                                            {{ spec }}
-                                        </option>
-                                    </select>
-                                    <button type="button" @click="removeSpecialization(index)"
-                                        class="px-3 py-2 text-red-600 hover:text-red-800 transition-colors">
-                                        Remove
-                                    </button>
-                                </div>
-                                <button type="button" @click="addSpecialization"
-                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-brand-1 hover:to-brand-2"
-                                    :disabled="availableSpecializations.length <= formData.specializations.filter(s => s !== '').length">
-                                    + Add Specialization
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="licenseNumber" class="label">License Number</label>
-                            <input id="licenseNumber" v-model="formData.licenseNumber" type="text" required
-                                class="input" placeholder="Enter license number" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="experience" class="label">Years of Experience</label>
-                            <input id="experience" v-model.number="formData.experience" type="number" min="0" required
-                                class="input" placeholder="0" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="sessionFee" class="label">Session Fee (UZS)</label>
-                            <input id="sessionFee" v-model.number="formData.sessionFee" type="number" min="0" required
-                                class="input" placeholder="0" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="languages" class="label">Languages</label>
-                            <div class="space-y-2">
-                                <div v-for="(lang, index) in formData.languages" :key="index" class="flex gap-2">
-                                    <select v-model="formData.languages[index]" class="input flex-1">
-                                        <option value="">Select Language</option>
-                                        <option v-for="language in getAvailableLanguages(index)" :key="language"
-                                            :value="language">
-                                            {{ language }}
-                                        </option>
-                                    </select>
-                                    <button type="button" @click="removeLanguage(index)"
-                                        class="px-3 py-2 text-red-600 hover:text-red-800 transition-colors">
-                                        Remove
-                                    </button>
-                                </div>
-                                <button type="button" @click="addLanguage"
-                                    class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-brand-1 hover:to-brand-2"
-                                    :disabled="availableLanguages.length <= formData.languages.filter(l => l !== '').length">
-                                    + Add Language
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-
                     <!-- Date of Birth - Only for clients -->
-                    <div v-if="formData.role === 'client'" class="form-group">
+                    <div class="form-group">
                         <label for="dateOfBirth" class="label">Date of Birth</label>
                         <input id="dateOfBirth" v-model="formData.dateOfBirth" type="date" required class="input"
                             :max="maxDate" />
                     </div>
 
                     <!-- Gender - Only for clients -->
-                    <div v-if="formData.role === 'client'" class="form-group">
+                    <div class="form-group">
                         <label for="gender" class="label">Gender</label>
                         <select id="gender" v-model="formData.gender" class="input" required>
                             <option value="">Select gender</option>
@@ -328,11 +260,6 @@ const formData = reactive({
     password: '',
     dateOfBirth: '',
     gender: '',
-    specializations: [],
-    languages: [],
-    licenseNumber: '',
-    experience: 0,
-    sessionFee: 0
 })
 
 const registrationSuccess = ref(false)
@@ -397,26 +324,6 @@ const isPasswordValid = computed(() => {
     return Object.values(passwordValidation).every(Boolean)
 })
 
-// Get available specializations for a specific dropdown, excluding already selected ones
-const getAvailableSpecializations = (currentIndex) => {
-    const selectedSpecializations = formData.specializations
-        .filter((spec, index) => index !== currentIndex && spec !== '')
-
-    return availableSpecializations.value.filter(spec =>
-        !selectedSpecializations.includes(spec)
-    )
-}
-
-// Get available languages for a specific dropdown, excluding already selected ones
-const getAvailableLanguages = (currentIndex) => {
-    const selectedLanguages = formData.languages
-        .filter((lang, index) => index !== currentIndex && lang !== '')
-
-    return availableLanguages.value.filter(lang =>
-        !selectedLanguages.includes(lang)
-    )
-}
-
 // Password validation function
 const validatePassword = () => {
     const password = formData.password
@@ -433,32 +340,6 @@ const togglePassword = () => {
     showPassword.value = !showPassword.value
 }
 
-// Helper functions for specializations
-const addSpecialization = () => {
-    formData.specializations.push('')
-}
-
-const removeSpecialization = (index) => {
-    formData.specializations.splice(index, 1)
-}
-
-// Helper functions for languages
-const addLanguage = () => {
-    formData.languages.push('')
-}
-
-const removeLanguage = (index) => {
-    formData.languages.splice(index, 1)
-}
-
-// Add default empty specialization when switching to provider role
-const watchRole = () => {
-    if (formData.role === 'provider' && formData.specializations.length === 0) {
-        formData.specializations.push('')
-        formData.languages.push('')
-    }
-}
-
 async function handleSubmit() {
     try {
         loading.value = true;
@@ -473,17 +354,6 @@ async function handleSubmit() {
 
             // Process languages for provider registration
             registrationData.languages = formData.languages.filter(l => l !== "");
-
-            // Remove client-only fields for provider registration
-            delete registrationData.dateOfBirth;
-            delete registrationData.gender;
-        } else {
-            // For client registration, remove all provider-specific fields
-            delete registrationData.specializations;
-            delete registrationData.languages;
-            delete registrationData.licenseNumber;
-            delete registrationData.experience;
-            delete registrationData.sessionFee;
         }
 
         await authStore.register(registrationData);
@@ -492,28 +362,6 @@ async function handleSubmit() {
         error.value = err.message || 'Failed to create account';
     } finally {
         loading.value = false;
-    }
-}
-
-async function fetchSpecializations() {
-    try {
-        const response = await axios.get('/specializations')
-        availableSpecializations.value = response.data.specializations.map(s => s.name)
-    } catch (error) {
-        console.error('Error fetching specializations:', error)
-        // Set some defaults in case API call fails
-        availableSpecializations.value = [
-            'Specialization 1',
-            'Specialization 2',
-            'Specialization 3',
-            'Specialization 4',
-            'Specialization 5',
-            'Specialization 6',
-            'Specialization 7',
-            'Specialization 8',
-            'Specialization 9',
-            'Specialization 10'
-        ]
     }
 }
 

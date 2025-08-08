@@ -93,27 +93,22 @@ const userSchema = new mongoose.Schema({
     },
     dateOfBirth: {
         type: Date,
-        required: function () { return this.role === 'client'; }
     },
     gender: {
         type: String,
-        enum: ['male', 'female', 'other'],
-        required: function () { return this.role === 'client'; }
+        enum: ['male', 'female'],
     },
 
     // Provider-specific fields
     specializations: [{
         type: String,
-        required: function () { return this.role === 'provider'; }
     }],
     licenseNumber: {
         type: String,
-        required: function () { return this.role === 'provider'; }
     },
     experience: {
         type: Number,
         default: 0,
-        required: function () { return this.role === 'provider'; }
     },
     education: [{
         degree: String,
@@ -144,7 +139,6 @@ const userSchema = new mongoose.Schema({
     }],
     sessionFee: {
         type: Number,
-        required: function () { return this.role === 'provider'; }
     },
 
     // NEW: Provider Analytics Fields
@@ -152,7 +146,6 @@ const userSchema = new mongoose.Schema({
         type: Number,
         enum: [15, 30, 45, 60, 75, 90, 105, 120],
         default: 60,
-        required: function () { return this.role === 'provider'; }
     },
     profileCompletionPercentage: {
         type: Number,

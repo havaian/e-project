@@ -155,7 +155,7 @@
         <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Need Help Getting Started?</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <a :href="'mailto:{{ supportEmail }}'"
+                <a :href="`mailto:${supportEmail}`"
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <svg class="w-6 h-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -167,7 +167,7 @@
                     </div>
                 </a>
 
-                <a :href="'tel:{{ supportPhone }}'"
+                <a :href="`tel:${supportPhone}`"
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <svg class="w-6 h-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

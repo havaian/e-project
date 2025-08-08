@@ -148,7 +148,7 @@
                     <div>
                         <h3 class="text-sm font-medium text-blue-900">Need Help?</h3>
                         <p class="text-sm text-blue-700 mt-1">
-                            Contact our support team at <a :href="'mailto:{{supportEmail}}'"
+                            Contact our support team at <a :href="`mailto:${supportEmail}`"
                                 class="underline">{{ supportEmail }}</a>
                             or call us at {{ supportPhone }} if you need assistance completing your profile.
                         </p>

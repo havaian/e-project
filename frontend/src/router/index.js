@@ -75,7 +75,9 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         requiresProvider: true,
-        requiresIncompleteProfile: true // NEW: Only allow incomplete profiles
+        requiresIncompleteProfile: true, // NEW: Only allow incomplete profiles
+        hideNavBar: true,
+        hideFooter: true
       }
     },
 
@@ -295,19 +297,7 @@ router.beforeEach(async (to, from, next) => {
     await authStore.updateProfileCompletion()
 
     // If provider needs onboarding and tries to access routes requiring complete profile
-    if (to.meta.requiresCompleteProfile && authStore.needsOnboarding) {
-      next('/profile/provider/onboarding')
-      return
-    }
-
-    // If provider has complete profile and tries to access onboarding
-    if (to.meta.requiresIncompleteProfile && !authStore.needsOnboarding) {
-      next('/profile/provider')
-      return
-    }
-
-    // Special handling for provider login redirect
-    if (to.path === '/profile/provider' && authStore.needsOnboarding) {
+    if (authStore.isProvider && authStore.needsOnboarding) {
       next('/profile/provider/onboarding')
       return
     }
