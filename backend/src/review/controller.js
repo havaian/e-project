@@ -167,7 +167,7 @@ exports.getClientReviews = async (req, res) => {
         const { limit = 10, skip = 0 } = req.query;
 
         // Verify access (clients can only see their own reviews, providers/admins can see all)
-        if (req.user.role === 'client' && req.user.id !== clientId) {
+        if (req.user.role === 'client' && req.user.id.toString() !== clientId) {
             return res.status(403).json({
                 message: 'You can only view your own reviews'
             });
