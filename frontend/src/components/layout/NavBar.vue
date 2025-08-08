@@ -82,7 +82,7 @@
                                 </svg>
                             </button>
                             <div v-if="showProfileMenu"
-                                class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white/95 backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-sky-500/10">
+                                class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-sky-500/10">
                                 <div class="py-1">
                                     <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
                                         class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
