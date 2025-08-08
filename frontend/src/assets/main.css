@@ -205,12 +205,6 @@
     border-color: color-mix(in srgb, var(--color-brand-1) 10%, transparent);
   }
 
-  .card-element:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.8);
-  }
-
   /* Brand gradient text */
   .text-gradient-element {
     background: linear-gradient(135deg, var(--color-brand-1), var(--color-brand-2));
@@ -706,12 +700,6 @@
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(8px);
     border-color: color-mix(in srgb, var(--color-brand-1) 10%, transparent);
-  }
-
-  .card-element:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
-    background: rgba(255, 255, 255, 0.85);
   }
 
   /* Smooth button transitions */

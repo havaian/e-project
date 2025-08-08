@@ -299,13 +299,6 @@
                     </div>
                   </div>
                 </div>
-
-                <div class="mt-4 text-center">
-                  <router-link to="/appointments/provider"
-                    class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                    View All Appointments →
-                  </router-link>
-                </div>
               </div>
             </div>
 

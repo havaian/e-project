@@ -192,20 +192,6 @@
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <p class="text-gray-500">No appointments yet</p>
-                <router-link to="/providers"
-                  class="inline-flex items-center mt-2 text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                  Book Your First Session
-                  <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </router-link>
-              </div>
-
-              <div class="mt-4 text-center">
-                <router-link to="/appointments/client"
-                  class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                  View All Appointments →
-                </router-link>
               </div>
             </div>
           </div>
