@@ -283,11 +283,25 @@ app.use((req, res, next) => {
 // Compression
 app.use(compression());
 
+// Health check route
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        status: 'success',
+        message: 'Server is running',
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later'
+    message: 'Too many requests from this IP, please try again later',
+    skip: (req) => {
+        const skipPaths = ['/api/health', '/health', '/ping'];
+        return skipPaths.includes(req.path);
+    }
 });
 app.use('/api', limiter);
 
@@ -323,16 +337,6 @@ app.use('/api/reviews', reviewRoutes);
 
 // Initialize cron jobs
 scheduleAppointmentReminders();
-
-// Health check route
-app.get('/api/health', (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        message: 'Server is running',
-        environment: process.env.NODE_ENV,
-        timestamp: new Date().toISOString()
-    });
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

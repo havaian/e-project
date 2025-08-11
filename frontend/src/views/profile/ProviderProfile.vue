@@ -619,7 +619,7 @@ const fetchAppointments = async () => {
 
 const fetchEarnings = async () => {
   try {
-    const response = await axios.get('/users/providers/earnings')
+    const response = await axios.get('/users/providers/dashboard/earnings')
     const earningsData = response.data.earnings || []
 
     // Calculate totals
