@@ -319,11 +319,8 @@ const completeOnboarding = async () => {
         // Mark onboarding as complete
         await authStore.updateOnboardingStep(6)
 
-        // Refresh profile completion status
-        await authStore.updateProfileCompletion()
-
         // Redirect to provider dashboard
-        router.push('/profile/provider')
+        router.push('/profile/provider?refreshProfile=true')
 
     } catch (error) {
         console.error('Error completing onboarding:', error)

@@ -63,11 +63,11 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         requiresProvider: true,
-        requiresCompleteProfile: true // NEW: Only allow complete profiles
+        requiresCompleteProfile: true
       }
     },
 
-    // NEW: Provider onboarding routes
+    // Provider onboarding routes
     {
       path: '/profile/provider/onboarding',
       name: 'provider-onboarding',
@@ -75,13 +75,13 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         requiresProvider: true,
-        requiresIncompleteProfile: true, // NEW: Only allow incomplete profiles
+        requiresIncompleteProfile: true,
         hideNavBar: true,
         hideFooter: true
       }
     },
 
-    // NEW: Provider dashboard with earnings
+    // Provider dashboard with earnings
     {
       path: '/profile/provider/dashboard',
       name: 'provider-dashboard',
@@ -265,7 +265,7 @@ const router = createRouter({
   ]
 })
 
-// Enhanced navigation guards
+// FIXED: Enhanced navigation guards with reduced API calls
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
@@ -291,29 +291,54 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
-  // NEW: Provider profile completion checks
+  // FIXED: Only check profile completion for specific routes that actually need it
   if (authStore.isProvider && authStore.isAuthenticated) {
-    // Refresh profile completion status if it's stale
-    await authStore.updateProfileCompletion()
+    // Only check profile completion when navigating to routes that require it
+    const needsProfileCheck = 
+      to.meta.requiresCompleteProfile || 
+      to.meta.requiresIncompleteProfile ||
+      to.path.includes('/profile/provider')
 
-    // If provider needs onboarding and tries to access routes requiring complete profile
-    if (authStore.isProvider && authStore.needsOnboarding) {
-      next('/profile/provider/onboarding')
-      return
+    if (needsProfileCheck) {
+      // Don't force refresh on every navigation, use cache
+      await authStore.updateProfileCompletion(false)
+
+      // Check if provider needs onboarding and is trying to access complete-profile routes
+      if (to.meta.requiresCompleteProfile && authStore.needsOnboarding) {
+        next('/profile/provider/onboarding')
+        return
+      }
+
+      // Check if provider is complete and trying to access onboarding
+      if (to.meta.requiresIncompleteProfile && !authStore.needsOnboarding) {
+        next('/profile/provider')
+        return
+      }
     }
   }
 
   next()
 })
 
-// NEW: After each route change, update the auth store if needed
+// FIXED: Much more selective user data refresh
 router.afterEach((to, from) => {
   const authStore = useAuthStore()
 
-  // Refresh user data periodically when navigating to important pages
-  if (authStore.isAuthenticated &&
-    (to.path.includes('/profile') || to.path.includes('/appointments'))) {
-    authStore.refreshUserData()
+  // Only refresh user data when navigating to critical pages and it's actually needed
+  if (authStore.isAuthenticated) {
+    // Only refresh on specific high-priority pages, not every navigation
+    const criticalPages = [
+      '/profile/edit',
+      '/profile/provider/onboarding'
+    ]
+    
+    // Force refresh only when completing onboarding or editing profile
+    const shouldForceRefresh = 
+      to.path === '/profile/provider' && from.path === '/profile/provider/onboarding'
+
+    if (criticalPages.some(page => to.path.includes(page)) || shouldForceRefresh) {
+      authStore.refreshUserData(shouldForceRefresh)
+    }
   }
 })
 

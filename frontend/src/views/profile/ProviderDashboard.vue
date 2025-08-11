@@ -444,8 +444,12 @@ const exportEarnings = async () => {
 onMounted(async () => {
     await Promise.all([
         fetchDashboardSummary(),
-        fetchEarningsData(),
-        authStore.updateProfileCompletion()
+        fetchEarningsData()
     ])
+    
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('refreshProfile') === 'true') {
+        await authStore.updateProfileCompletion(true) // force refresh
+    }
 })
 </script>
