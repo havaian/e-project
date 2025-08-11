@@ -17,10 +17,11 @@ services:
     command: mongod --port ${MONGODB_PORT}
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "--port", "${MONGODB_PORT}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    stop_grace_period: 10s
 
   # Redis service for caching
   redis:
@@ -36,10 +37,11 @@ services:
       - default_net
     healthcheck:
       test: ["CMD", "redis-cli", "-p", "${REDIS_PORT}", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 10s
+      interval: 3s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+    stop_grace_period: 5s
 
   # RabbitMQ for message broker
   rabbitmq:
@@ -59,10 +61,11 @@ services:
       - default_net
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    stop_grace_period: 15s
 
   # Backend API service
   backend:
@@ -100,10 +103,11 @@ services:
       - default_net
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_PORT}/api/health"]
-      interval: 20s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+      interval: 5s
+      timeout: 3s
+      retries: 2
+      start_period: 10s
+    stop_grace_period: 10s
 
   # Frontend service
   frontend-prod:
@@ -151,10 +155,11 @@ services:
       - default_net
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
+      interval: 5s
+      timeout: 3s
+      retries: 2
+      start_period: 5s
+    stop_grace_period: 5s
 
   # # Monitoring with Prometheus
   # prometheus:

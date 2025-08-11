@@ -1,7 +1,23 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting deployment process..."
+# Colors for better output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m' # No Color
+
+# Emojis for better UX
+ROCKET="🚀"
+PACKAGE="📦"
+HAMMER="🏗️"
+RECYCLE="🔄"
+SPEAKER="📢"
+CLOCK="⏱️"
+CHECK="✅"
+WARNING="⚠️"
 
 # Function to check if docker compose command exists and use appropriate version
 check_docker_compose() {
@@ -12,31 +28,284 @@ check_docker_compose() {
     fi
 }
 
-DOCKER_COMPOSE=$(check_docker_compose)
+# Logging functions
+log() {
+    echo -e "${BLUE}[$(date +'%H:%M:%S')]${NC} $1"
+}
 
-# Load from BOTH env files to get all variables - PROPERLY handle quotes
-echo "📦 Loading environment variables..."
-if [ -f .env ]; then
-    set -a
-    source .env
-fi
-if [ -f .env.docker ]; then
-    set -a
-    source .env.docker
-    set +a
-fi
-if [ -f .env.local ]; then
-    set -a
-    source .env.local  
-    set +a
-fi
+success() {
+    echo -e "${GREEN}${CHECK}${NC} $1"
+}
 
-# Build new images
-echo "🏗️  Building new images..."
-$DOCKER_COMPOSE build --no-cache
+warning() {
+    echo -e "${YELLOW}${WARNING}${NC} $1"
+}
 
-# Recreate containers
-echo "🔄 Swapping to new containers..."
-$DOCKER_COMPOSE up -d --force-recreate
+error() {
+    echo -e "${RED}❌${NC} $1"
+}
 
-echo "📢 Deployment complete!"
+# Timer function
+start_timer() {
+    START_TIME=$(date +%s)
+}
+
+end_timer() {
+    END_TIME=$(date +%s)
+    DURATION=$((END_TIME - START_TIME))
+    echo -e "${PURPLE}${CLOCK} Total deployment time: ${DURATION}s${NC}"
+}
+
+# Load environment variables
+load_env() {
+    log "${PACKAGE} Loading environment variables..."
+    
+    if [ -f .env ]; then
+        set -a
+        source .env
+        success "Loaded .env"
+    fi
+    
+    if [ -f .env.docker ]; then
+        set -a
+        source .env.docker
+        set +a
+        success "Loaded .env.docker"
+    fi
+    
+    if [ -f .env.local ]; then
+        set -a
+        source .env.local  
+        set +a
+        success "Loaded .env.local"
+    fi
+}
+
+# Health check function
+health_check() {
+    local service=$1
+    local max_attempts=30
+    local attempt=1
+    
+    log "Performing health check for $service..."
+    
+    while [ $attempt -le $max_attempts ]; do
+        if $DOCKER_COMPOSE ps $service | grep -q "healthy\|Up"; then
+            success "Health check passed for $service"
+            return 0
+        fi
+        
+        if [ $((attempt % 5)) -eq 0 ]; then
+            log "Health check attempt $attempt/$max_attempts for $service..."
+        fi
+        
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    
+    error "Health check failed for $service after $max_attempts attempts"
+    return 1
+}
+
+# Quick restart deployment (fastest option)
+quick_deploy() {
+    local service=${1:-""}
+    
+    echo -e "${ROCKET} ${GREEN}Starting QUICK deployment${NC} ${service:+for $service}..."
+    start_timer
+    
+    load_env
+    DOCKER_COMPOSE=$(check_docker_compose)
+    
+    log "${RECYCLE} Quick restarting containers..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE restart $service
+        health_check $service
+    else
+        $DOCKER_COMPOSE restart frontend-prod backend
+        health_check "backend" && health_check "frontend-prod"
+    fi
+    
+    success "${SPEAKER} Quick deployment complete!"
+    end_timer
+}
+
+# Standard deployment (your original approach)
+standard_deploy() {
+    local service=${1:-""}
+    
+    echo -e "${ROCKET} ${BLUE}Starting STANDARD deployment${NC} ${service:+for $service}..."
+    start_timer
+    
+    load_env
+    DOCKER_COMPOSE=$(check_docker_compose)
+    
+    # Build new images
+    log "${HAMMER} Building new images..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE build --no-cache $service
+    else
+        $DOCKER_COMPOSE build --no-cache
+    fi
+    
+    # Recreate containers
+    log "${RECYCLE} Swapping to new containers..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE up -d --force-recreate $service
+        health_check $service
+    else
+        $DOCKER_COMPOSE up -d --force-recreate
+        health_check "backend" && health_check "frontend-prod"
+    fi
+    
+    success "${SPEAKER} Standard deployment complete!"
+    end_timer
+}
+
+# Optimized deployment (build while running)
+optimized_deploy() {
+    local service=${1:-""}
+    
+    echo -e "${ROCKET} ${PURPLE}Starting OPTIMIZED deployment${NC} ${service:+for $service}..."
+    start_timer
+    
+    load_env
+    DOCKER_COMPOSE=$(check_docker_compose)
+    
+    # Build new images while old containers are still running
+    log "${HAMMER} Building images in background (containers still serving traffic)..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE build --no-cache $service &
+    else
+        $DOCKER_COMPOSE build --no-cache --parallel &
+    fi
+    BUILD_PID=$!
+    
+    # Show progress while building
+    while kill -0 $BUILD_PID 2>/dev/null; do
+        log "Still building... (your site is still live)"
+        sleep 10
+    done
+    wait $BUILD_PID
+    
+    success "Build completed! Now swapping containers..."
+    
+    # Quick swap to new containers
+    log "${RECYCLE} Swapping to new containers..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE up -d --force-recreate $service
+        health_check $service
+    else
+        $DOCKER_COMPOSE up -d --force-recreate
+        health_check "backend" && health_check "frontend-prod"
+    fi
+    
+    success "${SPEAKER} Optimized deployment complete!"
+    end_timer
+}
+
+# Parallel deployment
+parallel_deploy() {
+    local service=${1:-""}
+    
+    echo -e "${ROCKET} ${YELLOW}Starting PARALLEL deployment${NC} ${service:+for $service}..."
+    start_timer
+    
+    load_env
+    DOCKER_COMPOSE=$(check_docker_compose)
+    
+    # Build images in parallel
+    log "${HAMMER} Building images in parallel..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE build --no-cache $service
+    else
+        $DOCKER_COMPOSE build --no-cache --parallel
+    fi
+    
+    # Deploy with minimal downtime
+    log "${RECYCLE} Deploying containers..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE up -d --force-recreate $service
+        health_check $service
+    else
+        $DOCKER_COMPOSE up -d --force-recreate
+        health_check "backend" && health_check "frontend-prod"
+    fi
+    
+    success "${SPEAKER} Parallel deployment complete!"
+    end_timer
+}
+
+# Status check
+status() {
+    DOCKER_COMPOSE=$(check_docker_compose)
+    
+    echo -e "${BLUE}=== Container Status ===${NC}"
+    $DOCKER_COMPOSE ps
+    echo ""
+    echo -e "${BLUE}=== Health Status ===${NC}"
+    $DOCKER_COMPOSE ps --format "table {{.Name}}\t{{.Status}}"
+    echo ""
+    echo -e "${BLUE}=== Resource Usage ===${NC}"
+    docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
+}
+
+# Show help
+show_help() {
+    echo -e "${GREEN}🚀 Enhanced Deployment Script${NC}"
+    echo ""
+    echo "Usage: $0 [COMMAND] [SERVICE]"
+    echo ""
+    echo -e "${BLUE}Commands:${NC}"
+    echo "  quick [service]      - Quick restart only (~3-5s downtime)"
+    echo "  standard [service]   - Your original deployment method (~15-30s downtime)"
+    echo "  optimized [service]  - Build while running (~5-10s downtime)"
+    echo "  parallel [service]   - Build in parallel (~8-15s downtime)"
+    echo "  status              - Show current container status"
+    echo "  help                - Show this help message"
+    echo ""
+    echo -e "${BLUE}Services:${NC}"
+    echo "  backend             - Deploy only backend"
+    echo "  frontend-prod       - Deploy only frontend"
+    echo "  (none)              - Deploy everything"
+    echo ""
+    echo -e "${BLUE}Examples:${NC}"
+    echo "  $0 quick                    # Fastest option, restart everything"
+    echo "  $0 optimized backend        # Build backend while frontend serves traffic"
+    echo "  $0 standard                 # Your original deployment method"
+    echo "  $0 parallel frontend-prod   # Build frontend in parallel"
+    echo ""
+    echo -e "${YELLOW}💡 Recommended:${NC}"
+    echo "  - Use 'quick' for small code changes"
+    echo "  - Use 'optimized' for major updates"
+    echo "  - Use 'standard' for dependency changes"
+}
+
+# Main command handling
+case "${1:-standard}" in
+    "quick")
+        quick_deploy "${2:-}"
+        ;;
+    "standard")
+        standard_deploy "${2:-}"
+        ;;
+    "optimized")
+        optimized_deploy "${2:-}"
+        ;;
+    "parallel")
+        parallel_deploy "${2:-}"
+        ;;
+    "status")
+        status
+        ;;
+    "help"|"-h"|"--help")
+        show_help
+        ;;
+    *)
+        echo -e "${YELLOW}Unknown command: $1${NC}"
+        echo "Use '$0 help' to see available commands."
+        echo ""
+        echo -e "${BLUE}Running standard deployment...${NC}"
+        standard_deploy "${1:-}"
+        ;;
+esac
