@@ -182,7 +182,7 @@
                         <p class="text-sm text-blue-700 mt-1">
                             Contact our support team at <a :href="`mailto:${supportEmail}`" class="underline">{{
                                 supportEmail }}</a>
-                            or call us at {{ supportPhone }} if you need assistance completing your profile.
+                            or call us at <a :href="`tel:${supportPhone}`" class="underline">{{ supportPhone }}</a> if you need assistance completing your profile.
                         </p>
                     </div>
                 </div>
