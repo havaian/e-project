@@ -871,7 +871,7 @@ exports.getProviderClients = async (req, res) => {
         
         const provider = await User.findById(targetProviderId)
             .populate('clients', 'firstName lastName profilePicture email phone')
-            .select('firstName lastName clients');
+            .select('firstName lastName clients role');
             
         if (!provider || provider.role !== 'provider') {
             return res.status(404).json({ message: 'Provider not found' });
