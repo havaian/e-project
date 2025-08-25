@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(email, password) {
     try {
       const credentials = { email, password }
-      const response = await axios.post('/auth/login', credentials)
+      const response = await axios.post('/users/login', credentials)
 
       user.value = response.data.user
       token.value = response.data.token
@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(userData) {
     try {
-      const response = await axios.post('/auth/register', userData)
+      const response = await axios.post('/users/register', userData)
 
       user.value = response.data.user
       token.value = response.data.token
