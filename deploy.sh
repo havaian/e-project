@@ -19,6 +19,9 @@ CLOCK="⏱️"
 CHECK="✅"
 WARNING="⚠️"
 
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+
 # Function to check if docker compose command exists and use appropriate version
 check_docker_compose() {
     if command -v docker-compose &> /dev/null; then
@@ -236,6 +239,76 @@ parallel_deploy() {
     end_timer
 }
 
+ultra_fast_deploy() {
+    local service=${1:-""}
+    
+    echo -e "${ROCKET} ${GREEN}Starting ULTRA-FAST deployment${NC} ${service:+for $service}..."
+    start_timer
+    
+    load_env
+    DOCKER_COMPOSE=$(check_docker_compose)
+    
+    # Build with caching (only rebuild changed layers)
+    log "${HAMMER} Building with layer caching..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE build $service  # NO --no-cache flag!
+    else
+        $DOCKER_COMPOSE build --parallel  # NO --no-cache flag!
+    fi
+    
+    # Use up instead of force-recreate for faster deployment
+    log "${RECYCLE} Updating containers..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE up -d $service
+        health_check $service
+    else
+        $DOCKER_COMPOSE up -d
+        health_check "backend" && health_check "frontend-prod"
+    fi
+    
+    success "${SPEAKER} Ultra-fast deployment complete!"
+    end_timer
+}
+
+cached_deploy() {
+    local service=${1:-""}
+    local force_rebuild=${2:-false}
+    
+    echo -e "${ROCKET} ${CYAN}Starting CACHED deployment${NC} ${service:+for $service}..."
+    start_timer
+    
+    load_env
+    DOCKER_COMPOSE=$(check_docker_compose)
+    
+    if [ "$force_rebuild" = "true" ]; then
+        log "${HAMMER} Force rebuilding all layers..."
+        BUILD_ARGS="--no-cache"
+    else
+        log "${HAMMER} Building with intelligent caching..."
+        BUILD_ARGS=""
+    fi
+    
+    # Build images
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE build $BUILD_ARGS $service
+    else
+        $DOCKER_COMPOSE build $BUILD_ARGS --parallel
+    fi
+    
+    # Deploy containers
+    log "${RECYCLE} Updating containers..."
+    if [ -n "$service" ]; then
+        $DOCKER_COMPOSE up -d $service
+        health_check $service
+    else
+        $DOCKER_COMPOSE up -d
+        health_check "backend" && health_check "frontend-prod"
+    fi
+    
+    success "${SPEAKER} Cached deployment complete!"
+    end_timer
+}
+
 # Status check
 status() {
     DOCKER_COMPOSE=$(check_docker_compose)
@@ -282,7 +355,7 @@ show_help() {
 }
 
 # Main command handling
-case "${1:-standard}" in
+case "${1:-ultrafast}" in
     "quick")
         quick_deploy "${2:-}"
         ;;
@@ -295,6 +368,9 @@ case "${1:-standard}" in
     "parallel")
         parallel_deploy "${2:-}"
         ;;
+    "ultrafast")
+        ultra_fast_deploy "${2:-}"
+        ;;
     "status")
         status
         ;;
@@ -305,7 +381,7 @@ case "${1:-standard}" in
         echo -e "${YELLOW}Unknown command: $1${NC}"
         echo "Use '$0 help' to see available commands."
         echo ""
-        echo -e "${BLUE}Running standard deployment...${NC}"
-        standard_deploy "${1:-}"
+        echo -e "${BLUE}Running ultrafast deployment...${NC}"
+        ultra_fast_deploy "${1:-}"
         ;;
 esac
