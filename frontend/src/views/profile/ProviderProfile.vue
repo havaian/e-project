@@ -304,6 +304,44 @@
 
             <!-- Right Column -->
             <div class="space-y-8">
+              <!-- Session Settings Card (NEW - Add this BEFORE existing Consultation Fee card) -->
+              <div class="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Session Settings
+                </h2>
+
+                <div class="space-y-4">
+                  <!-- Session Duration Highlight -->
+                  <div class="text-center p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <div class="text-3xl font-bold text-indigo-600">{{ formatSessionDuration }}</div>
+                    <div class="text-sm text-indigo-700 font-medium">Session Duration</div>
+                    <div class="text-xs text-indigo-600 mt-1">per appointment</div>
+                  </div>
+
+                  <!-- Quick Session Info -->
+                  <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="text-center p-3 bg-blue-50 rounded-lg">
+                      <div class="font-semibold text-blue-900">{{ formatSessionFee }}</div>
+                      <div class="text-blue-600 text-xs">Fee per session</div>
+                    </div>
+                    <div class="text-center p-3 bg-green-50 rounded-lg">
+                      <div class="font-semibold text-green-900">{{ Math.ceil(60 / (user.sessionDuration || 60)) }}</div>
+                      <div class="text-green-600 text-xs">sessions/hour max</div>
+                    </div>
+                  </div>
+
+                  <!-- Edit Link -->
+                  <div class="text-center pt-2">
+                    <router-link to="/profile/edit" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                      Update Session Settings →
+                    </router-link>
+                  </div>
+                </div>
+              </div>
 
               <!-- Consultation Fee -->
               <div class="bg-white border border-gray-200 rounded-xl p-6">
@@ -316,7 +354,27 @@
                 </h2>
                 <div class="text-center p-4">
                   <div class="text-3xl font-bold text-green-600">{{ formatSessionFee }}</div>
-                  <div class="text-sm text-gray-600">per {{ user.sessionDuration || 60 }} minutes</div>
+                  <div class="text-lg font-medium text-gray-700 mt-1">per {{ formatSessionDuration }}</div>
+
+                  <!-- Additional session info -->
+                  <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex items-center justify-center space-x-4 text-sm text-gray-600">
+                      <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ formatSessionDuration }} sessions</span>
+                      </div>
+                      <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Professional quality</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -574,6 +632,19 @@ const formatSessionFee = computed(() => {
 })
 
 // Methods
+const formatSessionDuration = computed(() => {
+  const duration = user.value?.sessionDuration || 60
+  if (duration >= 60) {
+    const hours = Math.floor(duration / 60)
+    const mins = duration % 60
+    if (mins === 0) {
+      return `${hours}h`
+    }
+    return `${hours}h ${mins}m`
+  }
+  return `${duration}min`
+})
+
 const fetchUserProfile = async () => {
   try {
     const response = await axios.get('/users/me')
