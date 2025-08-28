@@ -434,12 +434,23 @@ const fetchAppointments = async () => {
 }
 
 const fetchAchievements = async () => {
+  // Early return if achievements module is disabled
+  if (!showAchievements.value) {
+    achievements.value = []
+    return
+  }
+
   try {
     const response = await axios.get('/users/achievements')
     achievements.value = response.data.achievements?.all || []
   } catch (error) {
     console.error('Error fetching achievements:', error)
-    achievements.value = []
+    // If API returns 404 (module disabled), just set empty array
+    if (error.response?.status === 404) {
+      achievements.value = []
+    } else {
+      achievements.value = []
+    }
   }
 }
 
@@ -487,13 +498,20 @@ const getStatusBadgeClass = (status) => {
 onMounted(async () => {
   loading.value = true
   try {
-    await Promise.all([
+    // Base data that's always needed
+    const basePromises = [
       fetchUserProfile(),
       fetchAssociatedProviders(),
       fetchAppointments(),
-      fetchAchievements(),
       fetchReviews()
-    ])
+    ]
+
+    // Conditionally add achievements fetch
+    if (showAchievements.value) {
+      basePromises.push(fetchAchievements())
+    }
+
+    await Promise.all(basePromises)
   } catch (error) {
     console.error('Error loading profile data:', error)
   } finally {
