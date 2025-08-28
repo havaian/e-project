@@ -3,6 +3,29 @@ const router = express.Router();
 const userController = require('./controller');
 const { authenticateUser, authorizeRoles, preventProviderRegistration, ensureTermsAccepted } = require('../auth');
 
+if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
+    /**
+     * @route GET /api/users/achievements
+     * @desc Get current user's achievements
+     * @access Private
+     */
+    router.get('/achievements', authenticateUser, userController.getUserAchievements);
+
+    /**
+     * @route POST /api/users/achievements
+     * @desc Add achievement to current user
+     * @access Private
+     */
+    router.post('/achievements', authenticateUser, userController.addAchievement);
+
+    /**
+     * @route POST /api/users/achievements/:achievementId/earn
+     * @desc Mark achievement as earned for current user
+     * @access Private
+     */
+    router.post('/achievements/:achievementId/earn', authenticateUser, userController.earnAchievement);
+}
+
 /**
  * @route POST /api/users/register
  * @desc Register a new user (client or provider)
@@ -37,27 +60,6 @@ router.get('/me', authenticateUser, userController.getCurrentUser);
  * @access Private
  */
 router.patch('/me', authenticateUser, userController.updateUserProfile);
-
-/**
- * @route GET /api/users/achievements
- * @desc Get current user's achievements
- * @access Private
- */
-router.get('/achievements', authenticateUser, userController.getUserAchievements);
-
-/**
- * @route POST /api/users/achievements
- * @desc Add achievement to current user
- * @access Private
- */
-router.post('/achievements', authenticateUser, userController.addAchievement);
-
-/**
- * @route POST /api/users/achievements/:achievementId/earn
- * @desc Mark achievement as earned for current user
- * @access Private
- */
-router.post('/achievements/:achievementId/earn', authenticateUser, userController.earnAchievement);
 
 /**
  * @route POST /api/users/change-password

@@ -200,7 +200,7 @@
           <div class="space-y-8">
 
             <!-- Achievements -->
-            <div class="bg-white border border-gray-200 rounded-xl p-6">
+            <div v-if="showAchievements" class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -330,6 +330,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
+import { isAchievementsEnabled } from '@/utils/modules'
+
+// Simple computed property
+const showAchievements = computed(() => isAchievementsEnabled())
 
 const authStore = useAuthStore()
 

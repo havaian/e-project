@@ -431,7 +431,7 @@ exports.getProviders = async (req, res) => {
             role: 'provider',
             isActive: true,
             isVerified: true,
-            isProfileComplete: true  // NEW: Only show complete profiles
+            isProfileComplete: true  // Only show complete profiles
         };
 
         if (specialization) {

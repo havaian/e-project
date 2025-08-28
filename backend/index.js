@@ -17,18 +17,6 @@ require('dotenv').config();
 // Connect to MongoDB
 require('./db');
 
-// Import routes
-const userRoutes = require('./src/user/routes');
-const appointmentRoutes = require('./src/appointment/routes');
-const telegramRoutes = require('./src/bot/routes');
-// const assistantRoutes = require('./src/assistant/routes');
-const paymentRoutes = require('./src/payment/routes');
-const sessionRoutes = require('./src/session/routes');
-const adminRoutes = require('./src/admin/routes');
-const specializationRoutes = require('./src/specializations/routes');
-const chatRoutes = require('./src/chat/routes');
-const reviewRoutes = require('./src/review/routes');
-
 // Initialize express app
 const app = express();
 
@@ -324,16 +312,25 @@ const io = socketIo(server, {
 initializeSocketIO(io);
 
 // Routes
-app.use('/api/users', userRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/telegram', telegramRoutes);
-// app.use('/api/assistant', assistantRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/sessions', sessionRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/specializations', specializationRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/reviews', reviewRoutes);
+app.use('/api/users', require('./src/user/routes'));
+app.use('/api/appointments', require('./src/appointment/routes'));
+app.use('/api/telegram', require('./src/bot/routes'));
+// app.use('/api/assistant', require('./src/assistant/routes'));
+app.use('/api/payments', require('./src/payment/routes'));
+app.use('/api/sessions', require('./src/session/routes'));
+app.use('/api/admin', require('./src/admin/routes'));
+app.use('/api/specializations', require('./src/specialization/routes'));
+app.use('/api/chat', require('./src/chat/routes'));
+app.use('/api/reviews', require('./src/review/routes'));
+
+// Conditional module routes
+if (process.env.MODULE_GROUP_CONSULTATIONS_ENABLED === 'true' && groupConsultationRoutes) {
+    app.use('/api/group-consultations', require('./src/group-consultation/routes'));
+}
+
+if (process.env.MODULE_MONTHLY_PAYMENTS_ENABLED === 'true' && monthlyPaymentRoutes) {
+    app.use('/api/monthly-payments', require('./src/monthly-payment/routes'));
+}
 
 // Initialize cron jobs
 scheduleAppointmentReminders();

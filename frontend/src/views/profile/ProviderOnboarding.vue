@@ -394,7 +394,7 @@ const prevStep = async () => {
     }
 }
 
-// NEW: Enhanced goToStep with auto-save for edit functionality
+// Enhanced goToStep with auto-save for edit functionality
 const goToStep = async (stepNumber) => {
     if (stepNumber >= 1 && stepNumber <= 5 && stepNumber !== currentStep.value) {
         // Auto-save current step before navigating
@@ -454,7 +454,7 @@ const completeOnboarding = async () => {
     }
 }
 
-// NEW: Auto-save when significant form data changes (debounced)
+// Auto-save when significant form data changes (debounced)
 let autoSaveTimeout = null
 const debouncedAutoSave = () => {
     if (autoSaveTimeout) {
@@ -470,7 +470,7 @@ const debouncedAutoSave = () => {
 // Watch for form data changes and trigger debounced auto-save
 watch(formData, debouncedAutoSave, { deep: true })
 
-// NEW: Auto-save before user navigates away
+// Auto-save before user navigates away
 const handleBeforeUnload = (event) => {
     if (autoSaving.value) {
         event.preventDefault()

@@ -14,13 +14,13 @@ export const useAuthStore = defineStore('auth', () => {
     currentStep: 0
   })
 
-  // NEW: Add timestamp tracking to prevent excessive API calls
+  // Add timestamp tracking to prevent excessive API calls
   const lastProfileCompletionCheck = ref(0)
   const lastUserDataRefresh = ref(0)
   const PROFILE_COMPLETION_CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
   const USER_DATA_CACHE_DURATION = 2 * 60 * 1000 // 2 minutes
   
-  // NEW: Track pending requests to prevent duplicates
+  // Track pending requests to prevent duplicates
   const pendingProfileCompletionRequest = ref(false)
   const pendingUserDataRequest = ref(false)
 

@@ -141,7 +141,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
     },
 
-    // NEW: Provider Analytics Fields
+    // Provider Analytics Fields
     sessionDuration: {
         type: Number,
         enum: [15, 30, 45, 60, 75, 90, 105, 120],
@@ -174,13 +174,13 @@ const userSchema = new mongoose.Schema({
         default: false
     },
 
-    // NEW: Clients field for providers (mentorship relationships)
+    // Clients field for providers (mentorship relationships)
     clients: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
 
-    // NEW: Achievements system
+    // Achievements system
     achievements: [achievementSchema],
 
     // Client-specific fields
@@ -258,8 +258,8 @@ const userSchema = new mongoose.Schema({
 // Index for performance
 userSchema.index({ email: 1 });
 userSchema.index({ role: 1, isActive: 1 });
-userSchema.index({ role: 1, isProfileComplete: 1 }); // NEW: For filtering complete profiles
-userSchema.index({ role: 1, profileSetupStep: 1 }); // NEW: For onboarding tracking
+userSchema.index({ role: 1, isProfileComplete: 1 }); // For filtering complete profiles
+userSchema.index({ role: 1, profileSetupStep: 1 }); // For onboarding tracking
 
 // Password hashing middleware
 userSchema.pre('save', async function (next) {
@@ -270,7 +270,7 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-// NEW: Calculate and update profile completion percentage
+// Calculate and update profile completion percentage
 userSchema.methods.calculateProfileCompletion = function () {
     if (this.role !== 'provider') {
         this.profileCompletionPercentage = 100;
@@ -311,7 +311,7 @@ userSchema.pre('save', function (next) {
     next();
 });
 
-// NEW: Check if provider needs onboarding
+// Check if provider needs onboarding
 userSchema.methods.needsOnboarding = function () {
     return this.role === 'provider' && (!this.onboardingCompleted || this.profileSetupStep < 6);
 };
@@ -363,7 +363,7 @@ userSchema.methods.getPublicProfile = function () {
     return userObject;
 };
 
-// NEW: Get profile for viewer with appointment checking
+// Get profile for viewer with appointment checking
 userSchema.methods.getProfileForViewer = async function(viewerRole, viewerId) {
     const profile = this.getPublicProfile();
     
@@ -378,7 +378,7 @@ userSchema.methods.getProfileForViewer = async function(viewerRole, viewerId) {
     return profile;
 };
 
-// NEW: Check if user has appointment with another user
+// Check if user has appointment with another user
 userSchema.methods.hasAppointmentWith = async function(otherUserId) {
     if (!otherUserId) return false;
     
@@ -393,7 +393,7 @@ userSchema.methods.hasAppointmentWith = async function(otherUserId) {
     return !!appointment;
 };
 
-// NEW: Achievement management methods
+// Achievement management methods
 userSchema.methods.addAchievement = function(achievementData) {
     // Check if achievement already exists
     const existingAchievement = this.achievements.find(a => a.id === achievementData.id);
@@ -423,7 +423,7 @@ userSchema.methods.getUnEarnedAchievements = function() {
     return this.achievements.filter(a => !a.isEarned);
 };
 
-// NEW: Client management methods for providers
+// Client management methods for providers
 userSchema.methods.addClient = function(clientId) {
     if (this.role !== 'provider') return false;
     if (this.clients.includes(clientId)) return false; // Already a client
@@ -457,7 +457,7 @@ userSchema.statics.findCompleteProviders = function (filters = {}) {
         role: 'provider',
         isActive: true,
         isVerified: true,
-        isProfileComplete: true, // NEW: Only complete profiles
+        isProfileComplete: true, // Only complete profiles
         ...filters
     });
 };
@@ -475,7 +475,7 @@ userSchema.statics.findProvidersNeedingOnboarding = function () {
     });
 };
 
-// NEW: Initialize default achievements for new users
+// Initialize default achievements for new users
 userSchema.methods.initializeDefaultAchievements = function() {
     const defaultAchievements = [
         {

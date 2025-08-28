@@ -93,7 +93,7 @@
                 </a>
             </p>
 
-            <!-- NEW: Provider onboarding notification -->
+            <!-- Provider onboarding notification -->
             <div v-if="showOnboardingNotification"
                 class="mt-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200 text-blue-800 px-4 py-3 rounded-2xl text-sm text-center shadow-sm">
                 <div class="flex items-center justify-center">
@@ -172,7 +172,7 @@ async function handleSubmit() {
         // Attempt login
         const response = await authStore.login(email.value, password.value)
 
-        // NEW: Handle provider onboarding notification
+        // Handle provider onboarding notification
         if (response.needsOnboarding) {
             showOnboardingNotification.value = true
             // Show notification briefly before redirect
