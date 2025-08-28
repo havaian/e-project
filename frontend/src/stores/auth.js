@@ -86,7 +86,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  // FIXED: Add caching and duplicate request prevention
+  // Add caching and duplicate request prevention
   async function updateProfileCompletion(forceRefresh = false) {
     try {
       if (!isProvider.value) return
@@ -183,7 +183,7 @@ export const useAuthStore = defineStore('auth', () => {
     delete axios.defaults.headers.common['Authorization']
   }
 
-  // FIXED: Add caching and duplicate request prevention
+  // Add caching and duplicate request prevention
   async function refreshUserData(forceRefresh = false) {
     try {
       if (!isAuthenticated.value) return

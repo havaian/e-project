@@ -364,6 +364,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 // Reactive data
+const pageLoaded = ref(false)
 const loading = ref(false)
 const newSpecialization = ref('')
 const newLanguage = ref('')
@@ -403,35 +404,84 @@ const availableLanguages = [
 // Methods
 const fetchUserProfile = async () => {
     try {
+        loading.value = true
+        
+        // Wait for auth store to be ready
+        if (!authStore.isAuthenticated) {
+            console.error('User not authenticated')
+            router.push('/login')
+            return
+        }
+
+        // Use auth store data if available and fresh
+        if (authStore.user && authStore.user._id) {
+            populateFormFromAuthStore()
+        }
+
+        // Still fetch fresh data but don't block UI
         const response = await axios.get('/users/me')
         const user = response.data
 
-        // Populate basic fields
-        formData.firstName = user.firstName || ''
-        formData.lastName = user.lastName || ''
-        formData.phone = user.phone || ''
-        formData.email = user.email || ''
-        formData.profilePicture = user.profilePicture || ''
-
-        // Emergency contact
-        formData.emergencyContact = user.emergencyContact || {
-            name: '',
-            relationship: '',
-            phone: ''
+        if (user) {
+            populateFormFromUserData(user)
+            // Update auth store with fresh data
+            authStore.user = user
         }
-
-        if (authStore.isProvider) {
-            // Provider-specific fields
-            formData.specializations = Array.isArray(user.specializations) ?
-                user.specializations : []
-            formData.languages = Array.isArray(user.languages) ?
-                user.languages : []
-            formData.education = user.education || []
-            formData.experience = user.experience || 0
-            formData.sessionFee = user.sessionFee || 0
-        }
+        
+        pageLoaded.value = true
     } catch (error) {
         console.error('Error fetching user profile:', error)
+        pageLoaded.value = true // Still show the page even if fetch fails
+        
+        // If we have auth store data, use it as fallback
+        if (authStore.user) {
+            populateFormFromAuthStore()
+        }
+    } finally {
+        loading.value = false
+    }
+}
+
+const populateFormFromAuthStore = () => {
+    const user = authStore.user
+    if (!user) return
+
+    formData.firstName = user.firstName || ''
+    formData.lastName = user.lastName || ''
+    formData.phone = user.phone || ''
+    formData.email = user.email || ''
+    formData.profilePicture = user.profilePicture || ''
+    formData.emergencyContact = user.emergencyContact || {
+        name: '', relationship: '', phone: ''
+    }
+
+    if (authStore.isProvider) {
+        formData.specializations = Array.isArray(user.specializations) ? user.specializations : []
+        formData.languages = Array.isArray(user.languages) ? user.languages : []
+        formData.education = Array.isArray(user.education) ? user.education : []
+        formData.experience = user.experience || 0
+        formData.sessionFee = user.sessionFee || 0
+        formData.sessionDuration = user.sessionDuration || 60
+    }
+}
+
+const populateFormFromUserData = (user) => {
+    formData.firstName = user.firstName || ''
+    formData.lastName = user.lastName || ''
+    formData.phone = user.phone || ''
+    formData.email = user.email || ''
+    formData.profilePicture = user.profilePicture || ''
+    formData.emergencyContact = user.emergencyContact || {
+        name: '', relationship: '', phone: ''
+    }
+
+    if (authStore.isProvider) {
+        formData.specializations = Array.isArray(user.specializations) ? user.specializations : []
+        formData.languages = Array.isArray(user.languages) ? user.languages : []
+        formData.education = Array.isArray(user.education) ? user.education : []
+        formData.experience = user.experience || 0
+        formData.sessionFee = user.sessionFee || 0
+        formData.sessionDuration = user.sessionDuration || 60
     }
 }
 
@@ -514,7 +564,6 @@ const handleSubmit = async () => {
     try {
         loading.value = true
 
-        // Prepare update data
         const updateData = {
             firstName: formData.firstName,
             lastName: formData.lastName,
@@ -524,18 +573,27 @@ const handleSubmit = async () => {
         }
 
         if (authStore.isProvider) {
-            // Provider-specific fields
             updateData.specializations = formData.specializations.filter(Boolean)
             updateData.languages = formData.languages.filter(Boolean)
             updateData.education = formData.education.filter(e => e.degree && e.institution && e.year)
             updateData.experience = formData.experience
             updateData.sessionFee = formData.sessionFee
+            updateData.sessionDuration = formData.sessionDuration
         }
 
         await axios.patch('/users/me', updateData)
 
-        // Redirect back to profile
-        router.push({ name: authStore.isProvider ? 'provider-profile' : 'client-profile' })
+        // Force refresh user data in auth store after successful update
+        await authStore.refreshUserData(true)
+
+        // Navigate back with force refresh
+        const targetRoute = authStore.isProvider ? '/profile/provider' : '/profile/client'
+        await router.push(targetRoute)
+
+        // Force component refresh by adding a query parameter
+        await nextTick()
+        await router.replace({ path: targetRoute, query: { updated: Date.now() } })
+        
     } catch (error) {
         console.error('Error updating profile:', error)
         alert('Error updating profile. Please try again.')
@@ -545,8 +603,10 @@ const handleSubmit = async () => {
 }
 
 // Lifecycle
-onMounted(() => {
-    fetchUserProfile()
+onMounted(async () => {
+    // Ensure DOM is ready before fetching data
+    await nextTick()
+    await fetchUserProfile()
 })
 </script>
 

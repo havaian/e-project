@@ -408,7 +408,7 @@
               </div>
 
               <!-- Achievements -->
-              <div class="bg-white border border-gray-200 rounded-xl p-6">
+              <div v-if="showAchievements" class="bg-white border border-gray-200 rounded-xl p-6">
                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                   <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -580,6 +580,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
+import { isAchievementsEnabled } from '@/utils/modules'
+
+// Simple computed property
+const showAchievements = computed(() => isAchievementsEnabled())
 
 const authStore = useAuthStore()
 
@@ -709,12 +713,23 @@ const fetchEarnings = async () => {
 }
 
 const fetchAchievements = async () => {
+  // Early return if achievements module is disabled
+  if (!showAchievements.value) {
+    achievements.value = []
+    return
+  }
+
   try {
     const response = await axios.get('/users/achievements')
     achievements.value = response.data.achievements?.all || []
   } catch (error) {
     console.error('Error fetching achievements:', error)
-    achievements.value = []
+    // If API returns 404 (module disabled), just set empty array
+    if (error.response?.status === 404) {
+      achievements.value = []
+    } else {
+      achievements.value = []
+    }
   }
 }
 
@@ -809,14 +824,21 @@ const getStatusBadgeClass = (status) => {
 onMounted(async () => {
   loading.value = true
   try {
-    await Promise.all([
+    // Base data that's always needed
+    const basePromises = [
       fetchUserProfile(),
       fetchClients(),
       fetchAppointments(),
       fetchEarnings(),
-      fetchAchievements(),
       fetchReviews()
-    ])
+    ]
+
+    // Conditionally add achievements fetch
+    if (showAchievements.value) {
+      basePromises.push(fetchAchievements())
+    }
+
+    await Promise.all(basePromises)
   } catch (error) {
     console.error('Error loading profile data:', error)
   } finally {

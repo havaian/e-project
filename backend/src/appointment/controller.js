@@ -102,7 +102,7 @@ exports.createAppointment = async (req, res) => {
             return res.status(409).json({ message: 'Provider is not available at this time' });
         }
 
-        // FIXED: Check if provider's working hours allow this appointment
+        // Check if provider's working hours allow this appointment
         const dayOfWeek = appointmentDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
         
         // Convert JavaScript day (0=Sunday) to your backend format
@@ -119,7 +119,7 @@ exports.createAppointment = async (req, res) => {
             return res.status(400).json({ message: 'Provider is not available on this day' });
         }
 
-        // FIXED: Check if appointment falls within provider's working hours
+        // Check if appointment falls within provider's working hours
         // Get appointment time in local time (assuming UTC+5 timezone)
         const appointmentHour = appointmentDate.getHours();
         const appointmentMinute = appointmentDate.getMinutes();

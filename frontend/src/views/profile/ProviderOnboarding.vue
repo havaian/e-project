@@ -104,7 +104,7 @@
                     <StepProfile v-if="currentStep === 4" v-model="formData" @next="nextStep" @prev="prevStep"
                         @validate="validateStep" />
 
-                    <!-- FIXED: Add @editStep handler -->
+                    <!-- Add @editStep handler -->
                     <StepReview v-if="currentStep === 5" v-model="formData" @next="nextStep" @prev="prevStep"
                         @validate="validateStep" @editStep="goToStep" />
 
