@@ -5,28 +5,57 @@ const { authenticateUser, authorizeRoles, preventProviderRegistration, ensureTer
 // Import the avatar upload configuration
 const avatarUpload = require('../utils/avatarConfig');
 
-if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
-    /**
-     * @route GET /api/users/achievements
-     * @desc Get current user's achievements
-     * @access Private
-     */
-    router.get('/achievements', authenticateUser, userController.getUserAchievements);
+/**
+ * @route GET /api/users/achievements
+ * @desc Get current user's achievements
+ * @access Private
+ */
+router.get('/achievements', authenticateUser, (req, res, next) => {
+    if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
+        return userController.getUserAchievements(req, res, next);
+    }
+    // Return 404 or disabled feature message when achievements are disabled
+    return res.status(404).json({ message: 'Not found' });
+});
 
-    /**
-     * @route POST /api/users/achievements
-     * @desc Add achievement to current user
-     * @access Private
-     */
-    router.post('/achievements', authenticateUser, userController.addAchievement);
+/**
+ * @route POST /api/users/achievements
+ * @desc Add achievement to current user
+ * @access Private
+ */
+router.post('/achievements', authenticateUser, (req, res, next) => {
+    if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
+        return userController.addAchievement(req, res, next);
+    }
+    // Return 404 or disabled feature message when achievements are disabled
+    return res.status(404).json({ message: 'Not found' });
+});
 
-    /**
-     * @route POST /api/users/achievements/:achievementId/earn
-     * @desc Mark achievement as earned for current user
-     * @access Private
-     */
-    router.post('/achievements/:achievementId/earn', authenticateUser, userController.earnAchievement);
-}
+/**
+ * @route POST /api/users/achievements/:achievementId/earn
+ * @desc Mark achievement as earned for current user
+ * @access Private
+ */
+router.post('/achievements/:achievementId/earn', authenticateUser, (req, res, next) => {
+    if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
+        return userController.earnAchievement(req, res, next);
+    }
+    // Return 404 or disabled feature message when achievements are disabled
+    return res.status(404).json({ message: 'Not found' });
+});
+
+/**
+ * @route GET /api/users/:id/achievements
+ * @desc Get achievements for specific user
+ * @access Private
+ */
+router.get('/:id/achievements', authenticateUser, (req, res, next) => {
+    if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
+        return userController.getUserAchievements(req, res, next);
+    }
+    // Return 404 or disabled feature message when achievements are disabled
+    return res.status(404).json({ message: 'Not found' });
+});
 
 /**
  * @route POST /api/users/upload-photo
