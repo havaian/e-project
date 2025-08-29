@@ -94,7 +94,6 @@ services:
       - API_URL=${PROJECT_URL}/api
     env_file:
       - ./.env
-      - ./.env.local
     ports:
       - "${BACKEND_EXPOSE}:${BACKEND_PORT}"
     volumes:
@@ -114,6 +113,32 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+      args:
+      - VITE_APP_TITLE=${VITE_APP_TITLE}
+      - VITE_PROJECT_NAME=${VITE_PROJECT_NAME}
+      - VITE_PROJECT_URL=${VITE_PROJECT_URL}
+      - VITE_COLOR_1=${VITE_COLOR_1}
+      - VITE_COLOR_2=${VITE_COLOR_2}
+      - VITE_COLOR_3=${VITE_COLOR_3}
+      - VITE_COLOR_4=${VITE_COLOR_4}
+      - VITE_COLOR_5=${VITE_COLOR_5}
+      - VITE_COLOR_SUCCESS=${VITE_COLOR_SUCCESS}
+      - VITE_COLOR_WARNING=${VITE_COLOR_WARNING}
+      - VITE_COLOR_ERROR=${VITE_COLOR_ERROR}
+      - VITE_APP_TITLE_1=${VITE_APP_TITLE_1}
+      - VITE_APP_TITLE_2=${VITE_APP_TITLE_2}
+      - VITE_APP_TITLE_3=${VITE_APP_TITLE_3}
+      - VITE_APP_PAGE_TITLE=${VITE_APP_PAGE_TITLE}
+      - VITE_APP_PAGE_DESC=${VITE_APP_PAGE_DESC}
+      - VITE_APP_COMPANY_NAME=${VITE_APP_COMPANY_NAME}
+      - VITE_SUPPORT_PHONE=${VITE_SUPPORT_PHONE}
+      - VITE_SUPPORT_EMAIL=${VITE_SUPPORT_EMAIL}
+      - VITE_BLOG_URL=${VITE_BLOG_URL}
+      - VITE_PRIVACY_POLICY_URL=${VITE_PRIVACY_POLICY_URL}
+      - VITE_TERMS_OF_SERVICE_URL=${VITE_TERMS_OF_SERVICE_URL}
+      - VITE_MODULE_ACHIEVEMENTS_ENABLED=${VITE_MODULE_ACHIEVEMENTS_ENABLED}
+      - VITE_MODULE_MONTHLY_PAYMENTS_ENABLED=${VITE_MODULE_MONTHLY_PAYMENTS_ENABLED}
+      - VITE_MODULE_GROUP_CONSULTATIONS_ENABLED=${VITE_MODULE_GROUP_CONSULTATIONS_ENABLED}
     container_name: ${PROJECT_NAME}-frontend
     restart: always
     depends_on:
@@ -121,7 +146,6 @@ services:
         condition: service_healthy
     env_file:
       - ./.env
-      - ./.env.local
     environment:
       - VITE_SOCKET_URL=${API_URL}
       - VUE_APP_API_URL=${PROJECT_URL}/api

@@ -6,7 +6,6 @@ yarn.lock
 .env
 .env.*
 !.env.sample
-!.env.docker
 !.env.local
 
 # Build outputs

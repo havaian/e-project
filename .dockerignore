@@ -15,7 +15,6 @@ yarn-error.log
 .env.*
 !.env.example
 !.env.sample
-!.env.docker
 !.env.local
 .npmrc
 .yarnrc
