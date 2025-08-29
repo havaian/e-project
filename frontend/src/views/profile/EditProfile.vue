@@ -1,10 +1,12 @@
 <template>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div v-if="!pageReady" class="text-center py-16">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
+            <div
+                class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent">
+            </div>
             <p class="mt-4 text-gray-600">Loading your profile...</p>
         </div>
-        
+
         <div v-else>
             <div class="card-element overflow-hidden">
                 <div class="p-8">
@@ -29,24 +31,91 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                                 <h2 class="text-xl font-semibold text-gray-900">Profile Photo</h2>
                             </div>
-                            <div class="flex items-center space-x-6">
-                                <img :src="formData.profilePicture || '/images/user-placeholder.jpg'"
-                                    :alt="formData.firstName" class="h-20 w-20 rounded-full object-cover">
-                                <div>
-                                    <input type="file" accept="image/*" @change="handlePhotoUpload" class="hidden"
-                                        ref="photoInput">
-                                    <button type="button" @click="$refs.photoInput.click()"
-                                        class="bg-white border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        Change Photo
-                                    </button>
-                                    <p class="text-sm text-gray-500 mt-1">JPG, PNG up to 2MB</p>
+
+                            <div class="flex items-start space-x-6">
+                                <!-- Avatar Display -->
+                                <div class="relative">
+                                    <img :src="formData.profilePicture || '/images/user-placeholder.jpg'"
+                                        :alt="formData.firstName"
+                                        class="h-24 w-24 rounded-full object-cover border-4 border-white shadow-md">
+                                    <!-- Loading Overlay -->
+                                    <div v-if="avatarUploading"
+                                        class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                                        <div
+                                            class="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Avatar Actions -->
+                                <div class="flex-1">
+                                    <div class="space-y-3">
+                                        <!-- Provider: Upload Photo -->
+                                        <div v-if="authStore.isProvider">
+                                            <input type="file" accept="image/*" @change="handlePhotoUpload"
+                                                class="hidden" ref="photoInput">
+                                            <button type="button" @click="$refs.photoInput?.click()"
+                                                :disabled="avatarUploading"
+                                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                {{ avatarUploading ? 'Uploading...' : 'Upload Photo' }}
+                                            </button>
+                                            <p class="text-sm text-gray-500 mt-1">JPG, PNG, WebP up to 2MB. Professional
+                                                photo recommended.</p>
+                                        </div>
+
+                                        <!-- Client: Generate Avatar -->
+                                        <div v-else-if="authStore.isClient">
+                                            <button type="button" @click="handleAvatarGeneration"
+                                                :disabled="avatarUploading"
+                                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                                                </svg>
+                                                {{ avatarUploading ? 'Generating...' : 'Generate Avatar' }}
+                                            </button>
+
+                                            <!-- Optional: Also allow manual upload for clients -->
+                                            <div class="mt-2">
+                                                <input type="file" accept="image/*" @change="handlePhotoUpload"
+                                                    class="hidden" ref="clientPhotoInput">
+                                                <button type="button" @click="$refs.clientPhotoInput?.click()"
+                                                    :disabled="avatarUploading"
+                                                    class="text-sm text-indigo-600 hover:text-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                    Or upload your own photo
+                                                </button>
+                                            </div>
+
+                                            <p class="text-sm text-gray-500 mt-1">
+                                                Generate an avatar from your initials or upload a custom photo.
+                                            </p>
+                                        </div>
+
+                                        <!-- Remove Photo Option -->
+                                        <div
+                                            v-if="formData.profilePicture && !formData.profilePicture.includes('ui-avatars.com')">
+                                            <button type="button" @click="handleRemovePhoto" :disabled="avatarUploading"
+                                                class="text-sm text-red-600 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                Remove Photo
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +124,8 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                     </svg>
@@ -65,11 +135,13 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="form-group">
                                     <label for="firstName" class="label">First Name</label>
-                                    <input id="firstName" v-model="formData.firstName" type="text" class="input" required />
+                                    <input id="firstName" v-model="formData.firstName" type="text" class="input"
+                                        required />
                                 </div>
                                 <div class="form-group">
                                     <label for="lastName" class="label">Last Name</label>
-                                    <input id="lastName" v-model="formData.lastName" type="text" class="input" required />
+                                    <input id="lastName" v-model="formData.lastName" type="text" class="input"
+                                        required />
                                 </div>
                                 <div class="form-group">
                                     <label for="phone" class="label">Phone Number</label>
@@ -86,7 +158,8 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
@@ -140,9 +213,10 @@
                         <div v-if="authStore.isProvider" class="space-y-8">
 
                             <!-- Specializations -->
-                            <div class="bg-gray-50/50 rounded-2xl p-6">
+                            <div v-if="authStore.isProvider" class="bg-gray-50/50 rounded-2xl p-6">
                                 <div class="flex items-center mb-6">
-                                    <div class="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center mr-3">
+                                    <div
+                                        class="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center mr-3">
                                         <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -151,27 +225,54 @@
                                     </div>
                                     <h2 class="text-xl font-semibold text-gray-900">Specializations</h2>
                                 </div>
+
                                 <div class="space-y-4">
-                                    <div class="flex flex-wrap gap-2 mb-4">
-                                        <span v-for="(spec, index) in formData.specializations" :key="index"
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                            {{ spec }}
-                                            <button type="button" @click="removeSpecialization(index)"
-                                                class="ml-2 text-blue-600 hover:text-blue-800">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M6 18L18 6M6 6l12 12" />
+                                    <p class="text-sm text-gray-600">Select the areas you specialize in</p>
+
+                                    <!-- Specialization Dropdowns (following StepProfile.vue pattern) -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div v-for="(specialization, index) in formData.specializations" :key="index"
+                                            class="flex items-center space-x-3">
+                                            <select v-model="formData.specializations[index]" class="input flex-1">
+                                                <option value="">Select a specialization</option>
+                                                <option v-for="spec in getAvailableSpecializations(index)"
+                                                    :key="spec.name" :value="spec.name">
+                                                    {{ spec.name }}
+                                                </option>
+                                            </select>
+                                            <button v-if="formData.specializations.length > 1"
+                                                @click="removeSpecialization(index)" type="button"
+                                                class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
-                                        </span>
+                                        </div>
                                     </div>
-                                    <div class="flex gap-2">
-                                        <input v-model="newSpecialization" type="text" placeholder="Add specialization"
-                                            class="flex-1 input" @keyup.enter="addSpecialization" />
-                                        <button type="button" @click="addSpecialization"
-                                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            Add
-                                        </button>
+
+                                    <!-- Add Specialization Button -->
+                                    <button v-if="formData.specializations.length < availableSpecializations.length"
+                                        @click="addSpecialization" type="button"
+                                        class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        <span>Add Specialization</span>
+                                    </button>
+
+                                    <!-- Selected Specializations Display -->
+                                    <div v-if="selectedSpecializations.length > 0" class="mt-4">
+                                        <p class="text-sm text-gray-600 mb-2">Selected specializations:</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span v-for="spec in selectedSpecializations" :key="spec"
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                                {{ spec }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -243,8 +344,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="experience" class="label">Years of Experience</label>
-                                        <input id="experience" v-model.number="formData.experience" type="number" min="0"
-                                            max="50" class="input" placeholder="0" />
+                                        <input id="experience" v-model.number="formData.experience" type="number"
+                                            min="0" max="50" class="input" placeholder="0" />
                                     </div>
                                 </div>
 
@@ -263,8 +364,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="sessionFee" class="label">Session Fee (UZS)</label>
-                                        <input id="sessionFee" v-model.number="formData.sessionFee" type="number" min="0"
-                                            class="input" placeholder="0" />
+                                        <input id="sessionFee" v-model.number="formData.sessionFee" type="number"
+                                            min="0" class="input" placeholder="0" />
                                     </div>
                                 </div>
                             </div>
@@ -289,9 +390,10 @@
                                             {{ lang }}
                                             <button type="button" @click="removeLanguage(index)"
                                                 class="ml-2 text-purple-600 hover:text-purple-800">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M6 18L18 6M6 6l12 12" />
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
                                             </button>
                                         </span>
@@ -299,7 +401,8 @@
                                     <div class="flex gap-2">
                                         <select v-model="newLanguage" class="flex-1 input">
                                             <option value="">Select a language</option>
-                                            <option v-for="lang in availableLanguages" :key="lang" :value="lang">{{ lang }}
+                                            <option v-for="lang in availableLanguages" :key="lang" :value="lang">{{ lang
+                                            }}
                                             </option>
                                         </select>
                                         <button type="button" @click="addLanguage"
@@ -362,7 +465,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
@@ -375,6 +478,8 @@ const pageReady = ref(false)
 const loading = ref(false)
 const newSpecialization = ref('')
 const newLanguage = ref('')
+const avatarUploading = ref(false)
+const availableSpecializations = ref([])
 
 // Form data
 const formData = reactive({
@@ -402,6 +507,10 @@ const passwordData = reactive({
     new: ''
 })
 
+const selectedSpecializations = computed(() => {
+  return formData.specializations.filter(spec => spec !== '')
+})
+
 // Available languages list
 const availableLanguages = [
     'English', 'Русский', 'O\'zbek', 'Українська', 'Қазақша',
@@ -412,7 +521,7 @@ const availableLanguages = [
 const fetchUserProfile = async () => {
     try {
         loading.value = true
-        
+
         // Use auth store data immediately if available
         if (authStore.user && Object.keys(authStore.user).length > 0) {
             // console.log('Using auth store data for immediate display')
@@ -424,21 +533,21 @@ const fetchUserProfile = async () => {
         // console.log('Fetching fresh user profile data...')
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
-        
+
         const response = await axios.get('/users/me', {
             signal: controller.signal
         })
-        
+
         clearTimeout(timeoutId)
-        
+
         if (response.data) {
             // console.log('Fresh data loaded, updating form')
             populateFormData(response.data)
         }
-        
+
     } catch (error) {
         console.error('Error fetching user profile:', error)
-        
+
         // If API fails but we have auth store data, use it
         if (authStore.user && Object.keys(authStore.user).length > 0) {
             // console.log('API failed, falling back to auth store data')
@@ -455,7 +564,7 @@ const fetchUserProfile = async () => {
 
 const populateFormData = (userData) => {
     if (!userData) return
-    
+
     // Basic fields
     formData.firstName = userData.firstName || ''
     formData.lastName = userData.lastName || ''
@@ -468,11 +577,11 @@ const populateFormData = (userData) => {
 
     // Provider-specific fields
     if (authStore.isProvider && userData) {
-        formData.specializations = Array.isArray(userData.specializations) ? 
+        formData.specializations = Array.isArray(userData.specializations) ?
             [...userData.specializations] : []
-        formData.languages = Array.isArray(userData.languages) ? 
+        formData.languages = Array.isArray(userData.languages) ?
             [...userData.languages] : []
-        formData.education = Array.isArray(userData.education) ? 
+        formData.education = Array.isArray(userData.education) ?
             [...userData.education] : []
         formData.experience = userData.experience || 0
         formData.sessionFee = userData.sessionFee || 0
@@ -504,14 +613,45 @@ const handlePhotoUpload = async (event) => {
 }
 
 const addSpecialization = () => {
-    if (newSpecialization.value.trim() && !formData.specializations.includes(newSpecialization.value.trim())) {
-        formData.specializations.push(newSpecialization.value.trim())
-        newSpecialization.value = ''
-    }
+  formData.specializations.push('')
 }
 
 const removeSpecialization = (index) => {
-    formData.specializations.splice(index, 1)
+  formData.specializations.splice(index, 1)
+}
+
+const getAvailableSpecializations = (currentIndex) => {
+  const selectedSpecs = formData.specializations
+    .filter((spec, index) => index !== currentIndex && spec !== '')
+
+  return availableSpecializations.value.filter(spec =>
+    !selectedSpecs.includes(spec.name)
+  )
+}
+
+const fetchSpecializations = async () => {
+  try {
+    loading.value = true
+    const response = await axios.get('/specializations')
+    availableSpecializations.value = response.data.specializations || []
+  } catch (error) {
+    console.error('Error fetching specializations:', error)
+    // Fallback specializations - EXACT same as StepProfile.vue
+    availableSpecializations.value = [
+      { name: 'Clinical Psychology' },
+      { name: 'Counseling Psychology' },
+      { name: 'Educational Psychology' },
+      { name: 'Social Work' },
+      { name: 'Marriage and Family Therapy' },
+      { name: 'Addiction Counseling' },
+      { name: 'Child Psychology' },
+      { name: 'Behavioral Therapy' },
+      { name: 'Cognitive Behavioral Therapy' },
+      { name: 'Psychotherapy' }
+    ]
+  } finally {
+    loading.value = false
+  }
 }
 
 const addEducation = () => {
@@ -555,6 +695,105 @@ const changePassword = async () => {
     }
 }
 
+// Enhanced photo upload handler
+const handlePhotoUpload = async (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    // Validate file size (2MB limit)
+    const maxSize = 2 * 1024 * 1024 // 2MB
+    if (file.size > maxSize) {
+        alert('File size must be less than 2MB')
+        return
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+        alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)')
+        return
+    }
+
+    const formDataUpload = new FormData()
+    formDataUpload.append('photo', file)
+
+    try {
+        avatarUploading.value = true
+        const response = await axios.post('/users/upload-photo', formDataUpload, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+
+        if (response.data.success) {
+            formData.profilePicture = response.data.profilePicture
+            // Show success message
+            console.log('Photo uploaded successfully')
+        } else {
+            throw new Error(response.data.message || 'Upload failed')
+        }
+    } catch (error) {
+        console.error('Error uploading photo:', error)
+        const errorMessage = error.response?.data?.message || 'Error uploading photo. Please try again.'
+        alert(errorMessage)
+    } finally {
+        avatarUploading.value = false
+        // Clear file input
+        if (event.target) {
+            event.target.value = ''
+        }
+    }
+}
+
+// Avatar generation handler for clients
+const handleAvatarGeneration = async () => {
+    if (!formData.firstName || !formData.lastName) {
+        alert('Please enter your first and last name before generating an avatar')
+        return
+    }
+
+    try {
+        avatarUploading.value = true
+        const response = await axios.post('/users/generate-avatar')
+
+        if (response.data.success) {
+            formData.profilePicture = response.data.profilePicture
+            console.log('Avatar generated successfully')
+        } else {
+            throw new Error(response.data.message || 'Avatar generation failed')
+        }
+    } catch (error) {
+        console.error('Error generating avatar:', error)
+        const errorMessage = error.response?.data?.message || 'Error generating avatar. Please try again.'
+        alert(errorMessage)
+    } finally {
+        avatarUploading.value = false
+    }
+}
+
+// Remove photo handler
+const handleRemovePhoto = async () => {
+    if (!confirm('Are you sure you want to remove your profile photo?')) {
+        return
+    }
+
+    try {
+        avatarUploading.value = true
+        // Update the user profile to remove the photo
+        formData.profilePicture = ''
+
+        // If it's a client, we could regenerate a default avatar
+        if (authStore.isClient) {
+            await handleAvatarGeneration()
+        }
+    } catch (error) {
+        console.error('Error removing photo:', error)
+        alert('Error removing photo. Please try again.')
+    } finally {
+        avatarUploading.value = false
+    }
+}
+
 const handleSubmit = async () => {
     try {
         loading.value = true
@@ -588,7 +827,7 @@ const handleSubmit = async () => {
         // Force component refresh by adding a query parameter
         await nextTick()
         await router.replace({ path: targetRoute, query: { updated: Date.now() } })
-        
+
     } catch (error) {
         console.error('Error updating profile:', error)
         alert('Error updating profile. Please try again.')
@@ -603,13 +842,20 @@ onMounted(async () => {
     // console.log('Auth store user:', authStore.user)
     // console.log('Is authenticated:', authStore.isAuthenticated)
     
+    await fetchSpecializations()
+
+    // Initialize with at least one specialization slot
+    if (formData.specializations.length === 0) {
+        addSpecialization()
+    }
+
     // Quick validation
     if (!authStore.isAuthenticated) {
         console.error('User not authenticated, redirecting to login')
         router.push('/login')
         return
     }
-    
+
     // Fetch profile data
     await fetchUserProfile()
 })
