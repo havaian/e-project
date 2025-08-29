@@ -1,242 +1,146 @@
+# docker-compose.yml
 version: '3.8'
 
-name: ${PROJECT_NAME}
-
 services:
-  # MongoDB service
+  # MongoDB Database
   mongodb:
-    image: mongo:latest
-    container_name: ${PROJECT_NAME}-mongodb
-    restart: always
+    image: mongo:7.0
+    container_name: ${PROJECT_NAME}_mongodb
+    restart: unless-stopped
     ports:
-      - "${MONGODB_EXPOSE}:${MONGODB_PORT}"
+      - "${MONGODB_EXPOSE}:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     volumes:
       - mongodb_data:/data/db
     networks:
-      - default_net
-    command: mongod --port ${MONGODB_PORT}
+      - app-network
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "--port", "${MONGODB_PORT}"]
-      interval: 5s
-      timeout: 3s
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
       retries: 3
-      start_period: 15s
-    stop_grace_period: 10s
 
-  # Redis service for caching
+  # Redis Cache
   redis:
-    image: redis:alpine
-    container_name: ${PROJECT_NAME}-redis
-    restart: always
+    image: redis:7-alpine
+    container_name: ${PROJECT_NAME}_redis
+    restart: unless-stopped
     ports:
-      - "${REDIS_EXPOSE}:${REDIS_PORT}"
+      - "${REDIS_EXPOSE}:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis_data:/data
-    command: --port ${REDIS_PORT}
     networks:
-      - default_net
+      - app-network
     healthcheck:
-      test: ["CMD", "redis-cli", "-p", "${REDIS_PORT}", "ping"]
-      interval: 3s
-      timeout: 2s
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
       retries: 3
-      start_period: 5s
-    stop_grace_period: 5s
 
-  # RabbitMQ for message broker
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: ${PROJECT_NAME}-rabbitmq
-    restart: always
-    ports:
-      - "${RABBITMQ_EXPOSE_1}:${RABBITMQ_PORT_1}"
-      - "${RABBITMQ_EXPOSE_2}:${RABBITMQ_PORT_2}"
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-      - ./rabbitmq/main.conf:/etc/rabbitmq/rabbitmq.conf
-    networks:
-      - default_net
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    stop_grace_period: 15s
-
-  # Backend API service
+  # Backend Service
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: ${PROJECT_NAME}-backend
-    restart: always
-    depends_on:
-      mongodb:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+    container_name: ${PROJECT_NAME}_backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_EXPOSE}:3000"
     environment:
-      - NODE_ENV=development
-      # - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
       - PORT=3000
-      - MONGO_URI=mongodb://mongodb:${MONGODB_PORT}/${MONGO_DATABASE}
-      - REDIS_URI=redis://redis:${REDIS_PORT}
+      - MONGO_DATABASE=${MONGO_DATABASE}
+      - MONGODB_URI=mongodb://mongodb:27017/${MONGO_DATABASE}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
-      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT_1}
-      - FRONTEND_URL=${PROJECT_URL}
-      - API_URL=${PROJECT_URL}/api
-    env_file:
-      - ./.env
-      - ./.env.local
-    ports:
-      - "${BACKEND_EXPOSE}:${BACKEND_PORT}"
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_SECURE=${SMTP_SECURE}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL}
     volumes:
-      - backend_logs:/usr/src/app/logs
+      - backend_uploads:/usr/src/app/uploads
+    depends_on:
+      - mongodb
+      - redis
     networks:
-      - default_net
+      - app-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_PORT}/api/health"]
-      interval: 5s
-      timeout: 3s
-      retries: 2
-      start_period: 10s
-    stop_grace_period: 10s
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Frontend service
+  # Frontend Production
   frontend-prod:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-      args:
-        - VITE_APP_TITLE=${VITE_APP_TITLE}
-        - VITE_PROJECT_NAME=${VITE_PROJECT_NAME}
-        - VITE_PROJECT_URL=${VITE_PROJECT_URL}
-        - VITE_COLOR_1=${VITE_COLOR_1}
-        - VITE_COLOR_2=${VITE_COLOR_2}
-        - VITE_COLOR_3=${VITE_COLOR_3}
-        - VITE_COLOR_4=${VITE_COLOR_4}
-        - VITE_COLOR_5=${VITE_COLOR_5}
-        - VITE_COLOR_SUCCESS=${VITE_COLOR_SUCCESS}
-        - VITE_COLOR_WARNING=${VITE_COLOR_WARNING}
-        - VITE_COLOR_ERROR=${VITE_COLOR_ERROR}
-        - VITE_APP_TITLE_1=${VITE_APP_TITLE_1}
-        - VITE_APP_TITLE_2=${VITE_APP_TITLE_2}
-        - VITE_APP_TITLE_3=${VITE_APP_TITLE_3}
-        - VITE_APP_PAGE_TITLE=${VITE_APP_PAGE_TITLE}
-        - VITE_APP_PAGE_DESC=${VITE_APP_PAGE_DESC}
-        - VITE_APP_COMPANY_NAME=${VITE_APP_COMPANY_NAME}
-        - VITE_SUPPORT_PHONE=${VITE_SUPPORT_PHONE}
-        - VITE_SUPPORT_EMAIL=${VITE_SUPPORT_EMAIL}
-        - VITE_BLOG_URL=${VITE_BLOG_URL}
-        - VITE_PRIVACY_POLICY_URL=${VITE_PRIVACY_POLICY_URL}
-        - VITE_TERMS_OF_SERVICE_URL=${VITE_TERMS_OF_SERVICE_URL}
-        - VITE_MODULE_ACHIEVEMENTS_ENABLED=${VITE_MODULE_ACHIEVEMENTS_ENABLED}
-        - VITE_MODULE_MONTHLY_PAYMENTS_ENABLED=${VITE_MODULE_MONTHLY_PAYMENTS_ENABLED}
-        - VITE_MODULE_GROUP_CONSULTATIONS_ENABLED=${VITE_MODULE_GROUP_CONSULTATIONS_ENABLED}
-    container_name: ${PROJECT_NAME}-frontend
-    restart: always
-    depends_on:
-      backend:
-        condition: service_healthy
-    env_file:
-      - ./.env
-      - ./.env.local
-    environment:
-      - VITE_SOCKET_URL=${API_URL}
-      - VUE_APP_API_URL=${PROJECT_URL}/api
-      - VUE_APP_STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+    container_name: ${PROJECT_NAME}_frontend_prod
+    restart: unless-stopped
     ports:
       - "${FRONTEND_EXPOSE}:80"
+    depends_on:
+      - backend
     networks:
-      - default_net
+      - app-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
-      interval: 5s
-      timeout: 3s
-      retries: 2
-      start_period: 5s
-    stop_grace_period: 5s
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # # Monitoring with Prometheus
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: ${PROJECT_NAME}-prometheus
-  #   restart: always
-  #   ports:
-  #     - "${PROMETHEUS_EXPOSE}:${PROMETHEUS_PORT}"
-  #   volumes:
-  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
-  #     - prometheus_data:/prometheus
-  #   networks:
-  #     - default_net
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 30s
+  # Frontend Development (optional)
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: ${PROJECT_NAME}_frontend_dev
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_DEV_PORT}:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    profiles:
+      - dev
 
-  # # Visualization with Grafana
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   container_name: ${PROJECT_NAME}-grafana
-  #   restart: always
-  #   ports:
-  #     - "${GRAFANA_EXPOSE}:${GRAFANA_PORT}"
-  #   volumes:
-  #     - grafana_data:/var/lib/grafana
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
-  #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
-  #   networks:
-  #     - default_net
-  #   depends_on:
-  #     prometheus:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 30s
-
-  # # Loki for log aggregation
-  # loki:
-  #   image: grafana/loki:latest
-  #   container_name: ${PROJECT_NAME}-loki
-  #   restart: always
-  #   ports:
-  #     - "${LOKI_EXPOSE}:${LOKI_PORT}"
-  #   volumes:
-  #     - loki_data:/loki
-  #   command: -config.file=/etc/loki/local-config.yaml
-  #   networks:
-  #     - default_net
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3100/ready"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 20s
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: ${PROJECT_NAME}_nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_EXPOSE}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - backend_uploads:/usr/share/nginx/html/uploads
+    depends_on:
+      - backend
+      - frontend-prod
+    networks:
+      - app-network
+    profiles:
+      - production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   mongodb_data:
   redis_data:
-  rabbitmq_data:
-  backend_logs:
-  frontend_logs:
-  # prometheus_data:
-  # grafana_data:
-  # loki_data:
-  # nginx_logs:
+  backend_uploads:
 
 networks:
-  default_net:
+  app-network:
     driver: bridge

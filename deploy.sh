@@ -7,6 +7,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Emojis for better UX
@@ -59,7 +60,32 @@ end_timer() {
     echo -e "${PURPLE}${CLOCK} Total deployment time: ${DURATION}s${NC}"
 }
 
-# Load environment variables
+# Function to load and export all VITE_ variables from .env.local
+load_frontend_env() {
+    if [ -f ".env.local" ]; then
+        log "Loading frontend environment variables from .env.local..."
+        
+        # Read .env.local and export VITE_ variables
+        while IFS='=' read -r key value; do
+            # Skip empty lines and comments
+            [[ -z "$key" || "$key" =~ ^[[:space:]]*# ]] && continue
+            
+            # Only process VITE_ variables
+            if [[ "$key" =~ ^VITE_.* ]]; then
+                # Remove quotes and export
+                value=$(echo "$value" | sed 's/^["'\'']*//;s/["'\'']*$//')
+                export "$key=$value"
+                echo "  📌 Exported $key"
+            fi
+        done < ".env.local"
+        
+        success "Loaded VITE_ variables from .env.local"
+    else
+        warning "No .env.local found, using default environment variables"
+    fi
+}
+
+# Enhanced load environment variables function
 load_env() {
     log "${PACKAGE} Loading environment variables..."
     
@@ -82,6 +108,9 @@ load_env() {
         set +a
         success "Loaded .env.local"
     fi
+    
+    # Load frontend-specific variables for Docker builds
+    load_frontend_env
 }
 
 # Health check function
@@ -334,6 +363,8 @@ show_help() {
     echo "  standard [service]   - Your original deployment method (~15-30s downtime)"
     echo "  optimized [service]  - Build while running (~5-10s downtime)"
     echo "  parallel [service]   - Build in parallel (~8-15s downtime)"
+    echo "  ultrafast [service]  - Build with caching (~3-8s downtime)"
+    echo "  cached [service]     - Smart caching build"
     echo "  status              - Show current container status"
     echo "  help                - Show this help message"
     echo ""
@@ -346,12 +377,17 @@ show_help() {
     echo "  $0 quick                    # Fastest option, restart everything"
     echo "  $0 optimized backend        # Build backend while frontend serves traffic"
     echo "  $0 standard                 # Your original deployment method"
-    echo "  $0 parallel frontend-prod   # Build frontend in parallel"
+    echo "  $0 ultrafast frontend-prod  # Build frontend with caching"
     echo ""
     echo -e "${YELLOW}💡 Recommended:${NC}"
     echo "  - Use 'quick' for small code changes"
+    echo "  - Use 'ultrafast' for most updates"
     echo "  - Use 'optimized' for major updates"
     echo "  - Use 'standard' for dependency changes"
+    echo ""
+    echo -e "${CYAN}🔧 Environment Variables:${NC}"
+    echo "  This script automatically loads all VITE_ variables from .env.local"
+    echo "  for frontend builds, eliminating manual Docker environment setup."
 }
 
 # Main command handling
@@ -370,6 +406,9 @@ case "${1:-ultrafast}" in
         ;;
     "ultrafast")
         ultra_fast_deploy "${2:-}"
+        ;;
+    "cached")
+        cached_deploy "${2:-}" "${3:-false}"
         ;;
     "status")
         status
