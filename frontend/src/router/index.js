@@ -93,37 +93,10 @@ const router = createRouter({
       }
     },
 
-    // {
-    //   path: '/profile/edit',
-    //   name: 'profile-edit',
-    //   component: () => import('@/views/profile/EditProfile.vue'),
-    //   meta: {
-    //     requiresAuth: true
-    //   },
-    //   beforeEnter: async (to, from, next) => {
-    //     const authStore = useAuthStore()
-
-    //     if (!authStore.isAuthenticated) {
-    //       next('/login')
-    //       return
-    //     }
-
-    //     // Force refresh user data when entering edit profile from any route
-    //     if (from.path !== '/login' && from.path !== '/register') {
-    //       try {
-    //         await authStore.refreshUserData(true)
-    //       } catch (error) {
-    //         console.error('Error refreshing user data before edit:', error)
-    //       }
-    //     }
-
-    //     next()
-    //   }
-    // },
     {
       path: '/profile/edit',
       name: 'profile-edit',
-      component: () => import('@/views/profile/EditProfileTest.vue'), // TEST COMPONENT
+      component: () => import('@/views/profile/EditProfile.vue'),
       meta: {
         requiresAuth: true
       }
@@ -294,28 +267,56 @@ const router = createRouter({
 
 // Enhanced navigation guards with reduced API calls
 router.beforeEach(async (to, from, next) => {
-  console.log('🔍 ROUTER: Navigating from', from.path, 'to', to.path)
-  console.log('🔍 ROUTER: Route meta:', to.meta)
-  
   const authStore = useAuthStore()
-  console.log('🔍 ROUTER: Auth state:', {
-    isAuthenticated: authStore.isAuthenticated,
-    isProvider: authStore.isProvider,
-    needsOnboarding: authStore.needsOnboarding
-  })
 
-  // Your existing beforeEach logic stays the same...
-  // Just add console.log statements before each major decision:
-  
+  // Basic authentication check
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    console.log('🔍 ROUTER: Redirecting to login - not authenticated')
     next('/login')
     return
   }
 
-  // ... continue with existing logic but add console.logs before each redirect
-  
-  console.log('🔍 ROUTER: Navigation proceeding...')
+  if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    next('/')
+    return
+  }
+
+  // Role-based access control
+  if (to.meta.requiresClient && !authStore.isClient) {
+    next('/')
+    return
+  }
+
+  if (to.meta.requiresProvider && !authStore.isProvider) {
+    next('/')
+    return
+  }
+
+  // Only check profile completion for specific routes that actually need it
+  if (authStore.isProvider && authStore.isAuthenticated) {
+    // Only check profile completion when navigating to routes that require it
+    const needsProfileCheck =
+      to.meta.requiresCompleteProfile ||
+      to.meta.requiresIncompleteProfile ||
+      to.path.includes('/profile/provider')
+
+    if (needsProfileCheck) {
+      // Don't force refresh on every navigation, use cache
+      await authStore.updateProfileCompletion(false)
+
+      // Check if provider needs onboarding and is trying to access complete-profile routes
+      if (to.meta.requiresCompleteProfile && authStore.needsOnboarding) {
+        next('/profile/provider/onboarding')
+        return
+      }
+
+      // Check if provider is complete and trying to access onboarding
+      if (to.meta.requiresIncompleteProfile && !authStore.needsOnboarding) {
+        next('/profile/provider')
+        return
+      }
+    }
+  }
+
   next()
 })
 
@@ -323,17 +324,17 @@ router.beforeEach(async (to, from, next) => {
 router.afterEach((to, from) => {
   const authStore = useAuthStore()
 
+  // Only refresh user data when navigating to critical pages and it's actually needed
   if (authStore.isAuthenticated) {
+    // Only refresh on specific high-priority pages, not every navigation
     const criticalPages = [
       '/profile/edit',
       '/profile/provider/onboarding'
     ]
-    
-    // Force refresh when navigating TO edit profile from provider profile
-    const shouldForceRefresh = 
-      to.path === '/profile/provider' && from.path === '/profile/provider/onboarding' ||
-      to.path === '/profile/edit' && from.path.includes('/profile/provider') ||
-      to.path.includes('/profile/provider') && from.path === '/profile/edit'
+
+    // Force refresh only when completing onboarding or editing profile
+    const shouldForceRefresh =
+      to.path === '/profile/provider' && from.path === '/profile/provider/onboarding'
 
     if (criticalPages.some(page => to.path.includes(page)) || shouldForceRefresh) {
       authStore.refreshUserData(shouldForceRefresh)
