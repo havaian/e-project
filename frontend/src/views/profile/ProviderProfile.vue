@@ -287,6 +287,79 @@
               </div>
             </div>
 
+            <!-- Achievements -->
+            <div v-if="showAchievements" class="bg-white border border-gray-200 rounded-xl p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Achievements
+              </h3>
+
+              <!-- Achievement Progress -->
+              <div class="mb-4">
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                  <span>Progress</span>
+                  <span>{{ earnedAchievements.length }}/{{ totalAchievements }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-yellow-500 h-2 rounded-full" :style="{ width: achievementProgress + '%' }"></div>
+                </div>
+              </div>
+
+              <!-- Earned Achievements -->
+              <div v-if="earnedAchievements.length > 0" class="space-y-3 mb-4">
+                <h4 class="text-sm font-medium text-gray-700">Earned Achievements</h4>
+                <div v-for="achievement in earnedAchievements.slice(0, showAllAchievements ? earnedAchievements.length : 3)" :key="achievement.id"
+                  class="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900">{{ achievement.name }}</p>
+                    <p class="text-xs text-gray-600">{{ achievement.description }}</p>
+                    <p class="text-xs text-gray-500">Earned {{ formatDate(achievement.earnedAt) }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Unearned Achievements -->
+              <div v-if="unearnedAchievements.length > 0" class="space-y-3">
+                <h4 class="text-sm font-medium text-gray-700">Available Achievements</h4>
+                <div v-for="achievement in unearnedAchievements.slice(0, 3)" :key="achievement.id"
+                  class="flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-700">{{ achievement.name }}</p>
+                    <p class="text-xs text-gray-500">{{ achievement.requirements }}</p>
+                  </div>
+                </div>
+                <div v-if="unearnedAchievements.length > 3" class="text-center">
+                  <button @click="showAllAchievements = !showAllAchievements"
+                    class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                    {{ showAllAchievements ? 'Show Less' : `View ${unearnedAchievements.length - 3} More` }}
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="totalAchievements === 0" class="text-center py-4">
+                <p class="text-gray-500 text-sm">No achievements available</p>
+              </div>
+            </div>
+
             <!-- Earnings Summary -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Earnings Summary</h3>
@@ -339,6 +412,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
+import { isAchievementsEnabled } from '@/utils/modules'
+
+// Simple computed property
+const showAchievements = computed(() => isAchievementsEnabled())
 
 const authStore = useAuthStore()
 
@@ -356,9 +433,27 @@ const earnings = ref({
   thisMonth: 0,
   total: 0
 })
+const achievements = ref([])
 const loading = ref(true)
 const showAddClientModal = ref(false)
+const showAllAchievements = ref(false)
 const newClientEmail = ref('')
+
+// Computed properties  
+const earnedAchievements = computed(() =>
+  achievements.value.filter(a => a.isEarned)
+)
+
+const unearnedAchievements = computed(() =>
+  achievements.value.filter(a => !a.isEarned)
+)
+
+const totalAchievements = computed(() => achievements.value.length)
+
+const achievementProgress = computed(() => {
+  if (totalAchievements.value === 0) return 0
+  return Math.round((earnedAchievements.value.length / totalAchievements.value) * 100)
+})
 
 // Methods
 const fetchUserProfile = async () => {
@@ -422,6 +517,27 @@ const fetchEarnings = async () => {
   } catch (error) {
     console.error('Error fetching earnings:', error)
     earnings.value = { thisMonth: 0, total: 0 }
+  }
+}
+
+const fetchAchievements = async () => {
+  // Early return if achievements module is disabled
+  if (!showAchievements.value) {
+    achievements.value = []
+    return
+  }
+
+  try {
+    const response = await axios.get('/users/achievements')
+    achievements.value = response.data.achievements?.all || []
+  } catch (error) {
+    console.error('Error fetching achievements:', error)
+    // If API returns 404 (module disabled), just set empty array
+    if (error.response?.status === 404) {
+      achievements.value = []
+    } else {
+      achievements.value = []
+    }
   }
 }
 
@@ -490,12 +606,20 @@ const getStatusBadgeClass = (status) => {
 onMounted(async () => {
   loading.value = true
   try {
-    await Promise.all([
+    // Base data that's always needed
+    const basePromises = [
       fetchUserProfile(),
       fetchClients(),
       fetchAppointments(),
       fetchEarnings()
-    ])
+    ]
+
+    // Conditionally add achievements fetch
+    if (showAchievements.value) {
+      basePromises.push(fetchAchievements())
+    }
+
+    await Promise.all(basePromises)
   } catch (error) {
     console.error('Error loading profile data:', error)
   } finally {
