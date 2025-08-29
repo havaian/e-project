@@ -589,29 +589,6 @@ const populateFormData = (userData) => {
     }
 }
 
-const handlePhotoUpload = async (event) => {
-    const file = event.target.files[0]
-    if (!file) return
-
-    const formDataUpload = new FormData()
-    formDataUpload.append('photo', file)
-
-    try {
-        loading.value = true
-        const response = await axios.post('/users/upload-photo', formDataUpload, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-        formData.profilePicture = response.data.profilePicture
-    } catch (error) {
-        console.error('Error uploading photo:', error)
-        alert('Error uploading photo. Please try again.')
-    } finally {
-        loading.value = false
-    }
-}
-
 const addSpecialization = () => {
   formData.specializations.push('')
 }
@@ -841,7 +818,7 @@ onMounted(async () => {
     // console.log('EditProfile component mounted')
     // console.log('Auth store user:', authStore.user)
     // console.log('Is authenticated:', authStore.isAuthenticated)
-    
+
     await fetchSpecializations()
 
     // Initialize with at least one specialization slot
