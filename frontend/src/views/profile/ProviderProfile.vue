@@ -417,6 +417,8 @@ import { isAchievementsEnabled } from '@/utils/modules'
 // Simple computed property
 const showAchievements = computed(() => isAchievementsEnabled())
 
+console.log(showAchievements)
+
 const authStore = useAuthStore()
 
 // Reactive data
