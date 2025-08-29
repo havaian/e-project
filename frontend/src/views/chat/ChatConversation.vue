@@ -316,12 +316,12 @@ async function sendMessage() {
     const messageText = newMessage.value.trim()
 
     if (!messageText || sending.value || !recipient.value) {
-        console.log('Cannot send message:', {
-            messageText: !!messageText,
-            sending: sending.value,
-            recipient: !!recipient.value,
-            socketConnected: socket.value?.connected
-        })
+        // console.log('Cannot send message:', {
+        //     messageText: !!messageText,
+        //     sending: sending.value,
+        //     recipient: !!recipient.value,
+        //     socketConnected: socket.value?.connected
+        // })
         return
     }
 
@@ -349,7 +349,7 @@ async function sendMessage() {
         // Add acknowledgment callback to confirm message was received by server
         socket.value.emit('new-message', messageData, (response) => {
             if (response && response.success) {
-                console.log('Message sent successfully')
+                // console.log('Message sent successfully')
             } else {
                 console.error('Failed to send message:', response)
                 alert('Failed to send message. Please try again.')
@@ -390,7 +390,7 @@ function initializeSocket() {
     })
 
     socket.value.on('connect', () => {
-        console.log('Socket connected successfully')
+        // console.log('Socket connected successfully')
         socket.value.emit('join-conversation', route.params.id)
     })
 
@@ -399,7 +399,7 @@ function initializeSocket() {
     })
 
     socket.value.on('disconnect', (reason) => {
-        console.log('Socket disconnected:', reason)
+        // console.log('Socket disconnected:', reason)
     })
 
     socket.value.on('error', (error) => {

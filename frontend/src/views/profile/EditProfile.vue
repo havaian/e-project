@@ -415,13 +415,13 @@ const fetchUserProfile = async () => {
         
         // Use auth store data immediately if available
         if (authStore.user && Object.keys(authStore.user).length > 0) {
-            console.log('Using auth store data for immediate display')
+            // console.log('Using auth store data for immediate display')
             populateFormData(authStore.user)
             pageReady.value = true
         }
 
         // Fetch fresh data with timeout
-        console.log('Fetching fresh user profile data...')
+        // console.log('Fetching fresh user profile data...')
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
         
@@ -432,7 +432,7 @@ const fetchUserProfile = async () => {
         clearTimeout(timeoutId)
         
         if (response.data) {
-            console.log('Fresh data loaded, updating form')
+            // console.log('Fresh data loaded, updating form')
             populateFormData(response.data)
         }
         
@@ -441,7 +441,7 @@ const fetchUserProfile = async () => {
         
         // If API fails but we have auth store data, use it
         if (authStore.user && Object.keys(authStore.user).length > 0) {
-            console.log('API failed, falling back to auth store data')
+            // console.log('API failed, falling back to auth store data')
             populateFormData(authStore.user)
         } else {
             console.error('No fallback data available')
@@ -599,9 +599,9 @@ const handleSubmit = async () => {
 
 // Lifecycle
 onMounted(async () => {
-    console.log('EditProfile component mounted')
-    console.log('Auth store user:', authStore.user)
-    console.log('Is authenticated:', authStore.isAuthenticated)
+    // console.log('EditProfile component mounted')
+    // console.log('Auth store user:', authStore.user)
+    // console.log('Is authenticated:', authStore.isAuthenticated)
     
     // Quick validation
     if (!authStore.isAuthenticated) {

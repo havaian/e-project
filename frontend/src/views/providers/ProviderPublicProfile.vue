@@ -576,7 +576,7 @@ const initiateChat = async () => {
 
         // Navigate to chat (assuming you have a chat route)
         // router.push(`/chat/${response.data.conversationId}`)
-        console.log('Chat initiated:', response.data)
+        // console.log('Chat initiated:', response.data)
     } catch (error) {
         console.error('Error initiating chat:', error)
     }

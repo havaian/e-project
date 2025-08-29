@@ -663,7 +663,7 @@ const initiateChat = async () => {
     const response = await axios.post('/chat/conversations', {
       participantId: client.value._id
     })
-    console.log('Chat initiated:', response.data)
+    // console.log('Chat initiated:', response.data)
     // Navigate to chat interface
     // router.push(`/chat/${response.data.conversationId}`)
   } catch (error) {
@@ -1228,7 +1228,7 @@ const initiateChat = async () => {
         const response = await axios.post('/chat/conversations', {
             participantId: student.value._id
         })
-        console.log('Chat initiated:', response.data)
+        // console.log('Chat initiated:', response.data)
     } catch (error) {
         console.error('Error initiating chat:', error)
     }
