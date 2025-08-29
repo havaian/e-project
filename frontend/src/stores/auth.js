@@ -1,10 +1,9 @@
-// src/stores/auth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from '@/plugins/axios'
 
 export const useAuthStore = defineStore('auth', () => {
-  // State
+  // Ensure proper initialization from localStorage
   const user = ref(JSON.parse(localStorage.getItem('user')) || null)
   const token = ref(localStorage.getItem('token') || null)
   const needsOnboarding = ref(JSON.parse(localStorage.getItem('needsOnboarding')) || false)
@@ -13,6 +12,11 @@ export const useAuthStore = defineStore('auth', () => {
     isComplete: false,
     currentStep: 0
   })
+
+  // Set axios header if token exists during initialization
+  if (token.value) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
+  }
 
   // Add timestamp tracking to prevent excessive API calls
   const lastProfileCompletionCheck = ref(0)
@@ -24,18 +28,43 @@ export const useAuthStore = defineStore('auth', () => {
   const pendingProfileCompletionRequest = ref(false)
   const pendingUserDataRequest = ref(false)
 
-  // Computed
-  const isAuthenticated = computed(() => !!token.value)
-  const isProvider = computed(() => user.value?.role === 'provider')
-  const isClient = computed(() => user.value?.role === 'client')
+  // Computed properties now work correctly because user.value and token.value are properly set
+  const isAuthenticated = computed(() => {
+    const result = !!token.value && !!user.value
+    return result
+  })
+  
+  const isProvider = computed(() => {
+    const result = user.value?.role === 'provider'
+    return result
+  })
+  
+  const isClient = computed(() => {
+    const result = user.value?.role === 'client'
+    return result
+  })
+
   const isProviderOnboardingComplete = computed(() => !needsOnboarding.value)
   const currentOnboardingStep = computed(() => profileCompletion.value?.currentStep || 0)
 
-  // Set axios default auth header
-  if (token.value) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
+  // Force reactive update on store initialization
+  function initializeStore() {
+    const storedUser = localStorage.getItem('user')
+    const storedToken = localStorage.getItem('token')
+    
+    if (storedUser && storedToken) {
+      user.value = JSON.parse(storedUser)
+      token.value = storedToken
+      
+      // Set axios header
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
+    }
   }
 
+  // Call initialization immediately
+  initializeStore()
+
+  // Rest of your existing methods...
   async function login(email, password) {
     try {
       const credentials = { email, password }

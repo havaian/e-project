@@ -63,7 +63,7 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         requiresProvider: true,
-        requiresCompleteProfile: true
+        // requiresCompleteProfile: true
       }
     },
 
@@ -75,7 +75,7 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         requiresProvider: true,
-        requiresIncompleteProfile: true,
+        // requiresIncompleteProfile: true,
         hideNavBar: true,
         hideFooter: true
       }
@@ -89,7 +89,7 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         requiresProvider: true,
-        requiresCompleteProfile: true
+        // requiresCompleteProfile: true
       }
     },
 
@@ -299,7 +299,7 @@ router.beforeEach(async (to, from, next) => {
       to.meta.requiresIncompleteProfile ||
       to.path.includes('/profile/provider')
 
-    if (needsProfileCheck) {
+    if (needsProfileCheck) {      
       // Don't force refresh on every navigation, use cache
       await authStore.updateProfileCompletion(false)
 
@@ -316,7 +316,6 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   }
-
   next()
 })
 

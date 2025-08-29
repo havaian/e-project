@@ -5,13 +5,23 @@ import { createHead } from '@unhead/vue/client'
 import App from './App.vue'
 import router from './router'
 import './assets/main.css'
+import { useAuthStore } from '@/stores/auth'
 
 const app = createApp(App)
 const head = createHead() 
 
 app.use(createPinia())
 app.use(router)
-app.use(head) 
+app.use(head)
+
+const authStore = useAuthStore()
+
+// If store state is wrong, force initialization
+if (!authStore.isAuthenticated && localStorage.getItem('token') && localStorage.getItem('user')) {
+  if (authStore.initializeStore) {
+    authStore.initializeStore()
+  }
+}
 
 // Helper function to convert hex to RGB
 function hexToRgb(hex) {
