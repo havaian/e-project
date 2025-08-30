@@ -705,7 +705,7 @@ const handlePhotoUpload = async (event) => {
         if (response.data.success) {
             formData.profilePicture = response.data.profilePicture
             // Show success message
-            console.log('Photo uploaded successfully')
+            // console.log('Photo uploaded successfully')
         } else {
             throw new Error(response.data.message || 'Upload failed')
         }
@@ -735,7 +735,7 @@ const handleAvatarGeneration = async () => {
 
         if (response.data.success) {
             formData.profilePicture = response.data.profilePicture
-            console.log('Avatar generated successfully')
+            // console.log('Avatar generated successfully')
         } else {
             throw new Error(response.data.message || 'Avatar generation failed')
         }
