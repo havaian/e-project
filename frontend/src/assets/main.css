@@ -750,6 +750,5 @@
 
   .input:hover {
     border-color: color-mix(in srgb, var(--color-brand-1) 30%, #d1d5db);
-    transform: scale(1.005);
   }
 }

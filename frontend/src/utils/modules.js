@@ -2,7 +2,6 @@
 
 // Check if achievements module is enabled
 export const isAchievementsEnabled = () => {
-  console.log(import.meta.env.VITE_MODULE_ACHIEVEMENTS_ENABLED)
   return import.meta.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true' // Default false
 }
 
