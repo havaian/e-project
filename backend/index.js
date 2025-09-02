@@ -274,8 +274,8 @@ app.use(compression());
 
 // If you need more control over avatar serving with security:
 app.use('/uploads/avatars', express.static(path.join(__dirname, 'uploads/avatars'), {
-    // Cache for 1 day
-    maxAge: '1d',
+    maxAge: '1h',
+    etag: true,
     // Set proper headers
     setHeaders: (res, path, stat) => {
         // Only serve image files
