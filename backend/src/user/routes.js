@@ -50,14 +50,6 @@ router.post('/generate-avatar',
 );
 
 /**
- * @route GET /api/users/avatars/:filename
- * @desc Serve avatar/profile picture files
- * @access Public (no authentication required for viewing avatars)
- * @security File validation, path traversal protection
- */
-router.get('/avatars/:filename', userController.getAvatar);
-
-/**
  * @route POST /api/users/register
  * @desc Register a new user (client or provider)
  * @access Public
