@@ -273,7 +273,7 @@ app.use((req, res, next) => {
 app.use(compression());
 
 // If you need more control over avatar serving with security:
-app.use('/uploads/avatars', express.static(path.join(__dirname, 'uploads/avatars'), {
+app.use('/api/uploads/avatars', express.static(path.join(__dirname, 'uploads/avatars'), {
     maxAge: '1h',
     etag: true,
     // Set proper headers

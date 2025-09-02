@@ -43,7 +43,7 @@
                             <div class="flex items-start space-x-6">
                                 <!-- Avatar Display -->
                                 <div class="relative">
-                                    <img :src="formData.profilePicture || '/images/user-placeholder.jpg'"
+                                    <img :src="formData.profilePicture ? `/api${formData.profilePicture}` : '/images/user-placeholder.jpg'"
                                         :alt="formData.firstName"
                                         class="h-24 w-24 rounded-full object-cover border-4 border-white shadow-md">
                                     <!-- Loading Overlay -->
