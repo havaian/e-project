@@ -96,7 +96,7 @@ services:
       - "${BACKEND_EXPOSE}:${BACKEND_PORT}"
     volumes:
       - backend_logs:/usr/src/app/logs
-      - ./backend/uploads/:/usr/src/app/uploads:Z
+      - ./backend/uploads/:/usr/src/app/uploads:rw
     networks:
       - default_net
     healthcheck:
