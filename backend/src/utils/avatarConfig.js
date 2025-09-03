@@ -4,17 +4,24 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
+// Create upload directory with proper error handling
+const createUploadDir = (dir) => {
+    try {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true, mode: 0o755 });
+        }
+    } catch (error) {
+        console.error(`Failed to create directory ${dir}:`, error);
+        // Fallback to a writable directory
+        return path.join(process.cwd(), 'temp', 'avatars');
+    }
+    return dir;
+};
+
 // Configure storage for avatars
 const avatarStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        // Separate avatar uploads from documents
-        const uploadDir = path.join(__dirname, '../../uploads/avatars');
-
-        // Create directory if it doesn't exist
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-
+    destination: (req, file, cb) => {
+        const uploadDir = createUploadDir(path.join(__dirname, '../../uploads/avatars'));
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
