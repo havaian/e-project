@@ -272,34 +272,6 @@ app.use((req, res, next) => {
 // Compression
 app.use(compression());
 
-// If you need more control over avatar serving with security:
-app.use('/api/uploads/avatars', express.static(path.join(__dirname, 'uploads/avatars'), {
-    maxAge: '1h',
-    etag: true,
-    // Set proper headers
-    setHeaders: (res, path, stat) => {
-        // Only serve image files
-        const allowedTypes = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-        const ext = path.extname(path).toLowerCase();
-        
-        if (!allowedTypes.includes(ext)) {
-            res.status(403).end();
-            return;
-        }
-        
-        // Set content type
-        const contentTypes = {
-            '.jpg': 'image/jpeg',
-            '.jpeg': 'image/jpeg',
-            '.png': 'image/png',
-            '.gif': 'image/gif',
-            '.webp': 'image/webp'
-        };
-        
-        res.setHeader('Content-Type', contentTypes[ext] || 'application/octet-stream');
-    }
-}));
-
 // Health check route
 app.get('/api/health', (req, res) => {
     res.status(200).json({
