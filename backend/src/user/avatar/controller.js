@@ -74,7 +74,7 @@ exports.uploadProfilePhoto = async (req, res) => {
         fs.renameSync(req.file.path, newFilePath);
 
         // Update user's profile picture URL
-        const profilePictureUrl = `/uploads/avatars/${newFileName}`;
+        const profilePictureUrl = `/users/avatars/${newFileName}`;
         user.profilePicture = profilePictureUrl;
         await user.save();
 
