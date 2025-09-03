@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const userController = require('./controller');
 const { authenticateUser, authorizeRoles, preventProviderRegistration, ensureTermsAccepted } = require('../auth');
-// Import the avatar upload configuration
-const avatarUpload = require('../utils/avatarConfig');
+// Import the avatar upload routes
+const avatarRoutes = require('./avatar/routes');
+
+router.use('/avatars', avatarRoutes);
 
 if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
     /**
@@ -27,27 +29,6 @@ if (process.env.VITE_MODULE_ACHIEVEMENTS_ENABLED === 'true') {
      */
     router.post('/achievements/:achievementId/earn', authenticateUser, userController.earnAchievement);
 }
-
-/**
- * @route POST /api/users/upload-photo
- * @desc Upload profile photo (for providers primarily, but available to all users)
- * @access Private
- */
-router.post('/upload-photo', 
-    authenticateUser, 
-    avatarUpload.single('photo'), // Use 'photo' as the field name to match frontend
-    userController.uploadProfilePhoto
-);
-
-/**
- * @route POST /api/users/generate-avatar  
- * @desc Generate avatar for client using initials/external service
- * @access Private
- */
-router.post('/generate-avatar',
-    authenticateUser,
-    userController.generateAvatar
-);
 
 /**
  * @route POST /api/users/register
