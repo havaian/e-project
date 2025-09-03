@@ -11,7 +11,9 @@ RUN npm ci --omit=dev
 COPY . .
 
 # Create uploads directory
-RUN mkdir -p uploads/avatars uploads/documents
+RUN mkdir -p /usr/src/app/uploads/avatars && mkdir -p /usr/src/app/uploads/documents && \
+    chown -R node:node /usr/src/app && \
+    chmod -R 755 /usr/src/app/uploads
 
 # Create a non-root user and switch to it
 RUN addgroup -S nodeapp && adduser -S -G nodeapp nodeapp
