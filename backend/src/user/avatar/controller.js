@@ -326,6 +326,24 @@ exports.generateAvatar = async (req, res) => {
             });
         }
 
+        // Remove any existing uploaded avatar files first
+        const avatarsDir = path.join(__dirname, '../../../uploads/avatars');
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        
+        allowedExtensions.forEach(ext => {
+            const filename = `${userId}${ext}`;
+            const filePath = path.join(avatarsDir, filename);
+            
+            if (fs.existsSync(filePath)) {
+                try {
+                    fs.unlinkSync(filePath);
+                    console.log('Removed existing avatar file for generated avatar:', filename);
+                } catch (deleteError) {
+                    console.error('Error deleting existing avatar file:', deleteError);
+                }
+            }
+        });
+
         // Generate avatar URL using initials and a color based on user ID
         const initials = `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase();
         

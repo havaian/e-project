@@ -696,7 +696,8 @@ const handlePhotoUpload = async (event) => {
 
     try {
         avatarUploading.value = true
-        const response = await axios.post('/users/upload-photo', formDataUpload, {
+        // FIXED: Updated endpoint to match new avatar routes
+        const response = await axios.post('/users/avatars/upload-photo', formDataUpload, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -704,8 +705,7 @@ const handlePhotoUpload = async (event) => {
 
         if (response.data.success) {
             formData.profilePicture = response.data.profilePicture
-            // Show success message
-            // console.log('Photo uploaded successfully')
+            console.log('Photo uploaded successfully')
         } else {
             throw new Error(response.data.message || 'Upload failed')
         }
@@ -731,11 +731,12 @@ const handleAvatarGeneration = async () => {
 
     try {
         avatarUploading.value = true
-        const response = await axios.post('/users/generate-avatar')
+        // FIXED: Updated endpoint to match new avatar routes
+        const response = await axios.post('/users/avatars/generate-avatar')
 
         if (response.data.success) {
             formData.profilePicture = response.data.profilePicture
-            // console.log('Avatar generated successfully')
+            console.log('Avatar generated successfully')
         } else {
             throw new Error(response.data.message || 'Avatar generation failed')
         }
@@ -748,7 +749,7 @@ const handleAvatarGeneration = async () => {
     }
 }
 
-// Remove photo handler
+// Remove photo handler with backend call
 const handleRemovePhoto = async () => {
     if (!confirm('Are you sure you want to remove your profile photo?')) {
         return
@@ -756,16 +757,26 @@ const handleRemovePhoto = async () => {
 
     try {
         avatarUploading.value = true
-        // Update the user profile to remove the photo
-        formData.profilePicture = ''
+        
+        // NEW: Call backend to remove avatar file and update database
+        const response = await axios.delete('/users/avatars/')
 
-        // If it's a client, we could regenerate a default avatar
-        if (authStore.isClient) {
-            await handleAvatarGeneration()
+        if (response.data.success) {
+            // Clear the local form data
+            formData.profilePicture = ''
+            console.log('Avatar removed successfully')
+
+            // If it's a client, generate a new default avatar
+            if (authStore.isClient && formData.firstName && formData.lastName) {
+                await handleAvatarGeneration()
+            }
+        } else {
+            throw new Error(response.data.message || 'Failed to remove avatar')
         }
     } catch (error) {
         console.error('Error removing photo:', error)
-        alert('Error removing photo. Please try again.')
+        const errorMessage = error.response?.data?.message || 'Error removing photo. Please try again.'
+        alert(errorMessage)
     } finally {
         avatarUploading.value = false
     }
