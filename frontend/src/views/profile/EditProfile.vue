@@ -179,7 +179,7 @@
                         <!-- Provider-Specific Fields -->
                         <div v-if="authStore.isProvider" class="space-y-8">
 
-                            <!-- Specializations -->
+                            <!-- Specializations with Enhanced Validation -->
                             <div v-if="authStore.isProvider" class="bg-gray-50/50 rounded-2xl p-6">
                                 <div class="flex items-center mb-6">
                                     <div
@@ -191,25 +191,51 @@
                                         </svg>
                                     </div>
                                     <h2 class="text-xl font-semibold text-gray-900">Specializations</h2>
+                                    <span class="ml-2 text-red-500 text-sm">*</span>
                                 </div>
 
                                 <div class="space-y-4">
-                                    <p class="text-sm text-gray-600">Select the areas you specialize in</p>
+                                    <p class="text-sm text-gray-600">Select the areas you specialize in (at least 1 required)</p>
 
-                                    <!-- Specialization Dropdowns (following StepProfile.vue pattern) -->
+                                    <!-- Validation Error Message -->
+                                    <div v-if="validationErrors.specializations" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                        <div class="flex">
+                                            <svg class="w-5 h-5 text-red-400 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                                            </svg>
+                                            <p class="text-sm text-red-800 font-medium">{{ validationErrors.specializations }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Specialization Dropdowns -->
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div v-for="(specialization, index) in formData.specializations" :key="index"
                                             class="flex items-center space-x-3">
-                                            <select v-model="formData.specializations[index]" class="input flex-1">
+                                            <select v-model="formData.specializations[index]" 
+                                                :class="[
+                                                    'input flex-1',
+                                                    validationErrors.specializations ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                                                ]">
                                                 <option value="">Select a specialization</option>
                                                 <option v-for="spec in getAvailableSpecializations(index)"
                                                     :key="spec.name" :value="spec.name">
                                                     {{ spec.name }}
                                                 </option>
                                             </select>
-                                            <button v-if="formData.specializations.length > 1"
-                                                @click="removeSpecialization(index)" type="button"
-                                                class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                            <!-- Remove Button - Always show if more than 1, but disable if only 1 valid specialization -->
+                                            <button 
+                                                v-if="formData.specializations.length > 1 || (formData.specializations.length === 1 && selectedSpecializations.length > 1)"
+                                                @click="removeSpecialization(index)" 
+                                                type="button"
+                                                :disabled="selectedSpecializations.length <= 1"
+                                                :class="[
+                                                    'p-2 rounded-lg transition-colors',
+                                                    selectedSpecializations.length <= 1 
+                                                        ? 'text-gray-300 cursor-not-allowed' 
+                                                        : 'text-red-500 hover:text-red-700 hover:bg-red-50'
+                                                ]"
+                                                :title="selectedSpecializations.length <= 1 ? 'At least one specialization is required' : 'Remove this specialization'">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -294,7 +320,7 @@
                                 </div>
                             </div>
 
-                            <!-- Experience & Consultation Fee -->
+                            <!-- Experience & Session Configuration -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Experience -->
                                 <div class="bg-gray-50/50 rounded-2xl p-6">
@@ -316,7 +342,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Consultation Fee -->
+                                <!-- Session Configuration -->
                                 <div class="bg-gray-50/50 rounded-2xl p-6">
                                     <div class="flex items-center mb-4">
                                         <div
@@ -327,12 +353,24 @@
                                                     d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                                             </svg>
                                         </div>
-                                        <h2 class="text-lg font-semibold text-gray-900">Consultation Fee</h2>
+                                        <h2 class="text-lg font-semibold text-gray-900">Session Settings</h2>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="sessionFee" class="label">Session Fee (UZS)</label>
-                                        <input id="sessionFee" v-model.number="formData.sessionFee" type="number"
-                                            min="0" class="input" placeholder="0" />
+                                    <div class="space-y-4">
+                                        <div class="form-group">
+                                            <label for="sessionFee" class="label">Session Fee (UZS)</label>
+                                            <input id="sessionFee" v-model.number="formData.sessionFee" type="number"
+                                                min="0" step="1000" class="input" placeholder="0" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sessionDuration" class="label">Session Duration (minutes)</label>
+                                            <select id="sessionDuration" v-model.number="formData.sessionDuration" class="input">
+                                                <option value="30">30 minutes</option>
+                                                <option value="45">45 minutes</option>
+                                                <option value="60">60 minutes</option>
+                                                <option value="90">90 minutes</option>
+                                                <option value="120">120 minutes</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -419,8 +457,13 @@
                                 class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 Cancel
                             </router-link>
-                            <button type="submit" :disabled="loading"
-                                class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
+                            <button type="submit" :disabled="loading || (authStore.isProvider && !isFormValid)"
+                                :class="[
+                                    'px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                                    loading || (authStore.isProvider && !isFormValid)
+                                        ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                ]">
                                 {{ loading ? 'Saving...' : 'Save Changes' }}
                             </button>
                         </div>
@@ -448,6 +491,11 @@ const newLanguage = ref('')
 const avatarUploading = ref(false)
 const availableSpecializations = ref([])
 
+// Validation errors
+const validationErrors = reactive({
+    specializations: ''
+})
+
 // Form data
 const formData = reactive({
     firstName: '',
@@ -465,6 +513,7 @@ const formData = reactive({
     education: [],
     experience: 0,
     sessionFee: 0,
+    sessionDuration: 60, // Default to 60 minutes
     languages: []
 })
 
@@ -474,8 +523,25 @@ const passwordData = reactive({
     new: ''
 })
 
+// Computed properties
 const selectedSpecializations = computed(() => {
-  return formData.specializations.filter(spec => spec !== '')
+    return formData.specializations.filter(spec => spec !== '')
+})
+
+// Form validation for providers
+const isFormValid = computed(() => {
+    if (!authStore.isProvider) return true
+    
+    // Clear validation errors first
+    validationErrors.specializations = ''
+    
+    // Check if at least one specialization is selected
+    if (selectedSpecializations.value.length === 0) {
+        validationErrors.specializations = 'At least one specialization is required'
+        return false
+    }
+    
+    return true
 })
 
 // Available languages list
@@ -491,13 +557,11 @@ const fetchUserProfile = async () => {
 
         // Use auth store data immediately if available
         if (authStore.user && Object.keys(authStore.user).length > 0) {
-            // console.log('Using auth store data for immediate display')
             populateFormData(authStore.user)
             pageReady.value = true
         }
 
         // Fetch fresh data with timeout
-        // console.log('Fetching fresh user profile data...')
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
 
@@ -508,7 +572,6 @@ const fetchUserProfile = async () => {
         clearTimeout(timeoutId)
 
         if (response.data) {
-            // console.log('Fresh data loaded, updating form')
             populateFormData(response.data)
         }
 
@@ -517,7 +580,6 @@ const fetchUserProfile = async () => {
 
         // If API fails but we have auth store data, use it
         if (authStore.user && Object.keys(authStore.user).length > 0) {
-            // console.log('API failed, falling back to auth store data')
             populateFormData(authStore.user)
         } else {
             console.error('No fallback data available')
@@ -557,34 +619,46 @@ const populateFormData = (userData) => {
 }
 
 const addSpecialization = () => {
-  formData.specializations.push('')
+    formData.specializations.push('')
+    // Clear validation error when adding
+    validationErrors.specializations = ''
 }
 
 const removeSpecialization = (index) => {
-  formData.specializations.splice(index, 1)
+    // Don't allow removal if it would leave no valid specializations
+    if (selectedSpecializations.value.length <= 1) {
+        return
+    }
+    
+    formData.specializations.splice(index, 1)
+    
+    // Validate after removal
+    if (selectedSpecializations.value.length === 0) {
+        validationErrors.specializations = 'At least one specialization is required'
+    }
 }
 
 const getAvailableSpecializations = (currentIndex) => {
-  const selectedSpecs = formData.specializations
-    .filter((spec, index) => index !== currentIndex && spec !== '')
+    const selectedSpecs = formData.specializations
+        .filter((spec, index) => index !== currentIndex && spec !== '')
 
-  return availableSpecializations.value.filter(spec =>
-    !selectedSpecs.includes(spec.name)
-  )
+    return availableSpecializations.value.filter(spec =>
+        !selectedSpecs.includes(spec.name)
+    )
 }
 
 const fetchSpecializations = async () => {
-  try {
-    loading.value = true
-    const response = await axios.get('/specializations')
-    availableSpecializations.value = response.data.specializations || []
-  } catch (error) {
-    console.error('Error fetching specializations:', error)
-    // Fallback specializations
-    availableSpecializations.value = []
-  } finally {
-    loading.value = false
-  }
+    try {
+        loading.value = true
+        const response = await axios.get('/specializations')
+        availableSpecializations.value = response.data.specializations || []
+    } catch (error) {
+        console.error('Error fetching specializations:', error)
+        // Fallback specializations
+        availableSpecializations.value = []
+    } finally {
+        loading.value = false
+    }
 }
 
 const addEducation = () => {
@@ -714,7 +788,7 @@ const handleRemovePhoto = async () => {
     try {
         avatarUploading.value = true
         
-        // NEW: Call backend to remove avatar file and update database
+        // Call backend to remove avatar file and update database
         const response = await axios.delete('/users/avatars/')
 
         if (response.data.success) {
@@ -739,6 +813,12 @@ const handleRemovePhoto = async () => {
 }
 
 const handleSubmit = async () => {
+    // Validate form before submission
+    if (authStore.isProvider && !isFormValid.value) {
+        alert('Please fix validation errors before submitting.')
+        return
+    }
+
     try {
         loading.value = true
 
@@ -767,11 +847,6 @@ const handleSubmit = async () => {
         // Navigate back with force refresh
         const targetRoute = authStore.isProvider ? '/profile/provider' : '/profile/client'
         await router.push(targetRoute)
-
-        // Force component refresh by adding a query parameter
-        await nextTick()
-        await router.replace({ path: targetRoute, query: { updated: Date.now() } })
-
     } catch (error) {
         console.error('Error updating profile:', error)
         alert('Error updating profile. Please try again.')
@@ -782,14 +857,10 @@ const handleSubmit = async () => {
 
 // Lifecycle
 onMounted(async () => {
-    // console.log('EditProfile component mounted')
-    // console.log('Auth store user:', authStore.user)
-    // console.log('Is authenticated:', authStore.isAuthenticated)
-
     await fetchSpecializations()
 
-    // Initialize with at least one specialization slot
-    if (formData.specializations.length === 0) {
+    // Initialize with at least one specialization slot for providers
+    if (authStore.isProvider && formData.specializations.length === 0) {
         addSpecialization()
     }
 
