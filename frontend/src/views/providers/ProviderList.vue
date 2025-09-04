@@ -229,7 +229,7 @@
                   <!-- Provider Header -->
                   <div class="flex items-start space-x-4 mb-4">
                     <div class="relative flex-shrink-0">
-                      <img :src="provider.profilePicture || '/images/user-placeholder.jpg'" :alt="provider.firstName"
+                      <img :src="`/api${provider.profilePicture}`" :alt="provider.firstName"
                         class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-buttery" />
                       <!-- Online Status Indicator -->
                       <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full">

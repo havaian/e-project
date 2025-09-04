@@ -56,7 +56,7 @@
                     ]">
                         <!-- Other Person's Avatar -->
                         <div v-if="message.sender._id !== authStore.user._id" class="flex-shrink-0 mr-3">
-                            <img :src="message.sender.profilePicture || '/images/user-placeholder.jpg'"
+                            <img :src="`/api${message.sender.profilePicture}`"
                                 :alt="message.sender.firstName"
                                 class="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-sm" />
                         </div>
@@ -220,7 +220,7 @@ const recipientName = computed(() => {
 })
 
 const recipientAvatar = computed(() => {
-    return recipient.value?.profilePicture || '/images/user-placeholder.jpg'
+    return `/api${recipient.value?.profilePicture}`
 })
 
 const recipientStatus = computed(() => {

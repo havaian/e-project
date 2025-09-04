@@ -280,18 +280,7 @@ const fetchSpecializations = async () => {
     } catch (error) {
         console.error('Error fetching specializations:', error)
         // Fallback specializations
-        availableSpecializations.value = [
-            { name: 'Clinical Psychology' },
-            { name: 'Counseling Psychology' },
-            { name: 'Educational Psychology' },
-            { name: 'Social Work' },
-            { name: 'Marriage and Family Therapy' },
-            { name: 'Addiction Counseling' },
-            { name: 'Child Psychology' },
-            { name: 'Behavioral Therapy' },
-            { name: 'Cognitive Behavioral Therapy' },
-            { name: 'Psychotherapy' }
-        ]
+        availableSpecializations.value = []
     } finally {
         loading.value = false
     }

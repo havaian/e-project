@@ -43,7 +43,7 @@
                             <div class="flex items-start space-x-6">
                                 <!-- Avatar Display -->
                                 <div class="relative">
-                                    <img :src="formData.profilePicture ? `/api${formData.profilePicture}` : '/images/user-placeholder.jpg'"
+                                    <img :src="`/api${formData.profilePicture}`"
                                         :alt="formData.firstName"
                                         class="h-24 w-24 rounded-full object-cover border-4 border-white shadow-md">
                                     <!-- Loading Overlay -->
@@ -613,19 +613,8 @@ const fetchSpecializations = async () => {
     availableSpecializations.value = response.data.specializations || []
   } catch (error) {
     console.error('Error fetching specializations:', error)
-    // Fallback specializations - EXACT same as StepProfile.vue
-    availableSpecializations.value = [
-      { name: 'Clinical Psychology' },
-      { name: 'Counseling Psychology' },
-      { name: 'Educational Psychology' },
-      { name: 'Social Work' },
-      { name: 'Marriage and Family Therapy' },
-      { name: 'Addiction Counseling' },
-      { name: 'Child Psychology' },
-      { name: 'Behavioral Therapy' },
-      { name: 'Cognitive Behavioral Therapy' },
-      { name: 'Psychotherapy' }
-    ]
+    // Fallback specializations
+    availableSpecializations.value = []
   } finally {
     loading.value = false
   }

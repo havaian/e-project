@@ -74,7 +74,7 @@ exports.uploadProfilePhoto = async (req, res) => {
         fs.renameSync(req.file.path, newFilePath);
 
         // Update user's profile picture URL
-        const profilePictureUrl = `/users/avatars/${newFileName}`;
+        const profilePictureUrl = `/uploads/avatars/${newFileName}`;
         user.profilePicture = profilePictureUrl;
         await user.save();
 
@@ -160,13 +160,28 @@ exports.getAvatar = async (req, res) => {
             });
         }
 
-        // Optional: Check file size limit (e.g., 5MB max)
-        const maxFileSize = 5 * 1024 * 1024; // 5MB
+        // Optional: Check file size limit (e.g., 2MB max)
+        const maxFileSize = 2 * 1024 * 1024; // 2MB
         if (stats.size > maxFileSize) {
             return res.status(400).json({ 
                 success: false,
-                message: 'File too large' 
+                message: 'File too large'
             });
+        }
+
+        // Handle conditional requests (If-None-Match, If-Modified-Since)
+        const etag = `"${stats.mtime.getTime()}-${stats.size}"`;
+        const lastModified = stats.mtime.toUTCString();
+        
+        // Check If-None-Match header
+        if (req.headers['if-none-match'] === etag) {
+            return res.status(304).end(); // Not modified
+        }
+        
+        // Check If-Modified-Since header
+        if (req.headers['if-modified-since'] && 
+            new Date(req.headers['if-modified-since']) >= stats.mtime) {
+            return res.status(304).end(); // Not modified
         }
 
         // Set appropriate content type based on file extension
@@ -180,12 +195,14 @@ exports.getAvatar = async (req, res) => {
 
         const contentType = contentTypes[fileExtension] || 'application/octet-stream';
         
-        // Set cache headers for better performance
+        // Set cache headers - 1 day cache with proper validation
         res.set({
             'Content-Type': contentType,
             'Content-Length': stats.size,
-            'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
-            'ETag': `"${stats.mtime.getTime()}-${stats.size}"` // Create ETag for caching
+            'Cache-Control': 'public, max-age=86400, must-revalidate', // 1 day cache
+            'ETag': etag,
+            'Last-Modified': lastModified,
+            'Vary': 'Accept-Encoding' // Handle compression variations
         });
 
         // Send the file
@@ -219,7 +236,7 @@ exports.getUserAvatar = async (req, res) => {
         }
 
         const avatarsDir = path.join(__dirname, '../../../uploads/avatars');
-        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
         
         // Find avatar file for this user
         let avatarFile = null;
@@ -310,7 +327,45 @@ exports.removeAvatar = async (req, res) => {
 };
 
 /**
- * Generate avatar for client using initials or external service
+ * Generate simple SVG avatar
+ * @param {string} initials - User initials (e.g., "JD")
+ * @param {string} userId - User ID for consistent colors
+ * @param {number} size - Image size in pixels (default: 200)
+ * @returns {string} SVG string
+ */
+function generateSVGAvatar(initials, userId, size = 200) {
+    // Generate consistent color based on user ID
+    const hash = crypto.createHash('md5').update(userId).digest('hex');
+    const hue = parseInt(hash.substring(0, 2), 16) % 360;
+    
+    // Create a pleasant color palette
+    const backgroundColor = `hsl(${hue}, 60%, 50%)`;
+    
+    // Determine text color based on brightness
+    const lightness = 50; // From the HSL above
+    const textColor = lightness > 50 ? '#FFFFFF' : '#000000';
+    
+    // Create SVG
+    const svg = `
+        <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="${backgroundColor}"/>
+            <text x="50%" y="50%" 
+                  text-anchor="middle" 
+                  dominant-baseline="middle" 
+                  font-family="Arial, sans-serif" 
+                  font-size="${size * 0.4}" 
+                  font-weight="bold" 
+                  fill="${textColor}">
+                ${initials.toUpperCase()}
+            </text>
+        </svg>
+    `.trim();
+    
+    return svg;
+}
+
+/**
+ * Enhanced generate avatar method using simple approach
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
@@ -326,9 +381,24 @@ exports.generateAvatar = async (req, res) => {
             });
         }
 
+        // Generate initials
+        const initials = `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase();
+        
+        if (initials.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot generate avatar without first name or last name'
+            });
+        }
+
         // Remove any existing uploaded avatar files first
         const avatarsDir = path.join(__dirname, '../../../uploads/avatars');
-        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+        
+        // Ensure directory exists
+        if (!fs.existsSync(avatarsDir)) {
+            fs.mkdirSync(avatarsDir, { recursive: true });
+        }
         
         allowedExtensions.forEach(ext => {
             const filename = `${userId}${ext}`;
@@ -344,25 +414,24 @@ exports.generateAvatar = async (req, res) => {
             }
         });
 
-        // Generate avatar URL using initials and a color based on user ID
-        const initials = `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase();
+        // Generate SVG avatar
+        const svgContent = generateSVGAvatar(initials, userId, 200);
         
-        // Generate a consistent color based on user ID
-        const hash = crypto.createHash('md5').update(user._id.toString()).digest('hex');
-        const hue = parseInt(hash.substring(0, 2), 16) % 360;
-        const backgroundHex = hslToHex(hue, 65, 50);
+        // Save to file system as SVG
+        const filename = `${userId}.svg`;
+        const filepath = path.join(avatarsDir, filename);
+        fs.writeFileSync(filepath, svgContent, 'utf8');
         
-        // Use UI Avatars service
-        const generatedAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&size=200&background=${backgroundHex.replace('#', '')}&color=ffffff&format=png&font-size=0.4`;
-        
-        // Update user's profile picture
-        user.profilePicture = generatedAvatarUrl;
+        // Update user's profile picture URL with cache busting
+        const timestamp = Date.now();
+        const profilePictureUrl = `/api/users/avatars/${filename}?v=${timestamp}`;
+        user.profilePicture = profilePictureUrl;
         await user.save();
 
         res.status(200).json({
             success: true,
             message: 'Avatar generated successfully',
-            profilePicture: generatedAvatarUrl,
+            profilePicture: profilePictureUrl,
             user: {
                 id: user._id,
                 firstName: user.firstName,
@@ -381,15 +450,3 @@ exports.generateAvatar = async (req, res) => {
         });
     }
 };
-
-// Helper function to convert HSL to Hex
-function hslToHex(h, s, l) {
-    l /= 100;
-    const a = s * Math.min(l, 1 - l) / 100;
-    const f = n => {
-        const k = (n + h / 30) % 12;
-        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-        return Math.round(255 * color).toString(16).padStart(2, '0');
-    };
-    return `#${f(0)}${f(8)}${f(4)}`;
-}
