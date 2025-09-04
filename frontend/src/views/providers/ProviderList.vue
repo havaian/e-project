@@ -231,9 +231,6 @@
                     <div class="relative flex-shrink-0">
                       <img :src="`/api${provider.profilePicture}`" :alt="provider.firstName"
                         class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-buttery" />
-                      <!-- Online Status Indicator -->
-                      <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full">
-                      </div>
                     </div>
                     <div class="flex-1 min-w-0">
                       <h3 class="text-lg font-semibold text-gray-900 group-hover:text-brand-1 transition-colors">
@@ -292,17 +289,30 @@
                     </div>
                   </div>
 
-                  <!-- Rating/Reviews (placeholder) -->
+                  <!-- UPDATED: Real Rating/Reviews instead of placeholder -->
                   <div class="flex items-center mb-4">
                     <div class="flex items-center">
+                      <!-- Show stars based on actual rating -->
                       <div class="flex">
-                        <svg v-for="n in 5" :key="n" class="w-4 h-4 text-yellow-400" fill="currentColor"
-                          viewBox="0 0 20 20">
-                          <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                        <template v-for="n in 5" :key="n">
+                          <svg class="w-4 h-4" :class="{
+                            'text-yellow-400': n <= Math.round(provider.reviewStats?.averageRating || 0),
+                            'text-gray-300': n > Math.round(provider.reviewStats?.averageRating || 0)
+                          }" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        </template>
                       </div>
-                      <span class="ml-2 text-sm text-gray-600">4.9 (127 reviews)</span>
+                      <!-- Show actual rating and review count -->
+                      <span class="ml-2 text-sm text-gray-600">
+                        <template v-if="provider.reviewStats?.totalReviews > 0">
+                          {{ provider.reviewStats.averageRating.toFixed(1) }} 
+                          ({{ provider.reviewStats.totalReviews }} {{ provider.reviewStats.totalReviews === 1 ? 'review' : 'reviews' }})
+                        </template>
+                        <template v-else>
+                          <span class="text-gray-400">No reviews yet</span>
+                        </template>
+                      </span>
                     </div>
                   </div>
 
@@ -368,18 +378,7 @@ async function fetchSpecializations() {
   } catch (error) {
     console.error('Error fetching specializations:', error)
     // Set some defaults in case API call fails
-    specializations.value = [
-      'Cardiology',
-      'Dermatology',
-      'Endocrinology',
-      'Gastroenterology',
-      'Neurology',
-      'Oncology',
-      'Orthopedics',
-      'Pediatrics',
-      'Psychiatry',
-      'Radiology'
-    ]
+    specializations.value = []
   }
 }
 

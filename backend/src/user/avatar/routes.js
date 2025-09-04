@@ -37,14 +37,4 @@ router.get('/:userId/avatar', avatarController.getUserAvatar);
  */
 router.delete('/', authenticateUser, avatarController.removeAvatar);
 
-/**
- * @route POST /api/users/avatars/generate-avatar  
- * @desc Generate avatar for client using initials/external service
- * @access Private
- */
-router.post('/generate-avatar',
-    authenticateUser,
-    avatarController.generateAvatar
-);
-
 module.exports = router;

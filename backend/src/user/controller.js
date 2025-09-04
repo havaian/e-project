@@ -418,14 +418,22 @@ exports.resetPassword = async (req, res) => {
 exports.getProviders = async (req, res) => {
     try {
         const {
-            specialization,
+            specializations, // Updated to match frontend filter name
             minExperience,
             maxSessionFee,
             language,
             sortBy = 'experience',
             order = 'desc',
             page = 1,
-            limit = 12
+            limit = 12,
+            // New filter parameters for price range and name search
+            name,
+            minPrice,
+            maxPrice,
+            // New sorting parameters
+            experience: experienceSort,
+            price: priceSort,
+            rating: ratingSort
         } = req.query;
 
         // Build filter query - ONLY complete profiles
@@ -436,30 +444,59 @@ exports.getProviders = async (req, res) => {
             isProfileComplete: true  // Only show complete profiles
         };
 
-        if (specialization) {
-            filter.specializations = { $in: [new RegExp(specialization, 'i')] };
+        // Updated filter logic
+        if (specializations) {
+            filter.specializations = { $in: [new RegExp(specializations, 'i')] };
+        }
+
+        if (name) {
+            filter.$or = [
+                { firstName: { $regex: name, $options: 'i' } },
+                { lastName: { $regex: name, $options: 'i' } }
+            ];
         }
 
         if (minExperience) {
             filter.experience = { $gte: parseInt(minExperience) };
         }
 
-        if (maxSessionFee) {
-            filter.sessionFee = { $lte: parseFloat(maxSessionFee) };
+        // Updated price filtering to support both old and new parameter names
+        const minPriceFilter = minPrice || maxSessionFee; // Support both parameter names for backward compatibility
+        const maxPriceFilter = maxPrice;
+        
+        if (minPriceFilter || maxPriceFilter) {
+            filter.sessionFee = {};
+            if (minPriceFilter) {
+                filter.sessionFee.$gte = parseFloat(minPriceFilter);
+            }
+            if (maxPriceFilter) {
+                filter.sessionFee.$lte = parseFloat(maxPriceFilter);
+            }
         }
 
         if (language) {
             filter.languages = { $in: [new RegExp(language, 'i')] };
         }
 
-        // Build sort options
+        // Build sort options - Updated to handle new sorting system
         const sortOptions = {};
-        const validSortFields = ['experience', 'sessionFee', 'createdAt', 'firstName'];
         
-        if (validSortFields.includes(sortBy)) {
-            sortOptions[sortBy] = order === 'asc' ? 1 : -1;
+        // Handle new individual sort parameters
+        if (experienceSort) {
+            sortOptions.experience = experienceSort === 'asc' ? 1 : -1;
+        } else if (priceSort) {
+            sortOptions.sessionFee = priceSort === 'asc' ? 1 : -1;
+        } else if (ratingSort) {
+            sortOptions.averageRating = ratingSort === 'asc' ? 1 : -1;
         } else {
-            sortOptions.experience = -1; // Default sort
+            // Handle legacy sorting system
+            const validSortFields = ['experience', 'sessionFee', 'createdAt', 'firstName'];
+            
+            if (validSortFields.includes(sortBy)) {
+                sortOptions[sortBy] = order === 'asc' ? 1 : -1;
+            } else {
+                sortOptions.experience = -1; // Default sort
+            }
         }
 
         // Execute query with pagination
@@ -474,15 +511,65 @@ exports.getProviders = async (req, res) => {
             User.countDocuments(filter)
         ]);
 
+        // Add review data for each provider
+        const Review = require('../review/model'); // Import Review model
+        
+        const providersWithReviews = await Promise.all(
+            providers.map(async (provider) => {
+                try {
+                    // Get review statistics for this provider
+                    const reviewStats = await Review.getProviderAverageRating(provider._id);
+                    
+                    // Convert provider to object and add review data
+                    const providerObj = provider.toObject();
+                    providerObj.reviewStats = {
+                        averageRating: reviewStats.averageRating || 0,
+                        totalReviews: reviewStats.totalReviews || 0
+                    };
+                    
+                    return providerObj;
+                } catch (reviewError) {
+                    console.error('Error fetching reviews for provider:', provider._id, reviewError);
+                    // Return provider with default review stats if review fetch fails
+                    const providerObj = provider.toObject();
+                    providerObj.reviewStats = {
+                        averageRating: 0,
+                        totalReviews: 0
+                    };
+                    return providerObj;
+                }
+            })
+        );
+
+        // Sort by rating if rating sort is specified (since we added review data after the initial query)
+        if (ratingSort) {
+            providersWithReviews.sort((a, b) => {
+                const aRating = a.reviewStats.averageRating;
+                const bRating = b.reviewStats.averageRating;
+                return ratingSort === 'asc' ? aRating - bRating : bRating - aRating;
+            });
+        }
+
         res.status(200).json({
-            providers,
+            providers: providersWithReviews,
             pagination: {
                 total,
                 page: parseInt(page),
                 limit: parseInt(limit),
                 totalPages: Math.ceil(total / parseInt(limit))
             },
-            filters: { specialization, minExperience, maxSessionFee, language, sortBy, order }
+            filters: { 
+                specializations, 
+                minExperience, 
+                maxSessionFee, 
+                language, 
+                sortBy, 
+                order,
+                // Include new filter parameters in response
+                name,
+                minPrice,
+                maxPrice
+            }
         });
     } catch (error) {
         console.error('Error fetching providers:', error);

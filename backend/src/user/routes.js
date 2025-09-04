@@ -104,7 +104,7 @@ router.post('/deactivate', authenticateUser, userController.deactivateAccount);
 
 /**
  * @route GET /api/users/providers
- * @desc Get all providers with optional filters - UPDATED to only show complete profiles
+ * @desc Get all providers with optional filters
  * @access Public
  */
 router.get('/providers', userController.getProviders);

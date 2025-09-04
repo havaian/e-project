@@ -328,7 +328,7 @@ userSchema.methods.generateAuthToken = function () {
         email: this.email
     };
     
-    // IMPORTANT: Always use the same secret for consistency
+    // Always use the same secret for consistency
     // Use user's personal secret combined with global secret for security
     const secret = process.env.JWT_SECRET + (this.jwtSecret || '');
     
