@@ -206,7 +206,9 @@ api.interceptors.request.use(
     }
 
     // Process request data for POST, PUT, PATCH requests
-    if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase())) {
+    if (config.data && 
+        ['post', 'put', 'patch'].includes(config.method?.toLowerCase()) && 
+        !(config.data instanceof FormData)) {
       config.data = processDataForSubmission(config.data);
     }
 
