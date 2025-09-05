@@ -41,15 +41,8 @@
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                         </path>
                     </svg>
-                    <svg v-if="autoSaveStatus === 'saved'" class="w-3 h-3" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <svg v-if="autoSaveStatus === 'error'" class="w-3 h-3" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <CheckIcon v-if="autoSaveStatus === 'saved'" class="w-3 h-3" />
+                    <XMarkIcon v-if="autoSaveStatus === 'error'" class="w-3 h-3" />
                     <span>{{ autoSaveStatusText }}</span>
                 </div>
             </div>
@@ -73,11 +66,7 @@
                         :class="index + 1 <= currentStep
                             ? 'bg-white text-sky-500 border-sky-500'
                             : 'bg-white text-gray-500 border-gray-300'">
-                        <svg v-if="index + 1 < currentStep" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <CheckIcon v-if="index + 1 < currentStep" class="w-5 h-5" />
                         <span v-else>{{ index + 1 }}</span>
                     </div>
                     <div class="mt-2 text-xs text-center text-gray-600 max-w-20">
@@ -115,9 +104,7 @@
                 <div v-if="currentStep < 6" class="bg-gray-50 px-8 py-4 flex justify-between items-center">
                     <button v-if="currentStep > 1" @click="prevStep" class="btn-element-secondary"
                         :class="{ 'cursor-not-allowed': loading || autoSaving }" :disabled="loading || autoSaving">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                        </svg>
+                        <ChevronLeftIcon class="w-4 h-4 mr-2" />
                         Previous
                     </button>
                     <div v-else></div>
@@ -156,11 +143,7 @@
                             </span>
                             <span class="flex items-center" v-else>
                                 {{ currentStep === 5 ? 'Complete Setup' : 'Next' }}
-                                <svg v-if="currentStep < 5" class="w-4 h-4 ml-2" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
+                                <ChevronRightIcon v-if="currentStep < 5" class="w-4 h-4 ml-2" />
                             </span>
                         </button>
                     </div>
@@ -172,11 +155,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
             <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
                 <div class="flex items-start space-x-3">
-                    <svg class="w-6 h-6 text-blue-500 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <InformationCircleIcon class="w-6 h-6 text-blue-500 mt-1 flex-shrink-0" />
                     <div>
                         <h3 class="text-sm font-medium text-blue-900">Need Help?</h3>
                         <p class="text-sm text-blue-700 mt-1">
@@ -192,6 +171,7 @@
 </template>
 
 <script setup>
+import { CheckIcon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

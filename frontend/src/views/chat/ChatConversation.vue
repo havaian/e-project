@@ -30,17 +30,11 @@
                     <div class="flex items-center space-x-2">
                         <button
                             class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
+                            <PhoneIcon class="w-5 h-5" />
                         </button>
                         <button
                             class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
+                            <VideoCameraIcon class="w-5 h-5" />
                         </button>
                     </div>
                 </div>
@@ -86,24 +80,10 @@
                                 <!-- Enhanced Read Status (only for sent messages) -->
                                 <div v-if="message.sender._id === authStore.user._id" class="ml-2">
                                     <div v-if="message.isRead" class="flex items-center space-x-0.5" title="Read">
-                                        <svg class="w-4 h-4 text-white/70" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <svg class="w-4 h-4 text-white/70 -ml-1" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                clip-rule="evenodd" />
-                                        </svg>
+                                        <CheckIcon class="w-4 h-4 text-white/70" />
+                                        <CheckIcon class="w-4 h-4 text-white/70 -ml-1" />
                                     </div>
-                                    <svg v-else class="w-4 h-4 text-white/70" fill="currentColor" viewBox="0 0 20 20"
-                                        title="Sent">
-                                        <path fill-rule="evenodd"
-                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                    <CheckIcon v-else class="w-4 h-4 text-white/70" title="Sent" />
                                 </div>
                             </div>
                         </div>
@@ -121,10 +101,7 @@
                 <!-- Enhanced Typing Indicator -->
                 <div v-if="isTyping" class="flex items-center space-x-3 text-gray-500">
                     <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
+                        <ChatBubbleLeftEllipsisIcon class="w-4 h-4" />
                     </div>
                     <div class="bg-white rounded-2xl px-4 py-3 border border-gray-100 shadow-sm">
                         <div class="flex items-center space-x-1">
@@ -149,18 +126,12 @@
                             class="input pr-12" placeholder="Type your message..." :disabled="loading || sending" />
                         <button v-if="newMessage.trim()" type="button" @click="newMessage = ''"
                             class="input-icon text-gray-400 hover:text-gray-600">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <XMarkIcon class="h-4 w-4" />
                         </button>
                     </div>
                     <button type="submit" class="btn-primary px-4 py-4 flex items-center justify-center min-w-[3rem]"
                         :disabled="loading || sending || !newMessage.trim()">
-                        <svg v-if="!sending" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 19l9 2-9-18-9 18l9-2zm0 0v-8" />
-                        </svg>
+                        <PaperAirplaneIcon v-if="!sending" class="h-5 w-5" />
                         <svg v-else class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -177,6 +148,7 @@
 </template>
 
 <script setup>
+import { PhoneIcon, VideoCameraIcon, ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, PaperAirplaneIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

@@ -2,9 +2,7 @@
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full text-center">
             <div class="rounded-full bg-red-100 h-24 w-24 flex items-center justify-center mx-auto">
-                <svg class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="h-12 w-12 text-red-600" />
             </div>
 
             <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
@@ -25,4 +23,7 @@
             </div>
         </div>
     </div>
-</template> 
+</template>
+<script setup>
+import { XMarkIcon } from "@heroicons/vue/24/outline";
+</script>

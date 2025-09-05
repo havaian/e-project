@@ -10,17 +10,11 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <router-link to="/profile/edit" class="btn-element-secondary text-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
+                            <PencilIcon class="w-4 h-4 mr-2" />
                             Edit Profile
                         </router-link>
                         <router-link to="/appointments/provider" class="btn-element-primary text-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                            <CalendarDaysIcon class="w-4 h-4 mr-2" />
                             View Schedule
                         </router-link>
                     </div>
@@ -38,17 +32,9 @@
                             <p class="text-2xl font-bold text-gray-900">{{
                                 formatCurrency(dashboardSummary?.currentMonth?.earnings || 0) }}</p>
                             <div class="flex items-center mt-2">
-                                <svg v-if="(dashboardSummary?.currentMonth?.growth || 0) >= 0"
-                                    class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                                <svg v-else class="w-4 h-4 text-red-500 mr-1" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                                </svg>
+                                <TrendingUpIcon v-if="(dashboardSummary?.currentMonth?.growth || 0) >= 0"
+                                    class="w-4 h-4 text-green-500 mr-1" />
+                                <TrendingDownIcon v-else class="w-4 h-4 text-red-500 mr-1" />
                                 <span class="text-sm font-medium"
                                     :class="(dashboardSummary?.currentMonth?.growth || 0) >= 0 ? 'text-green-600' : 'text-red-600'">
                                     {{ Math.abs(dashboardSummary?.currentMonth?.growth || 0).toFixed(1) }}%
@@ -56,10 +42,7 @@
                             </div>
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                            </svg>
+                            <CurrencyDollarIcon class="w-6 h-6 text-green-600" />
                         </div>
                     </div>
                 </div>
@@ -74,10 +57,7 @@
                                 || 0 }} completed</p>
                         </div>
                         <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                            <CalendarDaysIcon class="w-6 h-6 text-blue-600" />
                         </div>
                     </div>
                 </div>
@@ -91,10 +71,7 @@
                             <p class="text-sm text-gray-500 mt-2">Next 7 days</p>
                         </div>
                         <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <ClockIcon class="w-6 h-6 text-purple-600" />
                         </div>
                     </div>
                 </div>
@@ -108,10 +85,7 @@
                             <p class="text-sm text-gray-500 mt-2">Need your response</p>
                         </div>
                         <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <ExclamationCircleIcon class="w-6 h-6 text-orange-600" />
                         </div>
                     </div>
                 </div>
@@ -179,11 +153,7 @@
                         </div>
 
                         <div v-else class="text-center py-6">
-                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                            <CalendarDaysIcon class="w-12 h-12 text-gray-400 mx-auto mb-3" />
                             <p class="text-gray-500">No upcoming appointments</p>
                         </div>
                     </div>
@@ -241,19 +211,13 @@
 
                             <div v-if="profileCompletion?.isComplete"
                                 class="flex items-center space-x-2 text-green-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                <CheckCircleIcon class="w-4 h-4" />
                                 <span class="text-sm font-medium">Profile Complete</span>
                             </div>
 
                             <div v-else class="space-y-2">
                                 <div class="flex items-center space-x-2 text-orange-600">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    <ExclamationCircleIcon class="w-4 h-4" />
                                     <span class="text-sm font-medium">Profile Incomplete</span>
                                 </div>
                                 <router-link to="/profile/edit"
@@ -271,52 +235,28 @@
                             <router-link to="/appointments/provider"
                                 class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-sky-300 hover:bg-sky-50 transition-colors">
                                 <div class="flex items-center space-x-3">
-                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
+                                    <CalendarDaysIcon class="w-5 h-5 text-gray-600" />
                                     <span class="font-medium text-gray-900">Manage Schedule</span>
                                 </div>
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
+                                <ChevronRightIcon class="w-4 h-4 text-gray-400" />
                             </router-link>
 
                             <router-link to="/profile/edit"
                                 class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-sky-300 hover:bg-sky-50 transition-colors">
                                 <div class="flex items-center space-x-3">
-                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
+                                    <PencilIcon class="w-5 h-5 text-gray-600" />
                                     <span class="font-medium text-gray-900">Update Profile</span>
                                 </div>
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
+                                <ChevronRightIcon class="w-4 h-4 text-gray-400" />
                             </router-link>
 
                             <router-link to="/chat"
                                 class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-sky-300 hover:bg-sky-50 transition-colors">
                                 <div class="flex items-center space-x-3">
-                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                    </svg>
+                                    <ChatBubbleLeftRightIcon class="w-5 h-5 text-gray-600" />
                                     <span class="font-medium text-gray-900">Messages</span>
                                 </div>
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
+                                <ChevronRightIcon class="w-4 h-4 text-gray-400" />
                             </router-link>
                         </div>
                     </div>
@@ -327,6 +267,7 @@
 </template>
 
 <script setup>
+import { PencilIcon, CalendarDaysIcon, TrendingUpIcon, TrendingDownIcon, CurrencyDollarIcon, ClockIcon, ExclamationCircleIcon, CheckCircleIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
@@ -446,7 +387,7 @@ onMounted(async () => {
         fetchDashboardSummary(),
         fetchEarningsData()
     ])
-    
+
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get('refreshProfile') === 'true') {
         await authStore.updateProfileCompletion(true) // force refresh

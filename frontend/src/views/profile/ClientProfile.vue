@@ -15,18 +15,12 @@
               <div class="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
+                  <UserIcon class="w-4 h-4 mr-1" />
                   {{ completedAppointments }} Completed Sessions
                 </span>
                 <span v-if="isVerified"
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <CheckCircleIcon class="w-4 h-4 mr-1" />
                   Verified Account
                 </span>
               </div>
@@ -35,10 +29,7 @@
           <div class="mt-4 sm:mt-0">
             <router-link to="/profile/edit"
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
+              <PencilIcon class="w-4 h-4 mr-2" />
               Edit Profile
             </router-link>
           </div>
@@ -55,10 +46,7 @@
             <!-- Personal Information -->
             <div class="bg-gray-50 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+                <UserIcon class="w-5 h-5 mr-2 text-indigo-600" />
                 Personal Information
               </h2>
               <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,10 +77,7 @@
             <!-- Providers Associated -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
+                <UsersIcon class="w-5 h-5 mr-2 text-blue-600" />
                 Associated Providers
               </h2>
               <div v-if="associatedProviders.length > 0" class="space-y-4">
@@ -118,17 +103,12 @@
                 </div>
               </div>
               <div v-else class="text-center py-8">
-                <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
+                <UsersIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <p class="text-gray-500">No providers associated yet</p>
                 <router-link to="/providers"
                   class="inline-flex items-center mt-2 text-indigo-600 hover:text-indigo-700 text-sm font-medium">
                   Browse Providers
-                  <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
+                  <ChevronRightIcon class="ml-1 w-4 h-4" />
                 </router-link>
               </div>
             </div>
@@ -136,10 +116,7 @@
             <!-- Appointments & Consultations -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <CalendarDaysIcon class="w-5 h-5 mr-2 text-green-600" />
                 Recent Appointments
               </h2>
 
@@ -187,10 +164,7 @@
                 </div>
               </div>
               <div v-else class="text-center py-8">
-                <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <CalendarDaysIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <p class="text-gray-500">No appointments yet</p>
               </div>
             </div>
@@ -202,10 +176,7 @@
             <!-- Achievements -->
             <div v-if="showAchievements" class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircleIcon class="w-5 h-5 mr-2 text-yellow-600" />
                 Achievements
               </h2>
 
@@ -227,10 +198,7 @@
                   class="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <div class="flex-shrink-0">
                     <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
+                     <CheckCircleIcon class="w-4 h-4 text-white" />
                     </div>
                   </div>
                   <div class="flex-1">
@@ -248,10 +216,7 @@
                   class="flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                   <div class="flex-shrink-0">
                     <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                      <LockClosedIcon class="w-4 h-4 text-gray-500" />
                     </div>
                   </div>
                   <div class="flex-1">
@@ -275,10 +240,7 @@
             <!-- Reviews -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
+                <StarIcon class="w-5 h-5 mr-2 text-purple-600" />
                 Reviews Given
               </h2>
 
@@ -287,11 +249,7 @@
                   <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center space-x-2">
                       <div class="flex">
-                        <svg v-for="i in 5" :key="i" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'"
-                          class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.922-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                        <StarIcon v-for="i in 5" :key="i" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'" class="w-4 h-4" />
                       </div>
                       <span class="text-sm text-gray-600">{{ formatDate(review.createdAt) }}</span>
                     </div>
@@ -311,10 +269,7 @@
               </div>
 
               <div v-else class="text-center py-4">
-                <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
+                <StarIcon class="w-8 h-8 text-gray-300 mx-auto mb-2" />
                 <p class="text-gray-500 text-sm">No reviews given yet</p>
                 <p class="text-gray-400 text-xs mt-1">Reviews will appear here after completing appointments</p>
               </div>
@@ -327,6 +282,7 @@
 </template>
 
 <script setup>
+import { UserIcon, CheckCircleIcon, PencilIcon, UsersIcon, ChevronRightIcon, CalendarDaysIcon, StarIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'

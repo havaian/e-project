@@ -13,7 +13,7 @@
                 <div class="prose prose-lg max-w-none">
                     <p class="text-gray-700 leading-relaxed mb-8">
                         This Public Offer Agreement ("Agreement") constitutes a legally binding contract between {{
-                        companyName }}
+                            companyName }}
                         and users of our online consultation platform. By using our services, you accept this offer and
                         agree to
                         the terms outlined below.

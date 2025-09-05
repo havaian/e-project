@@ -18,11 +18,7 @@
                         <div class="mb-8">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    <ClockIcon class="w-6 h-6 text-green-600" />
                                 </div>
                                 <div>
                                     <h3 class="font-semibold text-gray-900">24/7 Support</h3>
@@ -37,11 +33,7 @@
                             <div class="flex items-start space-x-4">
                                 <div
                                     class="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                    </svg>
+                                    <PhoneIcon class="w-5 h-5 text-sky-600" />
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">Phone Support</h4>
@@ -57,11 +49,7 @@
                             <div class="flex items-start space-x-4">
                                 <div
                                     class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
+                                    <EnvelopeIcon class="w-5 h-5 text-purple-600" />
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">Email Support</h4>
@@ -77,11 +65,7 @@
                             <div class="flex items-start space-x-4">
                                 <div
                                     class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                    </svg>
+                                    <ChatBubbleLeftRightIcon class="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">Live Chat</h4>
@@ -243,11 +227,7 @@
                         <!-- Success Message -->
                         <div v-if="showSuccess" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                             <div class="flex items-center">
-                                <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                                <CheckCircleIcon class="w-5 h-5 text-green-600 mr-2" />
                                 <p class="text-green-800">Thank you! Your message has been sent successfully. We'll get
                                     back to you soon.</p>
                             </div>
@@ -288,6 +268,7 @@
 </template>
 
 <script setup>
+import { ClockIcon, PhoneIcon, EnvelopeIcon, ChatBubbleLeftRightIcon, CheckCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive } from 'vue'
 
 // Environment variables

@@ -1,101 +1,92 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-sky-600 to-cyan-600 text-white">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div class="text-center">
-                    <h1 class="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
-                    <p class="text-xl text-sky-100">Quick answers to the most common questions</p>
-                </div>
-            </div>
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-sky-600 to-cyan-600 text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center">
+          <h1 class="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
+          <p class="text-xl text-sky-100">Quick answers to the most common questions</p>
         </div>
-
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <!-- Search -->
-            <div class="mb-12">
-                <div class="relative">
-                    <input v-model="searchQuery" type="text" placeholder="Search FAQs..."
-                        class="w-full px-6 py-4 text-gray-900 bg-white rounded-lg shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" />
-                    <svg class="absolute right-4 top-4 w-6 h-6 text-gray-400" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Categories -->
-            <div class="mb-12">
-                <div class="flex flex-wrap gap-3 justify-center">
-                    <button v-for="category in categories" :key="category" @click="activeCategory = category" :class="[
-                        'px-6 py-3 rounded-full font-medium transition-colors duration-200',
-                        activeCategory === category
-                            ? 'bg-sky-600 text-white'
-                            : 'bg-white text-gray-700 hover:bg-sky-50 shadow-md'
-                    ]">
-                        {{ category }}
-                    </button>
-                </div>
-            </div>
-
-            <!-- FAQ Items -->
-            <div class="space-y-4">
-                <div v-for="faq in filteredFAQs" :key="faq.id" class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <button @click="toggleFAQ(faq.id)"
-                        class="w-full px-6 py-4 text-left focus:outline-none focus:ring-2 focus:ring-sky-500 hover:bg-gray-50 transition-colors duration-200">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-gray-900 pr-4">{{ faq.question }}</h3>
-                            <svg :class="[
-                                'w-5 h-5 text-gray-500 transition-transform duration-200',
-                                openFAQs.includes(faq.id) ? 'rotate-180' : ''
-                            ]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                    </button>
-
-                    <div v-if="openFAQs.includes(faq.id)" class="px-6 pb-4 text-gray-700 leading-relaxed"
-                        v-html="faq.answer"></div>
-                </div>
-            </div>
-
-            <!-- No Results -->
-            <div v-if="filteredFAQs.length === 0" class="text-center py-12">
-                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">No FAQs found</h3>
-                <p class="text-gray-600 mb-4">
-                    We couldn't find any FAQs matching your search or category.
-                </p>
-                <router-link to="/contact" class="btn-primary">
-                    Contact Support
-                </router-link>
-            </div>
-
-            <!-- Contact Section -->
-            <div class="mt-16 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl p-8 text-center">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Still Have Questions?</h2>
-                <p class="text-gray-600 mb-6">
-                    Can't find the answer you're looking for? Our support team is here to help.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <router-link to="/contact" class="btn-primary px-6 py-3">
-                        Contact Support
-                    </router-link>
-                    <router-link to="/help" class="btn-secondary px-6 py-3">
-                        Visit Help Center
-                    </router-link>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <!-- Search -->
+      <div class="mb-12">
+        <div class="relative">
+          <input v-model="searchQuery" type="text" placeholder="Search FAQs..."
+            class="w-full px-6 py-4 text-gray-900 bg-white rounded-lg shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" />
+          <MagnifyingGlassIcon class="absolute right-4 top-4 w-6 h-6 text-gray-400" />
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="mb-12">
+        <div class="flex flex-wrap gap-3 justify-center">
+          <button v-for="category in categories" :key="category" @click="activeCategory = category" :class="[
+            'px-6 py-3 rounded-full font-medium transition-colors duration-200',
+            activeCategory === category
+              ? 'bg-sky-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-sky-50 shadow-md'
+          ]">
+            {{ category }}
+          </button>
+        </div>
+      </div>
+
+      <!-- FAQ Items -->
+      <div class="space-y-4">
+        <div v-for="faq in filteredFAQs" :key="faq.id" class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <button @click="toggleFAQ(faq.id)"
+            class="w-full px-6 py-4 text-left focus:outline-none focus:ring-2 focus:ring-sky-500 hover:bg-gray-50 transition-colors duration-200">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-gray-900 pr-4">{{ faq.question }}</h3>
+              <ChevronDownIcon :class="[
+                'w-5 h-5 text-gray-500 transition-transform duration-200',
+                openFAQs.includes(faq.id) ? 'rotate-180' : ''
+              ]" />
+            </div>
+          </button>
+
+          <div v-if="openFAQs.includes(faq.id)" class="px-6 pb-4 text-gray-700 leading-relaxed" v-html="faq.answer">
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div v-if="filteredFAQs.length === 0" class="text-center py-12">
+        <QuestionMarkCircleIcon class="w-16 h-16 text-gray-400 mx-auto mb-4" />
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No FAQs found</h3>
+        <p class="text-gray-600 mb-4">
+          We couldn't find any FAQs matching your search or category.
+        </p>
+        <router-link to="/contact" class="btn-primary">
+          Contact Support
+        </router-link>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="mt-16 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl p-8 text-center">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Still Have Questions?</h2>
+        <p class="text-gray-600 mb-6">
+          Can't find the answer you're looking for? Our support team is here to help.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <router-link to="/contact" class="btn-primary px-6 py-3">
+            Contact Support
+          </router-link>
+          <router-link to="/help" class="btn-secondary px-6 py-3">
+            Visit Help Center
+          </router-link>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import { MagnifyingGlassIcon, ChevronDownIcon, QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
 const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 
@@ -109,12 +100,12 @@ const categories = ['All', 'Getting Started', 'Consultations', 'Billing', 'Techn
 
 // FAQ Data
 const faqs = reactive([
-    // Getting Started
-    {
-        id: 1,
-        category: 'Getting Started',
-        question: 'How do I create an account?',
-        answer: `
+  // Getting Started
+  {
+    id: 1,
+    category: 'Getting Started',
+    question: 'How do I create an account?',
+    answer: `
       <p>Creating an account is simple:</p>
       <ol class="list-decimal ml-6 mt-2 space-y-1">
         <li>Click the "Get Started" or "Sign Up" button on our homepage</li>
@@ -125,12 +116,12 @@ const faqs = reactive([
       </ol>
       <p class="mt-3">Once your account is created, you can immediately start browsing providers and booking consultations.</p>
     `
-    },
-    {
-        id: 2,
-        category: 'Getting Started',
-        question: 'Do I need any special software to use the platform?',
-        answer: `
+  },
+  {
+    id: 2,
+    category: 'Getting Started',
+    question: 'Do I need any special software to use the platform?',
+    answer: `
       <p>No special software is required! Our platform works entirely in your web browser. However, we recommend:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li>Using Chrome, Firefox, Safari, or Edge (latest versions)</li>
@@ -139,12 +130,12 @@ const faqs = reactive([
         <li>Using headphones for better audio quality during consultations</li>
       </ul>
     `
-    },
-    {
-        id: 3,
-        category: 'Getting Started',
-        question: 'Is my data secure and private?',
-        answer: `
+  },
+  {
+    id: 3,
+    category: 'Getting Started',
+    question: 'Is my data secure and private?',
+    answer: `
       <p>Absolutely! We take your privacy and security very seriously:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Encrypted Data:</strong> All data is encrypted in transit and at rest</li>
@@ -153,14 +144,14 @@ const faqs = reactive([
         <li><strong>Regular Audits:</strong> We conduct regular security assessments</li>
       </ul>
     `
-    },
+  },
 
-    // Consultations
-    {
-        id: 4,
-        category: 'Consultations',
-        question: 'How do I book a consultation?',
-        answer: `
+  // Consultations
+  {
+    id: 4,
+    category: 'Consultations',
+    question: 'How do I book a consultation?',
+    answer: `
       <p>Booking a consultation is easy:</p>
       <ol class="list-decimal ml-6 mt-2 space-y-1">
         <li>Browse our list of verified providers</li>
@@ -172,12 +163,12 @@ const faqs = reactive([
         <li>Receive confirmation and calendar invite</li>
       </ol>
     `
-    },
-    {
-        id: 5,
-        category: 'Consultations',
-        question: 'Can I reschedule or cancel my consultation?',
-        answer: `
+  },
+  {
+    id: 5,
+    category: 'Consultations',
+    question: 'Can I reschedule or cancel my consultation?',
+    answer: `
       <p>Yes, you can reschedule or cancel consultations:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>24+ hours in advance:</strong> Full refund available</li>
@@ -186,12 +177,12 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">To reschedule or cancel, go to "My Appointments" in your dashboard and select the consultation you want to modify.</p>
     `
-    },
-    {
-        id: 6,
-        category: 'Consultations',
-        question: 'What happens during a consultation?',
-        answer: `
+  },
+  {
+    id: 6,
+    category: 'Consultations',
+    question: 'What happens during a consultation?',
+    answer: `
       <p>During your consultation:</p>
       <ol class="list-decimal ml-6 mt-2 space-y-1">
         <li>Join the video call at your scheduled time</li>
@@ -203,12 +194,12 @@ const faqs = reactive([
         <li>You'll receive a summary of the session afterward</li>
       </ol>
     `
-    },
-    {
-        id: 7,
-        category: 'Consultations',
-        question: 'How long are consultation sessions?',
-        answer: `
+  },
+  {
+    id: 7,
+    category: 'Consultations',
+    question: 'How long are consultation sessions?',
+    answer: `
       <p>Consultation lengths vary by provider and service type:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Standard sessions:</strong> 30 or 60 minutes</li>
@@ -218,14 +209,14 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">The session length is clearly displayed when booking, and you can discuss extending the session with your provider if needed.</p>
     `
-    },
+  },
 
-    // Billing
-    {
-        id: 8,
-        category: 'Billing',
-        question: 'What payment methods do you accept?',
-        answer: `
+  // Billing
+  {
+    id: 8,
+    category: 'Billing',
+    question: 'What payment methods do you accept?',
+    answer: `
       <p>We accept several payment methods for your convenience:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li>Credit cards (Visa, MasterCard, American Express, Discover)</li>
@@ -236,12 +227,12 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">All payments are processed securely and your payment information is encrypted.</p>
     `
-    },
-    {
-        id: 9,
-        category: 'Billing',
-        question: 'When am I charged for a consultation?',
-        answer: `
+  },
+  {
+    id: 9,
+    category: 'Billing',
+    question: 'When am I charged for a consultation?',
+    answer: `
       <p>Payment timing depends on the consultation type:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Individual sessions:</strong> Charged immediately upon booking</li>
@@ -250,12 +241,12 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">You'll always receive a confirmation email with payment details after each transaction.</p>
     `
-    },
-    {
-        id: 10,
-        category: 'Billing',
-        question: 'Can I get a refund?',
-        answer: `
+  },
+  {
+    id: 10,
+    category: 'Billing',
+    question: 'Can I get a refund?',
+    answer: `
       <p>Yes, refunds are available based on our cancellation policy:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>24+ hours before:</strong> Full refund</li>
@@ -266,14 +257,14 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">Refunds are processed within 5-7 business days to your original payment method.</p>
     `
-    },
+  },
 
-    // Technical
-    {
-        id: 11,
-        category: 'Technical',
-        question: 'What are the technical requirements for video consultations?',
-        answer: `
+  // Technical
+  {
+    id: 11,
+    category: 'Technical',
+    question: 'What are the technical requirements for video consultations?',
+    answer: `
       <p>To ensure the best experience, you'll need:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Internet:</strong> Broadband connection (minimum 1 Mbps upload/download)</li>
@@ -284,12 +275,12 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">We recommend testing your setup using our connection test tool before your first consultation.</p>
     `
-    },
-    {
-        id: 12,
-        category: 'Technical',
-        question: 'What if I experience technical difficulties during a consultation?',
-        answer: `
+  },
+  {
+    id: 12,
+    category: 'Technical',
+    question: 'What if I experience technical difficulties during a consultation?',
+    answer: `
       <p>If you encounter technical issues:</p>
       <ol class="list-decimal ml-6 mt-2 space-y-1">
         <li>Try refreshing your browser first</li>
@@ -300,12 +291,12 @@ const faqs = reactive([
       </ol>
       <p class="mt-3">Our support team is available 24/7 at <strong>${import.meta.env.VITE_SUPPORT_PHONE}</strong> or through our live chat feature.</p>
     `
-    },
-    {
-        id: 13,
-        category: 'Technical',
-        question: 'Can I use the platform on my mobile device?',
-        answer: `
+  },
+  {
+    id: 13,
+    category: 'Technical',
+    question: 'Can I use the platform on my mobile device?',
+    answer: `
       <p>Yes! Our platform is fully optimized for mobile devices:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Mobile browsers:</strong> Works in Safari (iOS) and Chrome (Android)</li>
@@ -315,14 +306,14 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">We also offer native mobile apps for iOS and Android for an even better experience.</p>
     `
-    },
+  },
 
-    // Privacy
-    {
-        id: 14,
-        category: 'Privacy',
-        question: 'How do you protect my educational records?',
-        answer: `
+  // Privacy
+  {
+    id: 14,
+    category: 'Privacy',
+    question: 'How do you protect my educational records?',
+    answer: `
       <p>We take educational record protection very seriously:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Encryption:</strong> All data is encrypted both in transit and at rest</li>
@@ -331,12 +322,12 @@ const faqs = reactive([
         <li><strong>Data Minimization:</strong> We only collect data necessary for our services</li>
       </ul>
     `
-    },
-    {
-        id: 15,
-        category: 'Privacy',
-        question: 'Who can see my consultation records?',
-        answer: `
+  },
+  {
+    id: 15,
+    category: 'Privacy',
+    question: 'Who can see my consultation records?',
+    answer: `
       <p>Access to your consultation records is strictly limited:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>You:</strong> Full access to your own records</li>
@@ -346,14 +337,14 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">We never share your information with third parties without your explicit consent or legal requirement.</p>
     `
-    },
+  },
 
-    // Providers
-    {
-        id: 16,
-        category: 'Providers',
-        question: 'How do you verify service providers?',
-        answer: `
+  // Providers
+  {
+    id: 16,
+    category: 'Providers',
+    question: 'How do you verify service providers?',
+    answer: `
       <p>All providers go through a rigorous verification process:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Credential verification:</strong> We check all professional licenses and certifications</li>
@@ -364,12 +355,12 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">Only providers who meet our strict standards are approved to offer services on our platform.</p>
     `
-    },
-    {
-        id: 17,
-        category: 'Providers',
-        question: 'How can I become a service provider?',
-        answer: `
+  },
+  {
+    id: 17,
+    category: 'Providers',
+    question: 'How can I become a service provider?',
+    answer: `
       <p>To become a provider on our platform:</p>
       <ol class="list-decimal ml-6 mt-2 space-y-1">
         <li>Visit our provider application page</li>
@@ -382,12 +373,12 @@ const faqs = reactive([
       </ol>
       <p class="mt-3">The approval process typically takes 7-14 business days.</p>
     `
-    },
-    {
-        id: 18,
-        category: 'Providers',
-        question: 'How do I choose the right provider for my needs?',
-        answer: `
+  },
+  {
+    id: 18,
+    category: 'Providers',
+    question: 'How do I choose the right provider for my needs?',
+    answer: `
       <p>Finding the right provider is important for a successful consultation:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Review specialties:</strong> Look for providers who specialize in your area of need</li>
@@ -398,46 +389,46 @@ const faqs = reactive([
       </ul>
       <p class="mt-3">You can also use our matching tool to get personalized provider recommendations based on your specific needs.</p>
     `
-    }
+  }
 ])
 
 // Computed
 const filteredFAQs = computed(() => {
-    let filtered = faqs
+  let filtered = faqs
 
-    // Filter by category
-    if (activeCategory.value !== 'All') {
-        filtered = filtered.filter(faq => faq.category === activeCategory.value)
-    }
+  // Filter by category
+  if (activeCategory.value !== 'All') {
+    filtered = filtered.filter(faq => faq.category === activeCategory.value)
+  }
 
-    // Filter by search query
-    if (searchQuery.value.trim()) {
-        const query = searchQuery.value.toLowerCase()
-        filtered = filtered.filter(faq =>
-            faq.question.toLowerCase().includes(query) ||
-            faq.answer.toLowerCase().includes(query)
-        )
-    }
+  // Filter by search query
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(faq =>
+      faq.question.toLowerCase().includes(query) ||
+      faq.answer.toLowerCase().includes(query)
+    )
+  }
 
-    return filtered
+  return filtered
 })
 
 // Methods
 const toggleFAQ = (id) => {
-    const index = openFAQs.value.indexOf(id)
-    if (index > -1) {
-        openFAQs.value.splice(index, 1)
-    } else {
-        openFAQs.value.push(id)
-    }
+  const index = openFAQs.value.indexOf(id)
+  if (index > -1) {
+    openFAQs.value.splice(index, 1)
+  } else {
+    openFAQs.value.push(id)
+  }
 }
 
 // Meta tags
 import { useHead } from '@unhead/vue'
 useHead({
-    title: `FAQ | ${companyName}`,
-    meta: [
-        { name: 'description', content: `Frequently asked questions about ${companyName} consultation platform.` }
-    ]
+  title: `FAQ | ${companyName}`,
+  meta: [
+    { name: 'description', content: `Frequently asked questions about ${companyName} consultation platform.` }
+  ]
 })
 </script>

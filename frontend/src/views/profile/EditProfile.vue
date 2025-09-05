@@ -18,10 +18,7 @@
                         </div>
                         <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
                             class="text-gray-500 hover:text-gray-700">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <XMarkIcon class="w-6 h-6" />
                         </router-link>
                     </div>
 
@@ -31,11 +28,7 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
+                                    <PhotoIcon class="w-4 h-4 text-brand-1" />
                                 </div>
                                 <h2 class="text-xl font-semibold text-gray-900">Profile Photo</h2>
                             </div>
@@ -63,12 +56,7 @@
                                         <button type="button" @click="$refs.photoInput?.click()"
                                             :disabled="avatarUploading"
                                             class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
+                                            <PhotoIcon class="w-4 h-4 mr-2" />
                                             {{ avatarUploading ? 'Uploading...' : 'Upload Photo' }}
                                         </button>
                                         <p class="text-sm text-gray-500 mt-1">JPG, PNG, WebP up to 2MB. Professional
@@ -91,11 +79,7 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
+                                    <UserIcon class="w-4 h-4 text-brand-1" />
                                 </div>
                                 <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
                             </div>
@@ -125,11 +109,7 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                    </svg>
+                                    <DevicePhoneIcon class="w-4 h-4 text-red-500" />
                                 </div>
                                 <h2 class="text-xl font-semibold text-gray-900">Emergency Contact</h2>
                             </div>
@@ -160,11 +140,7 @@
                             </div>
                             <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                                 <div class="flex">
-                                    <svg class="w-5 h-5 text-yellow-400 mt-0.5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                                    </svg>
+                                    <ExclamationTriangleIcon class="w-5 h-5 text-yellow-400 mt-0.5 mr-2" />
                                     <div class="text-sm">
                                         <p class="text-yellow-800 font-medium">Privacy Notice</p>
                                         <p class="text-yellow-700 mt-1">
@@ -184,11 +160,7 @@
                                 <div class="flex items-center mb-6">
                                     <div
                                         class="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center mr-3">
-                                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                        </svg>
+                                        <LightBulbIcon class="w-4 h-4 text-blue-500" />
                                     </div>
                                     <h2 class="text-xl font-semibold text-gray-900">Specializations</h2>
                                     <span class="ml-2 text-red-500 text-sm">*</span>
@@ -200,10 +172,7 @@
                                     <!-- Validation Error Message -->
                                     <div v-if="validationErrors.specializations" class="p-3 bg-red-50 border border-red-200 rounded-lg">
                                         <div class="flex">
-                                            <svg class="w-5 h-5 text-red-400 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                                            </svg>
+                                            <ExclamationTriangleIcon class="w-5 h-5 text-red-400 mt-0.5 mr-2" />
                                             <p class="text-sm text-red-800 font-medium">{{ validationErrors.specializations }}</p>
                                         </div>
                                     </div>
@@ -236,12 +205,7 @@
                                                         : 'text-red-500 hover:text-red-700 hover:bg-red-50'
                                                 ]"
                                                 :title="selectedSpecializations.length <= 1 ? 'At least one specialization is required' : 'Remove this specialization'">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
+                                                <TrashIcon class="w-5 h-5" />
                                             </button>
                                         </div>
                                     </div>
@@ -250,23 +214,9 @@
                                     <button v-if="formData.specializations.length < availableSpecializations.length"
                                         @click="addSpecialization" type="button"
                                         class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
+                                        <PlusIcon class="w-5 h-5" />
                                         <span>Add Specialization</span>
                                     </button>
-
-                                    <!-- Selected Specializations Display -->
-                                    <div v-if="selectedSpecializations.length > 0" class="mt-4">
-                                        <p class="text-sm text-gray-600 mb-2">Selected specializations:</p>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span v-for="spec in selectedSpecializations" :key="spec"
-                                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                                {{ spec }}
-                                            </span>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
@@ -276,11 +226,7 @@
                                     <div class="flex items-center">
                                         <div
                                             class="w-8 h-8 bg-green-500/10 rounded-full flex items-center justify-center mr-3">
-                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
+                                            <BookOpenIcon class="w-4 h-4 text-green-500" />
                                         </div>
                                         <h2 class="text-xl font-semibold text-gray-900">Education</h2>
                                     </div>
@@ -327,11 +273,7 @@
                                     <div class="flex items-center mb-4">
                                         <div
                                             class="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center mr-3">
-                                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0H8m8 0v2a2 2 0 01-2 2H10a2 2 0 01-2-2V6m8 0V9a2 2 0 01-2 2H10a2 2 0 01-2-2V6" />
-                                            </svg>
+                                            <BriefcaseIcon class="w-4 h-4 text-orange-500" />
                                         </div>
                                         <h2 class="text-lg font-semibold text-gray-900">Experience</h2>
                                     </div>
@@ -347,11 +289,7 @@
                                     <div class="flex items-center mb-4">
                                         <div
                                             class="w-8 h-8 bg-green-500/10 rounded-full flex items-center justify-center mr-3">
-                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                                            </svg>
+                                            <CurrencyDollarIcon class="w-4 h-4 text-green-500" />
                                         </div>
                                         <h2 class="text-lg font-semibold text-gray-900">Session Settings</h2>
                                     </div>
@@ -380,11 +318,7 @@
                                 <div class="flex items-center mb-6">
                                     <div
                                         class="w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center mr-3">
-                                        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                                        </svg>
+                                        <LanguageIcon class="w-4 h-4 text-purple-500" />
                                     </div>
                                     <h2 class="text-xl font-semibold text-gray-900">Languages</h2>
                                 </div>
@@ -395,11 +329,7 @@
                                             {{ lang }}
                                             <button type="button" @click="removeLanguage(index)"
                                                 class="ml-2 text-purple-600 hover:text-purple-800">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
+                                                <XMarkIcon class="w-4 h-4" />
                                             </button>
                                         </span>
                                     </div>
@@ -423,11 +353,7 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-gray-500/10 rounded-full flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
+                                    <LockClosedIcon class="w-4 h-4 text-gray-500" />
                                 </div>
                                 <h2 class="text-xl font-semibold text-gray-900">Change Password</h2>
                             </div>
@@ -475,6 +401,7 @@
 </template>
 
 <script setup>
+import { XMarkIcon, PhotoIcon, UserIcon, DevicePhoneIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

@@ -7,10 +7,7 @@
 
         <!-- No Data State -->
         <div v-else-if="!tableData || tableData.length === 0" class="text-center py-12">
-            <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <DocumentChartBarIcon class="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 class="text-lg font-medium text-gray-900 mb-2">No earnings data</h3>
             <p class="text-gray-500">Start completing appointments to see detailed earnings here.</p>
         </div>
@@ -110,16 +107,8 @@
                             <!-- Growth -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div v-if="row.growthPercentage !== null" class="flex items-center space-x-1">
-                                    <svg v-if="row.growthPercentage >= 0" class="w-4 h-4 text-green-500" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                    </svg>
-                                    <svg v-else class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                                    </svg>
+                                    <TrendingUpIcon v-if="row.growthPercentage >= 0" class="w-4 h-4 text-green-500" />
+                                    <TrendingDownIcon v-else class="w-4 h-4 text-red-500" />
                                     <span class="text-sm font-medium"
                                         :class="row.growthPercentage >= 0 ? 'text-green-600' : 'text-red-600'">
                                         {{ Math.abs(row.growthPercentage).toFixed(1) }}%
@@ -172,6 +161,7 @@
 </template>
 
 <script setup>
+import { DocumentChartBarIcon, TrendingUpIcon, TrendingDownIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
 
 const props = defineProps({

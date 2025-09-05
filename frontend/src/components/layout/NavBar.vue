@@ -49,17 +49,9 @@
                         class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-sky-500 hover:bg-sky-500/5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500 transition-colors duration-200">
                         <span class="sr-only">Open main menu</span>
                         <!-- Icon when menu is closed -->
-                        <svg v-if="!showMobileMenu" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
+                        <Bars3Icon v-if="!showMobileMenu" class="block h-6 w-6" aria-hidden="true" />
                         <!-- Icon when menu is open -->
-                        <svg v-else class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
                     </button>
                 </div>
 
@@ -75,11 +67,7 @@
                                     }}</span>
                                 </div>
                                 <span class="text-sm font-medium text-gray-700">{{ authStore.user?.firstName }}</span>
-                                <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
+                                <ChevronDownIcon class="h-4 w-4 text-gray-500" />
                             </button>
                             <div v-if="showProfileMenu"
                                 class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-sky-500/10">
@@ -87,10 +75,7 @@
                                     <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
                                         class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
+                                            <UserIcon class="h-4 w-4" />
                                             <span>My Profile</span>
                                         </div>
                                     </router-link>
@@ -99,10 +84,7 @@
                                     <button @click="logout"
                                         class="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                            </svg>
+                                            <ArrowRightOnRectangleIcon class="h-4 w-4" />
                                             <span>Sign Out</span>
                                         </div>
                                     </button>
@@ -198,6 +180,7 @@
 </template>
 
 <script setup>
+import { Bars3Icon, XMarkIcon, ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon } from "@heroicons/vue/24/outline";
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

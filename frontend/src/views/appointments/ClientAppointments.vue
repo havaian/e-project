@@ -30,11 +30,7 @@
             <template v-else>
                 <div v-if="appointments.length === 0" class="text-center py-12">
                     <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m2 0h2a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2h2m6 4v2m0 4v2">
-                            </path>
-                        </svg>
+                        <CalendarDaysIcon class="w-12 h-12" />
                     </div>
                     <p class="text-gray-600 text-lg">No appointments found</p>
                     <p class="text-gray-500 text-sm mt-1">Schedule an appointment to get started</p>
@@ -81,12 +77,7 @@
                                 <div class="flex items-center space-x-3">
                                     <div
                                         class="flex-shrink-0 w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m2 0h2a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2h2m6 4v2m0 4v2">
-                                            </path>
-                                        </svg>
+                                        <CalendarDaysIcon class="w-4 h-4 text-brand-1" />
                                     </div>
                                     <div>
                                         <p class="text-sm text-gray-500">Date & Time</p>
@@ -97,12 +88,7 @@
                                 <div class="flex items-center space-x-3">
                                     <div
                                         class="flex-shrink-0 w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-brand-1" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                            </path>
-                                        </svg>
+                                        <VideoCameraIcon class="w-4 h-4 text-brand-1" />
                                     </div>
                                     <div>
                                         <p class="text-sm text-gray-500">Session Type</p>
@@ -115,32 +101,19 @@
                             <div class="flex justify-end space-x-3">
                                 <router-link :to="{ name: 'appointment-details', params: { id: appointment._id } }"
                                     class="btn-secondary">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                        </path>
-                                    </svg>
+                                    <EyeIcon class="w-4 h-4 mr-2" />
                                     View Details
                                 </router-link>
                                 <button v-if="appointment.status === 'scheduled'"
                                     class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50"
                                     @click="cancelAppointment(appointment._id)">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
+                                    <XMarkIcon class="w-4 h-4 mr-2" />
                                     Cancel
                                 </button>
                                 <button
                                     v-if="appointment.status === 'scheduled' && isWithinJoinWindow(appointment.dateTime)"
                                     class="btn-primary">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                        </path>
-                                    </svg>
+                                    <VideoCameraIcon class="w-4 h-4 mr-2" />
                                     Join Now
                                 </button>
                             </div>
@@ -152,10 +125,7 @@
                 <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 mt-8">
                     <button v-if="currentPage > 1" @click="handlePageChange(currentPage - 1)"
                         class="btn-secondary px-3 py-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                            </path>
-                        </svg>
+                        <ChevronLeftIcon class="w-4 h-4" />
                     </button>
 
                     <div class="flex space-x-1">
@@ -169,10 +139,7 @@
 
                     <button v-if="currentPage < totalPages" @click="handlePageChange(currentPage + 1)"
                         class="btn-secondary px-3 py-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
+                        <ChevronRightIcon class="w-4 h-4" />
                     </button>
                 </div>
             </template>
@@ -181,6 +148,7 @@
 </template>
 
 <script setup>
+import { CalendarDaysIcon, VideoCameraIcon, EyeIcon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

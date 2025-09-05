@@ -673,127 +673,6 @@ exports.deactivateAccount = async (req, res) => {
     }
 };
 
-// Get provider's availability slots
-exports.getProviderAvailability = async (req, res) => {
-    try {
-        const { providerId } = req.params;
-        const { date } = req.query;
-
-        if (!date) {
-            return res.status(400).json({ message: 'Date parameter is required' });
-        }
-
-        // Get provider's working hours
-        const provider = await User.findById(providerId);
-        if (!provider || provider.role !== 'provider') {
-            return res.status(404).json({ message: 'Provider not found' });
-        }
-
-        // Parse date and get working hours for that day of week
-        const requestedDate = new Date(date);
-        const dayOfWeek = requestedDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
-        const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Convert to 0-based (Monday = 0, Sunday = 6)
-
-        const dayAvailability = provider.availability.find(a => a.dayOfWeek === dayIndex);
-        if (!dayAvailability || !dayAvailability.isAvailable) {
-            return res.status(200).json({
-                message: 'Provider is not available on this day',
-                availableSlots: []
-            });
-        }
-
-        let availableSlots = [];
-
-        // Check if the provider has time slots defined
-        if (Array.isArray(dayAvailability.timeSlots) && dayAvailability.timeSlots.length > 0) {
-            // For each time slot, generate available appointment slots
-            for (const timeSlot of dayAvailability.timeSlots) {
-                const slots = await generateTimeSlots(
-                    requestedDate,
-                    timeSlot.startTime,
-                    timeSlot.endTime,
-                    providerId
-                );
-                availableSlots = [...availableSlots, ...slots];
-            }
-        } else {
-            // Fallback to old format
-            availableSlots = await generateTimeSlots(
-                requestedDate,
-                dayAvailability.startTime,
-                dayAvailability.endTime,
-                providerId
-            );
-        }
-
-        res.status(200).json({
-            availableSlots,
-            workingHours: Array.isArray(dayAvailability.timeSlots) ?
-                dayAvailability.timeSlots :
-                { start: dayAvailability.startTime, end: dayAvailability.endTime }
-        });
-    } catch (error) {
-        console.error('Error fetching provider availability:', error);
-        res.status(500).json({ message: 'An error occurred while fetching provider availability' });
-    }
-};
-
-// Helper function to generate time slots
-async function generateTimeSlots(date, startTimeStr, endTimeStr, providerId) {
-    // Parse start and end times
-    const [startHour, startMinute] = startTimeStr.split(':').map(Number);
-    const [endHour, endMinute] = endTimeStr.split(':').map(Number);
-
-    const startTime = new Date(date);
-    startTime.setHours(startHour, startMinute, 0, 0);
-
-    const endTime = new Date(date);
-    endTime.setHours(endHour, endMinute, 0, 0);
-
-    // Generate slots at 15-minute intervals
-    const slots = [];
-    let currentSlot = new Date(startTime);
-
-    while (currentSlot < endTime) {
-        const slotEnd = new Date(currentSlot);
-        slotEnd.setMinutes(slotEnd.getMinutes() + 30); // Default 30-min slots
-
-        if (slotEnd <= endTime) {
-            slots.push({
-                start: new Date(currentSlot),
-                end: new Date(slotEnd)
-            });
-        }
-
-        currentSlot.setMinutes(currentSlot.getMinutes() + 15); // Move to next 15-min interval
-    }
-
-    // Remove slots that already have appointments
-    const bookedAppointments = await Appointment.find({
-        provider: providerId,
-        dateTime: {
-            $gte: new Date(date.setHours(0, 0, 0, 0)),
-            $lt: new Date(date.setHours(23, 59, 59, 999))
-        },
-        status: { $in: ['scheduled', 'pending-provider-confirmation'] }
-    });
-
-    // Check for conflicts with each potential slot
-    return slots.filter(slot => {
-        return !bookedAppointments.some(appointment => {
-            const apptStart = new Date(appointment.dateTime);
-            const apptEnd = appointment.endTime ||
-                new Date(apptStart.getTime() + (appointment.duration || 30) * 60000);
-
-            // Check if there's an overlap
-            return (
-                (slot.start < apptEnd && slot.end > apptStart) || // Slot overlaps with appointment
-                (apptStart < slot.end && apptEnd > slot.start)    // Appointment overlaps with slot
-            );
-        });
-    });
-}
-
 // Add achievement to user
 exports.addAchievement = async (req, res) => {
     try {
@@ -1016,4 +895,246 @@ exports.changePassword = async (req, res) => {
         console.error('Error changing password:', error);
         res.status(500).json({ message: 'An error occurred while changing password' });
     }
-};  
+};
+
+/**
+ * Update provider availability (calendar-style)
+ * @route PATCH /api/users/me/availability
+ * @access Private (Provider only)
+ */
+exports.updateProviderAvailability = async (req, res) => {
+    try {
+        const { availability } = req.body;
+        const userId = req.user.id;
+
+        // Validate that user is a provider
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+
+        if (user.role !== 'provider') {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Only providers can set availability' 
+            });
+        }
+
+        // Validate availability data
+        if (!Array.isArray(availability) || availability.length !== 7) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Availability must be an array of 7 days' 
+            });
+        }
+
+        // Validate each day's data
+        const daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Monday to Sunday
+        const processedAvailability = [];
+
+        for (const dayData of availability) {
+            const { dayOfWeek, isAvailable, timeSlots } = dayData;
+
+            // Validate dayOfWeek
+            if (!daysOfWeek.includes(dayOfWeek)) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: `Invalid dayOfWeek: ${dayOfWeek}. Must be 1-7 (Monday-Sunday)` 
+                });
+            }
+
+            // Process day data
+            const processedDay = {
+                dayOfWeek,
+                isAvailable: Boolean(isAvailable)
+            };
+
+            if (isAvailable && Array.isArray(timeSlots) && timeSlots.length > 0) {
+                // Validate and process time slots
+                processedDay.timeSlots = [];
+
+                for (const slot of timeSlots) {
+                    const { startTime, endTime } = slot;
+
+                    // Validate time format (HH:MM)
+                    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+                    if (!timeRegex.test(startTime) || !timeRegex.test(endTime)) {
+                        return res.status(400).json({ 
+                            success: false, 
+                            message: 'Invalid time format. Use HH:MM (24-hour format)' 
+                        });
+                    }
+
+                    // Validate that end time is after start time
+                    const [startHour, startMinute] = startTime.split(':').map(Number);
+                    const [endHour, endMinute] = endTime.split(':').map(Number);
+
+                    const startMinutes = startHour * 60 + startMinute;
+                    const endMinutes = endHour * 60 + endMinute;
+
+                    if (endMinutes <= startMinutes) {
+                        return res.status(400).json({ 
+                            success: false, 
+                            message: `End time must be after start time for ${getDayName(dayOfWeek)}` 
+                        });
+                    }
+
+                    // Minimum slot duration check (15 minutes)
+                    if (endMinutes - startMinutes < 15) {
+                        return res.status(400).json({ 
+                            success: false, 
+                            message: `Minimum time slot duration is 15 minutes for ${getDayName(dayOfWeek)}` 
+                        });
+                    }
+
+                    processedDay.timeSlots.push({
+                        startTime,
+                        endTime
+                    });
+                }
+
+                // Sort time slots by start time
+                processedDay.timeSlots.sort((a, b) => {
+                    const aMinutes = convertTimeToMinutes(a.startTime);
+                    const bMinutes = convertTimeToMinutes(b.startTime);
+                    return aMinutes - bMinutes;
+                });
+
+                // Check for overlapping time slots
+                for (let i = 0; i < processedDay.timeSlots.length - 1; i++) {
+                    const current = processedDay.timeSlots[i];
+                    const next = processedDay.timeSlots[i + 1];
+                    
+                    const currentEnd = convertTimeToMinutes(current.endTime);
+                    const nextStart = convertTimeToMinutes(next.startTime);
+
+                    if (currentEnd > nextStart) {
+                        return res.status(400).json({ 
+                            success: false, 
+                            message: `Overlapping time slots detected for ${getDayName(dayOfWeek)}` 
+                        });
+                    }
+                }
+            } else {
+                // No time slots for unavailable days
+                processedDay.timeSlots = [];
+            }
+
+            processedAvailability.push(processedDay);
+        }
+
+        // Sort availability by dayOfWeek
+        processedAvailability.sort((a, b) => a.dayOfWeek - b.dayOfWeek);
+
+        // Update user's availability
+        user.availability = processedAvailability;
+        
+        // Update profile completion if this improves it
+        await user.calculateProfileCompletion();
+        await user.save();
+
+        // Log the update for audit purposes
+        console.log(`Provider ${user.firstName} ${user.lastName} (${user._id}) updated availability:`, 
+            processedAvailability);
+
+        res.status(200).json({
+            success: true,
+            message: 'Availability updated successfully',
+            availability: processedAvailability,
+            profileCompletionPercentage: user.profileCompletionPercentage
+        });
+
+    } catch (error) {
+        console.error('Error updating provider availability:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'An error occurred while updating availability',
+            error: error.message 
+        });
+    }
+};
+
+/**
+ * Get provider availability for calendar view
+ * @route GET /api/users/me/availability
+ * @access Private (Provider only)
+ */
+exports.getProviderAvailability = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+
+        if (user.role !== 'provider') {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Only providers have availability settings' 
+            });
+        }
+
+        // Return availability with default structure if not set
+        const availability = user.availability || getDefaultAvailability();
+
+        res.status(200).json({
+            success: true,
+            availability,
+            totalWeeklyHours: calculateTotalWeeklyHours(availability)
+        });
+
+    } catch (error) {
+        console.error('Error fetching provider availability:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'An error occurred while fetching availability',
+            error: error.message 
+        });
+    }
+};
+
+// Helper functions
+const getDayName = (dayOfWeek) => {
+    const dayNames = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    return dayNames[dayOfWeek] || 'Unknown';
+};
+
+const convertTimeToMinutes = (timeString) => {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+};
+
+const getDefaultAvailability = () => {
+    return [
+        { dayOfWeek: 1, isAvailable: false, timeSlots: [] }, // Monday
+        { dayOfWeek: 2, isAvailable: false, timeSlots: [] }, // Tuesday
+        { dayOfWeek: 3, isAvailable: false, timeSlots: [] }, // Wednesday
+        { dayOfWeek: 4, isAvailable: false, timeSlots: [] }, // Thursday
+        { dayOfWeek: 5, isAvailable: false, timeSlots: [] }, // Friday
+        { dayOfWeek: 6, isAvailable: false, timeSlots: [] }, // Saturday
+        { dayOfWeek: 7, isAvailable: false, timeSlots: [] }  // Sunday
+    ];
+};
+
+const calculateTotalWeeklyHours = (availability) => {
+    let totalMinutes = 0;
+    
+    availability.forEach(day => {
+        if (day.isAvailable && day.timeSlots) {
+            day.timeSlots.forEach(slot => {
+                const startMinutes = convertTimeToMinutes(slot.startTime);
+                const endMinutes = convertTimeToMinutes(slot.endTime);
+                totalMinutes += (endMinutes - startMinutes);
+            });
+        }
+    });
+    
+    return Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal place
+};

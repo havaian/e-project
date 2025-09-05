@@ -5,25 +5,13 @@
       <!-- Floating Educational Icons -->
       <div class="absolute inset-0 overflow-hidden">
         <div class="absolute top-20 left-10 float-element opacity-20">
-          <svg class="text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
-            </path>
-          </svg>
+          <BookOpenIcon class="text-sky-500 w-6 h-6" />
         </div>
         <div class="absolute top-32 right-20 float-element opacity-15" style="animation-delay: -1s;">
-          <svg class="text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
-            </path>
-          </svg>
+          <AcademicCapIcon class="text-success w-6 h-6" />
         </div>
         <div class="absolute bottom-32 left-32 float-element opacity-10" style="animation-delay: -2s;">
-          <svg class="text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
-            </path>
-          </svg>
+          <LightBulbIcon class="text-emerald-500 w-6 h-6" />
         </div>
       </div>
 
@@ -32,16 +20,14 @@
         <div class="mb-12 slide-in">
           <div class="flex items-center justify-center mb-8">
             <div class="relative">
-              <div
-                class="float-element glow-effect">
-                  <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="80" height="80" class="w-20 h-20" />
+              <div class="float-element glow-effect">
+                <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="80" height="80" class="w-20 h-20" />
               </div>
             </div>
           </div>
           <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-3">
-            {{ appTitle1 }}<span
-              class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">{{ appTitle2 }}</span><span
-              class="text-success">{{ appTitle3 }}</span>
+            {{ appTitle1 }}<span class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">{{
+              appTitle2 }}</span><span class="text-success">{{ appTitle3 }}</span>
           </h1>
           <p class="text-xl text-gray-700 font-medium">Your Academic Performance, Our Digital Care</p>
         </div>
@@ -95,22 +81,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center card-hover shadow-lg">
             <div class="bg-gradient-to-r from-sky-500 to-emerald-500 rounded-2xl p-4 inline-flex mb-6 shadow-lg">
-              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
+              <VideoCameraIcon class="h-8 w-8 text-white" />
             </div>
             <h4 class="font-bold text-gray-800 mb-3 text-lg">Video Sessions</h4>
             <p class="text-sm text-gray-600">High-quality video calls with certified professionals</p>
           </div>
 
           <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center card-hover shadow-lg">
-            <div
-              class="bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl p-4 inline-flex mb-6 shadow-lg">
-              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
+            <div class="bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl p-4 inline-flex mb-6 shadow-lg">
+              <LightBulbIcon class="h-8 w-8 text-white" />
             </div>
             <h4 class="font-bold text-gray-800 mb-3 text-lg">AI Diagnostics</h4>
             <p class="text-sm text-gray-600">Smart problem analysis and preliminary diagnosis</p>
@@ -118,10 +97,7 @@
 
           <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center card-hover shadow-lg">
             <div class="bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-2xl p-4 inline-flex mb-6 shadow-lg">
-              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              <DocumentTextIcon class="h-8 w-8 text-white" />
             </div>
             <h4 class="font-bold text-gray-800 mb-3 text-lg">Digital Recommendations</h4>
             <p class="text-sm text-gray-600">Electronic recommendations sent directly to pharmacies</p>
@@ -129,10 +105,7 @@
 
           <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center card-hover shadow-lg">
             <div class="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-4 inline-flex mb-6 shadow-lg">
-              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 00-2-2z" />
-              </svg>
+              <ChartBarIcon class="h-8 w-8 text-white" />
             </div>
             <h4 class="font-bold text-gray-800 mb-3 text-lg">Academic Performance</h4>
             <p class="text-sm text-gray-600">Track vitals and receive personalized academic perfornamce insights</p>
@@ -234,8 +207,9 @@
 </template>
 
 <script setup>
+import { BookOpenIcon, AcademicCapIcon, LightBulbIcon, VideoCameraIcon, DocumentTextIcon, ChartBarIcon } from "@heroicons/vue/24/outline";
 const appTitle = import.meta.env.VITE_APP_TITLE
-const appTitle1 = import.meta.env.VITE_APP_TITLE_1  
+const appTitle1 = import.meta.env.VITE_APP_TITLE_1
 const appTitle2 = import.meta.env.VITE_APP_TITLE_2
 const appTitle3 = import.meta.env.VITE_APP_TITLE_3
 </script>

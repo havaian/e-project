@@ -25,10 +25,7 @@
                         </select>
                         <button v-if="modelValue.specializations.length > 1" @click="removeSpecialization(index)"
                             class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
+                            <TrashIcon class="w-5 h-5" />
                         </button>
                     </div>
                 </div>
@@ -36,10 +33,7 @@
                 <button v-if="modelValue.specializations.length < availableSpecializations.length"
                     @click="addSpecialization"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
+                    <PlusIcon class="w-5 h-5" />
                     <span>Add Specialization</span>
                 </button>
             </div>
@@ -152,11 +146,7 @@
         <!-- Validation Messages -->
         <div v-if="validationMessages.length > 0" class="bg-red-50 rounded-xl p-4 border border-red-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <ExclamationCircleIcon class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-red-900">Please complete the following:</p>
                     <ul class="text-red-700 mt-1 list-disc list-inside">
@@ -169,11 +159,7 @@
         <!-- Success Message -->
         <div v-if="isFormValid" class="bg-green-50 rounded-xl p-4 border border-green-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-green-900">Profile Complete!</p>
                     <p class="text-green-700 mt-1">
@@ -186,6 +172,7 @@
 </template>
 
 <script setup>
+import { TrashIcon, PlusIcon, ExclamationCircleIcon, CheckCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, watch, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'

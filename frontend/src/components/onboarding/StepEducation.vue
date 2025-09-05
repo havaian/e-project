@@ -34,10 +34,7 @@
                                 </div>
                                 <button v-if="modelValue.education.length > 1" @click="removeEducation(index)"
                                     class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
+                                    <TrashIcon class="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
@@ -46,10 +43,7 @@
 
                 <button @click="addEducation"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
+                    <PlusIcon class="w-5 h-5" />
                     <span>Add Education</span>
                 </button>
             </div>
@@ -82,10 +76,7 @@
                                 </div>
                                 <button v-if="modelValue.certifications.length > 1" @click="removeCertification(index)"
                                     class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
+                                    <TrashIcon class="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
@@ -94,10 +85,7 @@
 
                 <button @click="addCertification"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
+                    <PlusIcon class="w-5 h-5" />
                     <span>Add Certification</span>
                 </button>
             </div>
@@ -119,20 +107,14 @@
                         </select>
                         <button v-if="modelValue.languages.length > 1" @click="removeLanguage(index)"
                             class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
+                            <TrashIcon class="w-5 h-5" />
                         </button>
                     </div>
                 </div>
 
                 <button v-if="modelValue.languages.length < availableLanguages.length" @click="addLanguage"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
+                    <PlusIcon class="w-5 h-5" />
                     <span>Add Language</span>
                 </button>
             </div>
@@ -141,11 +123,7 @@
         <!-- Help Text -->
         <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <InformationCircleIcon class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-blue-900">Why do we need this information?</p>
                     <p class="text-blue-700 mt-1">
@@ -159,6 +137,7 @@
 </template>
 
 <script setup>
+import { TrashIcon, PlusIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, watch, onMounted } from 'vue'
 
 const emit = defineEmits(['update:modelValue', 'validate'])

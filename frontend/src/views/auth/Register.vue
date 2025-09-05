@@ -1,6 +1,7 @@
 <template>
     <div class="min-h-screen flex items-center justify-center element-gradient py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10">
+        <div
+            class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10">
             <div>
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
             </div>
@@ -9,11 +10,7 @@
                 class="rounded-2xl bg-green-50/80 backdrop-blur-sm p-4 border border-green-200">
                 <div class="flex">
                     <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <CheckCircleIcon class="h-5 w-5 text-green-400" />
                     </div>
                     <div class="ml-3">
                         <h3 class="text-sm font-medium text-green-800">Registration successful!</h3>
@@ -72,22 +69,9 @@
                             <button type="button" @click="togglePassword" class="input-icon"
                                 :class="showPassword ? 'active' : ''">
                                 <!-- Eye with diagonal stroke (password hidden) -->
-                                <svg v-if="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 4l16 16" />
-                                </svg>
+                                <EyeSlashIcon v-if="!showPassword" class="h-5 w-5" />
                                 <!-- Regular eye (password visible) -->
-                                <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
+                                <EyeIcon v-else class="h-5 w-5" />
                             </button>
                         </div>
 
@@ -96,61 +80,36 @@
                             <p class="text-gray-600 mb-2">Password must contain:</p>
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
+                                    <CheckCircleIcon class="h-4 w-4"
+                                        :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.minLength ? 'text-green-600' : 'text-gray-500'">
                                         At least 8 characters
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasUppercase ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
+                                    <CheckCircleIcon class="h-4 w-4"
+                                        :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.hasUppercase ? 'text-green-600' : 'text-gray-500'">
                                         One uppercase letter
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasLowercase ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
+                                    <CheckCircleIcon class="h-4 w-4"
+                                        :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.hasLowercase ? 'text-green-600' : 'text-gray-500'">
                                         One lowercase letter
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasNumber ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
+                                    <CheckCircleIcon class="h-4 w-4"
+                                        :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.hasNumber ? 'text-green-600' : 'text-gray-500'">
                                         One number
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <svg class="h-4 w-4"
-                                        :class="passwordValidation.hasSpecialChar ? 'text-green-500' : 'text-gray-400'"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
+                                    <CheckCircleIcon class="h-4 w-4"
+                                        :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span
                                         :class="passwordValidation.hasSpecialChar ? 'text-green-600' : 'text-gray-500'">
                                         One special character (!@#$%^&*)
@@ -227,10 +186,7 @@
             <div v-if="error"
                 class="mt-4 bg-red-50/80 backdrop-blur-sm border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm text-center shadow-sm">
                 <div class="flex items-center justify-center">
-                    <svg class="h-4 w-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <ExclamationCircleIcon class="h-4 w-4 mr-2 text-red-500" />
                     {{ error }}
                 </div>
             </div>
@@ -239,6 +195,7 @@
 </template>
 
 <script setup>
+import { EyeIcon, EyeSlashIcon, InformationCircleIcon, ExclamationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

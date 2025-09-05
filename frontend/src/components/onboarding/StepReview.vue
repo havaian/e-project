@@ -156,10 +156,7 @@
         <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
             <div class="flex items-center space-x-4">
                 <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <CheckCircleIcon class="w-6 h-6 text-white" />
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold text-green-900">Profile {{ completionPercentage }}% Complete</h3>
@@ -189,11 +186,7 @@
         <!-- Final Validation -->
         <div v-if="validationErrors.length > 0" class="bg-red-50 rounded-xl p-4 border border-red-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <ExclamationCircleIcon class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-red-900">Please address the following issues:</p>
                     <ul class="text-red-700 mt-1 list-disc list-inside">
@@ -206,11 +199,7 @@
         <!-- Success State -->
         <div v-if="isValid" class="bg-green-50 rounded-xl p-4 border border-green-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-green-900">Ready to Complete Setup!</p>
                     <p class="text-green-700 mt-1">
@@ -224,6 +213,7 @@
 </template>
 
 <script setup>
+import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, watch, onMounted } from 'vue'
 
 const emit = defineEmits(['update:modelValue', 'validate', 'editStep'])

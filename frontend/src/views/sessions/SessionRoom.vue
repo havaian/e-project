@@ -9,10 +9,7 @@
                         <div class="flex items-center space-x-3">
                             <div
                                 class="w-8 h-8 bg-gradient-to-r from-brand-1 to-brand-2 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
+                                <VideoCameraIcon class="w-4 h-4 text-white" />
                             </div>
                             <div>
                                 <h1 class="text-xl font-bold text-gray-900">
@@ -40,10 +37,7 @@
 
                             <!-- Session Timer -->
                             <div v-if="isConnected" class="flex items-center space-x-2 text-sm text-gray-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                <ClockIcon class="w-4 h-4" />
                                 <span class="font-mono">{{ sessionDuration }}</span>
                             </div>
                         </div>
@@ -53,19 +47,13 @@
                     <div class="flex items-center space-x-3">
                         <!-- Session Info Button -->
                         <button @click="showSessionInfo = !showSessionInfo" class="btn-secondary px-3 py-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <InformationCircleIcon class="w-4 h-4" />
                         </button>
 
                         <!-- End Session Button -->
                         <button class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50"
                             @click="showEndSessionConfirm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 21V8a3 3 0 013-3h6l2 2h6a3 3 0 013 3v11a3 3 0 01-3 3H6a3 3 0 01-3-3z" />
-                            </svg>
+                            <FolderIcon class="w-4 h-4 mr-2" />
                             End Session
                         </button>
                     </div>
@@ -116,10 +104,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">Session Notes</h3>
                     <button @click="showPlatformChat = false" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <XMarkIcon class="w-5 h-5" />
                     </button>
                 </div>
                 <div class="space-y-3">
@@ -152,26 +137,24 @@
             <div class="card-element max-w-md w-full mx-4 p-6">
                 <div class="flex items-center mb-4">
                     <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                        </svg>
+                        <ExclamationTriangleIcon class="w-5 h-5 text-red-600" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900">End Healthcare Session</h3>
                 </div>
                 <p class="text-gray-600 mb-6">
                     Are you sure you want to end this session?
-                    {{ isProvider ? 'You\'ll be asked to provide a summary and recommendations for the patient.' : 'The session recording and notes will be saved to your appointment history.' }}
+                    {{
+                        isProvider ?
+                        'You\'ll be asked to provide a summary and recommendations for the patient.' : 
+                        'The session recording and notes will be saved to your appointment history.'
+                    }}
                 </p>
                 <div class="flex justify-end space-x-3">
                     <button @click="showEndConfirmation = false" class="btn-secondary">
                         Continue Session
                     </button>
                     <button @click="confirmEndSession" class="btn-primary bg-red-600 hover:bg-red-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                        </svg>
+                        <CheckIcon class="w-4 h-4 mr-2" />
                         End Session
                     </button>
                 </div>
@@ -185,10 +168,7 @@
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                            <DocumentTextIcon class="w-5 h-5 text-brand-1" />
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-900">Complete Session Documentation</h3>
@@ -221,10 +201,7 @@
                                 </div>
                                 <button type="button" @click="addRecommendation"
                                     class="btn-secondary text-brand-1 hover:bg-brand-1/10">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
+                                    <PlusIcon class="w-4 h-4 mr-2" />
                                     Add Recommendation
                                 </button>
                             </div>
@@ -268,10 +245,7 @@
                                     </div>
                                     <button type="button" @click="removeRecommendation(index)"
                                         class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50 text-sm">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                        <TrashIcon class="w-4 h-4 mr-1" />
                                         Remove
                                     </button>
                                 </div>
@@ -279,11 +253,7 @@
 
                             <div v-else
                                 class="bg-gray-50/50 p-8 rounded-xl text-center border-2 border-dashed border-gray-300">
-                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                                </svg>
+                                <BeakerIcon class="w-12 h-12 text-gray-400 mx-auto mb-4" />
                                 <p class="text-gray-500">No recommendations added yet</p>
                                 <p class="text-sm text-gray-400 mt-1">Click "Add Recommendation" to include treatment
                                     recommendations</p>
@@ -342,10 +312,7 @@
                         <div
                             class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-6 border-t border-gray-200">
                             <button type="button" @click="skipPostSession" class="btn-secondary">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                <ArrowRightIcon class="w-4 h-4 mr-2" />
                                 Skip Documentation
                             </button>
                             <button type="submit" class="btn-primary" :disabled="submitting">
@@ -361,10 +328,7 @@
                                     Saving Session Data...
                                 </span>
                                 <span v-else class="flex items-center">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                                    </svg>
+                                    <CheckIcon class="w-4 h-4 mr-2" />
                                     Complete Session
                                 </span>
                             </button>
@@ -379,19 +343,14 @@
             class="fixed inset-0 bg-gray-500/75 backdrop-blur-sm flex items-center justify-center z-50">
             <div class="card-element max-w-md w-full mx-4 p-6 text-center">
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
+                    <CheckIcon class="h-8 w-8 text-green-600" />
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Session Completed Successfully</h3>
                 <p class="text-gray-600 mb-6">
                     Follow-up appointment has been created and is pending payment confirmation from the patient.
                 </p>
                 <button @click="returnToAppointments" class="btn-primary w-full">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m2 0h2a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2h2m6 4v2m0 4v2" />
-                    </svg>
+                    <CalendarIcon class="w-4 h-4 mr-2" />
                     Return to Appointments
                 </button>
             </div>
@@ -400,6 +359,7 @@
 </template>
 
 <script setup>
+import { VideoCameraIcon, ClockIcon, InformationCircleIcon, FolderIcon, XMarkIcon, ExclamationTriangleIcon, DocumentTextIcon, PlusIcon, TrashIcon, ArrowRightIcon, CheckIcon, CalendarIcon, BeakerIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

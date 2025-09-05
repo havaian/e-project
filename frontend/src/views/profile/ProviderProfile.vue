@@ -21,26 +21,17 @@
               <div class="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
                 <span v-if="user?.isVerified"
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <CheckCircleIcon class="w-4 h-4 mr-1" />
                   Verified Provider
                 </span>
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                  <CalendarDaysIcon class="w-4 h-4 mr-1" />
                   {{ appointmentStats.completed }} Completed Sessions
                 </span>
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                  </svg>
+                  <UsersIcon class="w-4 h-4 mr-1" />
                   {{ clients.length }} Clients
                 </span>
               </div>
@@ -49,18 +40,12 @@
           <div class="mt-4 sm:mt-0 flex gap-2">
             <router-link to="/profile/edit"
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
+              <PencilIcon class="w-4 h-4 mr-2" />
               Edit Profile
             </router-link>
             <router-link to="/profile/provider/dashboard"
               class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 00-2-2z" />
-              </svg>
+              <ChartBarIcon class="w-4 h-4 mr-2" />
               Dashboard
             </router-link>
           </div>
@@ -77,10 +62,7 @@
             <!-- Professional Information -->
             <div class="bg-gray-50 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2z" />
-                </svg>
+                <BriefcaseIcon class="w-5 h-5 mr-2 text-indigo-600" />
                 Professional Information
               </h2>
               <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,10 +96,7 @@
             <!-- Session Information -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
+                <CurrencyDollarIcon class="w-5 h-5 mr-2 text-green-600" />
                 Session Details
               </h2>
               <div class="grid grid-cols-2 gap-4">
@@ -136,13 +115,10 @@
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-medium text-gray-900 flex items-center">
-                  <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+                  <UsersIcon class="w-5 h-5 mr-2 text-blue-600" />
                   My Clients
                 </h2>
-                <button @click="showAddClientModal = true" 
+                <button @click="showAddClientModal = true"
                   class="text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">
                   Add Client
                 </button>
@@ -160,12 +136,10 @@
                     </div>
                   </div>
                   <div class="flex items-center space-x-2">
-                    <router-link :to="`/clients/${client._id}`"
-                      class="text-indigo-600 hover:text-indigo-700 text-sm">
+                    <router-link :to="`/clients/${client._id}`" class="text-indigo-600 hover:text-indigo-700 text-sm">
                       View Profile
                     </router-link>
-                    <button @click="removeClient(client._id)" 
-                      class="text-red-600 hover:text-red-700 text-sm">
+                    <button @click="removeClient(client._id)" class="text-red-600 hover:text-red-700 text-sm">
                       Remove
                     </button>
                   </div>
@@ -173,10 +147,7 @@
               </div>
 
               <div v-else class="text-center py-6">
-                <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
+                <UserPlusIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <p class="text-gray-500">No clients added yet</p>
                 <p class="text-gray-400 text-sm mt-1">Add clients to manage their sessions</p>
               </div>
@@ -185,10 +156,7 @@
             <!-- Recent Appointments -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <CalendarDaysIcon class="w-5 h-5 mr-2 text-purple-600" />
                 Recent Appointments
               </h2>
 
@@ -239,10 +207,7 @@
               </div>
 
               <div v-else class="text-center py-6">
-                <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <CalendarDaysIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <p class="text-gray-500">No appointments yet</p>
                 <p class="text-gray-400 text-sm mt-1">Your appointments will appear here</p>
               </div>
@@ -256,7 +221,10 @@
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4">About Me</h3>
               <p class="text-gray-600 text-sm leading-relaxed">
-                {{ user?.bio || 'No bio provided yet. Add information about your background, approach, and specialties to help clients get to know you better.' }}
+                {{ 
+                  user?.bio || 
+                  'No bio provided yet. Add information about your background, approach, and specialties to help clients get to know you better.' 
+                }}
               </p>
             </div>
 
@@ -277,11 +245,7 @@
               <h3 class="text-lg font-medium text-gray-900 mb-4">Certifications</h3>
               <div class="space-y-2">
                 <div v-for="cert in user.certifications" :key="cert._id" class="flex items-center space-x-2">
-                  <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd" />
-                  </svg>
+                  <CheckCircleIcon class="w-4 h-4 text-green-500" />
                   <span class="text-sm text-gray-900">{{ cert.name }}</span>
                 </div>
               </div>
@@ -290,10 +254,7 @@
             <!-- Achievements -->
             <div v-if="showAchievements" class="bg-white border border-gray-200 rounded-xl p-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircleIcon class="w-5 h-5 mr-2 text-yellow-600" />
                 Achievements
               </h3>
 
@@ -311,14 +272,13 @@
               <!-- Earned Achievements -->
               <div v-if="earnedAchievements.length > 0" class="space-y-3 mb-4">
                 <h4 class="text-sm font-medium text-gray-700">Earned Achievements</h4>
-                <div v-for="achievement in earnedAchievements.slice(0, showAllAchievements ? earnedAchievements.length : 3)" :key="achievement.id"
+                <div
+                  v-for="achievement in earnedAchievements.slice(0, showAllAchievements ? earnedAchievements.length : 3)"
+                  :key="achievement.id"
                   class="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <div class="flex-shrink-0">
                     <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
+                      <CheckCircleIcon class="w-4 h-4 text-white" />
                     </div>
                   </div>
                   <div class="flex-1">
@@ -336,10 +296,7 @@
                   class="flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                   <div class="flex-shrink-0">
                     <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                      <LockClosedIcon class="w-4 h-4 text-gray-500" />
                     </div>
                   </div>
                   <div class="flex-1">
@@ -372,7 +329,7 @@
                   <span class="text-sm text-gray-600">Total Earned</span>
                   <span class="font-medium text-gray-900">{{ formatCurrency(earnings.total) }}</span>
                 </div>
-                <router-link to="/profile/provider/dashboard" 
+                <router-link to="/profile/provider/dashboard"
                   class="block text-center text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-3">
                   View Detailed Earnings
                 </router-link>
@@ -409,6 +366,7 @@
 </template>
 
 <script setup>
+import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, PencilIcon, ChartBarIcon, BriefcaseIcon, CurrencyDollarIcon, UserPlusIcon, DocumentTextIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
@@ -509,7 +467,7 @@ const fetchEarnings = async () => {
       params: { period: 'monthly', limit: 1 }
     })
     const earningsData = response.data.earnings || []
-    
+
     earnings.value = {
       thisMonth: earningsData[0]?.totalEarnings || 0,
       total: earningsData.reduce((sum, month) => sum + (month.totalEarnings || 0), 0)

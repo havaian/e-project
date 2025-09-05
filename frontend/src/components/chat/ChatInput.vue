@@ -6,17 +6,12 @@
                 :class="disabled ? 'opacity-50 cursor-not-allowed' : ''" />
             <button v-if="message.trim()" type="button" @click="clearMessage"
                 class="input-icon text-gray-400 hover:text-gray-600">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="h-4 w-4" />
             </button>
         </div>
         <button type="submit" class="btn-primary px-4 py-4 flex items-center justify-center min-w-[3rem]"
             :disabled="disabled || !message.trim()">
-            <svg v-if="!loading" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
+            <PaperAirplaneIcon v-if="!loading" class="h-5 w-5" />
             <svg v-else class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor"
@@ -28,6 +23,7 @@
 </template>
 
 <script setup>
+import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/vue/24/outline";
 import { ref } from 'vue'
 
 const props = defineProps({

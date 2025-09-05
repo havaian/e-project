@@ -13,11 +13,7 @@
                             <input v-model="searchQuery" type="text" placeholder="Search for help articles..."
                                 class="w-full px-6 py-4 text-gray-900 bg-white rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
                                 @input="performSearch" />
-                            <svg class="absolute right-4 top-4 w-6 h-6 text-gray-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                            <MagnifyingGlassIcon class="absolute right-4 top-4 w-6 h-6 text-gray-400" />
                         </div>
                     </div>
                 </div>
@@ -32,10 +28,7 @@
                     <router-link to="/contact"
                         class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
                         <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
+                            <ChatBubbleLeftRightIcon class="w-8 h-8 text-blue-600" />
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">Contact Support</h3>
                         <p class="text-gray-600 text-sm">Get personalized help from our team</p>
@@ -44,10 +37,7 @@
                     <a href="#" @click.prevent="startLiveChat"
                         class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
                         <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-2M7 12h2m6-8h-2" />
-                            </svg>
+                            <ChatBubbleLeftRightIcon class="w-8 h-8 text-green-600" />
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">Live Chat</h3>
                         <p class="text-gray-600 text-sm">Chat with us in real-time</p>
@@ -56,10 +46,7 @@
                     <a :href="`tel:${supportPhone}`"
                         class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
                         <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
+                            <PhoneIcon class="w-8 h-8 text-purple-600" />
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">Call Us</h3>
                         <p class="text-gray-600 text-sm">{{ supportPhone }}</p>
@@ -68,10 +55,7 @@
                     <router-link to="/faq"
                         class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
                         <div class="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <QuestionMarkCircleIcon class="w-8 h-8 text-orange-600" />
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">FAQ</h3>
                         <p class="text-gray-600 text-sm">Find quick answers to common questions</p>
@@ -88,11 +72,8 @@
                         <div class="flex items-start space-x-4">
                             <div :class="category.iconBg"
                                 class="rounded-lg w-12 h-12 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-6 h-6" :class="category.iconColor" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        :d="category.iconPath" />
-                                </svg>
+                                <component :is="getIconComponent(category.id)" class="w-6 h-6"
+                                    :class="category.iconColor" />
                             </div>
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ category.title }}</h3>
@@ -128,10 +109,7 @@
 
             <!-- No Results -->
             <div v-if="searchQuery && searchResults.length === 0" class="text-center py-12">
-                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0118 12H2.25A7.962 7.962 0 016 18.25h12A7.962 7.962 0 0118 12z" />
-                </svg>
+                <FaceFrownIcon class="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">No results found</h3>
                 <p class="text-gray-600 mb-4">We couldn't find any articles matching "{{ searchQuery }}"</p>
                 <router-link to="/contact" class="btn-primary">Contact Support</router-link>
@@ -145,10 +123,7 @@
                         class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
                         <div class="flex items-start space-x-4">
                             <div class="bg-sky-100 rounded-lg w-10 h-10 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0118 15a7.962 7.962 0 01-5 2.836V19.5a2.5 2.5 0 01-5 0v-1.664A7.962 7.962 0 013 15a7.962 7.962 0 015-7.364V6a3 3 0 016 0v1.636A7.962 7.962 0 0121 15a7.962 7.962 0 01-3 6.164V19.5a2.5 2.5 0 01-5 0V17.836z" />
-                                </svg>
+                                <DocumentTextIcon class="w-5 h-5 text-sky-600" />
                             </div>
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ article.title }}</h3>
@@ -191,10 +166,7 @@
                     <div class="flex items-center justify-between">
                         <h2 class="text-2xl font-bold text-gray-900">{{ selectedArticle.title }}</h2>
                         <button @click="closeArticle" class="text-gray-500 hover:text-gray-700">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <XMarkIcon class="w-6 h-6" />
                         </button>
                     </div>
                 </div>
@@ -210,16 +182,10 @@
                             <div class="flex items-center space-x-4">
                                 <span class="text-sm text-gray-500">Was this helpful?</span>
                                 <button @click="rateArticle('helpful')" class="text-green-600 hover:text-green-700">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                                    </svg>
+                                    <HandThumbUpIcon class="w-5 h-5" />
                                 </button>
                                 <button @click="rateArticle('not-helpful')" class="text-red-600 hover:text-red-700">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.106-1.79l-.05-.025A4 4 0 0011.057 2H5.641a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
-                                    </svg>
+                                    <HandThumbDownIcon class="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
@@ -232,6 +198,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { MagnifyingGlassIcon, ChatBubbleLeftRightIcon, ChatBubbleLeftEllipsisIcon, PhoneIcon, QuestionMarkCircleIcon, BookOpenIcon, EyeIcon, CreditCardIcon, CogIcon, UsersIcon, ShieldCheckIcon, DocumentTextIcon, XMarkIcon, HandThumbUpIcon, HandThumbDownIcon, FaceFrownIcon } from "@heroicons/vue/24/outline";
 
 // Environment variables
 const companyName = import.meta.env.VITE_APP_COMPANY_NAME
@@ -403,6 +370,18 @@ const popularArticles = reactive([
 ])
 
 // Methods
+const getIconComponent = (categoryId) => {
+    const iconMap = {
+        1: BookOpenIcon,      // Getting Started
+        2: EyeIcon,           // Consultations  
+        3: CreditCardIcon,    // Account & Billing
+        4: CogIcon,           // Technical Support
+        5: UsersIcon,         // Provider Resources
+        6: ShieldCheckIcon    // Privacy & Security
+    }
+    return iconMap[categoryId] || BookOpenIcon
+}
+
 const performSearch = () => {
     if (!searchQuery.value.trim()) {
         searchResults.value = []

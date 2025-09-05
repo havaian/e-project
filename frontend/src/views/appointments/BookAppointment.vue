@@ -30,9 +30,7 @@
                                 <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
                                     <button type="button" @click="previousMonth" 
                                         class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                        </svg>
+                                        <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
                                     </button>
                                     
                                     <h2 class="text-lg font-semibold text-gray-900">
@@ -41,9 +39,7 @@
                                     
                                     <button type="button" @click="nextMonth" 
                                         class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg>
+                                        <ChevronRightIcon class="w-5 h-5 text-gray-600" />
                                     </button>
                                 </div>
 
@@ -139,11 +135,7 @@
                         <!-- Fee Information -->
                         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
                             <div class="flex items-center space-x-3">
-                                <!-- <div class="flex-shrink-0">
-                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                    </svg>
-                                </div> -->
+                                <BanknotesIcon class="w-5 h-5 w-6 h-6 text-blue-600" />
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900">Session Fee</h3>
                                     <p class="text-2xl font-bold text-blue-600">
@@ -185,6 +177,7 @@
 </template>
 
 <script setup>
+import { ChevronLeftIcon, ChevronRightIcon, VideoCameraIcon, MicrophoneIcon, ChatBubbleLeftRightIcon, BanknotesIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { format, addDays, parseISO, subMinutes, addMinutes, isWithinInterval, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, isAfter, addMonths, subMonths } from 'date-fns'
@@ -211,17 +204,11 @@ const validationErrors = reactive({
 })
 
 // Icons for session types
-const VideoIcon = {
-    template: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`
-}
+const VideoIcon = VideoCameraIcon
 
-const VoiceIcon = {
-    template: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`
-}
+const VoiceIcon = MicrophoneIcon
 
-const ChatIcon = {
-    template: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>`
-}
+const ChatIcon = ChatBubbleLeftRightIcon
 
 const sessionTypes = [
     { value: 'video', label: 'Video', icon: VideoIcon },

@@ -8,10 +8,7 @@
         <!-- No Data State -->
         <div v-else-if="!chartData || chartData.length === 0"
             class="flex flex-col items-center justify-center h-80 text-gray-500">
-            <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+            <ChartBarIcon class="w-16 h-16 mb-4" />
             <h3 class="text-lg font-medium mb-2">No earnings data available</h3>
             <p class="text-sm">Complete some appointments to see your earnings here.</p>
         </div>
@@ -40,15 +37,8 @@
             <div class="bg-gray-50 rounded-lg p-4 text-center">
                 <p class="text-sm text-gray-600">Growth Trend</p>
                 <div class="flex items-center justify-center space-x-1">
-                    <svg v-if="growthTrend >= 0" class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                    <svg v-else class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                    </svg>
+                    <TrendingUpIcon v-if="growthTrend >= 0" class="w-4 h-4 text-green-500" />
+                    <TrendingDownIcon v-else class="w-4 h-4 text-red-500" />
                     <span class="text-lg font-bold" :class="growthTrend >= 0 ? 'text-green-600' : 'text-red-600'">
                         {{ Math.abs(growthTrend).toFixed(1) }}%
                     </span>
@@ -59,6 +49,7 @@
 </template>
 
 <script setup>
+import { ChartBarIcon, TrendingUpIcon, TrendingDownIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
 import { LineChart } from 'recharts'
 

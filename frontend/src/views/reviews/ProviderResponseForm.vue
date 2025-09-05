@@ -11,11 +11,7 @@
                 </div>
             </div>
             <div class="mt-2 flex items-start space-x-2">
-                <svg class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <InformationCircleIcon class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                 <p class="text-sm text-gray-600">
                     Your response will be visible to all users. Be professional and constructive.
                 </p>
@@ -24,10 +20,7 @@
 
         <div class="flex justify-end space-x-3">
             <button type="button" @click="response = ''" class="btn-secondary" :disabled="!response.trim()">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
+                <TrashIcon class="w-4 h-4 mr-2" />
                 Clear
             </button>
             <button type="submit" class="btn-primary" :disabled="loading || !response.trim()">
@@ -43,10 +36,7 @@
                     Sending Response...
                 </span>
                 <span v-else class="flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 19l9 2-9-18-9 18l9-2zm0 0v-8" />
-                    </svg>
+                    <PaperAirplaneIcon class="w-4 h-4 mr-2" />
                     Send Response
                 </span>
             </button>
@@ -55,6 +45,7 @@
 </template>
 
 <script setup>
+import { InformationCircleIcon, TrashIcon, PaperAirplaneIcon } from "@heroicons/vue/24/outline";
 import { ref } from 'vue'
 
 const props = defineProps({

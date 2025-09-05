@@ -17,10 +17,7 @@
         <!-- Empty State -->
         <div v-else-if="!loading && appointments.length === 0" class="text-center py-12">
             <div class="mx-auto h-12 w-12 text-gray-400">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <CheckCircleIcon />
             </div>
             <h3 class="mt-2 text-sm font-medium text-gray-900">No pending confirmations</h3>
             <p class="mt-1 text-sm text-gray-500">All appointments have been processed.</p>
@@ -156,10 +153,7 @@
             <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                 <div class="mt-3">
                     <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                        <XMarkIcon class="h-6 w-6 text-red-600" />
                     </div>
                     <div class="mt-5 text-center">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Reject Appointment</h3>
@@ -193,6 +187,7 @@
 </template>
 
 <script setup>
+import { CheckCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format, parseISO, differenceInYears } from 'date-fns'

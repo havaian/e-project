@@ -12,13 +12,15 @@
       <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
         <div class="prose prose-lg max-w-none">
           <p class="text-gray-700 leading-relaxed mb-8">
-            At {{ companyName }}, we are committed to protecting your privacy and ensuring the security of your personal information. 
-            This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
+            At {{ companyName }}, we are committed to protecting your privacy and ensuring the security of your personal
+            information.
+            This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our
+            platform.
           </p>
 
           <section class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Information We Collect</h2>
-            
+
             <h3 class="text-xl font-semibold text-gray-800 mb-3">Personal Information</h3>
             <p class="text-gray-700 mb-4">We may collect the following types of personal information:</p>
             <ul class="list-disc ml-6 text-gray-700 mb-6">
@@ -30,7 +32,8 @@
             </ul>
 
             <h3 class="text-xl font-semibold text-gray-800 mb-3">Usage Information</h3>
-            <p class="text-gray-700 mb-4">We automatically collect certain information about your use of our platform:</p>
+            <p class="text-gray-700 mb-4">We automatically collect certain information about your use of our platform:
+            </p>
             <ul class="list-disc ml-6 text-gray-700 mb-6">
               <li>Device information and IP address</li>
               <li>Browser type and version</li>
@@ -40,7 +43,7 @@
 
             <h3 class="text-xl font-semibold text-gray-800 mb-3">Educational Records</h3>
             <p class="text-gray-700 mb-6">
-              We may collect and process educational records as necessary to provide our services. 
+              We may collect and process educational records as necessary to provide our services.
               All educational records are handled with the highest level of security and confidentiality.
             </p>
           </section>
@@ -60,7 +63,8 @@
 
           <section class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Information Sharing and Disclosure</h2>
-            <p class="text-gray-700 mb-4">We do not sell, trade, or rent your personal information. We may share your information only in the following circumstances:</p>
+            <p class="text-gray-700 mb-4">We do not sell, trade, or rent your personal information. We may share your
+              information only in the following circumstances:</p>
             <ul class="list-disc ml-6 text-gray-700 mb-6">
               <li>With your explicit consent</li>
               <li>To comply with legal obligations or court orders</li>
@@ -86,8 +90,8 @@
           <section class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Data Security</h2>
             <p class="text-gray-700 mb-6">
-              We implement comprehensive security measures to protect your information, including encryption, 
-              secure servers, regular security audits, and access controls. However, no method of transmission 
+              We implement comprehensive security measures to protect your information, including encryption,
+              secure servers, regular security audits, and access controls. However, no method of transmission
               over the internet is 100% secure.
             </p>
           </section>
@@ -107,7 +111,7 @@
           <section class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Cookies and Tracking Technologies</h2>
             <p class="text-gray-700 mb-6">
-              We use cookies and similar technologies to enhance your experience, analyze usage patterns, 
+              We use cookies and similar technologies to enhance your experience, analyze usage patterns,
               and provide personalized content. You can control cookie settings through your browser preferences.
             </p>
           </section>
@@ -115,7 +119,7 @@
           <section class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Changes to This Policy</h2>
             <p class="text-gray-700 mb-6">
-              We may update this Privacy Policy periodically. We will notify you of significant changes by 
+              We may update this Privacy Policy periodically. We will notify you of significant changes by
               posting the updated policy on our platform and updating the "Last updated" date.
             </p>
           </section>
@@ -147,10 +151,10 @@ const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
 
 // Computed properties
 const lastUpdated = computed(() => {
-  return new Date().toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  return new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   })
 })
 

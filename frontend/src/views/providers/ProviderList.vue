@@ -16,14 +16,11 @@
               <input id="search" v-model="filters.name" type="text" class="input pr-12"
                 placeholder="Search providers..." @input="handleSearch" />
               <div class="input-icon">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                <MagnifyingGlassIcon class="w-4 h-4 text-gray-400" />
               </div>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="specializations" class="label">Specialization</label>
             <select id="specializations" v-model="filters.specializations" class="input" @change="handleSearch">
@@ -33,25 +30,15 @@
               </option>
             </select>
           </div>
-          
+
           <!-- Price Range Filter -->
           <div class="form-group">
             <label class="label">Price Range (UZS)</label>
             <div class="grid grid-cols-2 gap-2">
-              <input 
-                v-model="filters.minPrice" 
-                type="number" 
-                class="input text-sm" 
-                placeholder="Min price"
-                @input="handleSearch"
-              />
-              <input 
-                v-model="filters.maxPrice" 
-                type="number" 
-                class="input text-sm" 
-                placeholder="Max price"
-                @input="handleSearch"
-              />
+              <input v-model="filters.minPrice" type="number" class="input text-sm" placeholder="Min price"
+                @input="handleSearch" />
+              <input v-model="filters.maxPrice" type="number" class="input text-sm" placeholder="Max price"
+                @input="handleSearch" />
             </div>
           </div>
         </div>
@@ -68,12 +55,8 @@
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             ]">
               Experience
-              <svg v-if="sorts.experience === 'asc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-              </svg>
-              <svg v-else-if="sorts.experience === 'desc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              <ChevronUpIcon v-if="sorts.experience === 'asc'" class="w-4 h-4 ml-1" />
+              <ChevronDownIcon v-else-if="sorts.experience === 'desc'" class="w-4 h-4 ml-1" />
             </button>
 
             <!-- Price Sort -->
@@ -84,12 +67,8 @@
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             ]">
               Price
-              <svg v-if="sorts.price === 'asc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-              </svg>
-              <svg v-else-if="sorts.price === 'desc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              <ChevronUpIcon v-if="sorts.price === 'asc'" class="w-4 h-4 ml-1" />
+              <ChevronDownIcon v-else-if="sorts.price === 'desc'" class="w-4 h-4 ml-1" />
             </button>
 
             <!-- Rating Sort -->
@@ -100,20 +79,14 @@
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             ]">
               Rating
-              <svg v-if="sorts.rating === 'asc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-              </svg>
-              <svg v-else-if="sorts.rating === 'desc'" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              <ChevronUpIcon v-if="sorts.rating === 'asc'" class="w-4 h-4 ml-1" />
+              <ChevronDownIcon v-else-if="sorts.rating === 'desc'" class="w-4 h-4 ml-1" />
             </button>
 
             <!-- Clear Sorts Button -->
             <button v-if="hasActiveSorts" @click="clearSorts"
               class="flex items-center px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <XMarkIcon class="w-3 h-3" />
               Clear Sorts
             </button>
           </div>
@@ -128,9 +101,7 @@
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               Name: {{ filters.name }}
               <button @click="filters.name = ''; handleSearch()" class="ml-1 text-blue-800 hover:text-blue-900">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="filters.specializations"
@@ -138,18 +109,14 @@
               {{ filters.specializations }}
               <button @click="filters.specializations = ''; handleSearch()"
                 class="ml-1 text-blue-800 hover:text-blue-900">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="filters.minPrice || filters.maxPrice"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               Price: {{ getPriceRangeText() }}
               <button @click="clearPriceRange(); handleSearch()" class="ml-1 text-blue-800 hover:text-blue-900">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
 
@@ -158,27 +125,21 @@
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Experience {{ sorts.experience === 'asc' ? '↑' : '↓' }}
               <button @click="sorts.experience = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="sorts.price"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Price {{ sorts.price === 'asc' ? '↑' : '↓' }}
               <button @click="sorts.price = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="sorts.rating"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Rating {{ sorts.rating === 'asc' ? '↑' : '↓' }}
               <button @click="sorts.rating = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
           </div>
@@ -196,10 +157,7 @@
         <template v-else>
           <div v-if="providers.length === 0" class="text-center py-12">
             <div class="mx-auto h-16 w-16 text-gray-400 mb-4">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              <DocumentIcon class="w-16 h-16" />
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No providers found</h3>
             <p class="text-gray-500">Try adjusting your search criteria or browse all providers</p>
@@ -253,10 +211,7 @@
                   <div class="space-y-3 mb-6">
                     <div class="flex items-center text-sm">
                       <div class="w-6 h-6 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                        <svg class="w-3 h-3 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                        </svg>
+                        <CheckIcon class="w-3 h-3 text-brand-1" />
                       </div>
                       <span class="text-gray-600">
                         <span class="font-medium text-gray-900">{{ provider.experience }}</span> years experience
@@ -265,10 +220,7 @@
 
                     <div class="flex items-center text-sm">
                       <div class="w-6 h-6 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                        <svg class="w-3 h-3 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                        </svg>
+                        <CurrencyDollarIcon class="w-3 h-3 text-brand-1" />
                       </div>
                       <span class="text-gray-600">
                         <span class="font-medium text-gray-900">{{ formatCurrency(provider.sessionFee) }}</span> UZS per
@@ -278,10 +230,7 @@
 
                     <div class="flex items-center text-sm">
                       <div class="w-6 h-6 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
-                        <svg class="w-3 h-3 text-brand-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                        </svg>
+                        <LanguageIcon class="w-3 h-3 text-brand-1" />
                       </div>
                       <span class="text-gray-600">
                         {{ provider.languages?.join(', ') || 'Not specified' }}
@@ -295,19 +244,18 @@
                       <!-- Show stars based on actual rating -->
                       <div class="flex">
                         <template v-for="n in 5" :key="n">
-                          <svg class="w-4 h-4" :class="{
+                          <StarIcon class="w-4 h-4" :class="{
                             'text-yellow-400': n <= Math.round(provider.reviewStats?.averageRating || 0),
                             'text-gray-300': n > Math.round(provider.reviewStats?.averageRating || 0)
-                          }" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
+                          }" />
                         </template>
                       </div>
                       <!-- Show actual rating and review count -->
                       <span class="ml-2 text-sm text-gray-600">
                         <template v-if="provider.reviewStats?.totalReviews > 0">
-                          {{ provider.reviewStats.averageRating.toFixed(1) }} 
-                          ({{ provider.reviewStats.totalReviews }} {{ provider.reviewStats.totalReviews === 1 ? 'review' : 'reviews' }})
+                          {{ provider.reviewStats.averageRating.toFixed(1) }}
+                          ({{ provider.reviewStats.totalReviews }} {{ provider.reviewStats.totalReviews === 1 ? 'review'
+                          : 'reviews' }})
                         </template>
                         <template v-else>
                           <span class="text-gray-400">No reviews yet</span>
@@ -319,12 +267,7 @@
                   <!-- Action Button -->
                   <router-link :to="{ name: 'provider-profile-view', params: { id: provider._id } }"
                     class="btn-primary w-full justify-center group-hover:shadow-lg transition-buttery">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
+                    <EyeIcon class="w-4 h-4 mr-2" />
                     View Profile & Book
                   </router-link>
                 </div>
@@ -335,9 +278,7 @@
           <!-- Enhanced Pagination -->
           <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 mt-8">
             <button v-if="currentPage > 1" @click="handlePageChange(currentPage - 1)" class="btn-secondary px-3 py-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
+              <ChevronLeftIcon class="w-4 h-4" />
             </button>
 
             <div class="flex space-x-1">
@@ -351,9 +292,7 @@
 
             <button v-if="currentPage < totalPages" @click="handlePageChange(currentPage + 1)"
               class="btn-secondary px-3 py-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
+              <ChevronRightIcon class="w-4 h-4" />
             </button>
           </div>
         </template>
@@ -363,6 +302,7 @@
 </template>
 
 <script setup>
+import { MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, XMarkIcon, DocumentIcon, CheckIcon, CurrencyDollarIcon, LanguageIcon, StarIcon, EyeIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, onMounted, computed } from 'vue'
 import axios from '@/plugins/axios'
 import { useRouter } from 'vue-router'
@@ -429,7 +369,7 @@ const getActiveSortsText = () => {
   if (sorts.experience) activeSorts.push(`Experience ${sorts.experience === 'asc' ? '↑' : '↓'}`)
   if (sorts.price) activeSorts.push(`Price ${sorts.price === 'asc' ? '↑' : '↓'}`)
   if (sorts.rating) activeSorts.push(`Rating ${sorts.rating === 'asc' ? '↑' : '↓'}`)
-  
+
   return activeSorts.length > 0 ? `Sorted by: ${activeSorts.join(', ')}` : 'No sorting applied'
 }
 
@@ -465,12 +405,12 @@ const clearAll = () => {
   filters.specializations = ''
   filters.minPrice = ''
   filters.maxPrice = ''
-  
+
   // Clear sorts
   sorts.experience = null
   sorts.price = null
   sorts.rating = null
-  
+
   handleSearch()
 }
 

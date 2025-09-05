@@ -86,11 +86,7 @@
         <!-- Time Zone Info -->
         <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <ClockIcon class="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-gray-900">Time Zone</p>
                     <p class="text-gray-600 mt-1">
@@ -104,11 +100,7 @@
         <!-- Summary -->
         <div v-if="availableDaysCount > 0" class="bg-green-50 rounded-xl p-4 border border-green-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-green-900">Availability Summary</p>
                     <p class="text-green-700 mt-1">
@@ -123,11 +115,7 @@
         <!-- Help Text -->
         <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
             <div class="flex items-start space-x-3">
-                <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <InformationCircleIcon class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
                     <p class="font-medium text-blue-900">Flexibility is key</p>
                     <p class="text-blue-700 mt-1">
@@ -141,6 +129,7 @@
 </template>
 
 <script setup>
+import { ClockIcon, CheckCircleIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, watch, onMounted } from 'vue'
 
 const emit = defineEmits(['update:modelValue', 'validate'])

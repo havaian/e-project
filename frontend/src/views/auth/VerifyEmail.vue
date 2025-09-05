@@ -9,9 +9,7 @@
             <template v-else>
                 <div v-if="success" class="space-y-6">
                     <div class="rounded-full bg-green-100 h-24 w-24 flex items-center justify-center mx-auto">
-                        <svg class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
+                        <CheckIcon class="h-12 w-12 text-green-600" />
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
@@ -30,10 +28,7 @@
 
                 <div v-else class="space-y-6">
                     <div class="rounded-full bg-red-100 h-24 w-24 flex items-center justify-center mx-auto">
-                        <svg class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <XMarkIcon class="h-12 w-12 text-red-600" />
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
@@ -55,6 +50,7 @@
 </template>
 
 <script setup>
+import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '@/plugins/axios'

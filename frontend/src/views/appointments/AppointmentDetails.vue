@@ -213,10 +213,7 @@
                                 {{ getChatButtonText }}
                             </p>
                             <button @click="startChat" class="btn-primary flex items-center">
-                                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                </svg>
+                                <ChatBubbleLeftRightIcon class="h-5 w-5 mr-2" />
                                 Start Chat
                             </button>
                         </div>
@@ -242,10 +239,7 @@
                                         </h3>
                                         <button type="button" @click="showFollowUpModal = false"
                                             class="text-gray-400 hover:text-gray-600 transition-colors">
-                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
+                                            <XMarkIcon class="h-6 w-6" />
                                         </button>
                                     </div>
 
@@ -299,6 +293,7 @@
 </template>
 
 <script setup>
+import { ChatBubbleLeftRightIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { format, parseISO, differenceInYears, isWithinInterval, subMinutes, addMinutes } from 'date-fns'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

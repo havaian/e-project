@@ -12,18 +12,12 @@
                         <!-- Search Icon -->
                         <button
                             class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                            <MagnifyingGlassIcon class="w-5 h-5" />
                         </button>
                         <!-- Compose Icon -->
                         <button
                             class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
+                            <PlusIcon class="w-5 h-5" />
                         </button>
                     </div>
                 </div>
@@ -41,10 +35,7 @@
                 <template v-else>
                     <div v-if="conversations.length === 0" class="p-12 text-center">
                         <div class="mx-auto h-16 w-16 text-gray-400 mb-4">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
+                            <ChatBubbleLeftRightIcon class="w-16 h-16" />
                         </div>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No conversations yet</h3>
                         <p class="text-gray-500">Start chatting by booking an appointment or responding to messages</p>
@@ -92,12 +83,8 @@
                                     <!-- Message Status Icon -->
                                     <div v-if="conversation.lastMessage" class="flex-shrink-0">
                                         <!-- Show different icons based on message status -->
-                                        <svg v-if="conversation.lastMessage.sender === authStore.user._id"
-                                            class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                clip-rule="evenodd" />
-                                        </svg>
+                                        <CheckIcon v-if="conversation.lastMessage.sender === authStore.user._id"
+                                            class="w-4 h-4 text-gray-400" />
                                     </div>
                                 </div>
 
@@ -106,18 +93,14 @@
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
                                         :class="getOtherParticipant(conversation).role === 'provider' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
                                         {{ getOtherParticipant(conversation).role === 'provider' ? 'Healthcare Provider'
-                                        : 'Client' }}
+                                            : 'Client' }}
                                     </span>
                                 </div>
                             </div>
 
                             <!-- Hover Arrow -->
                             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
+                                <ChevronRightIcon class="w-5 h-5 text-gray-400" />
                             </div>
                         </div>
                     </router-link>
@@ -128,6 +111,7 @@
 </template>
 
 <script setup>
+import { MagnifyingGlassIcon, PlusIcon, ChatBubbleLeftRightIcon, CheckIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format, isToday, isYesterday, formatDistanceToNow } from 'date-fns'
