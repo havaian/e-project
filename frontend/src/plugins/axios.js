@@ -16,10 +16,6 @@ const api = axios.create({
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
-    console.log("1");
-    console.log('Request interceptor - original data:', config.data);
-    console.log('Request interceptor - data type:', typeof config.data);
-    console.log('Request interceptor - is FormData:', config.data instanceof FormData);
     const authStore = useAuthStore()
     
     if (authStore.token) {
@@ -116,16 +112,6 @@ function shouldKeepEncoded(fieldName) {
 function processDataForSubmission(obj, parentKey = '') {
   if (!obj) return obj;
 
-  // ✅ FIXED: Handle File objects - return them as-is
-  if (obj instanceof File) {
-    return obj;
-  }
-
-  // ✅ FIXED: Handle FormData objects - return them as-is
-  if (obj instanceof FormData) {
-    return obj;
-  }
-
   // Handle strings
   if (typeof obj === 'string') {
     // Don't decode if parent key suggests this should stay encoded
@@ -205,10 +191,6 @@ function processResponseData(obj) {
 // Request interceptor - clean data being sent
 api.interceptors.request.use(
   (config) => {
-    console.log("2");
-    console.log('Request interceptor - original data:', config.data);
-    console.log('Request interceptor - data type:', typeof config.data);
-    console.log('Request interceptor - is FormData:', config.data instanceof FormData);
     // Add auth token if available
     const authStore = useAuthStore()
     if (authStore.token) {
@@ -216,9 +198,7 @@ api.interceptors.request.use(
     }
 
     // Process request data for POST, PUT, PATCH requests
-    if (config.data && 
-        ['post', 'put', 'patch'].includes(config.method?.toLowerCase()) && 
-        !(config.data instanceof FormData)) {
+    if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase())) {
       config.data = processDataForSubmission(config.data);
     }
 
@@ -235,10 +215,6 @@ api.interceptors.response.use(
   (response) => {
     // Process response data to decode HTML entities selectively
     if (response.data) {
-      console.log("3");
-      console.log('Request interceptor - original data:', response.data);
-      console.log('Request interceptor - data type:', typeof response.data);
-      console.log('Request interceptor - is FormData:', response.data instanceof FormData);
       response.data = processResponseData(response.data);
     }
 
@@ -267,4 +243,43 @@ api.interceptors.response.use(
   }
 )
 
+// Create a separate axios instance for file uploads (no data processing)
+const uploadApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || '/api',
+  timeout: 30000,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+})
+
+// Simple interceptor for uploads - only adds auth, no data processing
+uploadApi.interceptors.request.use(
+  (config) => {
+    const authStore = useAuthStore()
+    if (authStore.token) {
+      config.headers.Authorization = `Bearer ${authStore.token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// Simple response interceptor for uploads - only handles auth errors
+uploadApi.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const authStore = useAuthStore()
+    if (error.response?.status === 401 && authStore.token) {
+      await authStore.logout()
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
+
 export default api
+export { uploadApi }

@@ -403,7 +403,7 @@ import { XMarkIcon, PhotoIcon, CameraIcon, UserIcon, DevicePhoneMobileIcon, Excl
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import axios from '@/plugins/axios'
+import axios, { uploadApi } from '@/plugins/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -628,7 +628,6 @@ const changePassword = async () => {
 }
 
 // Enhanced photo upload handler
-// Test photo upload with vanilla fetch to bypass all axios processing
 const handlePhotoUpload = async (event) => {
     const file = event.target.files[0]
     if (!file) return
@@ -647,59 +646,25 @@ const handlePhotoUpload = async (event) => {
         return
     }
 
-    console.log('File details before upload:', {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        constructor: file.constructor.name
-    });
-
     const formDataUpload = new FormData()
     formDataUpload.append('photo', file)
-    
-    // Log FormData contents
-    console.log('FormData entries:');
-    for (let [key, value] of formDataUpload.entries()) {
-        console.log(`${key}:`, value);
-        if (value instanceof File) {
-            console.log(`  File name: ${value.name}, size: ${value.size}, type: ${value.type}`);
-        }
-    }
 
     try {
         avatarUploading.value = true
         
-        // Use vanilla fetch to bypass all axios interceptors
-        const response = await fetch(`${import.meta.env.VITE_API_URL || '/api'}/users/avatars/upload-photo`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${authStore.token}`
-                // Don't set Content-Type - let browser handle it
-            },
-            body: formDataUpload
-        });
+        // Use the clean uploadApi instance instead of the main axios instance
+        const response = await uploadApi.post('/users/avatars/upload-photo', formDataUpload)
 
-        console.log('Response status:', response.status);
-        console.log('Response headers:', [...response.headers.entries()]);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response text:', errorText);
-            throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log('Success response:', data);
-
-        if (data.success) {
-            formData.profilePicture = data.profilePicture
-            alert('Photo uploaded successfully!');
+        if (response.data.success) {
+            formData.profilePicture = response.data.profilePicture
+            console.log('Photo uploaded successfully:', response.data.profilePicture)
         } else {
-            throw new Error(data.message || 'Upload failed')
+            throw new Error(response.data.message || 'Upload failed')
         }
     } catch (error) {
         console.error('Error uploading photo:', error)
-        alert(`Error uploading photo: ${error.message}`)
+        const errorMessage = error.response?.data?.message || 'Error uploading photo. Please try again.'
+        alert(errorMessage)
     } finally {
         avatarUploading.value = false
         // Clear file input
