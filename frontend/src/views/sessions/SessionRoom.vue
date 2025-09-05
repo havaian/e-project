@@ -145,8 +145,8 @@
                     Are you sure you want to end this session?
                     {{
                         isProvider ?
-                        'You\'ll be asked to provide a summary and recommendations for the patient.' : 
-                        'The session recording and notes will be saved to your appointment history.'
+                        "You\'ll be asked to provide a summary and recommendations for the patient." : 
+                        "The session recording and notes will be saved to your appointment history."
                     }}
                 </p>
                 <div class="flex justify-end space-x-3">
