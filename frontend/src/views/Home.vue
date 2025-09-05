@@ -20,7 +20,7 @@
         <div class="mb-12 slide-in">
           <div class="flex items-center justify-center mb-8">
             <div class="relative">
-              <div class="float-element glow-effect">
+              <div class="float-element">
                 <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="80" height="80" class="w-20 h-20" />
               </div>
             </div>
@@ -52,7 +52,7 @@
           <!-- Action Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
             <router-link to="/providers"
-              class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-buttery shadow-lg glow-effect">
+              class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-buttery shadow-lg">
               Find a Provider
             </router-link>
             <router-link to="/register"
@@ -193,7 +193,7 @@
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
           <router-link to="/register"
-            class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-buttery shadow-lg glow-effect">
+            class="px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-buttery shadow-lg">
             Get Started Today
           </router-link>
           <router-link to="/providers"
@@ -261,10 +261,6 @@ const appTitle3 = import.meta.env.VITE_APP_TITLE_3
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.glow-effect {
-  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
 }
 
 .card-hover {

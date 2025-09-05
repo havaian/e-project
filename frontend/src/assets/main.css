@@ -213,11 +213,6 @@
     -webkit-text-fill-color: transparent;
   }
 
-  /* Glow effects with brand colors */
-  .glow-effect {
-    box-shadow: 0 20px 40px color-mix(in srgb, var(--color-brand-1) 15%, transparent);
-  }
-
   .glow-green {
     box-shadow: 0 20px 40px rgba(var(--color-success), 0.15);
   }

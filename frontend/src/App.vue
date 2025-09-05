@@ -93,10 +93,6 @@ body {
   }
 }
 
-.glow-effect {
-  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
-}
-
 .card-hover {
   transition: all 0.3s ease;
 }
