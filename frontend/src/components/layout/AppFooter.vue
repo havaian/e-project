@@ -118,7 +118,7 @@
         <!-- Trust Badges -->
         <div class="flex items-center space-x-4 mt-4 md:mt-0">
           <div class="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
-            <ShieldCheckIcon class="w-4 h-4 text-success" />
+            <CheckBadgeIcon class="w-4 h-4 text-success" />
             <span class="text-xs text-gray-300">SSL Secured</span>
           </div>
           <div class="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
@@ -131,7 +131,7 @@
 </template>
 
 <script setup>
-import { PhoneIcon, EnvelopeIcon, CheckCircleIcon, ShieldCheckIcon } from "@heroicons/vue/24/outline";
+import { PhoneIcon, EnvelopeIcon, CheckBadgeIcon, ShieldCheckIcon } from "@heroicons/vue/24/outline";
 // Import environment variables
 const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 const appTitle1 = import.meta.env.VITE_APP_TITLE_1
