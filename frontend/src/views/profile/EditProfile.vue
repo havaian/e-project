@@ -63,7 +63,7 @@
 
                                     <!-- Remove Photo Option -->
                                     <div
-                                        v-if="formData.profilePicture && !formData.profilePicture.includes('ui-avatars.com')">
+                                        v-if="formData.profilePicture">
                                         <button type="button" @click="handleRemovePhoto" :disabled="avatarUploading"
                                             class="text-sm text-red-600 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
                                             Remove Photo
