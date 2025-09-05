@@ -58,16 +58,14 @@
                                             <CameraIcon class="w-4 h-4 mr-2" />
                                             {{ avatarUploading ? 'Uploading...' : 'Upload' }}
                                         </button>
+                                        <!-- Remove Photo Option -->
+                                        <div
+                                            v-if="formData.profilePicture">
+                                            <button type="button" @click="handleRemovePhoto" :disabled="avatarUploading" class="text-sm text-red-600 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <CameraIcon class="w-6 h-6 ml-2" />
+                                            </button>
+                                        </div>
                                         <p class="text-sm text-gray-500 mt-1">JPG, PNG, WebP up to 2MB</p>
-                                    </div>
-
-                                    <!-- Remove Photo Option -->
-                                    <div
-                                        v-if="formData.profilePicture">
-                                        <button type="button" @click="handleRemovePhoto" :disabled="avatarUploading"
-                                            class="text-sm text-red-600 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            Remove Photo
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -352,7 +350,7 @@
 </template>
 
 <script setup>
-import { XMarkIcon, PhotoIcon, CameraIcon, UserIcon, DevicePhoneMobileIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { XMarkIcon, PhotoIcon, CameraIcon, UserIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
