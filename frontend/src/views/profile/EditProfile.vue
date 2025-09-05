@@ -654,11 +654,7 @@ const handlePhotoUpload = async (event) => {
     try {
         avatarUploading.value = true
         // Updated endpoint to match new avatar routes
-        const response = await axios.post('/users/avatars/upload-photo', formDataUpload, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
+        const response = await axios.post('/users/avatars/upload-photo', formDataUpload)
 
         if (response.data.success) {
             formData.profilePicture = response.data.profilePicture
