@@ -109,7 +109,7 @@
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center mr-3">
-                                    <DevicePhoneIcon class="w-4 h-4 text-red-500" />
+                                    <DevicePhoneMobileIcon class="w-4 h-4 text-red-500" />
                                 </div>
                                 <h2 class="text-xl font-semibold text-gray-900">Emergency Contact</h2>
                             </div>
@@ -401,7 +401,7 @@
 </template>
 
 <script setup>
-import { XMarkIcon, PhotoIcon, UserIcon, DevicePhoneIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { XMarkIcon, PhotoIcon, UserIcon, DevicePhoneMobileIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

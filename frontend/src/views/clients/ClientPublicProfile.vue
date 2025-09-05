@@ -270,7 +270,7 @@
                             <div v-if="showEmergencyContact && student.emergencyContact?.name"
                                 class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                    <DevicePhoneIcon class="w-5 h-5 mr-2 text-red-600" />
+                                    <DevicePhoneMobileIcon class="w-5 h-5 mr-2 text-red-600" />
                                     Emergency Contact
                                 </h3>
                                 <div class="space-y-2 text-sm">
@@ -352,7 +352,7 @@
 </template>
 
 <script setup>
-import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, ChatBubbleLeftRightIcon, UserIcon, LockClosedIcon, StarIcon, ChartBarIcon, DevicePhoneIcon, ArrowTrendingUpIcon, UserPlusIcon } from "@heroicons/vue/24/outline";
+import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, ChatBubbleLeftRightIcon, UserIcon, LockClosedIcon, StarIcon, ChartBarIcon, DevicePhoneMobileIcon, ArrowTrendingUpIcon, UserPlusIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
