@@ -247,11 +247,7 @@ api.interceptors.response.use(
 const uploadApi = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: 30000,
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
+  withCredentials: true
 })
 
 // Simple interceptor for uploads - only adds auth, no data processing
