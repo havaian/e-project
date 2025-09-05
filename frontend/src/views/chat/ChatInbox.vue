@@ -47,7 +47,7 @@
                         <div class="flex items-center space-x-4">
                             <!-- Enhanced Avatar with Online Status -->
                             <div class="relative flex-shrink-0">
-                                <img :src="`/api${getOtherParticipant(conversation).profilePicture}`"
+                                <img :src="`/api${getOtherParticipant(conversation)?.profilePicture} : /images/user-placeholder.jpg`"
                                     :alt="getOtherParticipant(conversation).firstName"
                                     class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-buttery" />
                                 <!-- Online Status Indicator (you could add this based on real-time data) -->

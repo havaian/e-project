@@ -32,7 +32,7 @@
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Provider</h3>
                             <div class="flex items-center space-x-4">
-                                <img :src="`/api${appointment.provider.profilePicture}`"
+                                <img :src="`/api${appointment.provider?.profilePicture}`"
                                     :alt="appointment.provider.firstName" class="h-12 w-12 rounded-full object-cover" />
                                 <div>
                                     <p class="font-medium text-gray-900">
@@ -51,7 +51,7 @@
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Client</h3>
                             <div class="flex items-center space-x-4">
-                                <img :src="`/api${appointment.client.profilePicture}`"
+                                <img :src="`/api${appointment.client?.profilePicture} : /images/user-placeholder.jpg`"
                                     :alt="appointment.client.firstName" class="h-12 w-12 rounded-full object-cover" />
                                 <div>
                                     <p class="font-medium text-gray-900">

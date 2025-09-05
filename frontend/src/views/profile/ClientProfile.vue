@@ -84,7 +84,7 @@
                 <div v-for="provider in associatedProviders" :key="provider._id"
                   class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div class="flex items-center space-x-3">
-                    <img :src="`/api${provider.profilePicture}`" :alt="provider.firstName"
+                    <img :src="`/api${provider?.profilePicture} : /images/user-placeholder.jpg`" :alt="provider.firstName"
                       class="h-12 w-12 rounded-full object-cover">
                     <div>
                       <p class="font-medium text-gray-900">{{ provider.firstName }} {{ provider.lastName }}</p>
