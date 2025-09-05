@@ -116,6 +116,16 @@ function shouldKeepEncoded(fieldName) {
 function processDataForSubmission(obj, parentKey = '') {
   if (!obj) return obj;
 
+  // ✅ FIXED: Handle File objects - return them as-is
+  if (obj instanceof File) {
+    return obj;
+  }
+
+  // ✅ FIXED: Handle FormData objects - return them as-is
+  if (obj instanceof FormData) {
+    return obj;
+  }
+
   // Handle strings
   if (typeof obj === 'string') {
     // Don't decode if parent key suggests this should stay encoded
