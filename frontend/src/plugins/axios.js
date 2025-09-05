@@ -16,6 +16,10 @@ const api = axios.create({
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
+    console.log("1");
+    console.log('Request interceptor - original data:', config.data);
+    console.log('Request interceptor - data type:', typeof config.data);
+    console.log('Request interceptor - is FormData:', config.data instanceof FormData);
     const authStore = useAuthStore()
     
     if (authStore.token) {
@@ -191,6 +195,10 @@ function processResponseData(obj) {
 // Request interceptor - clean data being sent
 api.interceptors.request.use(
   (config) => {
+    console.log("2");
+    console.log('Request interceptor - original data:', config.data);
+    console.log('Request interceptor - data type:', typeof config.data);
+    console.log('Request interceptor - is FormData:', config.data instanceof FormData);
     // Add auth token if available
     const authStore = useAuthStore()
     if (authStore.token) {
@@ -215,6 +223,10 @@ api.interceptors.response.use(
   (response) => {
     // Process response data to decode HTML entities selectively
     if (response.data) {
+      console.log("3");
+      console.log('Request interceptor - original data:', response.data);
+      console.log('Request interceptor - data type:', typeof response.data);
+      console.log('Request interceptor - is FormData:', response.data instanceof FormData);
       response.data = processResponseData(response.data);
     }
 

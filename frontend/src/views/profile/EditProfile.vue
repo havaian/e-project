@@ -11,10 +11,10 @@
             <div class="card-element overflow-hidden">
                 <div class="p-8">
                     <!-- Header -->
-                    <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center justify-between mb-4">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
-                            <p class="text-gray-600 mt-1">Update your information and preferences</p>
+                            <p class="text-gray-600 mt-4">Update your information and preferences</p>
                         </div>
                         <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
                             class="text-gray-500 hover:text-gray-700">
@@ -51,16 +51,14 @@
                                 <!-- Avatar Actions -->
                                 <div class="flex-1">
                                     <div class="space-y-3">
-                                        <input type="file" accept="image/*" @change="handlePhotoUpload"
-                                            class="hidden" ref="photoInput">
+                                        <input type="file" accept="image/*" @change="handlePhotoUpload" class="hidden" ref="photoInput">
                                         <button type="button" @click="$refs.photoInput?.click()"
                                             :disabled="avatarUploading"
                                             class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <PhotoIcon class="w-4 h-4 mr-2" />
-                                            {{ avatarUploading ? 'Uploading...' : 'Upload Photo' }}
+                                            <CameraIcon class="w-4 h-4 mr-2" />
+                                            {{ avatarUploading ? 'Uploading...' : 'Upload' }}
                                         </button>
-                                        <p class="text-sm text-gray-500 mt-1">JPG, PNG, WebP up to 2MB. Professional
-                                            photo recommended.</p>
+                                        <p class="text-sm text-gray-500 mt-1">JPG, PNG, WebP up to 2MB</p>
                                     </div>
 
                                     <!-- Remove Photo Option -->
@@ -401,7 +399,7 @@
 </template>
 
 <script setup>
-import { XMarkIcon, PhotoIcon, UserIcon, DevicePhoneMobileIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { XMarkIcon, PhotoIcon, CameraIcon, UserIcon, DevicePhoneMobileIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
