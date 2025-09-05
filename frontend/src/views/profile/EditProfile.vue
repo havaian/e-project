@@ -662,7 +662,6 @@ const handlePhotoUpload = async (event) => {
 
         if (response.data.success) {
             formData.profilePicture = response.data.profilePicture
-            console.log('Photo uploaded successfully')
         } else {
             throw new Error(response.data.message || 'Upload failed')
         }
@@ -676,33 +675,6 @@ const handlePhotoUpload = async (event) => {
         if (event.target) {
             event.target.value = ''
         }
-    }
-}
-
-// Avatar generation handler for clients
-const handleAvatarGeneration = async () => {
-    if (!formData.firstName || !formData.lastName) {
-        alert('Please enter your first and last name before generating an avatar')
-        return
-    }
-
-    try {
-        avatarUploading.value = true
-        // Updated endpoint to match new avatar routes
-        const response = await axios.post('/users/avatars/generate-avatar')
-
-        if (response.data.success) {
-            formData.profilePicture = response.data.profilePicture
-            console.log('Avatar generated successfully')
-        } else {
-            throw new Error(response.data.message || 'Avatar generation failed')
-        }
-    } catch (error) {
-        console.error('Error generating avatar:', error)
-        const errorMessage = error.response?.data?.message || 'Error generating avatar. Please try again.'
-        alert(errorMessage)
-    } finally {
-        avatarUploading.value = false
     }
 }
 
@@ -721,12 +693,6 @@ const handleRemovePhoto = async () => {
         if (response.data.success) {
             // Clear the local form data
             formData.profilePicture = ''
-            console.log('Avatar removed successfully')
-
-            // If it's a client, generate a new default avatar
-            if (authStore.isClient && formData.firstName && formData.lastName) {
-                await handleAvatarGeneration()
-            }
         } else {
             throw new Error(response.data.message || 'Failed to remove avatar')
         }
