@@ -67,7 +67,10 @@
                                     }}</span>
                                 </div>
                                 <span class="text-sm font-medium text-gray-700">{{ authStore.user?.firstName }}</span>
-                                <ChevronDownIcon class="h-4 w-4 text-gray-500" />
+                                <ChevronDownIcon :class="[
+                                    'h-4 w-4 text-gray-500 transition-transform duration-200',
+                                    showProfileMenu ? 'rotate-180' : ''
+                                ]" />
                             </button>
                             <div v-if="showProfileMenu"
                                 class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-sky-500/10">
