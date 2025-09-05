@@ -4,14 +4,14 @@
     <div class="relative min-h-screen element-gradient overflow-hidden">
       <!-- Floating Educational Icons -->
       <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute top-20 left-10 float-element opacity-20">
-          <BookOpenIcon class="text-sky-500 w-6 h-6" />
+        <div class="absolute top-20 left-20 float-element opacity-20">
+          <BookOpenIcon class="text-sky-500 w-12 h-12" />
         </div>
-        <div class="absolute top-32 right-20 float-element opacity-15" style="animation-delay: -1s;">
-          <AcademicCapIcon class="text-success w-6 h-6" />
+        <div class="absolute top-32 right-40 float-element opacity-15" style="animation-delay: -1s;">
+          <AcademicCapIcon class="text-success w-12 h-12" />
         </div>
-        <div class="absolute bottom-32 left-32 float-element opacity-10" style="animation-delay: -2s;">
-          <LightBulbIcon class="text-emerald-500 w-6 h-6" />
+        <div class="absolute bottom-40 left-48 float-element opacity-10" style="animation-delay: -2s;">
+          <LightBulbIcon class="text-emerald-500 w-12 h-12" />
         </div>
       </div>
 
