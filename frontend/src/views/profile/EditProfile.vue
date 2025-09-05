@@ -473,7 +473,7 @@ const isFormValid = computed(() => {
 
 // Available languages list
 const availableLanguages = [
-    "English", "Русский", "O\'zbek", "Українська", "Қазақша",
+    "English", "Русский", "O'zbek", "Українська", "Қазақша",
     "Español", "Français", "Deutsch", "العربية", "中文", "日本語", "한국어"
 ]
 
