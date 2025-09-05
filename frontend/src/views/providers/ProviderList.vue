@@ -182,16 +182,16 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div v-for="provider in providers" :key="provider._id"
-                class="card-element overflow-hidden group hover:shadow-lg transition-buttery duration-300">
+                class="card-element overflow-hidden group transition-buttery duration-300">
                 <div class="p-6">
                   <!-- Provider Header -->
                   <div class="flex items-start space-x-4 mb-4">
                     <div class="relative flex-shrink-0">
                       <img :src="provider.profilePicture ? `/api${provider.profilePicture}` : '/images/user-placeholder.jpg'" :alt="provider.firstName"
-                        class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-buttery" />
+                        class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 transition-buttery" />
                     </div>
                     <div class="flex-1 min-w-0">
-                      <h3 class="text-lg font-semibold text-gray-900 group-hover:text-brand-1 transition-colors">
+                      <h3 class="text-lg font-semibold text-gray-900 transition-colors">
                         Dr. {{ provider.firstName }} {{ provider.lastName }}
                       </h3>
                       <div class="mt-2 flex flex-wrap gap-2">
