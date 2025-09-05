@@ -34,7 +34,7 @@
                             <div class="flex items-center mt-2">
                                 <ArrowTrendingUpIcon v-if="(dashboardSummary?.currentMonth?.growth || 0) >= 0"
                                     class="w-4 h-4 text-green-500 mr-1" />
-                                <TrendingDownIcon v-else class="w-4 h-4 text-red-500 mr-1" />
+                                <ArrowTrendingDownIcon v-else class="w-4 h-4 text-red-500 mr-1" />
                                 <span class="text-sm font-medium"
                                     :class="(dashboardSummary?.currentMonth?.growth || 0) >= 0 ? 'text-green-600' : 'text-red-600'">
                                     {{ Math.abs(dashboardSummary?.currentMonth?.growth || 0).toFixed(1) }}%
@@ -267,7 +267,7 @@
 </template>
 
 <script setup>
-import { PencilIcon, CalendarDaysIcon, ArrowTrendingUpIcon, TrendingDownIcon, CurrencyDollarIcon, ClockIcon, ExclamationCircleIcon, CheckCircleIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from "@heroicons/vue/24/outline";
+import { PencilIcon, CalendarDaysIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, CurrencyDollarIcon, ClockIcon, ExclamationCircleIcon, CheckCircleIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
