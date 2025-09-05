@@ -5,7 +5,7 @@
       <div class="p-6 sm:p-8 border-b border-gray-200">
         <div class="flex flex-col sm:flex-row items-center justify-between">
           <div class="flex flex-col sm:flex-row items-center">
-            <img :src="`/api${user?.profilePicture}`" :alt="user?.firstName"
+            <img :src="`/api${user.profilePicture}`" :alt="user?.firstName"
               class="h-32 w-32 rounded-full object-cover" />
             <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
               <h1 class="text-2xl font-bold text-gray-900">
@@ -84,7 +84,7 @@
                 <div v-for="provider in associatedProviders" :key="provider._id"
                   class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div class="flex items-center space-x-3">
-                    <img :src="`/api${provider?.profilePicture} : /images/user-placeholder.jpg`" :alt="provider.firstName"
+                    <img :src="`/api${provider.profilePicture} : /images/user-placeholder.jpg`" :alt="provider.firstName"
                       class="h-12 w-12 rounded-full object-cover">
                     <div>
                       <p class="font-medium text-gray-900">{{ provider.firstName }} {{ provider.lastName }}</p>

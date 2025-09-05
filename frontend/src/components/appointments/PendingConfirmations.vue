@@ -33,7 +33,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
                             <div class="flex-shrink-0">
-                                <img v-if="appointment.client?.profilePicture" :src="appointment.client?.profilePicture"
+                                <img v-if="appointment.client.profilePicture" :src="appointment.client.profilePicture"
                                     :alt="`${appointment.client.firstName} ${appointment.client.lastName}`"
                                     class="h-10 w-10 rounded-full object-cover" />
                                 <div v-else class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">

@@ -12,7 +12,7 @@
                 <div class="p-6 sm:p-8 border-b border-gray-200">
                     <div class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex flex-col sm:flex-row items-center">
-                            <img :src="`/api${provider?.profilePicture} : /images/user-placeholder.jpg`"
+                            <img :src="`/api${provider.profilePicture} : /images/user-placeholder.jpg`"
                                 :alt="provider.firstName" class="h-32 w-32 rounded-full object-cover" />
                             <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
                                 <h1 class="text-3xl font-bold text-gray-900">
@@ -171,7 +171,7 @@
                                     <div v-for="review in reviews.slice(0, showAllReviews ? reviews.length : 3)"
                                         :key="review._id" class="border-b border-gray-100 pb-6 last:border-b-0">
                                         <div class="flex items-start space-x-4">
-                                            <img :src="`/api${review.client?.profilePicture} : /images/user-placeholder.jpg`"
+                                            <img :src="`/api${review.client.profilePicture} : /images/user-placeholder.jpg`"
                                                 :alt="review.client?.firstName"
                                                 class="h-10 w-10 rounded-full object-cover">
                                             <div class="flex-1">
@@ -346,7 +346,7 @@
                                 <div class="space-y-3">
                                     <div v-for="similar in similarProviders.slice(0, 3)" :key="similar._id"
                                         class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                                        <img :src="`/api${similar?.profilePicture} : /images/user-placeholder.jpg`"
+                                        <img :src="`/api${similar.profilePicture} : /images/user-placeholder.jpg`"
                                             :alt="similar.firstName" class="h-10 w-10 rounded-full object-cover">
                                         <div class="flex-1">
                                             <p class="font-medium text-gray-900 text-sm">{{ similar.firstName }} {{

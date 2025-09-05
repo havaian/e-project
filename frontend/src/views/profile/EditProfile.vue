@@ -36,7 +36,7 @@
                             <div class="flex items-start space-x-6">
                                 <!-- Avatar Display -->
                                 <div class="relative">
-                                    <img :src="`/api${formData?.profilePicture} : /images/user-placeholder.jpg`"
+                                    <img :src="`/api${formData.profilePicture} : /images/user-placeholder.jpg`"
                                         :alt="formData.firstName"
                                         class="h-24 w-24 rounded-full object-cover border-4 border-white shadow-md">
                                     <!-- Loading Overlay -->
@@ -65,7 +65,7 @@
 
                                     <!-- Remove Photo Option -->
                                     <div
-                                        v-if="formData?.profilePicture && !formData?.profilePicture.includes('ui-avatars.com')">
+                                        v-if="formData.profilePicture && !formData.profilePicture.includes('ui-avatars.com')">
                                         <button type="button" @click="handleRemovePhoto" :disabled="avatarUploading"
                                             class="text-sm text-red-600 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
                                             Remove Photo
@@ -526,7 +526,7 @@ const populateFormData = (userData) => {
     formData.lastName = userData.lastName || ''
     formData.phone = userData.phone || ''
     formData.email = userData.email || ''
-    formData?.profilePicture = userData?.profilePicture || ''
+    formData.profilePicture = userData.profilePicture || ''
     formData.emergencyContact = userData.emergencyContact || {
         name: '', relationship: '', phone: ''
     }
@@ -661,7 +661,7 @@ const handlePhotoUpload = async (event) => {
         })
 
         if (response.data.success) {
-            formData?.profilePicture = response.data?.profilePicture
+            formData.profilePicture = response.data.profilePicture
         } else {
             throw new Error(response.data.message || 'Upload failed')
         }
@@ -692,7 +692,7 @@ const handleRemovePhoto = async () => {
 
         if (response.data.success) {
             // Clear the local form data
-            formData?.profilePicture = ''
+            formData.profilePicture = ''
         } else {
             throw new Error(response.data.message || 'Failed to remove avatar')
         }

@@ -187,7 +187,7 @@
                   <!-- Provider Header -->
                   <div class="flex items-start space-x-4 mb-4">
                     <div class="relative flex-shrink-0">
-                      <img :src="`/api${provider?.profilePicture} : /images/user-placeholder.jpg`" :alt="provider.firstName"
+                      <img :src="`/api${provider.profilePicture} : /images/user-placeholder.jpg`" :alt="provider.firstName"
                         class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-buttery" />
                     </div>
                     <div class="flex-1 min-w-0">

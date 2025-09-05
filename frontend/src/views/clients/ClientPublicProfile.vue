@@ -12,7 +12,7 @@
                 <div class="p-6 sm:p-8 border-b border-gray-200">
                     <div class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex flex-col sm:flex-row items-center">
-                            <img :src="`/api${student?.profilePicture} : /images/user-placeholder.jpg`" :alt="student.firstName"
+                            <img :src="`/api${student.profilePicture} : /images/user-placeholder.jpg`" :alt="student.firstName"
                                 class="h-24 w-24 rounded-full object-cover" />
                             <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
                                 <h1 class="text-2xl font-bold text-gray-900">

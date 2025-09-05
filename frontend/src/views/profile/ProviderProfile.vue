@@ -11,7 +11,7 @@
       <div class="p-6 sm:p-8 border-b border-gray-200">
         <div class="flex flex-col sm:flex-row items-center justify-between">
           <div class="flex flex-col sm:flex-row items-center">
-            <img :src="`/api${user?.profilePicture} : /images/user-placeholder.jpg`" :alt="user?.firstName"
+            <img :src="`/api${user.profilePicture} : /images/user-placeholder.jpg`" :alt="user?.firstName"
               class="h-32 w-32 rounded-full object-cover" />
             <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
               <h1 class="text-2xl font-bold text-gray-900">
@@ -128,7 +128,7 @@
                 <div v-for="client in clients" :key="client._id"
                   class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div class="flex items-center space-x-3">
-                    <img :src="`/api${client?.profilePicture} : /images/user-placeholder.jpg`" :alt="client.firstName"
+                    <img :src="`/api${client.profilePicture} : /images/user-placeholder.jpg`" :alt="client.firstName"
                       class="h-10 w-10 rounded-full object-cover">
                     <div>
                       <p class="font-medium text-gray-900">{{ client.firstName }} {{ client.lastName }}</p>
