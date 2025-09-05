@@ -2,6 +2,11 @@
 node_modules/
 yarn.lock
 
+# Documents
+uploads/
+uploads/avatars/
+uploads/documents/
+
 # Environment variables
 .env
 .env.*
