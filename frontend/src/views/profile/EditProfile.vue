@@ -51,21 +51,29 @@
                                 <!-- Avatar Actions -->
                                 <div class="flex-1">
                                     <div class="space-y-3">
-                                        <input type="file" accept="image/*" @change="handlePhotoUpload" class="hidden" ref="photoInput">
-                                        <button type="button" @click="$refs.photoInput?.click()"
-                                            :disabled="avatarUploading"
-                                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <CameraIcon class="w-4 h-4 mr-2" />
-                                            {{ avatarUploading ? 'Uploading...' : 'Upload' }}
-                                        </button>
-                                        <!-- Remove Photo Option -->
-                                        <div
-                                            v-if="formData.profilePicture">
-                                            <button type="button" @click="handleRemovePhoto" :disabled="avatarUploading" class="text-sm text-red-600 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                                <CameraIcon class="w-6 h-6 ml-2" />
+                                        <!-- Upload and Remove buttons on same line -->
+                                        <div class="flex items-center gap-3">
+                                            <div>
+                                                <input type="file" accept="image/*" @change="handlePhotoUpload"
+                                                    class="hidden" ref="photoInput">
+                                                <button type="button" @click="$refs.photoInput?.click()"
+                                                    :disabled="avatarUploading"
+                                                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                    <CameraIcon class="w-4 h-4 mr-2" />
+                                                    {{ avatarUploading ? 'Uploading...' : 'Upload' }}
+                                                </button>
+                                            </div>
+
+                                            <!-- Remove Photo Button -->
+                                            <button v-if="formData.profilePicture" type="button"
+                                                @click="handleRemovePhoto" :disabled="avatarUploading"
+                                                class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <TrashIcon class="w-4 h-4 mr-1" />
+                                                Remove
                                             </button>
                                         </div>
-                                        <p class="text-sm text-gray-500 mt-1">JPG, PNG, WebP up to 2MB</p>
+
+                                        <p class="text-sm text-gray-500">JPG, PNG, WebP up to 2MB</p>
                                     </div>
                                 </div>
                             </div>
@@ -116,13 +124,16 @@
                                 </div>
 
                                 <div class="space-y-4">
-                                    <p class="text-sm text-gray-600">Select the areas you specialize in (at least 1 required)</p>
+                                    <p class="text-sm text-gray-600">Select the areas you specialize in (at least 1
+                                        required)</p>
 
                                     <!-- Validation Error Message -->
-                                    <div v-if="validationErrors.specializations" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <div v-if="validationErrors.specializations"
+                                        class="p-3 bg-red-50 border border-red-200 rounded-lg">
                                         <div class="flex">
                                             <ExclamationTriangleIcon class="w-5 h-5 text-red-400 mt-0.5 mr-2" />
-                                            <p class="text-sm text-red-800 font-medium">{{ validationErrors.specializations }}</p>
+                                            <p class="text-sm text-red-800 font-medium">{{
+                                                validationErrors.specializations }}</p>
                                         </div>
                                     </div>
 
@@ -130,11 +141,10 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div v-for="(specialization, index) in formData.specializations" :key="index"
                                             class="flex items-center space-x-3">
-                                            <select v-model="formData.specializations[index]" 
-                                                :class="[
-                                                    'input flex-1',
-                                                    validationErrors.specializations ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-                                                ]">
+                                            <select v-model="formData.specializations[index]" :class="[
+                                                'input flex-1',
+                                                validationErrors.specializations ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                                            ]">
                                                 <option value="">Select a specialization</option>
                                                 <option v-for="spec in getAvailableSpecializations(index)"
                                                     :key="spec.name" :value="spec.name">
@@ -142,15 +152,13 @@
                                                 </option>
                                             </select>
                                             <!-- Remove Button - Always show if more than 1, but disable if only 1 valid specialization -->
-                                            <button 
+                                            <button
                                                 v-if="formData.specializations.length > 1 || (formData.specializations.length === 1 && selectedSpecializations.length > 1)"
-                                                @click="removeSpecialization(index)" 
-                                                type="button"
-                                                :disabled="selectedSpecializations.length <= 1"
-                                                :class="[
+                                                @click="removeSpecialization(index)" type="button"
+                                                :disabled="selectedSpecializations.length <= 1" :class="[
                                                     'p-2 rounded-lg transition-colors',
-                                                    selectedSpecializations.length <= 1 
-                                                        ? 'text-gray-300 cursor-not-allowed' 
+                                                    selectedSpecializations.length <= 1
+                                                        ? 'text-gray-300 cursor-not-allowed'
                                                         : 'text-red-500 hover:text-red-700 hover:bg-red-50'
                                                 ]"
                                                 :title="selectedSpecializations.length <= 1 ? 'At least one specialization is required' : 'Remove this specialization'">
@@ -249,8 +257,10 @@
                                                 min="0" step="1000" class="input" placeholder="0" />
                                         </div>
                                         <div class="form-group">
-                                            <label for="sessionDuration" class="label">Session Duration (minutes)</label>
-                                            <select id="sessionDuration" v-model.number="formData.sessionDuration" class="input">
+                                            <label for="sessionDuration" class="label">Session Duration
+                                                (minutes)</label>
+                                            <select id="sessionDuration" v-model.number="formData.sessionDuration"
+                                                class="input">
                                                 <option value="30">30 minutes</option>
                                                 <option value="45">45 minutes</option>
                                                 <option value="60">60 minutes</option>
@@ -286,7 +296,7 @@
                                         <select v-model="newLanguage" class="flex-1 input">
                                             <option value="">Select a language</option>
                                             <option v-for="lang in availableLanguages" :key="lang" :value="lang">{{ lang
-                                            }}
+                                                }}
                                             </option>
                                         </select>
                                         <button type="button" @click="addLanguage"
@@ -332,13 +342,12 @@
                                 class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 Cancel
                             </router-link>
-                            <button type="submit" :disabled="loading || (authStore.isProvider && !isFormValid)"
-                                :class="[
-                                    'px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
-                                    loading || (authStore.isProvider && !isFormValid)
-                                        ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                ]">
+                            <button type="submit" :disabled="loading || (authStore.isProvider && !isFormValid)" :class="[
+                                'px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                                loading || (authStore.isProvider && !isFormValid)
+                                    ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            ]">
                                 {{ loading ? 'Saving...' : 'Save Changes' }}
                             </button>
                         </div>
@@ -402,16 +411,16 @@ const selectedSpecializations = computed(() => {
 // Form validation for providers
 const isFormValid = computed(() => {
     if (!authStore.isProvider) return true
-    
+
     // Clear validation errors first
     validationErrors.specializations = ''
-    
+
     // Check if at least one specialization is selected
     if (selectedSpecializations.value.length === 0) {
         validationErrors.specializations = 'At least one specialization is required'
         return false
     }
-    
+
     return true
 })
 
@@ -497,9 +506,9 @@ const removeSpecialization = (index) => {
     if (selectedSpecializations.value.length <= 1) {
         return
     }
-    
+
     formData.specializations.splice(index, 1)
-    
+
     // Validate after removal
     if (selectedSpecializations.value.length === 0) {
         validationErrors.specializations = 'At least one specialization is required'
@@ -594,7 +603,7 @@ const handlePhotoUpload = async (event) => {
 
     try {
         avatarUploading.value = true
-        
+
         // Use the clean uploadApi instance instead of the main axios instance
         const response = await uploadApi.post('/users/avatars/upload-photo', formDataUpload)
 
@@ -625,7 +634,7 @@ const handleRemovePhoto = async () => {
 
     try {
         avatarUploading.value = true
-        
+
         // Call backend to remove avatar file and update database
         const response = await axios.delete('/users/avatars/')
 
