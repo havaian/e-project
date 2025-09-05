@@ -58,7 +58,7 @@
                 <!-- Desktop profile menu -->
                 <div class="hidden sm:flex sm:items-center sm:space-x-4">
                     <template v-if="authStore.isAuthenticated">
-                        <div class="relative">
+                        <div class="relative" ref="profileMenuRef">
                             <button @click="toggleProfileMenu"
                                 class="flex items-center space-x-3 px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500/10 to-emerald-500/10 hover:from-sky-500/20 hover:to-emerald-500/20 transition-buttery duration-200 border border-sky-500/20">
                                 <div
@@ -68,7 +68,7 @@
                                 </div>
                                 <span class="text-sm font-medium text-gray-700">{{ authStore.user?.firstName }}</span>
                                 <ChevronDownIcon :class="[
-                                    'h-4 w-4 text-gray-500 transition-transform duration-200',
+                                    'h-4 w-4 text-gray-500 transition-transform duration-100',
                                     showProfileMenu ? 'rotate-180' : ''
                                 ]" />
                             </button>
@@ -109,7 +109,7 @@
         </div>
 
         <!-- Mobile menu -->
-        <div v-if="showMobileMenu" class="sm:hidden bg-white/95 backdrop-blur-md border-t border-sky-500/10">
+        <div v-if="showMobileMenu" class="sm:hidden bg-white/95 backdrop-blur-md border-t border-sky-500/10" ref="mobileMenuRef">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <router-link to="/"
                     class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
@@ -184,7 +184,7 @@
 
 <script setup>
 import { Bars3Icon, XMarkIcon, ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon } from "@heroicons/vue/24/outline";
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -193,6 +193,8 @@ const authStore = useAuthStore()
 
 const showMobileMenu = ref(false)
 const showProfileMenu = ref(false)
+const profileMenuRef = ref(null)
+const mobileMenuRef = ref(null)
 
 const appTitle = import.meta.env.VITE_APP_TITLE
 const appTitle1 = import.meta.env.VITE_APP_TITLE_1  
@@ -220,13 +222,26 @@ const logout = async () => {
     router.push('/')
 }
 
-// Close menus when clicking outside
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.relative')) {
+// Click outside handler
+const handleClickOutside = (event) => {
+    // Close profile menu if clicking outside of it
+    if (profileMenuRef.value && !profileMenuRef.value.contains(event.target)) {
         showProfileMenu.value = false
     }
-    if (!e.target.closest('nav')) {
+    
+    // Close mobile menu if clicking outside of it
+    if (mobileMenuRef.value && !mobileMenuRef.value.contains(event.target)) {
         showMobileMenu.value = false
     }
+}
+
+// Setup click outside listener
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+})
+
+// Cleanup listener
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
 })
 </script>
