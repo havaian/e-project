@@ -199,11 +199,7 @@ api.interceptors.request.use(
 
     // Process request data for POST, PUT, PATCH requests
     if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase())) {
-      console.log('Original request data:', config.data);
-      
       config.data = processDataForSubmission(config.data);
-      
-      console.log('Cleaned request data:', config.data);
     }
 
     return config
@@ -219,11 +215,7 @@ api.interceptors.response.use(
   (response) => {
     // Process response data to decode HTML entities selectively
     if (response.data) {
-      console.log('Original response data:', response.data);
-      
       response.data = processResponseData(response.data);
-      
-      console.log('Cleaned response data:', response.data);
     }
 
     return response
