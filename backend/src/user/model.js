@@ -188,11 +188,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    emergencyContact: {
-        name: String,
-        relationship: String,
-        phone: String
-    },
 
     // Agreement to terms
     termsAccepted: {
@@ -368,11 +363,6 @@ userSchema.methods.getProfileForViewer = async function(viewerRole, viewerId) {
     
     // Check if viewer has appointment with this user
     const hasAppointment = await this.hasAppointmentWith(viewerId);
-    
-    // Emergency contact only visible to associated providers/clients with appointments
-    if (!hasAppointment) {
-        delete profile.emergencyContact;
-    }
     
     return profile;
 };

@@ -64,12 +64,6 @@ exports.validateUserInput = (data) => {
     const clientSchema = {
         // Client-specific optional fields
         backgroundInfo: Joi.string().optional(),
-
-        emergencyContact: Joi.object({
-            name: Joi.string().trim().min(2).max(100),
-            relationship: Joi.string().trim().min(2).max(50),
-            phone: Joi.string().trim().pattern(new RegExp('^[+]?[0-9]{10,15}$'))
-        }).optional(),
     };
 
     // Define provider-specific schema

@@ -103,53 +103,6 @@
                             </div>
                         </div>
 
-                        <!-- Emergency Contact -->
-                        <div class="bg-gray-50/50 rounded-2xl p-6">
-                            <div class="flex items-center mb-6">
-                                <div class="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center mr-3">
-                                    <DevicePhoneMobileIcon class="w-4 h-4 text-red-500" />
-                                </div>
-                                <h2 class="text-xl font-semibold text-gray-900">Emergency Contact</h2>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div class="form-group">
-                                    <label for="emergencyName" class="label">Contact Name</label>
-                                    <input id="emergencyName" v-model="formData.emergencyContact.name" type="text"
-                                        class="input" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="emergencyRelationship" class="label">Relationship</label>
-                                    <select id="emergencyRelationship" v-model="formData.emergencyContact.relationship"
-                                        class="input">
-                                        <option value="">Select relationship</option>
-                                        <option value="parent">Parent</option>
-                                        <option value="spouse">Spouse</option>
-                                        <option value="sibling">Sibling</option>
-                                        <option value="child">Child</option>
-                                        <option value="friend">Friend</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="emergencyPhone" class="label">Phone Number</label>
-                                    <input id="emergencyPhone" v-model="formData.emergencyContact.phone" type="tel"
-                                        class="input" />
-                                </div>
-                            </div>
-                            <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                <div class="flex">
-                                    <ExclamationTriangleIcon class="w-5 h-5 text-yellow-400 mt-0.5 mr-2" />
-                                    <div class="text-sm">
-                                        <p class="text-yellow-800 font-medium">Privacy Notice</p>
-                                        <p class="text-yellow-700 mt-1">
-                                            Emergency contact information is only visible to providers/clients you have
-                                            appointments with.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Provider-Specific Fields -->
                         <div v-if="authStore.isProvider" class="space-y-8">
 
@@ -428,11 +381,6 @@ const formData = reactive({
     phone: '',
     email: '',
     profilePicture: '',
-    emergencyContact: {
-        name: '',
-        relationship: '',
-        phone: ''
-    },
     // Provider-specific fields
     specializations: [],
     education: [],
@@ -525,9 +473,6 @@ const populateFormData = (userData) => {
     formData.phone = userData.phone || ''
     formData.email = userData.email || ''
     formData.profilePicture = userData.profilePicture || ''
-    formData.emergencyContact = userData.emergencyContact || {
-        name: '', relationship: '', phone: ''
-    }
 
     // Provider-specific fields
     if (authStore.isProvider && userData) {
@@ -716,7 +661,6 @@ const handleSubmit = async () => {
             lastName: formData.lastName,
             phone: formData.phone,
             email: formData.email,
-            emergencyContact: formData.emergencyContact
         }
 
         if (authStore.isProvider) {

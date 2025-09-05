@@ -62,15 +62,6 @@
                   <dt class="text-sm font-medium text-gray-500">Member Since</dt>
                   <dd class="mt-1 text-gray-900">{{ formatDate(user?.createdAt) }}</dd>
                 </div>
-                <div v-if="user?.emergencyContact?.name">
-                  <dt class="text-sm font-medium text-gray-500">Emergency Contact</dt>
-                  <dd class="mt-1 text-gray-900">
-                    {{ user.emergencyContact.name }}
-                    <span class="text-gray-500">({{ user.emergencyContact.relationship }})</span>
-                    <br>
-                    <span class="text-sm text-gray-600">{{ user.emergencyContact.phone }}</span>
-                  </dd>
-                </div>
               </dl>
             </div>
 

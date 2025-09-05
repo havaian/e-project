@@ -80,9 +80,6 @@ function shouldCleanField(fieldName) {
     
     // Profile fields (but be careful with bio/description - those might need encoding)
     'title', 'subtitle', 'profession', 'category', 'type',
-    
-    // Nested object field names
-    'relationship', // for emergencyContact.relationship
   ];
   
   return fieldsToClean.includes(fieldName);

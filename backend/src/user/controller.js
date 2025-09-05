@@ -250,7 +250,7 @@ exports.updateUserProfile = async (req, res) => {
     try {
         const allowedUpdates = [
             'firstName', 'lastName', 'phone', 'profilePicture', 'bio', 'languages', 'availability',
-            'sessionFee', 'backgroundInfo', 'emergencyContact', 'sessionDuration',
+            'sessionFee', 'backgroundInfo', 'sessionDuration',
             'specializations', 'education', 'certifications', 'experience'
         ];
 

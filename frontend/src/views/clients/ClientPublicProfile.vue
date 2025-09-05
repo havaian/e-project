@@ -266,23 +266,6 @@
                                 </div>
                             </div>
 
-                            <!-- Contact Info (Emergency Contact if applicable) -->
-                            <div v-if="showEmergencyContact && student.emergencyContact?.name"
-                                class="bg-white border border-gray-200 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                    <DevicePhoneMobileIcon class="w-5 h-5 mr-2 text-red-600" />
-                                    Emergency Contact
-                                </h3>
-                                <div class="space-y-2 text-sm">
-                                    <p class="font-medium text-gray-900">{{ student.emergencyContact.name }}</p>
-                                    <p class="text-gray-600">{{ student.emergencyContact.relationship }}</p>
-                                    <p class="text-gray-600">{{ student.emergencyContact.phone }}</p>
-                                </div>
-                                <div class="mt-3 p-2 bg-red-50 rounded text-xs text-red-700">
-                                    Only visible because you have appointments together
-                                </div>
-                            </div>
-
                             <!-- Recent Activity -->
                             <div class="bg-gray-50 rounded-xl p-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
@@ -419,11 +402,6 @@ const fetchStudentProfile = async () => {
         const response = await axios.get(`/users/${route.params.id}`)
         student.value = response.data
 
-        // Check if emergency contact should be shown
-        if (authStore.isAuthenticated) {
-            checkEmergencyContactVisibility()
-        }
-
         // If viewer is a provider, check relationship context
         if (authStore.isProvider) {
             await checkProviderRelationship()
@@ -529,15 +507,6 @@ const fetchRecentActivity = async () => {
         ]
     } catch (error) {
         console.error('Error fetching recent activity:', error)
-    }
-}
-
-const checkEmergencyContactVisibility = async () => {
-    try {
-        const response = await axios.get(`/users/${route.params.id}/emergency-contact-visibility`)
-        showEmergencyContact.value = response.data.visible || false
-    } catch (error) {
-        showEmergencyContact.value = false
     }
 }
 

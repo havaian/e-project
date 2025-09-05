@@ -297,23 +297,6 @@
                                 </div>
                             </div>
 
-                            <!-- Contact Info (Emergency Contact if applicable) -->
-                            <div v-if="showEmergencyContact && provider.emergencyContact?.name"
-                                class="bg-white border border-gray-200 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                    <DevicePhoneMobileIcon class="w-5 h-5 mr-2 text-red-600" />
-                                    Emergency Contact
-                                </h3>
-                                <div class="space-y-2 text-sm">
-                                    <p class="font-medium text-gray-900">{{ provider.emergencyContact.name }}</p>
-                                    <p class="text-gray-600">{{ provider.emergencyContact.relationship }}</p>
-                                    <p class="text-gray-600">{{ provider.emergencyContact.phone }}</p>
-                                </div>
-                                <div class="mt-3 p-2 bg-red-50 rounded text-xs text-red-700">
-                                    Only visible because you have appointments together
-                                </div>
-                            </div>
-
                             <!-- Provider Stats -->
                             <div class="bg-gray-50 rounded-xl p-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Provider Stats</h3>
@@ -430,11 +413,6 @@ const fetchProviderProfile = async () => {
     try {
         const response = await axios.get(`/users/${route.params.id}`)
         provider.value = response.data
-
-        // Check if emergency contact should be shown (if user has appointments with this provider)
-        if (authStore.isAuthenticated) {
-            checkEmergencyContactVisibility()
-        }
     } catch (error) {
         console.error('Error fetching provider profile:', error)
     }
@@ -485,17 +463,6 @@ const fetchCompletedAppointments = async () => {
         completedAppointments.value = response.data.completedAppointments || 0
     } catch (error) {
         console.error('Error fetching appointment stats:', error)
-    }
-}
-
-const checkEmergencyContactVisibility = async () => {
-    try {
-        // This would be determined by the backend based on appointment history
-        const response = await axios.get(`/users/${route.params.id}/emergency-contact-visibility`)
-        showEmergencyContact.value = response.data.visible || false
-    } catch (error) {
-        // If endpoint doesn't exist or fails, default to false
-        showEmergencyContact.value = false
     }
 }
 
