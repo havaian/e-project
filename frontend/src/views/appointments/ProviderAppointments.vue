@@ -83,7 +83,7 @@
                                     <div class="flex items-center space-x-4">
                                         <div class="flex-shrink-0">
                                             <div v-if="appointment.client.profilePicture" class="relative">
-                                                <img :src="`/api${appointment.client.profilePicture} : /images/user-placeholder.jpg`"
+                                                <img :src="appointment.client.profilePicture ? `/api${appointment.client.profilePicture}` : '/images/user-placeholder.jpg'"
                                                     :alt="`${appointment.client.firstName} ${appointment.client.lastName}`"
                                                     class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100" />
                                             </div>

@@ -43,7 +43,7 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center space-x-4">
                                     <div class="relative">
-                                        <img :src="`/api${appointment.provider.profilePicture} : /images/user-placeholder.jpg`"
+                                        <img :src="appointment.provider.profilePicture ? `/api${appointment.provider.profilePicture}` : '/images/user-placeholder.jpg'"
                                             :alt="appointment.provider.firstName"
                                             class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100" />
                                         <div class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-green-400 border-2 border-white"
