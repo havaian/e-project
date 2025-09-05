@@ -32,7 +32,7 @@
                             <p class="text-2xl font-bold text-gray-900">{{
                                 formatCurrency(dashboardSummary?.currentMonth?.earnings || 0) }}</p>
                             <div class="flex items-center mt-2">
-                                <TrendingUpIcon v-if="(dashboardSummary?.currentMonth?.growth || 0) >= 0"
+                                <ArrowTrendingUpIcon v-if="(dashboardSummary?.currentMonth?.growth || 0) >= 0"
                                     class="w-4 h-4 text-green-500 mr-1" />
                                 <TrendingDownIcon v-else class="w-4 h-4 text-red-500 mr-1" />
                                 <span class="text-sm font-medium"
@@ -267,7 +267,7 @@
 </template>
 
 <script setup>
-import { PencilIcon, CalendarDaysIcon, TrendingUpIcon, TrendingDownIcon, CurrencyDollarIcon, ClockIcon, ExclamationCircleIcon, CheckCircleIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from "@heroicons/vue/24/outline";
+import { PencilIcon, CalendarDaysIcon, ArrowTrendingUpIcon, TrendingDownIcon, CurrencyDollarIcon, ClockIcon, ExclamationCircleIcon, CheckCircleIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'

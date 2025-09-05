@@ -107,7 +107,7 @@
                             <!-- Growth -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div v-if="row.growthPercentage !== null" class="flex items-center space-x-1">
-                                    <TrendingUpIcon v-if="row.growthPercentage >= 0" class="w-4 h-4 text-green-500" />
+                                    <ArrowTrendingUpIcon v-if="row.growthPercentage >= 0" class="w-4 h-4 text-green-500" />
                                     <TrendingDownIcon v-else class="w-4 h-4 text-red-500" />
                                     <span class="text-sm font-medium"
                                         :class="row.growthPercentage >= 0 ? 'text-green-600' : 'text-red-600'">
@@ -161,7 +161,7 @@
 </template>
 
 <script setup>
-import { DocumentChartBarIcon, TrendingUpIcon, TrendingDownIcon } from "@heroicons/vue/24/outline";
+import { DocumentChartBarIcon, ArrowTrendingUpIcon, TrendingDownIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
 
 const props = defineProps({

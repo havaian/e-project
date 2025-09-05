@@ -316,7 +316,7 @@
                             <!-- Learning Journey -->
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                    <TrendingUpIcon class="w-5 h-5 mr-2 text-blue-600" />
+                                    <ArrowTrendingUpIcon class="w-5 h-5 mr-2 text-blue-600" />
                                     Learning Journey
                                 </h3>
                                 <div class="space-y-3">
@@ -352,7 +352,7 @@
 </template>
 
 <script setup>
-import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, ChatBubbleLeftRightIcon, UserIcon, LockClosedIcon, StarIcon, ChartBarIcon, DevicePhoneIcon, TrendingUpIcon, UserPlusIcon } from "@heroicons/vue/24/outline";
+import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, ChatBubbleLeftRightIcon, UserIcon, LockClosedIcon, StarIcon, ChartBarIcon, DevicePhoneIcon, ArrowTrendingUpIcon, UserPlusIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

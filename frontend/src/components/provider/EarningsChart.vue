@@ -37,7 +37,7 @@
             <div class="bg-gray-50 rounded-lg p-4 text-center">
                 <p class="text-sm text-gray-600">Growth Trend</p>
                 <div class="flex items-center justify-center space-x-1">
-                    <TrendingUpIcon v-if="growthTrend >= 0" class="w-4 h-4 text-green-500" />
+                    <ArrowTrendingUpIcon v-if="growthTrend >= 0" class="w-4 h-4 text-green-500" />
                     <TrendingDownIcon v-else class="w-4 h-4 text-red-500" />
                     <span class="text-lg font-bold" :class="growthTrend >= 0 ? 'text-green-600' : 'text-red-600'">
                         {{ Math.abs(growthTrend).toFixed(1) }}%
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ChartBarIcon, TrendingUpIcon, TrendingDownIcon } from "@heroicons/vue/24/outline";
+import { ChartBarIcon, ArrowTrendingUpIcon, TrendingDownIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
 import { LineChart } from 'recharts'
 

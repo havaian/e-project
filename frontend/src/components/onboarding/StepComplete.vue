@@ -175,7 +175,7 @@
         <!-- Action Button -->
         <div class="pt-4">
             <button @click="$emit('finish')" class="btn-element-primary text-lg px-12 py-4">
-                <TrendingUpIcon class="w-5 h-5 mr-2" />
+                <ArrowTrendingUpIcon class="w-5 h-5 mr-2" />
                 Go to My Dashboard
             </button>
             <p class="text-sm text-gray-500 mt-3">
@@ -186,7 +186,7 @@
 </template>
 
 <script setup>
-import { CheckCircleIcon, BookOpenIcon, ClockIcon, CurrencyDollarIcon, EnvelopeIcon, PhoneIcon, QuestionMarkCircleIcon, TrendingUpIcon } from "@heroicons/vue/24/outline";
+import { CheckCircleIcon, BookOpenIcon, ClockIcon, CurrencyDollarIcon, EnvelopeIcon, PhoneIcon, QuestionMarkCircleIcon, ArrowTrendingUpIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
