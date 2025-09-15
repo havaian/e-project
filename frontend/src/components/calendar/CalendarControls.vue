@@ -13,22 +13,6 @@
             </button>
         </div>
 
-        <!-- Calendar Navigation (only show in calendar view) -->
-        <div v-if="currentView === 'calendar'" class="flex items-center space-x-2">
-            <button @click="$emit('navigate', 'prev')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
-            </button>
-
-            <button @click="$emit('navigate', 'today')"
-                class="px-3 py-1 text-sm bg-brand-1 text-white rounded-lg hover:bg-brand-1/90 transition-colors">
-                Today
-            </button>
-
-            <button @click="$emit('navigate', 'next')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <ChevronRightIcon class="w-5 h-5 text-gray-600" />
-            </button>
-        </div>
-
         <!-- List View Controls -->
         <div v-if="currentView === 'list'" class="flex items-center space-x-2">
             <!-- Sort Options -->

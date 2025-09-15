@@ -5,11 +5,11 @@
       <div class="p-6 sm:p-8 border-b border-gray-200">
         <div class="flex flex-col sm:flex-row items-center justify-between">
           <div class="flex flex-col sm:flex-row items-center">
-            <img :src="user.profilePicture ? `/api${user.profilePicture}` : '/images/user-placeholder.jpg'" :alt="user?.firstName"
+            <img :src="user?.profilePicture ? `/api${user.profilePicture}` : '/images/user-placeholder.jpg'" :alt="user?.firstName || 'User'"
               class="h-32 w-32 rounded-full object-cover" />
             <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
               <h1 class="text-2xl font-bold text-gray-900">
-                {{ user?.firstName }} {{ user?.lastName }}
+                {{ user?.firstName || '' }} {{ user?.lastName || '' }}
               </h1>
               <p class="text-gray-600">Client</p>
               <div class="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
@@ -52,11 +52,11 @@
               <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <dt class="text-sm font-medium text-gray-500">Email</dt>
-                  <dd class="mt-1 text-gray-900">{{ user?.email }}</dd>
+                  <dd class="mt-1 text-gray-900">{{ user?.email || 'N/A' }}</dd>
                 </div>
                 <div>
                   <dt class="text-sm font-medium text-gray-500">Phone</dt>
-                  <dd class="mt-1 text-gray-900">{{ user?.phone }}</dd>
+                  <dd class="mt-1 text-gray-900">{{ user?.phone || 'N/A' }}</dd>
                 </div>
                 <div>
                   <dt class="text-sm font-medium text-gray-500">Member Since</dt>
@@ -75,12 +75,12 @@
                 <div v-for="provider in associatedProviders" :key="provider._id"
                   class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div class="flex items-center space-x-3">
-                    <img :src="provider.profilePicture ? `/api${provider.profilePicture}` : '/images/user-placeholder.jpg'" :alt="provider.firstName"
+                    <img :src="provider?.profilePicture ? `/api${provider.profilePicture}` : '/images/user-placeholder.jpg'" :alt="provider?.firstName || 'Provider'"
                       class="h-12 w-12 rounded-full object-cover">
                     <div>
-                      <p class="font-medium text-gray-900">{{ provider.firstName }} {{ provider.lastName }}</p>
+                      <p class="font-medium text-gray-900">{{ provider?.firstName || '' }} {{ provider?.lastName || '' }}</p>
                       <p class="text-sm text-gray-600">
-                        {{ provider.specializations?.join(', ') }}
+                        {{ provider?.specializations?.join(', ') || 'No specializations listed' }}
                       </p>
                       <p class="text-xs text-gray-500">
                         {{ provider.appointmentCount }} session{{ provider.appointmentCount !== 1 ? 's' : '' }}
@@ -137,7 +137,7 @@
                     </div>
                     <div>
                       <p class="font-medium text-gray-900">
-                        {{ appointment.provider?.firstName }} {{ appointment.provider?.lastName }}
+                        {{ appointment.provider?.firstName || '' }} {{ appointment.provider?.lastName || '' }}
                       </p>
                       <p class="text-sm text-gray-600">
                         {{ formatDateTime(appointment.dateTime) }}
@@ -146,7 +146,7 @@
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-900">{{ appointment.type }}</p>
+                    <p class="text-sm font-medium text-gray-900">{{ appointment.type || 'Consultation' }}</p>
                     <router-link :to="`/appointments/${appointment._id}`"
                       class="text-xs text-indigo-600 hover:text-indigo-700">
                       View Details
@@ -247,7 +247,7 @@
                   </div>
                   <p class="text-sm text-gray-900 mb-2">{{ review.comment }}</p>
                   <p class="text-xs text-gray-500">
-                    For {{ review.provider?.firstName }} {{ review.provider?.lastName }}
+                    For {{ review.provider?.firstName || '' }} {{ review.provider?.lastName || '' }}
                   </p>
                 </div>
 
@@ -328,13 +328,28 @@ const fetchUserProfile = async () => {
   }
 }
 
-const fetchAssociatedProviders = async () => {
+// Combined function to fetch appointments data and extract providers
+// This eliminates the duplicate API call
+const fetchAppointmentsAndProviders = async () => {
   try {
-    // Get providers from completed appointments
-    const appointmentsResponse = await axios.get(`/appointments/client/${authStore.user._id}`)
-    const appointments = appointmentsResponse.data.appointments || []
+    const response = await axios.get(`/appointments/client/${authStore.user._id}`)
+    const appointments = response.data.appointments || []
 
-    // Group by provider and count appointments
+    // Calculate appointment stats
+    appointmentStats.value = {
+      total: appointments.length,
+      completed: appointments.filter(a => a.status === 'completed').length,
+      upcoming: appointments.filter(a =>
+        a.status === 'scheduled' && new Date(a.dateTime) > new Date()
+      ).length
+    }
+
+    // Get recent appointments (last 5)
+    recentAppointments.value = appointments
+      .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
+      .slice(0, 5)
+
+    // Extract associated providers from completed appointments
     const providerMap = new Map()
     appointments.forEach(appointment => {
       if (appointment.provider && appointment.status === 'completed') {
@@ -352,31 +367,11 @@ const fetchAssociatedProviders = async () => {
 
     associatedProviders.value = Array.from(providerMap.values())
   } catch (error) {
-    console.error('Error fetching associated providers:', error)
+    console.error('Error fetching appointments and providers:', error)
+    // Set defaults on error
+    appointmentStats.value = { total: 0, completed: 0, upcoming: 0 }
+    recentAppointments.value = []
     associatedProviders.value = []
-  }
-}
-
-const fetchAppointments = async () => {
-  try {
-    const response = await axios.get(`/appointments/client/${authStore.user._id}`)
-    const appointments = response.data.appointments || []
-
-    // Calculate stats
-    appointmentStats.value = {
-      total: appointments.length,
-      completed: appointments.filter(a => a.status === 'completed').length,
-      upcoming: appointments.filter(a =>
-        a.status === 'scheduled' && new Date(a.dateTime) > new Date()
-      ).length
-    }
-
-    // Get recent appointments (last 5)
-    recentAppointments.value = appointments
-      .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
-      .slice(0, 5)
-  } catch (error) {
-    console.error('Error fetching appointments:', error)
   }
 }
 
@@ -445,11 +440,10 @@ const getStatusBadgeClass = (status) => {
 onMounted(async () => {
   loading.value = true
   try {
-    // Base data that's always needed
+    // Use the combined function instead of separate calls
     const basePromises = [
       fetchUserProfile(),
-      fetchAssociatedProviders(),
-      fetchAppointments(),
+      fetchAppointmentsAndProviders(), // This now handles both appointments AND providers
       fetchReviews()
     ]
 

@@ -37,7 +37,7 @@
                                 <!-- Avatar Display -->
                                 <div class="relative">
                                     <img :src="formData.profilePicture ? `/api${formData.profilePicture}` : '/images/user-placeholder.jpg'"
-                                        :alt="formData.firstName"
+                                        :alt="formData.firstName || 'User'"
                                         class="h-24 w-24 rounded-full object-cover border-4 border-white shadow-md">
                                     <!-- Loading Overlay -->
                                     <div v-if="avatarUploading"
@@ -295,7 +295,7 @@
                                         <select v-model="newLanguage" class="flex-1 input">
                                             <option value="">Select a language</option>
                                             <option v-for="lang in availableLanguages" :key="lang" :value="lang">{{ lang
-                                                }}
+                                            }}
                                             </option>
                                         </select>
                                         <button type="button" @click="addLanguage"
@@ -429,18 +429,20 @@ const availableLanguages = [
     "Español", "Français", "Deutsch", "العربية", "中文", "日本語", "한국어"
 ]
 
-// Methods
+// FIXED: Modified to use auth store data immediately and eliminate duplicate API calls
 const fetchUserProfile = async () => {
     try {
         loading.value = true
 
-        // Use auth store data immediately if available
+        // First, use auth store data immediately if available
         if (authStore.user && Object.keys(authStore.user).length > 0) {
             populateFormData(authStore.user)
             pageReady.value = true
+            loading.value = false
+            return // Exit early - we have the data we need
         }
 
-        // Fetch fresh data with timeout
+        // Only fetch from API if auth store doesn't have user data
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
 
@@ -452,6 +454,8 @@ const fetchUserProfile = async () => {
 
         if (response.data) {
             populateFormData(response.data)
+            // Update the auth store with fresh data
+            authStore.user = response.data
         }
 
     } catch (error) {
@@ -652,6 +656,7 @@ const handleRemovePhoto = async () => {
     }
 }
 
+// FIXED: Modified to avoid duplicate API calls by directly updating auth store instead of calling refreshUserData
 const handleSubmit = async () => {
     // Validate form before submission
     if (authStore.isProvider && !isFormValid.value) {
@@ -678,12 +683,17 @@ const handleSubmit = async () => {
             updateData.sessionDuration = formData.sessionDuration
         }
 
-        await axios.patch('/users/me', updateData)
+        // Update the profile
+        const response = await axios.patch('/users/me', updateData)
 
-        // Force refresh user data in auth store after successful update
-        await authStore.refreshUserData(true)
+        // FIXED: Instead of calling refreshUserData (which makes another API call), 
+        // directly update the auth store with the returned data
+        if (response.data) {
+            authStore.user = { ...authStore.user, ...response.data }
+            localStorage.setItem('user', JSON.stringify(authStore.user))
+        }
 
-        // Navigate back with force refresh
+        // Navigate back
         const targetRoute = authStore.isProvider ? '/profile/provider' : '/profile/client'
         await router.push(targetRoute)
     } catch (error) {
