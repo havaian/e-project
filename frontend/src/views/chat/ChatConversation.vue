@@ -1,198 +1,79 @@
 <template>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="card-element overflow-hidden h-[600px] flex flex-col">
-            <!-- Enhanced Chat Header -->
-            <div class="p-6 border-b border-gray-200/50 bg-gradient-to-r from-brand-1/5 to-brand-2/5">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="relative">
-                            <img :src="recipientAvatar" :alt="recipientName"
-                                class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-md" />
-                            <!-- Enhanced Online Status Indicator -->
-                            <div v-if="recipientOnlineStatus.isOnline"
-                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse">
-                            </div>
-                            <div v-else
-                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-gray-400 border-2 border-white rounded-full">
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-lg font-semibold text-gray-900">{{ recipientName }}</h3>
-                            <p class="text-sm text-gray-500 flex items-center">
-                                <span class="w-2 h-2 rounded-full mr-2"
-                                    :class="recipientOnlineStatus.isOnline ? 'bg-green-500' : 'bg-gray-400'"></span>
-                                {{ recipientStatus }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Chat Actions -->
-                    <div class="flex items-center space-x-2">
-                        <button
-                            class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <PhoneIcon class="w-5 h-5" />
-                        </button>
-                        <button
-                            class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <VideoCameraIcon class="w-5 h-5" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Enhanced Messages Container -->
-            <div ref="messagesContainer" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30"
-                @scroll="handleScroll">
-                <template v-for="message in messages" :key="message._id">
-                    <!-- Message Bubble -->
-                    <div class="flex mb-4" :class="[
-                        message.sender._id === authStore.user._id ? 'justify-end' : 'justify-start',
-                    ]">
-                        <!-- Other Person's Avatar -->
-                        <div v-if="message.sender._id !== authStore.user._id" class="flex-shrink-0 mr-3">
-                            <img :src="message.sender.profilePicture ? `/api${message.sender.profilePicture}` : '/images/user-placeholder.jpg'"
-                                :alt="message.sender.firstName"
-                                class="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-sm" />
-                        </div>
-
-                        <!-- Enhanced Message Content -->
-                        <div class="rounded-2xl px-4 py-3 max-w-[70%] shadow-sm relative" :class="[
-                            message.sender._id === authStore.user._id
-                                ? 'bg-gradient-to-r from-brand-1 to-brand-2 text-white'
-                                : 'bg-white text-gray-900 border border-gray-100'
-                        ]">
-                            <!-- Sender Label -->
-                            <div class="text-xs mb-1"
-                                :class="message.sender._id === authStore.user._id ? 'opacity-75' : 'text-gray-500'">
-                                {{ formatSenderLabel(message.sender) }}
-                            </div>
-
-                            <!-- Message Text -->
-                            <div class="text-sm leading-relaxed">{{ message.text }}</div>
-
-                            <!-- Enhanced Timestamp and Read Status -->
-                            <div class="flex items-center justify-between mt-2">
-                                <div class="text-xs"
-                                    :class="message.sender._id === authStore.user._id ? 'opacity-70' : 'text-gray-500'">
-                                    {{ formatTime(message.createdAt) }}
-                                </div>
-
-                                <!-- Enhanced Read Status (only for sent messages) -->
-                                <div v-if="message.sender._id === authStore.user._id" class="ml-2">
-                                    <div v-if="message.isRead" class="flex items-center space-x-0.5" title="Read">
-                                        <CheckIcon class="w-4 h-4 text-white/70" />
-                                        <CheckIcon class="w-4 h-4 text-white/70 -ml-1" />
-                                    </div>
-                                    <CheckIcon v-else class="w-4 h-4 text-white/70" title="Sent" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- User's Avatar -->
-                        <div v-if="message.sender._id === authStore.user._id" class="flex-shrink-0 ml-3">
-                            <div
-                                class="h-10 w-10 rounded-full bg-gradient-to-r from-brand-1 to-brand-2 flex items-center justify-center text-white font-semibold ring-2 ring-white shadow-sm">
-                                {{ userInitials }}
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- Enhanced Typing Indicator -->
-                <div v-if="isTyping" class="flex items-center space-x-3 text-gray-500">
-                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                        <ChatBubbleLeftEllipsisIcon class="w-4 h-4" />
-                    </div>
-                    <div class="bg-white rounded-2xl px-4 py-3 border border-gray-100 shadow-sm">
-                        <div class="flex items-center space-x-1">
-                            <span class="text-sm text-gray-600">{{ recipientName }} is typing</span>
-                            <div class="flex space-x-1 ml-2">
-                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                                    style="animation-delay: 0.2s"></div>
-                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                                    style="animation-delay: 0.4s"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Enhanced Input Area -->
-            <div class="p-4 border-t border-gray-200/50 bg-white">
-                <form @submit.prevent="sendMessage" class="flex space-x-3">
-                    <div class="flex-1 input-group">
-                        <input v-model="newMessage" @input="handleTyping" @keydown="handleKeyDown" type="text"
-                            class="input pr-12" placeholder="Type your message..." :disabled="loading || sending" />
-                        <button v-if="newMessage.trim()" type="button" @click="newMessage = ''"
-                            class="input-icon text-gray-400 hover:text-gray-600">
-                            <XMarkIcon class="h-4 w-4" />
-                        </button>
-                    </div>
-                    <button type="submit" class="btn-primary px-4 py-4 flex items-center justify-center min-w-[3rem]"
-                        :disabled="loading || sending || !newMessage.trim()">
-                        <PaperAirplaneIcon v-if="!sending" class="h-5 w-5" />
-                        <svg v-else class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                    </button>
-                </form>
-            </div>
+            <ChatWindow :messages="messages" :recipient-name="recipientName" :recipient-avatar="recipientAvatar"
+                :recipient-status="recipientStatus" :recipient-online-status="recipientOnlineStatus"
+                :current-user-id="currentUserId" :user-initials="userInitials" :is-typing="isTyping"
+                :disabled="!isAuthenticated" :loading="loading" :sending="sending" @submit="handleMessageSubmit"
+                @typing="handleTyping" @keydown="handleKeyDown" @scroll="handleScroll" @phone-call="handlePhoneCall"
+                @video-call="handleVideoCall" ref="chatWindow" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { PhoneIcon, VideoCameraIcon, ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, PaperAirplaneIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { format } from 'date-fns'
 import api from '@/plugins/axios'
 import { io } from 'socket.io-client'
+import ChatWindow from '@/components/chat/ChatWindow.vue'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
+// Core reactive data
 const messages = ref([])
 const conversation = ref(null)
 const loading = ref(true)
 const sending = ref(false)
 const isTyping = ref(false)
 const socket = ref(null)
-const newMessage = ref('')
-const messagesContainer = ref(null)
+const chatWindow = ref(null)
 
 // Online status and read receipts
 const recipientOnlineStatus = ref({ isOnline: false, lastSeen: null })
 const typingTimeout = ref(null)
 const isUserTyping = ref(false)
 
+// Computed properties for authentication and user data
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+
+const currentUserId = computed(() => {
+    return authStore.user?._id || authStore.user?.id
+})
+
 const userInitials = computed(() => {
     const user = authStore.user
     if (!user) return 'U'
-    return (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase()
+    const first = user.firstName?.charAt(0) || ''
+    const last = user.lastName?.charAt(0) || ''
+    return (first + last).toUpperCase() || 'U'
 })
 
+// Recipient data
 const recipient = computed(() => {
-    if (!conversation.value) return null
-    return conversation.value.participants.find(p => p._id !== authStore.user._id)
+    if (!conversation.value?.participants) return null
+
+    const userId = currentUserId.value
+    if (!userId) return null
+
+    return conversation.value.participants.find(p => p?._id !== userId) || null
 })
 
 const recipientName = computed(() => {
-    if (!recipient.value) return ''
-    return recipient.value.role === 'provider' ?
-        `${recipient.value.firstName} ${recipient.value.lastName}` :
-        `${recipient.value.firstName} ${recipient.value.lastName}`
+    if (!recipient.value) return 'Loading...'
+    const first = recipient.value.firstName || ''
+    const last = recipient.value.lastName || ''
+    return `${first} ${last}`.trim() || 'User'
 })
 
 const recipientAvatar = computed(() => {
-    return recipient.value.profilePicture ? `/api${recipient.value.profilePicture}` : '/images/user-placeholder.jpg'
+    if (!recipient.value) return '/images/user-placeholder.jpg'
+    return recipient.value.profilePicture ?
+        `/api${recipient.value.profilePicture}` :
+        '/images/user-placeholder.jpg'
 })
 
 const recipientStatus = computed(() => {
@@ -211,143 +92,37 @@ const recipientStatus = computed(() => {
     return 'Offline'
 })
 
-function formatSenderLabel(sender) {
-    return sender.role === 'provider' ?
-        `${sender.firstName} ${sender.lastName}` :
-        `${sender.firstName} ${sender.lastName}`
-}
-
-function formatTime(timestamp) {
-    return format(new Date(timestamp), 'h:mm a')
-}
-
-function scrollToBottom() {
-    if (messagesContainer.value) {
-        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
-    }
-}
-
-// Handle scroll to mark messages as read
-function handleScroll() {
-    if (messagesContainer.value) {
-        const { scrollTop, scrollHeight, clientHeight } = messagesContainer.value
-        const isNearBottom = scrollHeight - scrollTop - clientHeight < 100
-
-        if (isNearBottom && socket.value) {
-            socket.value.emit('mark-read', { conversationId: route.params.id })
-        }
-    }
-}
-
-// Handle typing indicators
-function handleTyping() {
-    if (!socket.value || !recipient.value) return
-
-    if (!isUserTyping.value) {
-        isUserTyping.value = true
-        socket.value.emit('typing', { conversationId: route.params.id })
-    }
-
-    // Clear existing timeout
-    if (typingTimeout.value) {
-        clearTimeout(typingTimeout.value)
-    }
-
-    // Set new timeout to stop typing
-    typingTimeout.value = setTimeout(() => {
-        if (isUserTyping.value) {
-            isUserTyping.value = false
-            socket.value.emit('stop-typing', { conversationId: route.params.id })
-        }
-    }, 2000)
-}
-
-function handleKeyDown(event) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault()
-        sendMessage()
-    }
-}
-
+// API Functions
 async function fetchConversation() {
     try {
         loading.value = true
         const response = await api.get(`/chat/conversations/${route.params.id}`)
         conversation.value = response.data.conversation
-        messages.value = response.data.messages
+        messages.value = response.data.messages || []
         await nextTick()
-        scrollToBottom()
+        chatWindow.value?.scrollToBottom()
     } catch (error) {
         console.error('Error fetching conversation:', error)
+        conversation.value = null
+        messages.value = []
     } finally {
         loading.value = false
     }
 }
 
-async function sendMessage() {
-    const messageText = newMessage.value.trim()
-
-    if (!messageText || sending.value || !recipient.value) {
-        // console.log('Cannot send message:', {
-        //     messageText: !!messageText,
-        //     sending: sending.value,
-        //     recipient: !!recipient.value,
-        //     socketConnected: socket.value?.connected
-        // })
-        return
-    }
-
-    if (!socket.value || !socket.value.connected) {
-        console.error('Socket not connected')
-        alert('Connection lost. Please refresh the page.')
-        return
-    }
-
-    try {
-        sending.value = true
-
-        // Stop typing indicator
-        if (isUserTyping.value) {
-            isUserTyping.value = false
-            socket.value.emit('stop-typing', { conversationId: route.params.id })
-        }
-
-        const messageData = {
-            conversationId: route.params.id,
-            receiverId: recipient.value._id,
-            text: messageText
-        }
-
-        // Add acknowledgment callback to confirm message was received by server
-        socket.value.emit('new-message', messageData, (response) => {
-            if (response && response.success) {
-                // console.log('Message sent successfully')
-            } else {
-                console.error('Failed to send message:', response)
-                alert('Failed to send message. Please try again.')
-            }
-        })
-
-        newMessage.value = ''
-        await nextTick()
-        scrollToBottom()
-    } catch (error) {
-        console.error('Error sending message:', error)
-        alert('Error sending message. Please try again.')
-    } finally {
-        sending.value = false
-    }
-}
-
+// Socket Functions
 function initializeSocket() {
-    const token = authStore.token
+    if (!isAuthenticated.value) {
+        console.error('User not authenticated')
+        return
+    }
 
+    const token = authStore.token
     if (!token) {
         console.error('No authentication token available')
         return
     }
 
-    // Use environment variable for WebSocket URL, fallback to current location origin
     const wsUrl = import.meta.env.VITE_WS_URL || window.location.origin
 
     socket.value = io(wsUrl, {
@@ -361,17 +136,21 @@ function initializeSocket() {
         forceNew: true
     })
 
+    // Socket event handlers
     socket.value.on('connect', () => {
-        // console.log('Socket connected successfully')
+        console.log('Socket connected successfully')
         socket.value.emit('join-conversation', route.params.id)
     })
 
     socket.value.on('connect_error', (error) => {
         console.error('Socket connection error:', error)
+        if (error.message?.includes('Authentication error')) {
+            console.error('Authentication failed. Please log in again.')
+        }
     })
 
     socket.value.on('disconnect', (reason) => {
-        // console.log('Socket disconnected:', reason)
+        console.log('Socket disconnected:', reason)
     })
 
     socket.value.on('error', (error) => {
@@ -382,18 +161,13 @@ function initializeSocket() {
         if (message.conversation === route.params.id) {
             messages.value.push(message)
             await nextTick()
-            scrollToBottom()
+            chatWindow.value?.scrollToBottom()
 
             // Auto-mark as read if user is at bottom of chat
             setTimeout(() => {
                 handleScroll()
             }, 100)
         }
-    })
-
-    socket.value.on('new-message-notification', (data) => {
-        // Handle notifications for messages in other conversations
-        // You could show a toast notification here
     })
 
     // Online status events
@@ -429,7 +203,7 @@ function initializeSocket() {
 
     // Typing events
     socket.value.on('typing', (data) => {
-        if (data.userId !== authStore.user._id) {
+        if (data.userId !== currentUserId.value) {
             isTyping.value = true
             setTimeout(() => {
                 isTyping.value = false
@@ -438,7 +212,7 @@ function initializeSocket() {
     })
 
     socket.value.on('stop-typing', (data) => {
-        if (data.userId !== authStore.user._id) {
+        if (data.userId !== currentUserId.value) {
             isTyping.value = false
         }
     })
@@ -446,9 +220,8 @@ function initializeSocket() {
     // Read receipts
     socket.value.on('messages-read', (data) => {
         if (data.conversationId === route.params.id) {
-            // Update read status for messages sent by current user
             messages.value = messages.value.map(message => {
-                if (message.sender._id === authStore.user._id) {
+                if (message.sender._id === currentUserId.value) {
                     return { ...message, isRead: true }
                 }
                 return message
@@ -457,15 +230,102 @@ function initializeSocket() {
     })
 }
 
-// Watch for conversation changes to update online status
-watch(() => recipient.value, (newRecipient) => {
-    if (newRecipient && socket.value) {
-        // Reset online status when switching conversations
-        recipientOnlineStatus.value = { isOnline: false, lastSeen: null }
+// Event Handlers
+function handleMessageSubmit(messageText) {
+    if (!messageText || sending.value || !recipient.value) {
+        return
     }
-}, { immediate: true })
 
+    if (!socket.value?.connected) {
+        console.error('Socket not connected')
+        alert('Connection lost. Please refresh the page.')
+        return
+    }
+
+    try {
+        sending.value = true
+
+        // Stop typing indicator
+        if (isUserTyping.value) {
+            isUserTyping.value = false
+            socket.value.emit('stop-typing', { conversationId: route.params.id })
+        }
+
+        const messageData = {
+            conversationId: route.params.id,
+            receiverId: recipient.value._id,
+            text: messageText
+        }
+
+        socket.value.emit('new-message', messageData, (response) => {
+            if (response && response.success) {
+                console.log('Message sent successfully')
+            } else {
+                console.error('Failed to send message:', response)
+                alert('Failed to send message. Please try again.')
+            }
+        })
+
+    } catch (error) {
+        console.error('Error sending message:', error)
+        alert('Error sending message. Please try again.')
+    } finally {
+        sending.value = false
+    }
+}
+
+function handleTyping() {
+    if (!socket.value?.connected || !recipient.value) return
+
+    if (!isUserTyping.value) {
+        isUserTyping.value = true
+        socket.value.emit('typing', { conversationId: route.params.id })
+    }
+
+    // Clear existing timeout
+    if (typingTimeout.value) {
+        clearTimeout(typingTimeout.value)
+    }
+
+    // Set new timeout to stop typing
+    typingTimeout.value = setTimeout(() => {
+        if (isUserTyping.value && socket.value?.connected) {
+            isUserTyping.value = false
+            socket.value.emit('stop-typing', { conversationId: route.params.id })
+        }
+    }, 2000)
+}
+
+function handleKeyDown(event) {
+    // Event is already handled by ChatInput component
+    // This is here for potential future enhancements
+}
+
+function handleScroll() {
+    // Mark messages as read when scrolled to bottom
+    if (socket.value?.connected) {
+        socket.value.emit('mark-read', { conversationId: route.params.id })
+    }
+}
+
+function handlePhoneCall() {
+    console.log('Phone call initiated')
+    // Implement phone call functionality
+}
+
+function handleVideoCall() {
+    console.log('Video call initiated')
+    // Implement video call functionality
+}
+
+// Lifecycle management
 onMounted(() => {
+    if (!isAuthenticated.value) {
+        console.error('User not authenticated, cannot load chat')
+        loading.value = false
+        return
+    }
+
     fetchConversation()
     initializeSocket()
 })
@@ -485,4 +345,11 @@ onUnmounted(() => {
         clearTimeout(typingTimeout.value)
     }
 })
+
+// Watch for recipient changes
+watch(() => recipient.value, (newRecipient) => {
+    if (newRecipient && socket.value) {
+        recipientOnlineStatus.value = { isOnline: false, lastSeen: null }
+    }
+}, { immediate: true })
 </script>

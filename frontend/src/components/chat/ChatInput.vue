@@ -1,8 +1,8 @@
 <template>
     <form @submit.prevent="handleSubmit" class="flex space-x-3">
         <div class="flex-1 input-group">
-            <input v-model="message" type="text" class="input pr-12" placeholder="Type your message..."
-                :disabled="disabled" @keydown.enter="handleSubmit"
+            <input v-model="message" @input="handleInput" @keydown="handleKeydown" type="text" class="input pr-12"
+                placeholder="Type your message..." :disabled="disabled"
                 :class="disabled ? 'opacity-50 cursor-not-allowed' : ''" />
             <button v-if="message.trim()" type="button" @click="clearMessage"
                 class="input-icon text-gray-400 hover:text-gray-600">
@@ -10,7 +10,7 @@
             </button>
         </div>
         <button type="submit" class="btn-primary px-4 py-4 flex items-center justify-center min-w-[3rem]"
-            :disabled="disabled || !message.trim()">
+            :disabled="disabled || loading || !message.trim()">
             <PaperAirplaneIcon v-if="!loading" class="h-5 w-5" />
             <svg v-else class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -37,17 +37,38 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['submit'])
+const emit = defineEmits(['submit', 'typing', 'keydown'])
 const message = ref('')
 
 function handleSubmit() {
-    if (!message.value.trim() || props.disabled) return
+    if (!message.value.trim() || props.disabled || props.loading) return
 
-    emit('submit', message.value)
+    emit('submit', message.value.trim())
     message.value = ''
+}
+
+function handleInput() {
+    emit('typing')
+}
+
+function handleKeydown(event) {
+    emit('keydown', event)
+
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault()
+        handleSubmit()
+    }
 }
 
 function clearMessage() {
     message.value = ''
 }
+
+// Expose methods for parent components
+defineExpose({
+    clearMessage,
+    focus: () => {
+        // Could add focus functionality if needed
+    }
+})
 </script>
