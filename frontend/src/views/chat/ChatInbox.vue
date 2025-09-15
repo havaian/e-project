@@ -8,18 +8,6 @@
                         <h1 class="text-2xl font-bold text-gray-900">Messages</h1>
                         <p class="text-gray-600 mt-1">Stay connected with your appointments</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <!-- Search Icon -->
-                        <button
-                            class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <MagnifyingGlassIcon class="w-5 h-5" />
-                        </button>
-                        <!-- Compose Icon -->
-                        <button
-                            class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                            <PlusIcon class="w-5 h-5" />
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -81,10 +69,15 @@
                                     </p>
 
                                     <!-- Message Status Icon -->
-                                    <div v-if="conversation.lastMessage" class="flex-shrink-0">
-                                        <!-- Show different icons based on message status -->
-                                        <CheckIcon v-if="conversation.lastMessage.sender === authStore.user._id"
-                                            class="w-4 h-4 text-gray-400" />
+                                    <div v-if="conversation.lastMessage && conversation.lastMessage.sender === authStore.user._id"
+                                        class="flex-shrink-0 relative">
+                                        <!-- Double check for read messages, single for sent -->
+                                        <div v-if="conversation.lastMessage.isRead" class="flex items-center"
+                                            title="Read">
+                                            <CheckIcon class="w-4 h-4 text-gray-400" />
+                                            <CheckIcon class="w-4 h-4 text-gray-400 -ml-2" />
+                                        </div>
+                                        <CheckIcon v-else class="w-4 h-4 text-gray-400" title="Sent" />
                                     </div>
                                 </div>
 
@@ -111,7 +104,7 @@
 </template>
 
 <script setup>
-import { MagnifyingGlassIcon, PlusIcon, ChatBubbleLeftRightIcon, CheckIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
+import { ChatBubbleLeftRightIcon, CheckIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format, isToday, isYesterday, formatDistanceToNow } from 'date-fns'

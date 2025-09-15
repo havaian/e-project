@@ -27,10 +27,10 @@
                 </div>
 
                 <!-- Read Status (only for sent messages) -->
-                <div v-if="isCurrentUser" class="ml-2">
-                    <div v-if="message.isRead" class="flex items-center space-x-0.5" title="Read">
+                <div v-if="isCurrentUser" class="ml-2 relative">
+                    <div v-if="message.isRead" class="flex items-center" title="Read">
                         <CheckIcon class="w-4 h-4 text-white/70" />
-                        <CheckIcon class="w-4 h-4 text-white/70 -ml-1" />
+                        <CheckIcon class="w-4 h-4 text-white/70 -ml-2" />
                     </div>
                     <CheckIcon v-else class="w-4 h-4 text-white/70" title="Sent" />
                 </div>
