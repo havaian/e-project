@@ -75,7 +75,7 @@
                                         <div v-if="conversation.lastMessage.isRead" class="flex items-center"
                                             title="Read">
                                             <CheckIcon class="w-4 h-4 text-gray-400" />
-                                            <CheckIcon class="w-4 h-4 text-gray-400 -ml-2" />
+                                            <CheckIcon class="w-4 h-4 text-gray-400 -ml-2.5" />
                                         </div>
                                         <CheckIcon v-else class="w-4 h-4 text-gray-400" title="Sent" />
                                     </div>

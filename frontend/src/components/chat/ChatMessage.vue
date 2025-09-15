@@ -30,7 +30,7 @@
                 <div v-if="isCurrentUser" class="ml-2 relative">
                     <div v-if="message.isRead" class="flex items-center" title="Read">
                         <CheckIcon class="w-4 h-4 text-white/70" />
-                        <CheckIcon class="w-4 h-4 text-white/70 -ml-2" />
+                        <CheckIcon class="w-4 h-4 text-gray-400 -ml-2.5" />
                     </div>
                     <CheckIcon v-else class="w-4 h-4 text-white/70" title="Sent" />
                 </div>
