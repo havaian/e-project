@@ -14,7 +14,7 @@
             <label for="search" class="label">Search by name</label>
             <div class="input-group">
               <input id="search" v-model="filters.name" type="text" class="input pr-12"
-                placeholder="Search providers..." @input="handleSearch" />
+                placeholder="Search providers..." @input="handleSearchInput" />
               <div class="input-icon">
                 <MagnifyingGlassIcon class="w-4 h-4 text-gray-400" />
               </div>
@@ -23,7 +23,7 @@
 
           <div class="form-group">
             <label for="specializations" class="label">Specialization</label>
-            <select id="specializations" v-model="filters.specializations" class="input" @change="handleSearch">
+            <select id="specializations" v-model="filters.specializations" class="input" @change="handleFilterChange">
               <option value="">All Specializations</option>
               <option v-for="spec in specializations" :key="spec" :value="spec">
                 {{ spec }}
@@ -36,9 +36,9 @@
             <label class="label">Price Range (UZS)</label>
             <div class="grid grid-cols-2 gap-2">
               <input v-model="filters.minPrice" type="number" class="input text-sm" placeholder="Min price"
-                @input="handleSearch" />
+                @input="handleSearchInput" />
               <input v-model="filters.maxPrice" type="number" class="input text-sm" placeholder="Max price"
-                @input="handleSearch" />
+                @input="handleSearchInput" />
             </div>
           </div>
         </div>
@@ -100,22 +100,21 @@
             <span v-if="filters.name"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               Name: {{ filters.name }}
-              <button @click="filters.name = ''; handleSearch()" class="ml-1 text-blue-800 hover:text-blue-900">
+              <button @click="clearNameFilter" class="ml-1 text-blue-800 hover:text-blue-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="filters.specializations"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               {{ filters.specializations }}
-              <button @click="filters.specializations = ''; handleSearch()"
-                class="ml-1 text-blue-800 hover:text-blue-900">
+              <button @click="clearSpecializationFilter" class="ml-1 text-blue-800 hover:text-blue-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="filters.minPrice || filters.maxPrice"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               Price: {{ getPriceRangeText() }}
-              <button @click="clearPriceRange(); handleSearch()" class="ml-1 text-blue-800 hover:text-blue-900">
+              <button @click="clearPriceFilter" class="ml-1 text-blue-800 hover:text-blue-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
@@ -124,21 +123,21 @@
             <span v-if="sorts.experience"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Experience {{ sorts.experience === 'asc' ? '↑' : '↓' }}
-              <button @click="sorts.experience = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
+              <button @click="clearExperienceSort" class="ml-1 text-green-800 hover:text-green-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="sorts.price"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Price {{ sorts.price === 'asc' ? '↑' : '↓' }}
-              <button @click="sorts.price = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
+              <button @click="clearPriceSort" class="ml-1 text-green-800 hover:text-green-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="sorts.rating"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Rating {{ sorts.rating === 'asc' ? '↑' : '↓' }}
-              <button @click="sorts.rating = null; handleSearch()" class="ml-1 text-green-800 hover:text-green-900">
+              <button @click="clearRatingSort" class="ml-1 text-green-800 hover:text-green-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
@@ -187,7 +186,9 @@
                   <!-- Provider Header -->
                   <div class="flex items-start space-x-4 mb-4">
                     <div class="relative flex-shrink-0">
-                      <img :src="provider.profilePicture ? `/api${provider.profilePicture}` : '/images/user-placeholder.jpg'" :alt="provider.firstName"
+                      <img
+                        :src="provider.profilePicture ? `/api${provider.profilePicture}` : '/images/user-placeholder.jpg'"
+                        :alt="provider.firstName"
                         class="h-16 w-16 rounded-full object-cover ring-2 ring-gray-100 transition-buttery" />
                     </div>
                     <div class="flex-1 min-w-0">
@@ -255,7 +256,7 @@
                         <template v-if="provider.reviewStats?.totalReviews > 0">
                           {{ provider.reviewStats.averageRating.toFixed(1) }}
                           ({{ provider.reviewStats.totalReviews }} {{ provider.reviewStats.totalReviews === 1 ? 'review'
-                          : 'reviews' }})
+                            : 'reviews' }})
                         </template>
                         <template v-else>
                           <span class="text-gray-400">No reviews yet</span>
@@ -303,7 +304,7 @@
 
 <script setup>
 import { MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, XMarkIcon, DocumentIcon, CheckIcon, CurrencyDollarIcon, LanguageIcon, StarIcon, EyeIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, onUnmounted } from 'vue'
 import axios from '@/plugins/axios'
 import { useRouter } from 'vue-router'
 
@@ -341,6 +342,10 @@ const sorts = reactive({
   rating: null
 })
 
+// Debouncing setup
+let searchTimeout = null
+const DEBOUNCE_DELAY = 1000 // 1000ms delay
+
 const hasActiveFilters = computed(() => {
   return filters.name || filters.specializations || filters.minPrice || filters.maxPrice
 })
@@ -373,9 +378,56 @@ const getActiveSortsText = () => {
   return activeSorts.length > 0 ? `Sorted by: ${activeSorts.join(', ')}` : 'No sorting applied'
 }
 
-const clearPriceRange = () => {
+// FIXED: Debounced search input handler
+const handleSearchInput = () => {
+  // Clear any existing timeout
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
+  // Set a new timeout to trigger search after user stops typing
+  searchTimeout = setTimeout(() => {
+    currentPage.value = 1
+    fetchProviders()
+  }, DEBOUNCE_DELAY)
+}
+
+// FIXED: Immediate handler for non-text inputs (dropdowns, etc.)
+const handleFilterChange = () => {
+  currentPage.value = 1
+  fetchProviders()
+}
+
+// Individual clear methods for better UX
+const clearNameFilter = () => {
+  filters.name = ''
+  handleFilterChange()
+}
+
+const clearSpecializationFilter = () => {
+  filters.specializations = ''
+  handleFilterChange()
+}
+
+const clearPriceFilter = () => {
   filters.minPrice = ''
   filters.maxPrice = ''
+  handleFilterChange()
+}
+
+const clearExperienceSort = () => {
+  sorts.experience = null
+  handleFilterChange()
+}
+
+const clearPriceSort = () => {
+  sorts.price = null
+  handleFilterChange()
+}
+
+const clearRatingSort = () => {
+  sorts.rating = null
+  handleFilterChange()
 }
 
 const toggleSort = (field) => {
@@ -389,17 +441,22 @@ const toggleSort = (field) => {
     // Third click: clear
     sorts[field] = null
   }
-  handleSearch()
+  handleFilterChange() // Use immediate handler for sorts
 }
 
 const clearSorts = () => {
   sorts.experience = null
   sorts.price = null
   sorts.rating = null
-  handleSearch()
+  handleFilterChange()
 }
 
 const clearAll = () => {
+  // Clear any pending search timeout
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
   // Clear filters
   filters.name = ''
   filters.specializations = ''
@@ -411,7 +468,7 @@ const clearAll = () => {
   sorts.price = null
   sorts.rating = null
 
-  handleSearch()
+  handleFilterChange()
 }
 
 async function fetchProviders() {
@@ -441,15 +498,17 @@ async function fetchProviders() {
   }
 }
 
-function handleSearch() {
-  currentPage.value = 1
-  fetchProviders()
-}
-
 function handlePageChange(page) {
   currentPage.value = page
   fetchProviders()
 }
+
+// Cleanup timeout on component unmount
+onUnmounted(() => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+})
 
 onMounted(() => {
   fetchProviders()
