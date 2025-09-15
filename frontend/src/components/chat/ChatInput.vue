@@ -9,7 +9,7 @@
                 <XMarkIcon class="h-4 w-4" />
             </button>
         </div>
-        <button type="submit" class="btn-primary px-4 py-4 flex items-center justify-center min-w-[3rem]"
+        <button type="submit" class="btn-primary flex items-center justify-center min-w-[3rem] h-12"
             :disabled="disabled || loading || !message.trim()">
             <PaperAirplaneIcon v-if="!loading" class="h-5 w-5" />
             <svg v-else class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

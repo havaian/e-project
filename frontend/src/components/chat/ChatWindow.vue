@@ -25,15 +25,11 @@
                     </div>
                 </div>
 
-                <!-- Chat Actions -->
-                <div class="flex items-center space-x-2">
-                    <button @click="$emit('phone-call')"
-                        class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                        <PhoneIcon class="w-5 h-5" />
-                    </button>
-                    <button @click="$emit('video-call')"
-                        class="p-2 text-gray-400 hover:text-brand-1 rounded-lg hover:bg-white/50 transition-colors">
-                        <VideoCameraIcon class="w-5 h-5" />
+                <!-- Profile Button -->
+                <div class="flex items-center">
+                    <button @click="$emit('view-profile')" class="btn-secondary flex items-center space-x-2 text-sm">
+                        <UserIcon class="w-4 h-4" />
+                        <span>View Profile</span>
                     </button>
                 </div>
             </div>
@@ -84,7 +80,7 @@
 </template>
 
 <script setup>
-import { PhoneIcon, VideoCameraIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/vue/24/outline";
+import { ChatBubbleLeftEllipsisIcon, UserIcon } from "@heroicons/vue/24/outline";
 import { ref, watch, nextTick } from 'vue'
 import ChatMessage from './ChatMessage.vue'
 import ChatInput from './ChatInput.vue'
@@ -136,7 +132,7 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['submit', 'typing', 'keydown', 'scroll', 'phone-call', 'video-call'])
+const emit = defineEmits(['submit', 'typing', 'keydown', 'scroll', 'view-profile'])
 const messagesContainer = ref(null)
 
 function scrollToBottom() {

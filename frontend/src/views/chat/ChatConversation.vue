@@ -5,8 +5,8 @@
                 :recipient-status="recipientStatus" :recipient-online-status="recipientOnlineStatus"
                 :current-user-id="currentUserId" :user-initials="userInitials" :is-typing="isTyping"
                 :disabled="!isAuthenticated" :loading="loading" :sending="sending" @submit="handleMessageSubmit"
-                @typing="handleTyping" @keydown="handleKeyDown" @scroll="handleScroll" @phone-call="handlePhoneCall"
-                @video-call="handleVideoCall" ref="chatWindow" />
+                @typing="handleTyping" @keydown="handleKeyDown" @scroll="handleScroll" @view-profile="handleViewProfile"
+                ref="chatWindow" />
         </div>
     </div>
 </template>
@@ -296,11 +296,6 @@ function handleTyping() {
     }, 2000)
 }
 
-function handleKeyDown(event) {
-    // Event is already handled by ChatInput component
-    // This is here for potential future enhancements
-}
-
 function handleScroll() {
     // Mark messages as read when scrolled to bottom
     if (socket.value?.connected) {
@@ -308,14 +303,11 @@ function handleScroll() {
     }
 }
 
-function handlePhoneCall() {
-    console.log('Phone call initiated')
-    // Implement phone call functionality
-}
-
-function handleVideoCall() {
-    console.log('Video call initiated')
-    // Implement video call functionality
+function handleViewProfile() {
+    if (recipient.value) {
+        // Navigate to the recipient's profile page
+        router.push(`/profile/${recipient.value._id}`)
+    }
 }
 
 // Lifecycle management
