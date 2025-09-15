@@ -14,27 +14,13 @@
 
                         <!-- View Toggle & Actions -->
                         <div class="flex items-center space-x-4">
-                            <!-- View Toggle -->
-                            <div class="bg-gray-100 rounded-lg p-1 flex">
-                                <button @click="currentView = 'list'" :class="[
-                                    'px-3 py-2 text-sm rounded-md transition-all duration-200',
-                                    currentView === 'list'
-                                        ? 'bg-white text-brand-1 shadow-sm font-medium'
-                                        : 'text-gray-600 hover:text-gray-900'
-                                ]">
-                                    <Bars3Icon class="w-4 h-4 mr-2" />
-                                    List
-                                </button>
-                                <button @click="currentView = 'calendar'" :class="[
-                                    'px-3 py-2 text-sm rounded-md transition-all duration-200',
-                                    currentView === 'calendar'
-                                        ? 'bg-white text-brand-1 shadow-sm font-medium'
-                                        : 'text-gray-600 hover:text-gray-900'
-                                ]">
-                                    <CalendarDaysIcon class="w-4 h-4 mr-2" />
-                                    Calendar
-                                </button>
-                            </div>
+                            <!-- Calendar Controls -->
+                            <CalendarControls :current-view="currentView" user-role="provider"
+                                :calendar-view-mode="calendarViewMode" :sort-by="sortBy" :sort-direction="sortDirection"
+                                @view-change="handleViewChange" @navigate="handleCalendarNavigate"
+                                @calendar-view-change="handleCalendarViewChange" @sort-change="handleSortChange"
+                                @sort-direction-change="handleSortDirectionChange" @export="handleExport"
+                                @print="handlePrint" @refresh="handleRefresh" @bulk-action="handleBulkAction" />
 
                             <router-link to="/profile/provider" class="btn-secondary px-4 py-2">
                                 <UserIcon class="w-4 h-4 mr-2" />
@@ -69,7 +55,7 @@
             <!-- Calendar View -->
             <div v-if="currentView === 'calendar'" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <AppointmentCalendar ref="appointmentCalendar" user-role="provider" title="My Appointments"
-                    @appointment-updated="handleAppointmentUpdate" />
+                    :calendar-view-mode="calendarViewMode" @appointment-updated="handleAppointmentUpdate" />
             </div>
 
             <!-- List View -->
@@ -148,8 +134,8 @@
                     </div>
 
                     <!-- Appointments -->
-                    <div v-else-if="appointments.length > 0" class="divide-y divide-gray-200">
-                        <div v-for="appointment in appointments" :key="appointment._id"
+                    <div v-else-if="sortedAppointments.length > 0" class="divide-y divide-gray-200">
+                        <div v-for="appointment in sortedAppointments" :key="appointment._id"
                             class="p-6 hover:bg-gray-50 transition-colors">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-4">
@@ -254,7 +240,7 @@
                     </div>
 
                     <!-- Pagination -->
-                    <div v-if="appointments.length > 0 && totalPages > 1"
+                    <div v-if="sortedAppointments.length > 0 && totalPages > 1"
                         class="px-6 py-4 border-t border-gray-200 bg-gray-50">
                         <div class="flex items-center justify-between">
                             <div class="text-sm text-gray-700">
@@ -302,8 +288,7 @@ import {
     EyeIcon,
     ExclamationCircleIcon,
     ChevronLeftIcon,
-    ChevronRightIcon,
-    Bars3Icon
+    ChevronRightIcon
 } from "@heroicons/vue/24/outline"
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -312,12 +297,13 @@ import { format, parseISO, differenceInYears, isWithinInterval, subMinutes, addM
 import axios from '@/plugins/axios'
 import PendingConfirmations from '@/components/appointments/PendingConfirmations.vue'
 import AppointmentCalendar from '@/components/calendar/AppointmentCalendar.vue'
+import CalendarControls from '@/components/calendar/CalendarControls.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 // State
-const currentView = ref('list') // 'list' or 'calendar'
+const currentView = ref('calendar') // 'list' or 'calendar'
 const activeTab = ref('scheduled') // 'scheduled', 'completed', 'pending'
 const appointments = ref([])
 const loading = ref(false)
@@ -326,6 +312,11 @@ const totalPages = ref(1)
 const totalAppointments = ref(0)
 const pendingCount = ref(0)
 const appointmentCalendar = ref(null)
+
+// Calendar controls state
+const calendarViewMode = ref('dayGridMonth')
+const sortBy = ref('dateTime')
+const sortDirection = ref('desc')
 
 const filters = reactive({
     date: format(new Date(), 'yyyy-MM-dd'),
@@ -349,6 +340,41 @@ const visiblePages = computed(() => {
         pages.push(i)
     }
     return pages
+})
+
+const sortedAppointments = computed(() => {
+    if (!appointments.value.length) return []
+
+    const sorted = [...appointments.value].sort((a, b) => {
+        let aValue, bValue
+
+        switch (sortBy.value) {
+            case 'dateTime':
+                aValue = new Date(a.dateTime)
+                bValue = new Date(b.dateTime)
+                break
+            case 'status':
+                aValue = a.status
+                bValue = b.status
+                break
+            case 'client':
+                aValue = getClientName(a.client)
+                bValue = getClientName(b.client)
+                break
+            case 'type':
+                aValue = a.type || 'video'
+                bValue = b.type || 'video'
+                break
+            default:
+                return 0
+        }
+
+        if (aValue < bValue) return sortDirection.value === 'asc' ? -1 : 1
+        if (aValue > bValue) return sortDirection.value === 'asc' ? 1 : -1
+        return 0
+    })
+
+    return sorted
 })
 
 // Methods
@@ -479,6 +505,49 @@ const handlePageChange = (page) => {
     fetchAppointments()
 }
 
+// Calendar Controls handlers
+const handleViewChange = (view) => {
+    currentView.value = view
+}
+
+const handleCalendarNavigate = (direction) => {
+    if (appointmentCalendar.value) {
+        appointmentCalendar.value.navigate(direction)
+    }
+}
+
+const handleCalendarViewChange = (viewMode) => {
+    calendarViewMode.value = viewMode
+}
+
+const handleSortChange = (newSortBy) => {
+    sortBy.value = newSortBy
+}
+
+const handleSortDirectionChange = () => {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+}
+
+const handleExport = (format) => {
+    // TODO: Implement export functionality
+    console.log(`Exporting as ${format}`)
+}
+
+const handlePrint = () => {
+    // TODO: Implement print functionality
+    window.print()
+}
+
+const handleRefresh = () => {
+    fetchAppointments()
+    fetchPendingCount()
+}
+
+const handleBulkAction = (action) => {
+    // TODO: Implement bulk actions
+    console.log(`Bulk action: ${action}`)
+}
+
 // Calendar event handlers
 const handleAppointmentUpdate = (updateInfo) => {
     // Refresh list view data when calendar is updated
@@ -511,6 +580,11 @@ onMounted(() => {
 
 .btn-secondary {
     @apply bg-white text-gray-700 border border-gray-300 font-medium rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 transition-all duration-200;
+}
+
+.brand-1 {
+    background-color: #0ea5e9;
+    color: #0ea5e9;
 }
 
 .line-clamp-1 {

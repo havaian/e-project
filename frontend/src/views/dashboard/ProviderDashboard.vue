@@ -361,28 +361,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Support -->
-                    <div class="bg-gradient-to-br from-brand-1 to-cyan-500 rounded-xl p-6 text-white">
-                        <h3 class="text-lg font-semibold mb-2">Need Help?</h3>
-                        <p class="text-sm text-white/90 mb-4">
-                            Get support and tips to grow your practice
-                        </p>
-                        <div class="space-y-2">
-                            <router-link to="/help"
-                                class="block text-sm text-white/90 hover:text-white transition-colors">
-                                📚 Provider Guidelines
-                            </router-link>
-                            <router-link to="/contact"
-                                class="block text-sm text-white/90 hover:text-white transition-colors">
-                                💬 Contact Support
-                            </router-link>
-                            <router-link to="/faq"
-                                class="block text-sm text-white/90 hover:text-white transition-colors">
-                                ❓ Common Questions
-                            </router-link>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

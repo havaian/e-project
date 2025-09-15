@@ -46,7 +46,8 @@
                 class="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
                 <option value="dateTime">Date</option>
                 <option value="status">Status</option>
-                <option value="provider">Provider</option>
+                <option value="provider" v-if="userRole === 'client'">Provider</option>
+                <option value="client" v-if="userRole === 'provider'">Client</option>
                 <option value="type">Type</option>
             </select>
 
@@ -89,6 +90,35 @@
                         <ArrowPathIcon class="w-4 h-4 mr-2 inline" />
                         Refresh
                     </button>
+
+                    <!-- Role-specific actions -->
+                    <template v-if="userRole === 'provider'">
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <button @click="handleBulkAction('confirm')"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <CheckCircleIcon class="w-4 h-4 mr-2 inline" />
+                            Bulk Confirm
+                        </button>
+                        <button @click="handleBulkAction('reschedule')"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <CalendarDaysIcon class="w-4 h-4 mr-2 inline" />
+                            Bulk Reschedule
+                        </button>
+                    </template>
+
+                    <template v-if="userRole === 'client'">
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <button @click="handleQuickAction('book')"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <PlusIcon class="w-4 h-4 mr-2 inline" />
+                            Quick Book
+                        </button>
+                        <button @click="handleQuickAction('favorites')"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <HeartIcon class="w-4 h-4 mr-2 inline" />
+                            Favorite Providers
+                        </button>
+                    </template>
                 </div>
             </div>
         </div>
@@ -107,7 +137,10 @@ import {
     DocumentArrowDownIcon,
     DocumentTextIcon,
     PrinterIcon,
-    ArrowPathIcon
+    ArrowPathIcon,
+    CheckCircleIcon,
+    PlusIcon,
+    HeartIcon
 } from '@heroicons/vue/24/outline'
 import { ref, onMounted, onUnmounted } from 'vue'
 
@@ -117,6 +150,11 @@ const props = defineProps({
         type: String,
         default: 'list',
         validator: (value) => ['list', 'calendar'].includes(value)
+    },
+    userRole: {
+        type: String,
+        required: true,
+        validator: (value) => ['client', 'provider'].includes(value)
     },
     calendarViewMode: {
         type: String,
@@ -146,7 +184,9 @@ const emit = defineEmits([
     'sort-direction-change',
     'export',
     'print',
-    'refresh'
+    'refresh',
+    'bulk-action',
+    'quick-action'
 ])
 
 // Local state
@@ -182,6 +222,16 @@ const handleRefresh = () => {
     showActionsMenu.value = false
 }
 
+const handleBulkAction = (action) => {
+    emit('bulk-action', action)
+    showActionsMenu.value = false
+}
+
+const handleQuickAction = (action) => {
+    emit('quick-action', action)
+    showActionsMenu.value = false
+}
+
 // Close dropdown when clicking outside
 const handleClickOutside = (event) => {
     if (showActionsMenu.value && !event.target.closest('.relative')) {
@@ -202,5 +252,6 @@ onUnmounted(() => {
 <style scoped>
 .brand-1 {
     background-color: #0ea5e9;
+    color: #0ea5e9;
 }
 </style>

@@ -270,7 +270,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 // State
-const currentView = ref('list') // 'list' or 'calendar'
+const currentView = ref('calendar') // 'list' or 'calendar'
 const appointments = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
