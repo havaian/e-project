@@ -252,7 +252,7 @@
 
                 <!-- Sidebar -->
                 <div class="space-y-6">
-                    <!-- Quick Actions -->
+                    <!-- Quick Actions 
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                         <div class="space-y-3">
@@ -280,7 +280,7 @@
                                 Download Report
                             </button>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Earnings Summary -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -413,10 +413,10 @@ const earnings = ref({
     thisMonthGrowth: 0
 })
 const performance = ref({
-    rating: 4.8,
-    responseTime: '< 2 hours',
-    completionRate: 98,
-    profileViews: 156
+    rating: 0.0,
+    responseTime: '-',
+    completionRate: 0,
+    profileViews: 0
 })
 
 // Computed

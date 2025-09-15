@@ -21,11 +21,6 @@
                                 @calendar-view-change="handleCalendarViewChange" @sort-change="handleSortChange"
                                 @sort-direction-change="handleSortDirectionChange" @export="handleExport"
                                 @print="handlePrint" @refresh="handleRefresh" @bulk-action="handleBulkAction" />
-
-                            <router-link to="/profile/provider" class="btn-secondary px-4 py-2">
-                                <UserIcon class="w-4 h-4 mr-2" />
-                                Availability
-                            </router-link>
                         </div>
                     </div>
                 </div>

@@ -34,12 +34,6 @@
                         {{ view.label }}
                     </button>
                 </div>
-                
-                <button v-if="userRole === 'client'" @click="$emit('openBooking')"
-                    class="btn-primary px-4 py-2 text-sm">
-                    <PlusIcon class="w-4 h-4 mr-2" />
-                    Book Appointment
-                </button>
             </div>
         </div>
 

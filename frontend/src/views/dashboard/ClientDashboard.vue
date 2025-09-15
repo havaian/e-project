@@ -207,12 +207,6 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                         <div class="space-y-3">
-                            <router-link to="/providers"
-                                class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <PlusIcon class="w-4 h-4 mr-2" />
-                                Book Appointment
-                            </router-link>
-
                             <router-link to="/appointments/client"
                                 class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                                 <CalendarDaysIcon class="w-4 h-4 mr-2" />

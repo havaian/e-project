@@ -29,16 +29,6 @@
             </button>
         </div>
 
-        <!-- Calendar View Mode (Month/Week/Day) -->
-        <div v-if="currentView === 'calendar'" class="flex items-center space-x-1">
-            <select :value="calendarViewMode" @change="$emit('calendar-view-change', $event.target.value)"
-                class="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
-                <option value="dayGridMonth">Month</option>
-                <option value="timeGridWeek">Week</option>
-                <option value="timeGridDay">Day</option>
-            </select>
-        </div>
-
         <!-- List View Controls -->
         <div v-if="currentView === 'list'" class="flex items-center space-x-2">
             <!-- Sort Options -->
@@ -58,14 +48,14 @@
             </button>
         </div>
 
-        <!-- Export/Actions Menu -->
+        <!-- Export/Actions Menu 
         <div class="relative" v-if="showActions">
             <button @click="showActionsMenu = !showActionsMenu"
                 class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <EllipsisVerticalIcon class="w-5 h-5 text-gray-600" />
             </button>
 
-            <!-- Actions Dropdown -->
+            <!-- Actions Dropdown 
             <div v-if="showActionsMenu"
                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                 <div class="py-1">
@@ -91,7 +81,7 @@
                         Refresh
                     </button>
 
-                    <!-- Role-specific actions -->
+                    <!-- Role-specific actions 
                     <template v-if="userRole === 'provider'">
                         <div class="border-t border-gray-100 my-1"></div>
                         <button @click="handleBulkAction('confirm')"
@@ -121,7 +111,7 @@
                     </template>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -148,8 +138,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const props = defineProps({
     currentView: {
         type: String,
-        default: 'list',
-        validator: (value) => ['list', 'calendar'].includes(value)
+        default: 'calendar',
+        validator: (value) => ['calendar', 'list'].includes(value)
     },
     userRole: {
         type: String,
@@ -195,14 +185,14 @@ const showActionsMenu = ref(false)
 // View options configuration
 const viewOptions = [
     {
-        key: 'list',
-        label: 'List',
-        icon: Bars3Icon
-    },
-    {
         key: 'calendar',
         label: 'Calendar',
         icon: CalendarDaysIcon
+    },
+    {
+        key: 'list',
+        label: 'List',
+        icon: Bars3Icon
     }
 ]
 
