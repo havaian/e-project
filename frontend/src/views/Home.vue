@@ -224,7 +224,7 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
 import ClientDashboard from '@/views/dashboard/ClientDashboard.vue'
-import ProviderDashboard from '@/views/profile/ProviderDashboard.vue'
+import ProviderDashboard from '@/views/dashboard/ProviderDashboard.vue'
 
 const authStore = useAuthStore()
 </script>
