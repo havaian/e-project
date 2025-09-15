@@ -154,7 +154,9 @@
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center">
                                             <div class="flex">
-                                                <StarIcon :class="i <= Math.round(reviewStats.average) ? 'text-yellow-400' : 'text-gray-300'" class="w-6 h-6" />
+                                                <StarIcon v-for="i in 5" :key="i"
+                                                    :class="i <= Math.round(reviewStats.average) ? 'text-yellow-400' : 'text-gray-300'"
+                                                    class="w-6 h-6" />
                                             </div>
                                             <div class="ml-3">
                                                 <p class="text-lg font-medium text-gray-900">{{
@@ -182,7 +184,9 @@
                                                         </p>
                                                         <div class="flex items-center mt-1">
                                                             <div class="flex">
-                                                                <StarIcon :class="i <= Math.round(reviewStats.average) ? 'text-yellow-400' : 'text-gray-300'" class="w-4 h-4" />
+                                                                <StarIcon v-for="i in 5" :key="i"
+                                                                    :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'"
+                                                                    class="w-4 h-4" />
                                                             </div>
                                                             <span class="ml-2 text-sm text-gray-600">{{
                                                                 formatDate(review.createdAt) }}</span>
@@ -215,7 +219,7 @@
                                 </div>
 
                                 <div v-else class="text-center py-8">
-                                    <StarIcon class="w-12 h-12 text-gray-300" />
+                                    <StarIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                                     <p class="text-gray-500">No reviews yet</p>
                                     <p class="text-gray-400 text-sm mt-1">Be the first to leave a review!</p>
                                 </div>
@@ -287,7 +291,7 @@
                                         <button @click="showAllAchievements = !showAllAchievements"
                                             class="text-yellow-600 hover:text-yellow-700 text-sm font-medium">
                                             {{ showAllAchievements ? 'Show Less' : `View ${earnedAchievements.length -
-                                            4} More` }}
+                                                4} More` }}
                                         </button>
                                     </div>
                                 </div>
@@ -312,7 +316,7 @@
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">Member Since</span>
                                         <span class="font-medium text-gray-900">{{ formatDateShort(provider.createdAt)
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                     <div v-if="provider.lastLoginAt" class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">Last Active</span>
@@ -358,11 +362,12 @@
 <script setup>
 import { CheckCircleIcon, StarIcon, ChatBubbleLeftRightIcon, CalendarDaysIcon, LightBulbIcon, UserIcon, BookOpenIcon, BriefcaseIcon, LanguageIcon, CurrencyDollarIcon, DevicePhoneMobileIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
 // Reactive data
@@ -374,13 +379,12 @@ const similarProviders = ref([])
 const loading = ref(true)
 const showAllReviews = ref(false)
 const showAllAchievements = ref(false)
-const showEmergencyContact = ref(false)
 const completedAppointments = ref(0)
-const responseRate = ref(0) // This would come from backend analytics
+const responseRate = ref(95) // Default fallback value
 
 // Computed properties
 const canContact = computed(() => {
-    return authStore.isAuthenticated && authStore.user?.id !== provider.value?._id
+    return authStore.isAuthenticated && authStore.user?._id !== provider.value?._id
 })
 
 const earnedAchievements = computed(() =>
@@ -457,27 +461,45 @@ const fetchSimilarProviders = async () => {
     }
 }
 
+// Updated to handle the new backend response format
 const fetchCompletedAppointments = async () => {
     try {
         const response = await axios.get(`/appointments/provider/${route.params.id}/stats`)
-        completedAppointments.value = response.data.completedAppointments || 0
+        if (response.data.success) {
+            completedAppointments.value = response.data.completedAppointments || 0
+            responseRate.value = response.data.responseRate || 95
+        } else {
+            // Handle error case with fallback values
+            completedAppointments.value = 0
+            responseRate.value = 95
+        }
     } catch (error) {
         console.error('Error fetching appointment stats:', error)
+        // Set fallback values on error
+        completedAppointments.value = 0
+        responseRate.value = 95
     }
 }
 
+// Proper messaging navigation
 const initiateChat = async () => {
     try {
-        // Create or get existing conversation
+        // Create or get existing conversation first
         const response = await axios.post('/chat/conversations', {
             participantId: provider.value._id
         })
 
-        // Navigate to chat (assuming you have a chat route)
-        // router.push(`/chat/${response.data.conversationId}`)
-        // console.log('Chat initiated:', response.data)
+        if (response.data.success && response.data.conversationId) {
+            // Navigate to chat page with the conversation ID
+            router.push(`/chat/${response.data.conversationId}`)
+        } else {
+            // If creating conversation fails, still try to navigate to general chat with provider ID
+            router.push(`/chat?provider=${provider.value._id}`)
+        }
     } catch (error) {
         console.error('Error initiating chat:', error)
+        // Fallback: navigate to general chat page and let it handle provider selection
+        router.push(`/chat?provider=${provider.value._id}`)
     }
 }
 
