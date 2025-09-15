@@ -404,7 +404,7 @@ const fetchAppointments = async () => {
 
 const fetchPendingCount = async () => {
     try {
-        const response = await axios.get(`/appointments/pending-confirmation/provider/${authStore.user.id}`)
+        const response = await axios.get(`/appointments/pending-confirmation/provider/${authStore.user._id}`)
         pendingCount.value = response.data.appointments?.length || 0
     } catch (error) {
         console.error('Error fetching pending count:', error)

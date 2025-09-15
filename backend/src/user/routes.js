@@ -66,6 +66,28 @@ router.get('/me', authenticateUser, userController.getCurrentUser);
 router.patch('/me', authenticateUser, userController.updateUserProfile);
 
 /**
+ * @route PATCH /api/users/me/availability
+ * @desc Update provider availability (calendar-style)
+ * @access Private (Provider only)
+ */
+router.patch('/me/availability', 
+    authenticateUser, 
+    authorizeRoles(['provider']), 
+    userController.updateProviderAvailability
+);
+
+/**
+ * @route GET /api/users/me/availability
+ * @desc Get provider availability for calendar view
+ * @access Private (Provider only)
+ */
+router.get('/me/availability', 
+    authenticateUser, 
+    authorizeRoles(['provider']), 
+    userController.getProviderAvailability
+);
+
+/**
  * @route POST /api/users/change-password
  * @desc Change user password
  * @access Private

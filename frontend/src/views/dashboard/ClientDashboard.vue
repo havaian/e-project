@@ -203,30 +203,6 @@
 
                 <!-- Sidebar -->
                 <div class="space-y-6">
-                    <!-- Quick Actions -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                        <div class="space-y-3">
-                            <router-link to="/appointments/client"
-                                class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <CalendarDaysIcon class="w-4 h-4 mr-2" />
-                                View Calendar
-                            </router-link>
-
-                            <router-link to="/chat"
-                                class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <ChatBubbleLeftIcon class="w-4 h-4 mr-2" />
-                                Messages
-                            </router-link>
-
-                            <router-link to="/profile/client"
-                                class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <UserIcon class="w-4 h-4 mr-2" />
-                                Edit Profile
-                            </router-link>
-                        </div>
-                    </div>
-
                     <!-- Your Providers -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Providers</h3>
@@ -371,27 +347,7 @@ const calculateStats = (appointments) => {
 }
 
 const loadRecentActivity = () => {
-    // Mock recent activity - replace with actual API call when available
-    recentActivity.value = [
-        {
-            id: 1,
-            type: 'appointment_completed',
-            message: 'Completed session with Dr. Smith',
-            createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 hours ago
-        },
-        {
-            id: 2,
-            type: 'appointment_booked',
-            message: 'Booked appointment with Dr. Johnson',
-            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 day ago
-        },
-        {
-            id: 3,
-            type: 'message_received',
-            message: 'New message from Dr. Smith',
-            createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000) // 2 days ago
-        }
-    ]
+    recentActivity.value = []
 }
 
 // Use appointments data to get favorite providers instead of separate API call

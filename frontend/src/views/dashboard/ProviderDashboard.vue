@@ -252,36 +252,6 @@
 
                 <!-- Sidebar -->
                 <div class="space-y-6">
-                    <!-- Quick Actions 
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                        <div class="space-y-3">
-                            <router-link to="/profile/provider"
-                                class="w-full flex items-center justify-start px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <UserIcon class="w-4 h-4 mr-3" />
-                                Update Availability
-                            </router-link>
-
-                            <router-link to="/appointments/provider"
-                                class="w-full flex items-center justify-start px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <CalendarDaysIcon class="w-4 h-4 mr-3" />
-                                Manage Appointments
-                            </router-link>
-
-                            <router-link to="/chat"
-                                class="w-full flex items-center justify-start px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <ChatBubbleLeftIcon class="w-4 h-4 mr-3" />
-                                Messages
-                            </router-link>
-
-                            <button @click="downloadReport"
-                                class="w-full flex items-center justify-start px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                <DocumentArrowDownIcon class="w-4 h-4 mr-3" />
-                                Download Report
-                            </button>
-                        </div>
-                    </div> -->
-
                     <!-- Earnings Summary -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Earnings Overview</h3>
@@ -430,7 +400,7 @@ const loadDashboardData = async () => {
         loadingAppointments.value = true
 
         // Load dashboard summary
-        const summaryResponse = await axios.get(`/providers/dashboard/summary`)
+        const summaryResponse = await axios.get(`/users/providers/dashboard/summary`)
         dashboardSummary.value = summaryResponse.data
 
         // Load today's appointments
@@ -444,7 +414,7 @@ const loadDashboardData = async () => {
         todayAppointments.value = appointmentsResponse.data.appointments || []
 
         // Load earnings data
-        const earningsResponse = await axios.get(`/providers/dashboard/earnings`)
+        const earningsResponse = await axios.get(`/users/providers/dashboard/earnings`)
         earnings.value = {
             thisMonth: earningsResponse.data.currentMonth?.total || 0,
             lastMonth: earningsResponse.data.previousMonth?.total || 0,

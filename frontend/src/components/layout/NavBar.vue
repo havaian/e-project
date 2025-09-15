@@ -40,6 +40,11 @@
                                 My Schedule
                             </router-link>
                         </template>
+                        <router-link to="/chat"
+                            class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                            :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path === '/chat' }">
+                            Messages
+                        </router-link>
                     </div>
                 </div>
 
