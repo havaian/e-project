@@ -1,173 +1,337 @@
 <template>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">My Appointments</h1>
+    <div class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="py-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">My Appointments</h1>
+                            <p class="mt-1 text-sm text-gray-600">
+                                Manage your appointments and sessions
+                            </p>
+                        </div>
 
-        <!-- Filters -->
-        <div class="card-element p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="form-group">
-                    <label for="status" class="label">Filter by Status</label>
-                    <select id="status" v-model="filters.status" class="input" @change="fetchAppointments">
-                        <option value="">All Status</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="completed">Completed</option>
-                        <option value="canceled">Canceled</option>
-                        <option value="no-show">No Show</option>
-                    </select>
+                        <!-- View Toggle & Actions -->
+                        <div class="flex items-center space-x-4">
+                            <!-- View Toggle -->
+                            <CalendarControls :current-view="currentView" @view-change="handleViewChange" />
+
+                            <router-link to="/providers" class="btn-primary">
+                                <PlusIcon class="w-5 h-5 mr-2" />
+                                Book New
+                            </router-link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Appointments List -->
-        <div class="space-y-6">
-            <div v-if="loading" class="text-center py-12">
-                <div
-                    class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-1 border-t-transparent">
-                </div>
-                <p class="mt-4 text-gray-600">Loading your appointments...</p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Calendar View -->
+            <div v-if="currentView === 'calendar'" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <AppointmentCalendar ref="appointmentCalendar" user-role="client" title="My Appointments"
+                    @open-booking="handleOpenBooking" @appointment-updated="handleAppointmentUpdate" />
             </div>
 
-            <template v-else>
-                <div v-if="appointments.length === 0" class="text-center py-12">
-                    <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
-                        <CalendarDaysIcon class="w-12 h-12" />
+            <!-- List View -->
+            <div v-else>
+                <!-- Filters -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select v-model="filters.status" @change="fetchAppointments"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
+                                <option value="">All Statuses</option>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="completed">Completed</option>
+                                <option value="canceled">Cancelled</option>
+                                <option value="pending-provider-confirmation">Pending Confirmation</option>
+                                <option value="pending-payment">Pending Payment</option>
+                            </select>
+                        </div>
+
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                            <input v-model="filters.date" @change="fetchAppointments" type="date"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
+                        </div>
+
+                        <div class="flex items-end">
+                            <button @click="resetFilters"
+                                class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                Reset
+                            </button>
+                        </div>
                     </div>
-                    <p class="text-gray-600 text-lg">No appointments found</p>
-                    <p class="text-gray-500 text-sm mt-1">Schedule an appointment to get started</p>
                 </div>
 
-                <div v-else class="space-y-4">
-                    <div v-for="appointment in appointments" :key="appointment._id"
-                        class="card-element overflow-hidden transition-buttery duration-300 hover:shadow-lg">
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-4">
+                <!-- Appointments List -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <!-- Loading State -->
+                    <div v-if="loading" class="p-6">
+                        <div class="space-y-4">
+                            <div v-for="i in 5" :key="i" class="animate-pulse">
                                 <div class="flex items-center space-x-4">
-                                    <div class="relative">
-                                        <img :src="appointment.provider.profilePicture ? `/api${appointment.provider.profilePicture}` : '/images/user-placeholder.jpg'"
-                                            :alt="appointment.provider.firstName"
-                                            class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100" />
-                                        <div class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-green-400 border-2 border-white"
-                                            v-if="appointment.status === 'scheduled'"></div>
+                                    <div class="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                                    <div class="flex-1 space-y-2">
+                                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                                        <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                                        <div class="h-3 bg-gray-200 rounded w-1/4"></div>
                                     </div>
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">
-                                            {{ appointment.provider.firstName }} {{ appointment.provider.lastName }}
-                                        </h3>
-                                        <div class="mt-2 flex flex-wrap gap-2">
-                                            <span v-for="spec in appointment.provider.specializations" :key="spec"
-                                                class="status-info text-xs">
-                                                {{ spec }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                                        :class="{
-                                            'bg-green-100 text-green-800': appointment.status === 'completed',
-                                            'bg-blue-100 text-blue-800': appointment.status === 'scheduled',
-                                            'bg-red-100 text-red-800': appointment.status === 'canceled' || appointment.status === 'no-show'
-                                        }">
-                                        {{ appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1) }}
-                                    </span>
+                                    <div class="w-20 h-8 bg-gray-200 rounded"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                <div class="flex items-center space-x-3">
-                                    <div
-                                        class="flex-shrink-0 w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center">
-                                        <CalendarDaysIcon class="w-4 h-4 text-brand-1" />
+                    <!-- Appointments -->
+                    <div v-else-if="appointments.length > 0" class="divide-y divide-gray-200">
+                        <div v-for="appointment in appointments" :key="appointment._id"
+                            class="p-6 hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <!-- Provider Avatar -->
+                                    <div class="relative">
+                                        <img :src="appointment.provider?.profilePicture || '/images/default-avatar.png'"
+                                            :alt="getProviderName(appointment.provider)"
+                                            class="w-16 h-16 rounded-xl object-cover">
+                                        <div
+                                            class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white">
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="text-sm text-gray-500">Date & Time</p>
-                                        <p class="font-medium text-gray-900">{{ formatDateTime(appointment.dateTime) }}
+
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3">
+                                            <h3 class="text-lg font-semibold text-gray-900">
+                                                {{ getProviderName(appointment.provider) }}
+                                            </h3>
+                                            <span :class="getStatusClass(appointment.status)"
+                                                class="px-2 py-1 text-xs font-medium rounded-full capitalize">
+                                                {{ appointment.status.replace('-', ' ') }}
+                                            </span>
+                                        </div>
+
+                                        <div class="mt-1 flex items-center space-x-4 text-sm text-gray-600">
+                                            <div class="flex items-center space-x-1">
+                                                <CalendarDaysIcon class="w-4 h-4" />
+                                                <span>{{ formatDateTime(appointment.dateTime) }}</span>
+                                            </div>
+                                            <div class="flex items-center space-x-1">
+                                                <VideoCameraIcon class="w-4 h-4" />
+                                                <span class="capitalize">{{ appointment.type || 'Video Session'
+                                                    }}</span>
+                                            </div>
+                                        </div>
+
+                                        <p v-if="appointment.shortDescription"
+                                            class="mt-1 text-sm text-gray-500 line-clamp-1">
+                                            {{ appointment.shortDescription }}
                                         </p>
                                     </div>
                                 </div>
+
+                                <!-- Action Buttons -->
                                 <div class="flex items-center space-x-3">
-                                    <div
-                                        class="flex-shrink-0 w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center">
-                                        <VideoCameraIcon class="w-4 h-4 text-brand-1" />
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-500">Session Type</p>
-                                        <p class="font-medium text-gray-900">{{ appointment.type.charAt(0).toUpperCase()
-                                            + appointment.type.slice(1) }}</p>
-                                    </div>
+                                    <!-- Join Session (if within window) -->
+                                    <button
+                                        v-if="isWithinJoinWindow(appointment.dateTime) && appointment.status === 'scheduled'"
+                                        @click="joinSession(appointment._id)" class="btn-primary px-4 py-2 text-sm">
+                                        <VideoCameraIcon class="w-4 h-4 mr-2" />
+                                        Join Session
+                                    </button>
+
+                                    <!-- Future appointment actions -->
+                                    <template
+                                        v-else-if="isAppointmentInFuture(appointment.dateTime) && appointment.status === 'scheduled'">
+                                        <button @click="editAppointment(appointment._id)"
+                                            class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
+                                            Edit
+                                        </button>
+                                        <button @click="cancelAppointment(appointment._id)"
+                                            class="px-3 py-2 text-sm text-red-700 bg-red-100 rounded-lg hover:bg-red-200 transition-colors">
+                                            Cancel
+                                        </button>
+                                    </template>
+
+                                    <!-- View Details -->
+                                    <router-link :to="`/appointments/${appointment._id}`"
+                                        class="px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                        <EyeIcon class="w-4 h-4 mr-2" />
+                                        Details
+                                    </router-link>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="flex justify-end space-x-3">
-                                <router-link :to="{ name: 'appointment-details', params: { id: appointment._id } }"
-                                    class="btn-secondary">
-                                    <EyeIcon class="w-4 h-4 mr-2" />
-                                    View Details
-                                </router-link>
-                                <button v-if="appointment.status === 'scheduled'"
-                                    class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50"
-                                    @click="cancelAppointment(appointment._id)">
-                                    <XMarkIcon class="w-4 h-4 mr-2" />
-                                    Cancel
+                    <!-- Empty State -->
+                    <div v-else class="p-12 text-center">
+                        <CalendarDaysIcon class="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No appointments found</h3>
+                        <p class="text-gray-600 mb-6">
+                            {{ filters.status || filters.date ? 'Try adjusting your filters or' : '' }}
+                            Book your first appointment to get started
+                        </p>
+                        <router-link to="/providers" class="btn-primary px-6 py-3">
+                            Browse Providers
+                        </router-link>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div v-if="appointments.length > 0 && totalPages > 1"
+                        class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-700">
+                                Showing {{ (currentPage - 1) * 10 + 1 }} to {{ Math.min(currentPage * 10,
+                                totalAppointments) }}
+                                of {{ totalAppointments }} appointments
+                            </div>
+
+                            <div class="flex items-center space-x-2">
+                                <button v-if="currentPage > 1" @click="handlePageChange(currentPage - 1)"
+                                    class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <ChevronLeftIcon class="w-4 h-4" />
                                 </button>
-                                <button
-                                    v-if="appointment.status === 'scheduled' && isWithinJoinWindow(appointment.dateTime)"
-                                    class="btn-primary">
-                                    <VideoCameraIcon class="w-4 h-4 mr-2" />
-                                    Join Now
+
+                                <div class="flex space-x-1">
+                                    <button v-for="page in visiblePages" :key="page" :class="[
+                                        'px-3 py-2 text-sm rounded-lg transition-colors',
+                                        page === currentPage
+                                            ? 'bg-brand-1 text-white'
+                                            : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                                    ]" @click="handlePageChange(page)">
+                                        {{ page }}
+                                    </button>
+                                </div>
+
+                                <button v-if="currentPage < totalPages" @click="handlePageChange(currentPage + 1)"
+                                    class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <ChevronRightIcon class="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Enhanced Pagination -->
-                <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 mt-8">
-                    <button v-if="currentPage > 1" @click="handlePageChange(currentPage - 1)"
-                        class="btn-secondary px-3 py-2">
-                        <ChevronLeftIcon class="w-4 h-4" />
-                    </button>
-
-                    <div class="flex space-x-1">
-                        <button v-for="page in totalPages" :key="page"
-                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
-                            :class="currentPage === page ? 'bg-brand-1 text-white' : 'text-gray-700 hover:bg-gray-100'"
-                            @click="handlePageChange(page)">
-                            {{ page }}
+        <!-- Booking Modal (triggered from calendar) -->
+        <div v-if="showBookingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Quick Book</h3>
+                        <button @click="showBookingModal = false" class="text-gray-400 hover:text-gray-600">
+                            <XMarkIcon class="w-6 h-6" />
                         </button>
                     </div>
 
-                    <button v-if="currentPage < totalPages" @click="handlePageChange(currentPage + 1)"
-                        class="btn-secondary px-3 py-2">
-                        <ChevronRightIcon class="w-4 h-4" />
-                    </button>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Selected: {{ selectedBookingDate ? format(selectedBookingDate, 'MMM d, yyyy') : 'No date' }}
+                    </p>
+
+                    <div class="flex justify-end space-x-3">
+                        <button @click="showBookingModal = false"
+                            class="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <router-link to="/providers" @click="showBookingModal = false"
+                            class="px-4 py-2 text-sm text-white bg-brand-1 rounded-lg hover:bg-brand-1/90">
+                            Choose Provider
+                        </router-link>
+                    </div>
                 </div>
-            </template>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { CalendarDaysIcon, VideoCameraIcon, EyeIcon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
-import { ref, reactive, onMounted } from 'vue'
+import {
+    CalendarDaysIcon,
+    VideoCameraIcon,
+    EyeIcon,
+    XMarkIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    PlusIcon
+} from "@heroicons/vue/24/outline"
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { format, parseISO, isWithinInterval, subMinutes, addMinutes } from 'date-fns'
+import { format, parseISO, isWithinInterval, subMinutes, addMinutes, isFuture } from 'date-fns'
 import axios from '@/plugins/axios'
+import AppointmentCalendar from '@/components/calendar/AppointmentCalendar.vue'
+import CalendarControls from '@/components/calendar/CalendarControls.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
+// State
+const currentView = ref('list') // 'list' or 'calendar'
 const appointments = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
 const totalPages = ref(1)
+const totalAppointments = ref(0)
+const appointmentCalendar = ref(null)
+const showBookingModal = ref(false)
+const selectedBookingDate = ref(null)
+
 const filters = reactive({
-    status: ''
+    status: '',
+    date: ''
 })
+
+// Computed
+const visiblePages = computed(() => {
+    const pages = []
+    const start = Math.max(1, currentPage.value - 2)
+    const end = Math.min(totalPages.value, currentPage.value + 2)
+
+    for (let i = start; i <= end; i++) {
+        pages.push(i)
+    }
+    return pages
+})
+
+// Methods
+const fetchAppointments = async () => {
+    try {
+        loading.value = true
+        const params = {
+            limit: 10,
+            skip: (currentPage.value - 1) * 10,
+            ...filters
+        }
+
+        const response = await axios.get(`/appointments/client/${authStore.user.id}`, { params })
+        appointments.value = response.data.appointments || []
+        totalAppointments.value = response.data.pagination?.total || 0
+        totalPages.value = Math.ceil(totalAppointments.value / 10)
+    } catch (error) {
+        console.error('Error fetching appointments:', error)
+    } finally {
+        loading.value = false
+    }
+}
+
+const resetFilters = () => {
+    filters.status = ''
+    filters.date = ''
+    currentPage.value = 1
+    fetchAppointments()
+}
 
 const formatDateTime = (dateTime) => {
     return format(parseISO(dateTime), 'MMM d, yyyy h:mm a')
+}
+
+const getProviderName = (provider) => {
+    if (!provider) return 'Unknown Provider'
+    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || 'Provider'
 }
 
 const isWithinJoinWindow = (dateTime) => {
@@ -179,58 +343,100 @@ const isWithinJoinWindow = (dateTime) => {
     })
 }
 
-async function fetchAppointments() {
-    try {
-        loading.value = true
-        const params = {
-            page: currentPage.value,
-            limit: 10,
-            ...filters
-        }
-
-        const response = await axios.get(`/appointments/client/${authStore.user._id}`, { params })
-        appointments.value = response.data.appointments
-        totalPages.value = Math.ceil(response.data.pagination.total / response.data.pagination.limit)
-    } catch (error) {
-        console.error('Error fetching appointments:', error)
-    } finally {
-        loading.value = false
-    }
+const isAppointmentInFuture = (dateTime) => {
+    return isFuture(parseISO(dateTime))
 }
 
-async function cancelAppointment(appointmentId) {
-    if (!confirm('Are you sure you want to cancel this appointment?')) return
-
-    try {
-        await axios.patch(`/appointments/${appointmentId}/status`, {
-            status: 'canceled'
-        })
-        await fetchAppointments()
-    } catch (error) {
-        console.error('Error canceling appointment:', error)
+const getStatusClass = (status) => {
+    const classes = {
+        'scheduled': 'bg-blue-100 text-blue-800',
+        'completed': 'bg-green-100 text-green-800',
+        'canceled': 'bg-red-100 text-red-800',
+        'cancelled': 'bg-red-100 text-red-800',
+        'no-show': 'bg-gray-100 text-gray-800',
+        'pending-provider-confirmation': 'bg-purple-100 text-purple-800',
+        'pending-payment': 'bg-yellow-100 text-yellow-800'
     }
+    return classes[status] || 'bg-gray-100 text-gray-800'
 }
 
-async function joinSession(appointmentId) {
+// Actions
+const joinSession = async (appointmentId) => {
     try {
-        const response = await axios.get(`/sessions/${appointmentId}/join`)
-        if (response.data.session) {
-            router.push({
-                name: 'session-room',
-                params: { appointmentId }
-            })
-        }
+        router.push(`/session/${appointmentId}`)
     } catch (error) {
         console.error('Error joining session:', error)
     }
 }
 
-function handlePageChange(page) {
+const editAppointment = (appointmentId) => {
+    router.push(`/appointments/${appointmentId}/edit`)
+}
+
+const cancelAppointment = async (appointmentId) => {
+    if (!confirm('Are you sure you want to cancel this appointment?')) return
+
+    try {
+        await axios.patch(`/appointments/${appointmentId}`, {
+            status: 'canceled'
+        })
+        fetchAppointments()
+        // Refresh calendar if in calendar view
+        if (currentView.value === 'calendar' && appointmentCalendar.value) {
+            appointmentCalendar.value.refreshCalendar()
+        }
+        // TODO: Show success notification
+    } catch (error) {
+        console.error('Error canceling appointment:', error)
+        // TODO: Show error notification
+    }
+}
+
+const handlePageChange = (page) => {
     currentPage.value = page
     fetchAppointments()
 }
 
+// View handlers
+const handleViewChange = (view) => {
+    currentView.value = view
+}
+
+// Calendar event handlers
+const handleOpenBooking = (dateInfo) => {
+    if (dateInfo?.date) {
+        selectedBookingDate.value = dateInfo.date
+        showBookingModal.value = true
+    } else {
+        router.push('/providers')
+    }
+}
+
+const handleAppointmentUpdate = (updateInfo) => {
+    // Refresh list view data when calendar is updated
+    if (currentView.value === 'list') {
+        fetchAppointments()
+    }
+    // TODO: Show update notification
+}
+
+// Lifecycle
 onMounted(() => {
-    fetchAppointments()
+    if (currentView.value === 'list') {
+        fetchAppointments()
+    }
 })
 </script>
+
+<style scoped>
+.btn-primary {
+    @apply bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-all duration-200 shadow-lg px-4 py-2;
+}
+
+.line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+</style>

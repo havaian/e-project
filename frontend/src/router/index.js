@@ -46,6 +46,17 @@ const router = createRouter({
       component: () => import('@/views/auth/ResetPassword.vue')
     },
 
+    // Dashboard routes (NEW)
+    {
+      path: '/dashboard/client',
+      name: 'client-dashboard',
+      component: () => import('@/views/dashboard/ClientDashboard.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresClient: true
+      }
+    },
+
     // Profile routes
     {
       path: '/profile/client',
@@ -85,7 +96,7 @@ const router = createRouter({
     {
       path: '/profile/provider/dashboard',
       name: 'provider-dashboard',
-      component: () => import('@/views/profile/ProviderDashboard.vue'),
+      component: () => import('@/views/dashboard/ProviderDashboard.vue'),
       meta: {
         requiresAuth: true,
         requiresProvider: true,
@@ -116,7 +127,7 @@ const router = createRouter({
 
     // Client routes
     {
-      path: '/clientss/:id',
+      path: '/clients/:id',
       name: 'client-profile-view',
       component: () => import('@/views/clients/ClientPublicProfile.vue')
     },
@@ -154,6 +165,14 @@ const router = createRouter({
       path: '/appointments/:id',
       name: 'appointment-details',
       component: () => import('@/views/appointments/AppointmentDetails.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/appointments/:id/edit',
+      name: 'appointment-edit',
+      component: () => import('@/views/appointments/EditAppointment.vue'),
       meta: {
         requiresAuth: true
       }
@@ -276,7 +295,18 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    next('/')
+    // Redirect authenticated users to their appropriate dashboard
+    if (authStore.isClient) {
+      next('/dashboard/client')
+    } else if (authStore.isProvider) {
+      if (authStore.needsOnboarding) {
+        next('/profile/provider/onboarding')
+      } else {
+        next('/profile/provider/dashboard')
+      }
+    } else {
+      next('/')
+    }
     return
   }
 
