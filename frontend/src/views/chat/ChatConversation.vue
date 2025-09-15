@@ -304,10 +304,8 @@ function handleScroll() {
 }
 
 function handleViewProfile() {
-    if (recipient.value) {
-        // Navigate to the recipient's profile page
-        router.push(`/profile/${recipient.value._id}`)
-    }
+    const route = recipient.value.role === 'provider' ? 'providers' : 'clients'
+    router.push(`/${route}/${recipient.value._id}`)
 }
 
 // Lifecycle management
