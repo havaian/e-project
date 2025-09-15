@@ -305,31 +305,43 @@ const currentDate = computed(() => {
     return format(new Date(), 'EEEE, MMMM d, yyyy')
 })
 
-// Methods
+// Get the correct user ID - handle both _id and id properties
+const getUserId = () => {
+    return authStore.user?._id || authStore.user?.id
+}
+
+// Combined method to eliminate duplicate API calls
 const loadDashboardData = async () => {
     try {
+        const userId = getUserId()
+
+        if (!userId) {
+            console.error('No user ID available')
+            loadingAppointments.value = false
+            return
+        }
+
         loadingAppointments.value = true
 
-        // Load appointments
-        const appointmentsResponse = await axios.get(`/appointments/client/${authStore.user.id}`, {
-            params: {
-                limit: 5,
-                status: 'scheduled'
-            }
-        })
-        upcomingAppointments.value = appointmentsResponse.data.appointments || []
+        // Single API call to get all appointments - this eliminates duplicate requests
+        const appointmentsResponse = await axios.get(`/appointments/client/${userId}`)
+        const allAppointments = appointmentsResponse.data.appointments || []
 
-        // Load stats
-        const statsResponse = await axios.get(`/appointments/client/${authStore.user.id}`, {
-            params: { limit: 1000 } // Get all to calculate stats
-        })
-        calculateStats(statsResponse.data.appointments || [])
+        // Filter upcoming appointments for display (limit to 5 most recent)
+        const now = new Date()
+        const upcoming = allAppointments
+            .filter(apt => apt.status === 'scheduled' && new Date(apt.dateTime) > now)
+            .sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime))
+            .slice(0, 5)
 
-        // Load recent activity (mock for now - you might want to create an endpoint)
+        upcomingAppointments.value = upcoming
+
+        // Calculate stats from all appointments
+        calculateStats(allAppointments)
+
+        // Load additional data
         loadRecentActivity()
-
-        // Load favorite providers (those the client has had appointments with)
-        loadFavoriteProviders()
+        loadFavoriteProviders(allAppointments)
 
     } catch (error) {
         console.error('Error loading dashboard data:', error)
@@ -359,7 +371,7 @@ const calculateStats = (appointments) => {
 }
 
 const loadRecentActivity = () => {
-    // Mock recent activity - replace with actual API call
+    // Mock recent activity - replace with actual API call when available
     recentActivity.value = [
         {
             id: 1,
@@ -382,20 +394,31 @@ const loadRecentActivity = () => {
     ]
 }
 
-const loadFavoriteProviders = async () => {
+// Use appointments data to get favorite providers instead of separate API call
+const loadFavoriteProviders = (appointments) => {
     try {
-        // Get unique providers from appointments
-        const uniqueProviders = []
-        const providerIds = new Set()
+        // Get unique providers from appointments, prioritizing those with completed sessions
+        const providerMap = new Map()
 
-        upcomingAppointments.value.forEach(apt => {
-            if (apt.provider && !providerIds.has(apt.provider._id)) {
-                providerIds.add(apt.provider._id)
-                uniqueProviders.push(apt.provider)
+        appointments.forEach(apt => {
+            if (apt.provider && apt.provider._id) {
+                const providerId = apt.provider._id
+                if (!providerMap.has(providerId)) {
+                    providerMap.set(providerId, {
+                        ...apt.provider,
+                        appointmentCount: 0,
+                        lastAppointment: apt.dateTime
+                    })
+                }
+                providerMap.get(providerId).appointmentCount++
             }
         })
 
-        favoriteProviders.value = uniqueProviders.slice(0, 3) // Show top 3
+        // Sort by appointment count and get top 3
+        favoriteProviders.value = Array.from(providerMap.values())
+            .sort((a, b) => b.appointmentCount - a.appointmentCount)
+            .slice(0, 3)
+
     } catch (error) {
         console.error('Error loading favorite providers:', error)
     }
@@ -469,7 +492,13 @@ const joinSession = (appointmentId) => {
 
 // Lifecycle
 onMounted(() => {
-    loadDashboardData()
+    // Only load if user is authenticated and we have a user ID
+    if (authStore.isAuthenticated && getUserId()) {
+        loadDashboardData()
+    } else {
+        console.error('User not authenticated or no user ID available')
+        loadingAppointments.value = false
+    }
 })
 </script>
 
