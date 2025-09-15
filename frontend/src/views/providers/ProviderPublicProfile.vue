@@ -489,17 +489,12 @@ const initiateChat = async () => {
             participantId: provider.value._id
         })
 
-        if (response.data.success && response.data.conversationId) {
+        if (response.data.success && response.data.conversation._id) {
             // Navigate to chat page with the conversation ID
-            router.push(`/chat/${response.data.conversationId}`)
-        } else {
-            // If creating conversation fails, still try to navigate to general chat with provider ID
-            router.push(`/chat?provider=${provider.value._id}`)
+            router.push(`/chat/${response.data.conversation._id}`)
         }
     } catch (error) {
         console.error('Error initiating chat:', error)
-        // Fallback: navigate to general chat page and let it handle provider selection
-        router.push(`/chat?provider=${provider.value._id}`)
     }
 }
 
