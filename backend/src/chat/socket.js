@@ -31,11 +31,13 @@ function initializeSocketIO(io) {
                 return next(new Error('Authentication error: User not found'));
             }
 
-            // Now verify token with user's specific secret
-            const decoded = jwt.verify(token, user.jwtSecret);
+            // FIXED: Use the same secret combination as HTTP auth middleware
+            // Verify token with user's specific secret COMBINED with global secret
+            const secret = process.env.JWT_SECRET + (user.jwtSecret || '');
+            const decoded = jwt.verify(token, secret);
 
             if (!decoded) {
-                return next(new Error('Authentication error: User not found'));
+                return next(new Error('Authentication error: Token verification failed'));
             }
 
             // Attach user info to the socket
