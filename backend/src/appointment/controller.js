@@ -1208,3 +1208,66 @@ exports.getCalendarAppointments = async (req, res) => {
         res.status(500).json({ message: 'An error occurred while fetching calendar appointments' });
     }
 };
+
+/**
+ * Get provider statistics for public display
+ * @route GET /api/appointments/provider/:providerId/stats
+ * @access Public
+ */
+exports.getProviderStats = async (req, res) => {
+    try {
+        const { providerId } = req.params;
+
+        // Validate provider exists and is a provider
+        const provider = await User.findById(providerId);
+        if (!provider || provider.role !== 'provider') {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Provider not found' 
+            });
+        }
+
+        // Get all appointments for this provider
+        const appointments = await Appointment.find({ provider: providerId });
+
+        // Calculate completed sessions
+        const completedAppointments = appointments.filter(apt => apt.status === 'completed').length;
+
+        // Calculate response rate (simplified version)
+        // For now, we'll use: appointments not canceled by provider / total appointments
+        const totalAppointments = appointments.length;
+        let responseRate = 95; // Default fallback value
+
+        if (totalAppointments > 0) {
+            // Count appointments that were NOT canceled by the provider
+            const respondedAppointments = appointments.filter(apt => 
+                apt.status !== 'canceled' || apt.canceledBy !== 'provider'
+            ).length;
+            
+            responseRate = Math.round((respondedAppointments / totalAppointments) * 100);
+            
+            // Ensure response rate is within reasonable bounds (0-100)
+            responseRate = Math.max(0, Math.min(100, responseRate));
+            
+            // If no data to calculate from, keep default
+            if (totalAppointments < 5) {
+                responseRate = 95; // Keep default for new providers
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            completedAppointments,
+            responseRate
+        });
+
+    } catch (error) {
+        console.error('Error fetching provider stats:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'An error occurred while fetching provider statistics',
+            completedAppointments: 0,
+            responseRate: 95
+        });
+    }
+};

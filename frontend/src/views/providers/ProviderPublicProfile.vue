@@ -376,7 +376,7 @@ const showAllReviews = ref(false)
 const showAllAchievements = ref(false)
 const showEmergencyContact = ref(false)
 const completedAppointments = ref(0)
-const responseRate = ref(95) // This would come from backend analytics
+const responseRate = ref(0) // This would come from backend analytics
 
 // Computed properties
 const canContact = computed(() => {

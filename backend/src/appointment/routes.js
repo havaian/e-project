@@ -44,6 +44,16 @@ router.get(
 );
 
 /**
+ * @route GET /api/appointments/provider/:providerId/stats
+ * @desc Get public provider statistics (completed sessions, response rate)
+ * @access Public (no authentication required for public provider stats)
+ */
+router.get(
+    '/provider/:providerId/stats',
+    appointmentController.getProviderStats
+);
+
+/**
  * @route GET /api/appointments/provider/:providerId
  * @desc Get all appointments for a provider
  * @access Private (Provider must be the owner or Admin)
