@@ -1,8 +1,8 @@
 <template>
     <div class="appointment-calendar">
         <!-- Calendar Controls -->
-        <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div class="flex justify-between space-x-4">
+        <div class="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div class="flex w-full items-center justify-between space-x-4">
                 <h2 class="text-xl font-semibold text-gray-900">{{ title }}</h2>
                 <div class="flex items-center space-x-2">
                     <button @click="goToToday"
