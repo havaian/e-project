@@ -2,32 +2,12 @@
     <div class="appointment-calendar">
         <!-- Calendar Controls -->
         <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div class="flex items-center space-x-4">
+            <div class="flex justify-between space-x-4">
                 <h2 class="text-xl font-semibold text-gray-900">{{ title }}</h2>
                 <div class="flex items-center space-x-2">
-                    <button @click="goToPreviousPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
-                    </button>
                     <button @click="goToToday"
                         class="px-3 py-1 text-sm bg-brand-1 text-white rounded-lg hover:bg-brand-1/90 transition-colors">
                         Today
-                    </button>
-                    <button @click="goToNextPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <ChevronRightIcon class="w-5 h-5 text-gray-600" />
-                    </button>
-                </div>
-            </div>
-
-            <!-- View Switcher -->
-            <div class="flex items-center space-x-2">
-                <div class="bg-gray-100 rounded-lg p-1 flex">
-                    <button v-for="view in viewOptions" :key="view.key" @click="changeView(view.key)" :class="[
-                        'px-3 py-1 text-sm rounded-md transition-all duration-200',
-                        currentView === view.key
-                            ? 'bg-white text-brand-1 shadow-sm font-medium'
-                            : 'text-gray-600 hover:text-gray-900'
-                    ]">
-                        {{ view.label }}
                     </button>
                 </div>
             </div>
