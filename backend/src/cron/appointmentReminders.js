@@ -1,7 +1,8 @@
 const cron = require('node-cron');
 const { startOfDay, endOfDay, addDays } = require('date-fns');
 const Appointment = require('../appointment/model');
-const emailService = require('../notification/emailService');
+const { NotificationService } = require('../notification');
+const emailService = require('../notification/emailService.js')(NotificationService);
 
 // Schedule job to run every day at 9:00 AM
 const scheduleAppointmentReminders = () => {
