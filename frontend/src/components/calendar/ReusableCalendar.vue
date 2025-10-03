@@ -193,7 +193,7 @@ const calendarDays = computed(() => {
     })
 })
 
-// Methods - KEEP ORIGINAL SIMPLE LOGIC
+// Methods
 const previousMonth = () => {
     currentMonth.value = subMonths(currentMonth.value, 1)
     emit('monthChanged', currentMonth.value)

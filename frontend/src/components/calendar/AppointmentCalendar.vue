@@ -31,7 +31,7 @@
                             Appointments for {{ formatSelectedDate(selectedDate) }}
                         </h3>
                         <div class="space-y-2">
-                            <div v-for="appointment in selectedDateAppointments" :key="appointment.id"
+                            <div v-for="appointment in selectedDateAppointments" :key="appointment._id"
                                 class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-2 h-2 rounded-full" :class="getStatusColor(appointment.status)"></div>
@@ -42,12 +42,12 @@
                                     <span class="text-gray-600">{{ formatAppointmentTime(appointment.dateTime) }}</span>
                                 </div>
                                 <div class="flex space-x-1">
-                                    <button @click="viewAppointment(appointment.id)"
+                                    <button @click="viewAppointment(appointment._id)"
                                         class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
                                         View
                                     </button>
                                     <button v-if="canEditAppointment(appointment)"
-                                        @click="editAppointment(appointment.id)"
+                                        @click="editAppointment(appointment._id)"
                                         class="px-2 py-1 text-xs text-green-700 bg-green-100 rounded hover:bg-green-200">
                                         Edit
                                     </button>
@@ -66,7 +66,7 @@
                     <CalendarDaysIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <p class="text-gray-500">No appointments found</p>
                 </div>
-                <div v-for="appointment in appointments" :key="appointment.id"
+                <div v-for="appointment in appointments" :key="appointment._id"
                     class="p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
@@ -81,11 +81,11 @@
                             </div>
                         </div>
                         <div class="flex space-x-2">
-                            <button @click="viewAppointment(appointment.id)"
+                            <button @click="viewAppointment(appointment._id)"
                                 class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
                                 View
                             </button>
-                            <button v-if="canEditAppointment(appointment)" @click="editAppointment(appointment.id)"
+                            <button v-if="canEditAppointment(appointment)" @click="editAppointment(appointment._id)"
                                 class="px-3 py-2 text-sm text-green-700 bg-green-100 rounded hover:bg-green-200">
                                 Edit
                             </button>
@@ -175,32 +175,18 @@ const selectedDateAppointments = computed(() => {
     })
 })
 
-// Methods
-const loadAppointmentsForMonth = async (month) => {
-    // Prevent duplicate requests for the same month
-    const monthKey = format(month, 'yyyy-MM')
-    if (lastLoadedMonth.value === monthKey) {
-        return
-    }
-
+// Load all user appointments at once
+const loadAllAppointments = async () => {
     loading.value = true
     try {
-        lastLoadedMonth.value = monthKey
+        console.log('Loading all user appointments...')
 
-        // Calculate start and end of the month
-        const startDate = new Date(month.getFullYear(), month.getMonth(), 1).toISOString()
-        const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0).toISOString()
+        const response = await axios.get('/appointments/all')
 
-        console.log('Loading appointments for month:', format(month, 'MMMM yyyy'), { startDate, endDate })
-
-        const response = await axios.get('/appointments/calendar', {
-            params: { startDate, endDate }
-        })
-
-        appointments.value = response.data.calendarEvents || []
+        appointments.value = response.data.appointments || []
         console.log('Loaded appointments:', appointments.value.length)
     } catch (error) {
-        console.error('Error loading appointments for month:', error)
+        console.error('Error loading appointments:', error)
         appointments.value = []
     } finally {
         loading.value = false
@@ -210,31 +196,22 @@ const loadAppointmentsForMonth = async (month) => {
 const handleDateSelected = (date, dayInfo) => {
     selectedDate.value = date
 
-    // Always show appointments for selected date, regardless of past/future
     // If client and date has no appointments AND it's a future date, allow booking
     if (props.userRole === 'client' && dayInfo.events.length === 0 && isFuture(date)) {
         emit('openBooking', { date })
     }
 }
 
-// REMOVED: handleMonthChanged - let calendar work independently
-
 const goToToday = () => {
     const today = new Date()
     selectedDate.value = today
 
-    // Use the calendar ref to navigate to today
     if (calendarRef.value) {
         calendarRef.value.goToToday()
     }
 }
 
-const changeView = (viewName) => {
-    currentView.value = viewName
-}
-
 const refreshCalendar = () => {
-    // Simply reload all appointments
     loadAllAppointments()
 }
 
@@ -275,7 +252,6 @@ const formatAppointmentTime = (dateTime) => {
 }
 
 const canEditAppointment = (appointment) => {
-    // Can edit if appointment is in the future and not completed/canceled
     const appointmentDate = new Date(appointment.dateTime)
     return isFuture(appointmentDate) &&
         !['completed', 'canceled', 'no-show'].includes(appointment.status)
@@ -292,45 +268,7 @@ const editAppointment = (appointmentId) => {
 // Lifecycle
 onMounted(async () => {
     await nextTick()
-    // Load all user appointments once
     loadAllAppointments()
-})
-
-// ADDED: Load appointments for a wider date range instead of per-month
-const loadAppointmentsForDateRange = async () => {
-    loading.value = true
-    try {
-        const today = new Date()
-        const startDate = new Date(today.getFullYear(), today.getMonth() - 2, 1).toISOString() // 2 months ago
-        const endDate = new Date(today.getFullYear(), today.getMonth() + 4, 0).toISOString() // 3 months ahead
-
-        console.log('Loading appointments for date range:', { startDate, endDate })
-
-        const response = await axios.get('/appointments/calendar', {
-            params: { startDate, endDate }
-        })
-
-        appointments.value = response.data.calendarEvents || []
-        console.log('Loaded appointments:', appointments.value.length)
-    } catch (error) {
-        console.error('Error loading appointments:', error)
-        appointments.value = []
-    } finally {
-        loading.value = false
-    }
-}
-
-// ADDED: Cleanup on unmount
-import { onBeforeUnmount } from 'vue'
-onBeforeUnmount(() => {
-    // Cancel any pending request
-    if (loadingRequest.value) {
-        loadingRequest.value.cancel?.()
-    }
-    // Clear any pending timeout
-    if (monthChangedTimeout.value) {
-        clearTimeout(monthChangedTimeout.value)
-    }
 })
 
 // Expose methods for parent component
@@ -341,7 +279,6 @@ defineExpose({
         if (calendarRef.value) {
             calendarRef.value.goToDate(date)
         }
-        // Don't reload appointments - they're already loaded for the range
     }
 })
 </script>
