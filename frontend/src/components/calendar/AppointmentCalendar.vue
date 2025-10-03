@@ -2,32 +2,12 @@
     <div class="appointment-calendar">
         <!-- Calendar Controls -->
         <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div class="flex items-center space-x-4">
+            <div class="flex w-full items-center justify-between space-x-4">
                 <h2 class="text-xl font-semibold text-gray-900">{{ title }}</h2>
                 <div class="flex items-center space-x-2">
-                    <button @click="goToPreviousPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
-                    </button>
                     <button @click="goToToday"
                         class="px-3 py-1 text-sm bg-brand-1 text-white rounded-lg hover:bg-brand-1/90 transition-colors">
                         Today
-                    </button>
-                    <button @click="goToNextPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <ChevronRightIcon class="w-5 h-5 text-gray-600" />
-                    </button>
-                </div>
-            </div>
-
-            <!-- View Switcher -->
-            <div class="flex items-center space-x-2">
-                <div class="bg-gray-100 rounded-lg p-1 flex">
-                    <button v-for="view in viewOptions" :key="view.key" @click="changeView(view.key)" :class="[
-                        'px-3 py-1 text-sm rounded-md transition-all duration-200',
-                        currentView === view.key
-                            ? 'bg-white text-brand-1 shadow-sm font-medium'
-                            : 'text-gray-600 hover:text-gray-900'
-                    ]">
-                        {{ view.label }}
                     </button>
                 </div>
             </div>
@@ -40,9 +20,10 @@
 
         <!-- Calendar View -->
         <div v-else-if="currentView === 'calendar'">
-            <ReusableCalendar v-model="selectedDate" :events="calendarEvents" :disable-past-dates="true"
-                :max-future-days="60" :show-appointment-count="true" :show-selected-date-info="false"
-                @date-selected="handleDateSelected" @month-changed="handleMonthChanged">
+            <ReusableCalendar ref="calendarRef" v-model="selectedDate" :events="calendarEvents"
+                :disable-past-dates="true" :max-future-days="60" :show-appointment-count="true"
+                :show-selected-date-info="false" @date-selected="handleDateSelected"
+                @month-changed="handleMonthChanged">
                 <!-- Custom footer with selected date appointments -->
                 <template #footer="{ selectedDate }">
                     <div v-if="selectedDate && selectedDateAppointments.length > 0"
@@ -57,7 +38,7 @@
                                     <div class="w-2 h-2 rounded-full" :class="getStatusColor(appointment.status)"></div>
                                     <span class="font-medium">
                                         {{ userRole === 'provider' ? getClientName(appointment) :
-                                        getProviderName(appointment) }}
+                                            getProviderName(appointment) }}
                                     </span>
                                     <span class="text-gray-600">{{ formatAppointmentTime(appointment.dateTime) }}</span>
                                 </div>
@@ -94,7 +75,7 @@
                             <div>
                                 <p class="font-medium text-gray-900">
                                     {{ userRole === 'provider' ? getClientName(appointment) :
-                                    getProviderName(appointment) }}
+                                        getProviderName(appointment) }}
                                 </p>
                                 <p class="text-sm text-gray-600">{{ formatDateTime(appointment.dateTime) }}</p>
                                 <p class="text-xs text-gray-500">{{ appointment.type }} • {{ appointment.status }}</p>
@@ -142,10 +123,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { format, parseISO, isFuture, isSameDay } from 'date-fns'
-import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
+import { CalendarDaysIcon } from '@heroicons/vue/24/outline'
 import axios from '@/plugins/axios'
 import ReusableCalendar from './ReusableCalendar.vue'
 
@@ -170,12 +151,7 @@ const loading = ref(false)
 const currentView = ref('calendar')
 const selectedDate = ref(null)
 const appointments = ref([])
-
-// View options
-const viewOptions = [
-    { key: 'calendar', label: 'Calendar' },
-    { key: 'list', label: 'List' }
-]
+const calendarRef = ref(null)
 
 // Computed properties
 const calendarEvents = computed(() => {
@@ -201,20 +177,23 @@ const selectedDateAppointments = computed(() => {
 })
 
 // Methods
-const loadAppointments = async () => {
+const loadAppointmentsForMonth = async (month) => {
     loading.value = true
     try {
-        // Calculate date range for current month if no specific range is set
-        const now = new Date()
-        const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString()
+        // Calculate start and end of the month
+        const startDate = new Date(month.getFullYear(), month.getMonth(), 1).toISOString()
+        const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0).toISOString()
+
+        console.log('Loading appointments for month:', format(month, 'MMMM yyyy'), { startDate, endDate })
 
         const response = await axios.get('/appointments/calendar', {
             params: { startDate, endDate }
         })
         appointments.value = response.data.calendarEvents || []
+
+        console.log('Loaded appointments:', appointments.value.length)
     } catch (error) {
-        console.error('Error loading appointments:', error)
+        console.error('Error loading appointments for month:', error)
         appointments.value = []
     } finally {
         loading.value = false
@@ -224,12 +203,6 @@ const loadAppointments = async () => {
 const handleDateSelected = (date, dayInfo) => {
     selectedDate.value = date
 
-    // Update viewing month if different
-    const dateMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-    if (dateMonth.getTime() !== currentViewingMonth.value.getTime()) {
-        currentViewingMonth.value = dateMonth
-    }
-
     // If client and date has no appointments, allow booking
     if (props.userRole === 'client' && dayInfo.events.length === 0) {
         emit('openBooking', { date })
@@ -237,48 +210,22 @@ const handleDateSelected = (date, dayInfo) => {
 }
 
 const handleMonthChanged = (newMonth) => {
-    // Update current viewing month and reload appointments
-    currentViewingMonth.value = new Date(newMonth.getFullYear(), newMonth.getMonth(), 1)
+    console.log('Month changed to:', format(newMonth, 'MMMM yyyy'))
+    // Load appointments for the new month
     loadAppointmentsForMonth(newMonth)
 }
 
-const loadAppointmentsForMonth = async (month = new Date()) => {
-    loading.value = true
-    try {
-        // Calculate start and end of the month
-        const startDate = new Date(month.getFullYear(), month.getMonth(), 1).toISOString()
-        const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0).toISOString()
-
-        const response = await axios.get('/appointments/calendar', {
-            params: { startDate, endDate }
-        })
-        appointments.value = response.data.calendarEvents || []
-    } catch (error) {
-        console.error('Error loading appointments for month:', error)
-        appointments.value = []
-    } finally {
-        loading.value = false
-    }
-}
-
-const goToPreviousPeriod = () => {
-    // Navigate to previous month
-    const calendar = document.querySelector('.reusable-calendar')
-    if (calendar) {
-        calendar.previousMonth()
-    }
-}
-
-const goToNextPeriod = () => {
-    // Navigate to next month
-    const calendar = document.querySelector('.reusable-calendar')
-    if (calendar) {
-        calendar.nextMonth()
-    }
-}
-
 const goToToday = () => {
-    selectedDate.value = new Date()
+    const today = new Date()
+    selectedDate.value = today
+
+    // Use the calendar ref to navigate to today
+    if (calendarRef.value) {
+        calendarRef.value.goToToday()
+    }
+
+    // Load appointments for current month
+    loadAppointmentsForMonth(today)
 }
 
 const changeView = (viewName) => {
@@ -286,16 +233,10 @@ const changeView = (viewName) => {
 }
 
 const refreshCalendar = () => {
-    loadAppointments()
+    // Get current month from calendar or use current date
+    const currentMonth = calendarRef.value?.currentMonth || new Date()
+    loadAppointmentsForMonth(currentMonth)
 }
-
-// Add a method to track current viewing month for proper date range requests
-const currentViewingMonth = ref(new Date())
-
-// Watch for viewing month changes to update appointment data
-watch(currentViewingMonth, (newMonth) => {
-    loadAppointmentsForMonth(newMonth)
-})
 
 const getStatusColor = (status) => {
     const colors = {
@@ -349,15 +290,22 @@ const editAppointment = (appointmentId) => {
 }
 
 // Lifecycle
-onMounted(() => {
-    loadAppointments()
+onMounted(async () => {
+    await nextTick()
+    // Load appointments for current month on mount
+    const currentMonth = new Date()
+    loadAppointmentsForMonth(currentMonth)
 })
 
 // Expose methods for parent component
 defineExpose({
-    refreshCalendar: loadAppointments,
+    refreshCalendar,
     goToDate: (date) => {
         selectedDate.value = date
+        if (calendarRef.value) {
+            calendarRef.value.goToDate(date)
+        }
+        loadAppointmentsForMonth(date)
     }
 })
 </script>
