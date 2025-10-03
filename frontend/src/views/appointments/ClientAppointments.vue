@@ -302,7 +302,7 @@ const fetchAppointments = async () => {
             ...filters
         }
 
-        const response = await axios.get(`/appointments/client/${authStore.user.id}`, { params })
+        const response = await axios.get(`/appointments/client/${authStore.user._id}`, { params })
         appointments.value = response.data.appointments || []
         totalAppointments.value = response.data.pagination?.total || 0
         totalPages.value = Math.ceil(totalAppointments.value / 10)

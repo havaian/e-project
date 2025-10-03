@@ -405,7 +405,7 @@ const loadDashboardData = async () => {
 
         // Load today's appointments
         const today = format(new Date(), 'yyyy-MM-dd')
-        const appointmentsResponse = await axios.get(`/appointments/provider/${authStore.user.id}`, {
+        const appointmentsResponse = await axios.get(`/appointments/provider/${authStore.user._id}`, {
             params: {
                 date: today,
                 status: 'scheduled'

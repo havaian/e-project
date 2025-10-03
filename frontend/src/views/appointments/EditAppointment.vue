@@ -376,7 +376,7 @@ const loadAppointment = async () => {
         appointment.value = response.data.appointment
 
         // Check if user can edit this appointment
-        if (appointment.value.client._id !== authStore.user.id) {
+        if (appointment.value.client._id !== authStore.user._id) {
             throw new Error('You are not authorized to edit this appointment')
         }
 

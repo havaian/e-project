@@ -1,13 +1,33 @@
 <template>
     <div class="appointment-calendar">
         <!-- Calendar Controls -->
-        <div class="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div class="flex w-full items-center justify-between space-x-4">
+        <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex items-center space-x-4">
                 <h2 class="text-xl font-semibold text-gray-900">{{ title }}</h2>
                 <div class="flex items-center space-x-2">
+                    <button @click="goToPreviousPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
+                    </button>
                     <button @click="goToToday"
                         class="px-3 py-1 text-sm bg-brand-1 text-white rounded-lg hover:bg-brand-1/90 transition-colors">
                         Today
+                    </button>
+                    <button @click="goToNextPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <ChevronRightIcon class="w-5 h-5 text-gray-600" />
+                    </button>
+                </div>
+            </div>
+
+            <!-- View Switcher -->
+            <div class="flex items-center space-x-2">
+                <div class="bg-gray-100 rounded-lg p-1 flex">
+                    <button v-for="view in viewOptions" :key="view.key" @click="changeView(view.key)" :class="[
+                        'px-3 py-1 text-sm rounded-md transition-all duration-200',
+                        currentView === view.key
+                            ? 'bg-white text-brand-1 shadow-sm font-medium'
+                            : 'text-gray-600 hover:text-gray-900'
+                    ]">
+                        {{ view.label }}
                     </button>
                 </div>
             </div>
@@ -115,7 +135,7 @@
             </div>
             <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-purple-500 rounded"></div>
-                <span class="text-gray-600">Needs confirmation</span>
+                <span class="text-gray-600">Needs Confirmation</span>
             </div>
         </div>
     </div>
@@ -151,6 +171,12 @@ const currentView = ref('calendar')
 const selectedDate = ref(null)
 const appointments = ref([])
 
+// View options
+const viewOptions = [
+    { key: 'calendar', label: 'Calendar' },
+    { key: 'list', label: 'List' }
+]
+
 // Computed properties
 const calendarEvents = computed(() => {
     return appointments.value.map(appointment => ({
@@ -178,7 +204,14 @@ const selectedDateAppointments = computed(() => {
 const loadAppointments = async () => {
     loading.value = true
     try {
-        const response = await axios.get('/appointments/calendar')
+        // Calculate date range for current month if no specific range is set
+        const now = new Date()
+        const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString()
+
+        const response = await axios.get('/appointments/calendar', {
+            params: { startDate, endDate }
+        })
         appointments.value = response.data.calendarEvents || []
     } catch (error) {
         console.error('Error loading appointments:', error)
@@ -191,6 +224,12 @@ const loadAppointments = async () => {
 const handleDateSelected = (date, dayInfo) => {
     selectedDate.value = date
 
+    // Update viewing month if different
+    const dateMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+    if (dateMonth.getTime() !== currentViewingMonth.value.getTime()) {
+        currentViewingMonth.value = dateMonth
+    }
+
     // If client and date has no appointments, allow booking
     if (props.userRole === 'client' && dayInfo.events.length === 0) {
         emit('openBooking', { date })
@@ -198,8 +237,28 @@ const handleDateSelected = (date, dayInfo) => {
 }
 
 const handleMonthChanged = (newMonth) => {
-    // Optionally reload appointments for new month
-    loadAppointments()
+    // Update current viewing month and reload appointments
+    currentViewingMonth.value = new Date(newMonth.getFullYear(), newMonth.getMonth(), 1)
+    loadAppointmentsForMonth(newMonth)
+}
+
+const loadAppointmentsForMonth = async (month = new Date()) => {
+    loading.value = true
+    try {
+        // Calculate start and end of the month
+        const startDate = new Date(month.getFullYear(), month.getMonth(), 1).toISOString()
+        const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0).toISOString()
+
+        const response = await axios.get('/appointments/calendar', {
+            params: { startDate, endDate }
+        })
+        appointments.value = response.data.calendarEvents || []
+    } catch (error) {
+        console.error('Error loading appointments for month:', error)
+        appointments.value = []
+    } finally {
+        loading.value = false
+    }
 }
 
 const goToPreviousPeriod = () => {
@@ -229,6 +288,14 @@ const changeView = (viewName) => {
 const refreshCalendar = () => {
     loadAppointments()
 }
+
+// Add a method to track current viewing month for proper date range requests
+const currentViewingMonth = ref(new Date())
+
+// Watch for viewing month changes to update appointment data
+watch(currentViewingMonth, (newMonth) => {
+    loadAppointmentsForMonth(newMonth)
+})
 
 const getStatusColor = (status) => {
     const colors = {
