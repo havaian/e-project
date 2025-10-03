@@ -16,7 +16,7 @@ exports.createCheckoutSession = async (req, res) => {
 
         // Find appointment
         const appointment = await Appointment.findById(appointmentId)
-            .populate('provider', 'sessionFeefirstName lastName email specializations')
+            .populate('provider', 'sessionFee firstName lastName email specializations')
             .populate('client', 'firstName lastName email');
 
         if (!appointment) {
@@ -40,6 +40,17 @@ exports.createCheckoutSession = async (req, res) => {
         // Get session fee from provider's profile
         const amount = appointment.provider.sessionFee;
         const currency = 'uzs';
+
+        // Add validation to ensure amount is a valid number
+        if (!amount || isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ 
+                message: 'Invalid session fee. Provider must have a valid session fee set.',
+                debug: {
+                    sessionFee: appointment.provider.sessionFee,
+                    providerId: appointment.provider._id
+                }
+            });
+        }
 
         // Format appointment date for display
         const appointmentDate = new Date(appointment.dateTime).toLocaleString();
