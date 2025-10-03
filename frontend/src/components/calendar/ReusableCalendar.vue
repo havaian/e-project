@@ -1,317 +1,354 @@
 <template>
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-        <!-- Calendar Header -->
-        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
-            <button type="button" @click="previousMonth" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
-            </button>
-
-            <h2 class="text-lg font-semibold text-gray-900">
-                {{ currentMonthYear }}
-            </h2>
-
-            <button type="button" @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <ChevronRightIcon class="w-5 h-5 text-gray-600" />
-            </button>
-        </div>
-
-        <!-- Days of Week -->
-        <div class="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
-            <div v-for="day in daysOfWeek" :key="day" class="px-2 py-3 text-center text-sm font-medium text-gray-500">
-                {{ day }}
+    <div class="appointment-calendar">
+        <!-- Calendar Controls -->
+        <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex w-full items-center justify-between space-x-4">
+                <h2 class="text-xl font-semibold text-gray-900">{{ title }}</h2>
+                <div class="flex items-center space-x-2">
+                    <button @click="goToToday"
+                        class="px-3 py-1 text-sm bg-brand-1 text-white rounded-lg hover:bg-brand-1/90 transition-colors">
+                        Today
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Calendar Grid -->
-        <div class="grid grid-cols-7">
-            <button v-for="day in calendarDays" :key="day.key" type="button" :disabled="shouldDisableDay(day)"
-                @click="selectDate(day)"
-                class="relative p-2 h-12 text-sm transition-all duration-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
-                :class="getDayClasses(day)">
-
-                <!-- Date number - always visible -->
-                <span class="relative z-10 block w-full h-full flex items-center justify-center">
-                    {{ day.date }}
-                </span>
-
-                <!-- Today indicator -->
-                <div v-if="day.isToday && !day.isSelected"
-                    class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full z-20">
-                </div>
-
-                <!-- Event indicators -->
-                <div v-if="day.hasEvents && showEventIndicators"
-                    class="absolute top-1 right-1 w-2 h-2 bg-green-500 rounded-full z-20">
-                </div>
-
-                <!-- Appointments count for providers -->
-                <div v-if="day.appointmentCount && day.appointmentCount > 0 && showAppointmentCount"
-                    class="absolute top-1 right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center z-20">
-                    {{ day.appointmentCount > 9 ? '9+' : day.appointmentCount }}
-                </div>
-            </button>
+        <!-- Loading State -->
+        <div v-if="loading" class="flex justify-center items-center h-96 bg-gray-50 rounded-lg">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-1"></div>
         </div>
 
-        <!-- Selected Date Info -->
-        <div v-if="selectedDate && showSelectedDateInfo" class="px-4 py-3 bg-blue-50 border-t border-blue-200">
-            <p class="text-sm text-blue-800">
-                Selected: <span class="font-medium">{{ formatSelectedDate }}</span>
-            </p>
+        <!-- Calendar View -->
+        <div v-else-if="currentView === 'calendar'">
+            <ReusableCalendar ref="calendarRef" v-model="selectedDate" :events="calendarEvents"
+                :disable-past-dates="true" :max-future-days="60" :show-appointment-count="true"
+                :show-selected-date-info="false" @date-selected="handleDateSelected"
+                @month-changed="handleMonthChanged">
+                <!-- Custom footer with selected date appointments -->
+                <template #footer="{ selectedDate }">
+                    <div v-if="selectedDate && selectedDateAppointments.length > 0"
+                        class="border-t border-gray-200 p-4">
+                        <h3 class="text-sm font-medium text-gray-900 mb-3">
+                            Appointments for {{ formatSelectedDate(selectedDate) }}
+                        </h3>
+                        <div class="space-y-2">
+                            <div v-for="appointment in selectedDateAppointments" :key="appointment.id"
+                                class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 rounded-full" :class="getStatusColor(appointment.status)"></div>
+                                    <span class="font-medium">
+                                        {{ userRole === 'provider' ? getClientName(appointment) :
+                                            getProviderName(appointment) }}
+                                    </span>
+                                    <span class="text-gray-600">{{ formatAppointmentTime(appointment.dateTime) }}</span>
+                                </div>
+                                <div class="flex space-x-1">
+                                    <button @click="viewAppointment(appointment.id)"
+                                        class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                        View
+                                    </button>
+                                    <button v-if="canEditAppointment(appointment)"
+                                        @click="editAppointment(appointment.id)"
+                                        class="px-2 py-1 text-xs text-green-700 bg-green-100 rounded hover:bg-green-200">
+                                        Edit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ReusableCalendar>
         </div>
 
-        <!-- Additional slots for custom content -->
-        <slot name="footer" :selectedDate="selectedDate" :calendarDays="calendarDays"></slot>
+        <!-- List View -->
+        <div v-else-if="currentView === 'list'" class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div class="divide-y divide-gray-200">
+                <div v-if="appointments.length === 0" class="p-8 text-center">
+                    <CalendarDaysIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p class="text-gray-500">No appointments found</p>
+                </div>
+                <div v-for="appointment in appointments" :key="appointment.id"
+                    class="p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-4 h-4 rounded-full" :class="getStatusColor(appointment.status)"></div>
+                            <div>
+                                <p class="font-medium text-gray-900">
+                                    {{ userRole === 'provider' ? getClientName(appointment) :
+                                        getProviderName(appointment) }}
+                                </p>
+                                <p class="text-sm text-gray-600">{{ formatDateTime(appointment.dateTime) }}</p>
+                                <p class="text-xs text-gray-500">{{ appointment.type }} • {{ appointment.status }}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button @click="viewAppointment(appointment.id)"
+                                class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                View
+                            </button>
+                            <button v-if="canEditAppointment(appointment)" @click="editAppointment(appointment.id)"
+                                class="px-3 py-2 text-sm text-green-700 bg-green-100 rounded hover:bg-green-200">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="mt-4 flex flex-wrap gap-4 text-sm">
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-blue-500 rounded"></div>
+                <span class="text-gray-600">Scheduled</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-green-500 rounded"></div>
+                <span class="text-gray-600">Completed</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-red-500 rounded"></div>
+                <span class="text-gray-600">Cancelled</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-yellow-500 rounded"></div>
+                <span class="text-gray-600">Pending</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-purple-500 rounded"></div>
+                <span class="text-gray-600">Needs Confirmation</span>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
-import { ref, computed, watch, onMounted } from 'vue'
-import {
-    format,
-    addMonths,
-    subMonths,
-    startOfMonth,
-    endOfMonth,
-    eachDayOfInterval,
-    isSameDay,
-    isToday,
-    isBefore,
-    isAfter,
-    addDays,
-    parseISO,
-    startOfWeek,
-    endOfWeek
-} from 'date-fns'
+import { ref, computed, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import { format, parseISO, isFuture, isSameDay } from 'date-fns'
+import { CalendarDaysIcon } from '@heroicons/vue/24/outline'
+import axios from '@/plugins/axios'
+import ReusableCalendar from './ReusableCalendar.vue'
 
-// Props
 const props = defineProps({
-    modelValue: {
-        type: [Date, String],
-        default: null
-    },
-    // Events/appointments to show on calendar
-    events: {
-        type: Array,
-        default: () => []
-    },
-    // Disable past dates
-    disablePastDates: {
-        type: Boolean,
-        default: true
-    },
-    // Disable future dates beyond this many days
-    maxFutureDays: {
-        type: Number,
-        default: 30
-    },
-    // Show selected date info bar
-    showSelectedDateInfo: {
-        type: Boolean,
-        default: false
-    },
-    // Show event indicators
-    showEventIndicators: {
-        type: Boolean,
-        default: false
-    },
-    // Show appointment count
-    showAppointmentCount: {
-        type: Boolean,
-        default: false
-    },
-    // Custom disabled dates
-    disabledDates: {
-        type: Array,
-        default: () => []
-    },
-    // Theme colors
-    primaryColor: {
+    userRole: {
         type: String,
-        default: 'blue'
+        required: true,
+        validator: value => ['client', 'provider'].includes(value)
     },
-    // Initial month to display
-    initialMonth: {
-        type: Date,
-        default: () => new Date()
+    title: {
+        type: String,
+        default: 'Appointments'
     }
 })
 
-// Emits
-const emit = defineEmits(['update:modelValue', 'dateSelected', 'monthChanged'])
+const emit = defineEmits(['openBooking', 'appointmentUpdated'])
 
-// Reactive data
-const currentMonth = ref(props.initialMonth)
-const selectedDate = ref(props.modelValue ? new Date(props.modelValue) : null)
+const router = useRouter()
 
-// Constants - CHANGED: Start from Monday
-const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+// Component state
+const loading = ref(false)
+const currentView = ref('calendar')
+const selectedDate = ref(null)
+const appointments = ref([])
+const calendarRef = ref(null)
+
+// ADDED: Debouncing and request management
+const loadingRequest = ref(null)
+const monthChangedTimeout = ref(null)
 
 // Computed properties
-const currentMonthYear = computed(() => {
-    return format(currentMonth.value, 'MMMM yyyy')
+const calendarEvents = computed(() => {
+    return appointments.value.map(appointment => ({
+        id: appointment._id,
+        date: appointment.dateTime,
+        dateTime: appointment.dateTime,
+        title: props.userRole === 'provider'
+            ? getClientName(appointment)
+            : getProviderName(appointment),
+        status: appointment.status,
+        type: appointment.type
+    }))
 })
 
-const formatSelectedDate = computed(() => {
-    if (!selectedDate.value) return ''
-    return format(selectedDate.value, 'EEEE, MMMM d, yyyy')
-})
+const selectedDateAppointments = computed(() => {
+    if (!selectedDate.value) return []
 
-const calendarDays = computed(() => {
-    const start = startOfMonth(currentMonth.value)
-    const end = endOfMonth(currentMonth.value)
-
-    // CHANGED: Get first day of the week for the month starting from Monday
-    const startDate = startOfWeek(start, { weekStartsOn: 1 })
-    const endDate = endOfWeek(end, { weekStartsOn: 1 })
-
-    const days = eachDayOfInterval({ start: startDate, end: endDate })
-    const now = new Date()
-    const maxDate = addDays(now, props.maxFutureDays)
-
-    return days.map(day => {
-        // Find events for this day
-        const dayEvents = props.events.filter(event => {
-            const eventDate = event.date ? new Date(event.date) : new Date(event.dateTime)
-            return isSameDay(day, eventDate)
-        })
-
-        return {
-            date: day.getDate(),
-            fullDate: day,
-            key: format(day, 'yyyy-MM-dd'),
-            isCurrentMonth: day.getMonth() === currentMonth.value.getMonth(),
-            isToday: isToday(day),
-            isPast: props.disablePastDates && isBefore(day, new Date(now.getFullYear(), now.getMonth(), now.getDate())),
-            isTooFar: isAfter(day, maxDate),
-            isSelected: selectedDate.value && isSameDay(day, selectedDate.value),
-            hasEvents: dayEvents.length > 0,
-            appointmentCount: dayEvents.length,
-            events: dayEvents,
-            isDisabled: props.disabledDates.some(disabledDate => isSameDay(day, new Date(disabledDate)))
-        }
+    return appointments.value.filter(appointment => {
+        const appointmentDate = new Date(appointment.dateTime)
+        return isSameDay(selectedDate.value, appointmentDate)
     })
 })
 
 // Methods
-const previousMonth = () => {
-    currentMonth.value = subMonths(currentMonth.value, 1)
-    emit('monthChanged', currentMonth.value)
-}
+const loadAppointmentsForMonth = async (month) => {
+    // ADDED: Cancel previous request if still pending
+    if (loadingRequest.value) {
+        loadingRequest.value.cancel?.()
+    }
 
-const nextMonth = () => {
-    currentMonth.value = addMonths(currentMonth.value, 1)
-    emit('monthChanged', currentMonth.value)
-}
+    loading.value = true
+    try {
+        // Calculate start and end of the month
+        const startDate = new Date(month.getFullYear(), month.getMonth(), 1).toISOString()
+        const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0).toISOString()
 
-const selectDate = (day) => {
-    if (shouldDisableDay(day)) return
+        console.log('Loading appointments for month:', format(month, 'MMMM yyyy'), { startDate, endDate })
 
-    selectedDate.value = day.fullDate
-    emit('update:modelValue', day.fullDate)
-    emit('dateSelected', day.fullDate, day)
-}
+        // ADDED: Create cancellable request
+        const controller = new AbortController()
+        loadingRequest.value = controller
 
-const shouldDisableDay = (day) => {
-    return !day.isCurrentMonth || day.isPast || day.isTooFar || day.isDisabled
-}
-
-const getDayClasses = (day) => {
-    const classes = []
-
-    // Base classes for non-current month
-    if (!day.isCurrentMonth) {
-        if (shouldDisableDay(day)) {
-            classes.push('text-gray-300', 'cursor-not-allowed', 'bg-gray-50')
-            return classes
-        } else {
-            classes.push('text-gray-400', 'cursor-not-allowed')
-            return classes
+        const response = await axios.get('/appointments/calendar', {
+            params: { startDate, endDate },
+            signal: controller.signal
+        })
+        
+        // ADDED: Only update if this is still the current request
+        if (loadingRequest.value === controller) {
+            appointments.value = response.data.calendarEvents || []
+            console.log('Loaded appointments:', appointments.value.length)
+            loadingRequest.value = null
         }
+    } catch (error) {
+        // ADDED: Don't log cancelled requests as errors
+        if (error.name !== 'AbortError' && error.name !== 'CanceledError') {
+            console.error('Error loading appointments for month:', error)
+            if (loadingRequest.value) {
+                appointments.value = []
+                loadingRequest.value = null
+            }
+        }
+    } finally {
+        loading.value = false
     }
-
-    // Disabled states
-    if (shouldDisableDay(day)) {
-        classes.push('text-gray-300', 'cursor-not-allowed', 'bg-gray-50')
-        return classes
-    }
-
-    // Interactive state
-    classes.push('text-gray-900', 'hover:bg-blue-50')
-
-    // Selected state
-    if (day.isSelected) {
-        classes.push('bg-blue-600', 'text-white', 'hover:bg-blue-700', 'ring-2', 'ring-blue-500')
-    }
-    // Today state (if not selected)
-    else if (day.isToday) {
-        classes.push('bg-blue-100', 'text-blue-800')
-    }
-
-    return classes
 }
 
-// Watchers
-watch(() => props.modelValue, (newValue) => {
-    selectedDate.value = newValue ? new Date(newValue) : null
-})
+const handleDateSelected = (date, dayInfo) => {
+    selectedDate.value = date
 
-// Navigate to month of selected date when it changes
-watch(selectedDate, (newDate, oldDate) => {
-    if (newDate && (!oldDate || newDate.getMonth() !== currentMonth.value.getMonth())) {
-        const newMonth = new Date(newDate.getFullYear(), newDate.getMonth(), 1)
-        // Only update if it's actually different to prevent infinite loop
-        if (currentMonth.value.getTime() !== newMonth.getTime()) {
-            currentMonth.value = newMonth
-        }
+    // If client and date has no appointments, allow booking
+    if (props.userRole === 'client' && dayInfo.events.length === 0) {
+        emit('openBooking', { date })
     }
-})
+}
 
-// Public methods for parent components
-const goToDate = (date) => {
-    const targetDate = new Date(date)
-    currentMonth.value = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1)
-    selectedDate.value = targetDate
-    emit('update:modelValue', targetDate)
+// FIXED: Simplified month change handler without debouncing complications
+const handleMonthChanged = (newMonth) => {
+    console.log('Month changed to:', format(newMonth, 'MMMM yyyy'))
+    loadAppointmentsForMonth(newMonth)
 }
 
 const goToToday = () => {
     const today = new Date()
-    currentMonth.value = new Date(today.getFullYear(), today.getMonth(), 1)
+    selectedDate.value = today
+
+    // Use the calendar ref to navigate to today
+    if (calendarRef.value) {
+        calendarRef.value.goToToday()
+    }
+
+    // Load appointments for current month
+    loadAppointmentsForMonth(today)
 }
+
+const changeView = (viewName) => {
+    currentView.value = viewName
+}
+
+const refreshCalendar = () => {
+    // Get current month from calendar or use current date
+    const currentMonth = calendarRef.value?.currentMonth || new Date()
+    loadAppointmentsForMonth(currentMonth)
+}
+
+const getStatusColor = (status) => {
+    const colors = {
+        'scheduled': 'bg-blue-500',
+        'completed': 'bg-green-500',
+        'canceled': 'bg-red-500',
+        'no-show': 'bg-gray-500',
+        'pending-provider-confirmation': 'bg-purple-500',
+        'pending-payment': 'bg-yellow-500'
+    }
+    return colors[status] || 'bg-gray-500'
+}
+
+const getClientName = (appointment) => {
+    const client = appointment.client
+    if (!client) return 'Unknown Client'
+    return `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Client'
+}
+
+const getProviderName = (appointment) => {
+    const provider = appointment.provider
+    if (!provider) return 'Unknown Provider'
+    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || 'Provider'
+}
+
+const formatDateTime = (dateTime) => {
+    return format(parseISO(dateTime), 'MMM d, yyyy h:mm a')
+}
+
+const formatSelectedDate = (date) => {
+    return format(date, 'EEEE, MMMM d, yyyy')
+}
+
+const formatAppointmentTime = (dateTime) => {
+    return format(parseISO(dateTime), 'h:mm a')
+}
+
+const canEditAppointment = (appointment) => {
+    // Can edit if appointment is in the future and not completed/canceled
+    const appointmentDate = new Date(appointment.dateTime)
+    return isFuture(appointmentDate) &&
+        !['completed', 'canceled', 'no-show'].includes(appointment.status)
+}
+
+const viewAppointment = (appointmentId) => {
+    router.push(`/appointments/${appointmentId}`)
+}
+
+const editAppointment = (appointmentId) => {
+    router.push(`/appointments/${appointmentId}/edit`)
+}
+
+// Lifecycle
+onMounted(async () => {
+    await nextTick()
+    // Load appointments for current month on mount
+    const currentMonth = new Date()
+    loadAppointmentsForMonth(currentMonth)
+})
+
+// ADDED: Cleanup on unmount
+import { onBeforeUnmount } from 'vue'
+onBeforeUnmount(() => {
+    // Cancel any pending request
+    if (loadingRequest.value) {
+        loadingRequest.value.cancel?.()
+    }
+    // Clear any pending timeout
+    if (monthChangedTimeout.value) {
+        clearTimeout(monthChangedTimeout.value)
+    }
+})
 
 // Expose methods for parent component
 defineExpose({
-    goToDate,
-    goToToday,
-    currentMonth: computed(() => currentMonth.value),
-    selectedDate: computed(() => selectedDate.value)
+    refreshCalendar,
+    goToDate: (date) => {
+        selectedDate.value = date
+        if (calendarRef.value) {
+            calendarRef.value.goToDate(date)
+        }
+        loadAppointmentsForMonth(date)
+    }
 })
 </script>
 
 <style scoped>
-/* Ensure date numbers are always visible */
-button span {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-}
-
-/* Smooth hover effects */
-button:hover:not(:disabled) {
-    transform: scale(1.02);
-}
-
-button:disabled {
-    pointer-events: none;
-}
-
-/* Transition effects */
-button {
-    transition: all 0.2s ease;
+.brand-1 {
+    color: #0ea5e9;
 }
 </style>
