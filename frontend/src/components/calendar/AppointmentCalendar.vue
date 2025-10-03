@@ -17,6 +17,20 @@
                     </button>
                 </div>
             </div>
+
+            <!-- View Switcher -->
+            <div class="flex items-center space-x-2">
+                <div class="bg-gray-100 rounded-lg p-1 flex">
+                    <button v-for="view in viewOptions" :key="view.key" @click="changeView(view.key)" :class="[
+                        'px-3 py-1 text-sm rounded-md transition-all duration-200',
+                        currentView === view.key
+                            ? 'bg-white text-brand-1 shadow-sm font-medium'
+                            : 'text-gray-600 hover:text-gray-900'
+                    ]">
+                        {{ view.label }}
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Loading State -->

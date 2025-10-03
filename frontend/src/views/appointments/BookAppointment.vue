@@ -22,7 +22,7 @@
                     <form @submit.prevent="handleSubmit" class="mt-6 space-y-6">
                         <!-- Beautiful Calendar using ReusableCalendar -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Select Date</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Select date</label>
 
                             <ReusableCalendar v-model="selectedDateObj" :disable-past-dates="true" :max-future-days="30"
                                 :show-selected-date-info="true" @date-selected="handleDateSelected" />
