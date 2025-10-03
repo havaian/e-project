@@ -1285,3 +1285,61 @@ exports.getProviderStats = async (req, res) => {
         });
     }
 };
+
+// Get all appointments for the current user (minimal data for calendar display)
+exports.getAllUserAppointments = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const userRole = req.user.role;
+
+        let query = {};
+        
+        // Build query based on user role
+        if (userRole === 'client') {
+            query.client = userId;
+        } else if (userRole === 'provider') {
+            query.provider = userId;
+        } else {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+
+        // Fetch appointments with minimal populated data for calendar display
+        const appointments = await Appointment.find(query)
+            .populate('client', 'firstName lastName')
+            .populate('provider', 'firstName lastName')
+            .select('dateTime status type client provider')
+            .sort({ dateTime: 1 }); // Sort by date ascending
+
+        // Transform to minimal format for frontend
+        const calendarAppointments = appointments.map(appointment => ({
+            _id: appointment._id,
+            dateTime: appointment.dateTime,
+            status: appointment.status,
+            type: appointment.type,
+            client: appointment.client ? {
+                firstName: appointment.client.firstName,
+                lastName: appointment.client.lastName
+            } : null,
+            provider: appointment.provider ? {
+                firstName: appointment.provider.firstName,
+                lastName: appointment.provider.lastName
+            } : null
+        }));
+
+        res.json({
+            success: true,
+            appointments: calendarAppointments,
+            count: calendarAppointments.length
+        });
+
+    } catch (error) {
+        console.error('Error fetching all user appointments:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch appointments'
+        });
+    }
+};

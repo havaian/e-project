@@ -77,6 +77,8 @@ router.get(
     appointmentController.getCalendarAppointments
 );
 
+router.get('/all', authenticateToken, appointmentController.getAllUserAppointments);
+
 /**
  * @route GET /api/appointments/:id
  * @desc Get a specific appointment by ID

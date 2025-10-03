@@ -21,7 +21,7 @@
         <!-- Calendar View -->
         <div v-else-if="currentView === 'calendar'">
             <ReusableCalendar ref="calendarRef" v-model="selectedDate" :events="calendarEvents"
-                :disable-past-dates="true" :max-future-days="60" :show-appointment-count="true"
+                :disable-past-dates="false" :max-future-days="365" :show-appointment-count="true"
                 :show-selected-date-info="false" @date-selected="handleDateSelected">
                 <!-- Custom footer with selected date appointments -->
                 <template #footer="{ selectedDate }">
@@ -152,9 +152,6 @@ const selectedDate = ref(null)
 const appointments = ref([])
 const calendarRef = ref(null)
 
-// Track last loaded month to prevent duplicate requests
-const lastLoadedMonth = ref(null)
-
 // Computed properties
 const calendarEvents = computed(() => {
     return appointments.value.map(appointment => ({
@@ -213,8 +210,9 @@ const loadAppointmentsForMonth = async (month) => {
 const handleDateSelected = (date, dayInfo) => {
     selectedDate.value = date
 
-    // If client and date has no appointments, allow booking
-    if (props.userRole === 'client' && dayInfo.events.length === 0) {
+    // Always show appointments for selected date, regardless of past/future
+    // If client and date has no appointments AND it's a future date, allow booking
+    if (props.userRole === 'client' && dayInfo.events.length === 0 && isFuture(date)) {
         emit('openBooking', { date })
     }
 }
@@ -236,8 +234,8 @@ const changeView = (viewName) => {
 }
 
 const refreshCalendar = () => {
-    // Simply reload the date range
-    loadAppointmentsForDateRange()
+    // Simply reload all appointments
+    loadAllAppointments()
 }
 
 const getStatusColor = (status) => {
@@ -294,11 +292,11 @@ const editAppointment = (appointmentId) => {
 // Lifecycle
 onMounted(async () => {
     await nextTick()
-    // Load appointments for current month range on mount
-    loadAppointmentsForDateRange()
+    // Load all user appointments once
+    loadAllAppointments()
 })
 
-// Load appointments for a wider date range instead of per-month
+// ADDED: Load appointments for a wider date range instead of per-month
 const loadAppointmentsForDateRange = async () => {
     loading.value = true
     try {
@@ -322,7 +320,7 @@ const loadAppointmentsForDateRange = async () => {
     }
 }
 
-// Cleanup on unmount
+// ADDED: Cleanup on unmount
 import { onBeforeUnmount } from 'vue'
 onBeforeUnmount(() => {
     // Cancel any pending request
