@@ -5,16 +5,14 @@
             <div class="flex items-center space-x-4">
                 <h2 class="text-xl font-semibold text-gray-900">{{ title }}</h2>
                 <div class="flex items-center space-x-2">
-                    <button @click="goToPreviousPeriod"
-                        class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <button @click="goToPreviousPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                         <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
                     </button>
                     <button @click="goToToday"
                         class="px-3 py-1 text-sm bg-brand-1 text-white rounded-lg hover:bg-brand-1/90 transition-colors">
                         Today
                     </button>
-                    <button @click="goToNextPeriod"
-                        class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <button @click="goToNextPeriod" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                         <ChevronRightIcon class="w-5 h-5 text-gray-600" />
                     </button>
                 </div>
@@ -23,14 +21,12 @@
             <!-- View Switcher -->
             <div class="flex items-center space-x-2">
                 <div class="bg-gray-100 rounded-lg p-1 flex">
-                    <button v-for="view in viewOptions" :key="view.key"
-                        @click="changeView(view.key)"
-                        :class="[
-                            'px-3 py-1 text-sm rounded-md transition-all duration-200',
-                            currentView === view.key
-                                ? 'bg-white text-brand-1 shadow-sm font-medium'
-                                : 'text-gray-600 hover:text-gray-900'
-                        ]">
+                    <button v-for="view in viewOptions" :key="view.key" @click="changeView(view.key)" :class="[
+                        'px-3 py-1 text-sm rounded-md transition-all duration-200',
+                        currentView === view.key
+                            ? 'bg-white text-brand-1 shadow-sm font-medium'
+                            : 'text-gray-600 hover:text-gray-900'
+                    ]">
                         {{ view.label }}
                     </button>
                 </div>
@@ -42,9 +38,81 @@
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-1"></div>
         </div>
 
-        <!-- FullCalendar Component -->
-        <div v-else class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            <FullCalendar ref="calendar" :options="calendarOptions" />
+        <!-- Calendar View -->
+        <div v-else-if="currentView === 'calendar'">
+            <ReusableCalendar v-model="selectedDate" :events="calendarEvents" :disable-past-dates="true"
+                :max-future-days="60" :show-appointment-count="true" :show-selected-date-info="false"
+                @date-selected="handleDateSelected" @month-changed="handleMonthChanged">
+                <!-- Custom footer with selected date appointments -->
+                <template #footer="{ selectedDate }">
+                    <div v-if="selectedDate && selectedDateAppointments.length > 0"
+                        class="border-t border-gray-200 p-4">
+                        <h3 class="text-sm font-medium text-gray-900 mb-3">
+                            Appointments for {{ formatSelectedDate(selectedDate) }}
+                        </h3>
+                        <div class="space-y-2">
+                            <div v-for="appointment in selectedDateAppointments" :key="appointment.id"
+                                class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 rounded-full" :class="getStatusColor(appointment.status)"></div>
+                                    <span class="font-medium">
+                                        {{ userRole === 'provider' ? getClientName(appointment) :
+                                        getProviderName(appointment) }}
+                                    </span>
+                                    <span class="text-gray-600">{{ formatAppointmentTime(appointment.dateTime) }}</span>
+                                </div>
+                                <div class="flex space-x-1">
+                                    <button @click="viewAppointment(appointment.id)"
+                                        class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                        View
+                                    </button>
+                                    <button v-if="canEditAppointment(appointment)"
+                                        @click="editAppointment(appointment.id)"
+                                        class="px-2 py-1 text-xs text-green-700 bg-green-100 rounded hover:bg-green-200">
+                                        Edit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ReusableCalendar>
+        </div>
+
+        <!-- List View -->
+        <div v-else-if="currentView === 'list'" class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div class="divide-y divide-gray-200">
+                <div v-if="appointments.length === 0" class="p-8 text-center">
+                    <CalendarDaysIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p class="text-gray-500">No appointments found</p>
+                </div>
+                <div v-for="appointment in appointments" :key="appointment.id"
+                    class="p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-4 h-4 rounded-full" :class="getStatusColor(appointment.status)"></div>
+                            <div>
+                                <p class="font-medium text-gray-900">
+                                    {{ userRole === 'provider' ? getClientName(appointment) :
+                                    getProviderName(appointment) }}
+                                </p>
+                                <p class="text-sm text-gray-600">{{ formatDateTime(appointment.dateTime) }}</p>
+                                <p class="text-xs text-gray-500">{{ appointment.type }} • {{ appointment.status }}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button @click="viewAppointment(appointment.id)"
+                                class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                View
+                            </button>
+                            <button v-if="canEditAppointment(appointment)" @click="editAppointment(appointment.id)"
+                                class="px-3 py-2 text-sm text-green-700 bg-green-100 rounded hover:bg-green-200">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Legend -->
@@ -70,94 +138,16 @@
                 <span class="text-gray-600">Needs Confirmation</span>
             </div>
         </div>
-
-        <!-- Appointment Details Modal -->
-        <div v-if="selectedEvent" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                <div class="mt-3">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Appointment Details</h3>
-                        <button @click="selectedEvent = null" class="text-gray-400 hover:text-gray-600">
-                            <XMarkIcon class="w-6 h-6" />
-                        </button>
-                    </div>
-                    
-                    <div class="space-y-3">
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">
-                                {{ userRole === 'provider' ? 'Client' : 'Provider' }}
-                            </label>
-                            <p class="text-gray-900">{{ selectedEvent.title }}</p>
-                        </div>
-                        
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Date & Time</label>
-                            <p class="text-gray-900">{{ formatEventDateTime(selectedEvent) }}</p>
-                        </div>
-                        
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Status</label>
-                            <span :class="getStatusClass(selectedEvent.extendedProps.status)"
-                                class="inline-block px-2 py-1 text-xs font-medium rounded-full capitalize">
-                                {{ selectedEvent.extendedProps.status }}
-                            </span>
-                        </div>
-                        
-                        <div v-if="selectedEvent.extendedProps.shortDescription">
-                            <label class="text-sm font-medium text-gray-700">Description</label>
-                            <p class="text-gray-900">{{ selectedEvent.extendedProps.shortDescription }}</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button @click="selectedEvent = null"
-                            class="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">
-                            Close
-                        </button>
-                        
-                        <!-- Future appointment actions -->
-                        <template v-if="isEventInFuture(selectedEvent)">
-                            <button @click="editAppointment(selectedEvent.extendedProps.appointmentId)"
-                                class="px-4 py-2 text-sm text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200">
-                                Edit
-                            </button>
-                            <button @click="cancelAppointment(selectedEvent.extendedProps.appointmentId)"
-                                class="px-4 py-2 text-sm text-red-700 bg-red-100 rounded-lg hover:bg-red-200">
-                                Cancel
-                            </button>
-                        </template>
-                        
-                        <!-- View details button -->
-                        <button @click="viewAppointmentDetails(selectedEvent.extendedProps.appointmentId)"
-                            class="px-4 py-2 text-sm text-brand-1 bg-brand-1/10 rounded-lg hover:bg-brand-1/20">
-                            View Details
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { format, parseISO, isFuture } from 'date-fns'
+import { format, parseISO, isFuture, isSameDay } from 'date-fns'
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import axios from '@/plugins/axios'
-import { 
-    ChevronLeftIcon, 
-    ChevronRightIcon, 
-    PlusIcon, 
-    XMarkIcon 
-} from '@heroicons/vue/24/outline'
-
-// FullCalendar imports (these need to be installed)
-import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
+import ReusableCalendar from './ReusableCalendar.vue'
 
 const props = defineProps({
     userRole: {
@@ -174,318 +164,165 @@ const props = defineProps({
 const emit = defineEmits(['openBooking', 'appointmentUpdated'])
 
 const router = useRouter()
-const authStore = useAuthStore()
 
 // Component state
-const calendar = ref(null)
 const loading = ref(false)
-const currentView = ref('dayGridMonth')
-const selectedEvent = ref(null)
-const events = ref([])
+const currentView = ref('calendar')
+const selectedDate = ref(null)
+const appointments = ref([])
 
 // View options
 const viewOptions = [
-    { key: 'dayGridMonth', label: 'Month' },
-    { key: 'timeGridWeek', label: 'Week' },
-    { key: 'timeGridDay', label: 'Day' }
+    { key: 'calendar', label: 'Calendar' },
+    { key: 'list', label: 'List' }
 ]
 
-// FullCalendar configuration
-const calendarOptions = computed(() => ({
-    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-    initialView: currentView.value,
-    headerToolbar: false, // We're using custom header
-    height: 'auto',
-    events: events.value,
-    editable: true,
-    droppable: true,
-    eventResizableFromStart: true,
-    eventDurationEditable: true,
-    eventStartEditable: true,
-    selectable: props.userRole === 'client',
-    selectMirror: true,
-    weekends: true,
-    dayMaxEvents: true,
-    eventClick: handleEventClick,
-    eventDrop: handleEventDrop,
-    eventResize: handleEventResize,
-    select: handleDateSelect,
-    eventDidMount: handleEventMount,
-    eventMouseEnter: handleEventMouseEnter,
-    eventMouseLeave: handleEventMouseLeave
-}))
+// Computed properties
+const calendarEvents = computed(() => {
+    return appointments.value.map(appointment => ({
+        id: appointment._id,
+        date: appointment.dateTime,
+        dateTime: appointment.dateTime,
+        title: props.userRole === 'provider'
+            ? getClientName(appointment)
+            : getProviderName(appointment),
+        status: appointment.status,
+        type: appointment.type
+    }))
+})
+
+const selectedDateAppointments = computed(() => {
+    if (!selectedDate.value) return []
+
+    return appointments.value.filter(appointment => {
+        const appointmentDate = new Date(appointment.dateTime)
+        return isSameDay(selectedDate.value, appointmentDate)
+    })
+})
 
 // Methods
 const loadAppointments = async () => {
     loading.value = true
     try {
-        const calendarApi = calendar.value?.getApi()
-        const view = calendarApi?.view
-        
-        let startDate, endDate
-        if (view) {
-            startDate = view.activeStart.toISOString()
-            endDate = view.activeEnd.toISOString()
-        } else {
-            // Fallback dates
-            const now = new Date()
-            startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString()
-        }
-
-        const response = await axios.get('/appointments/calendar', {
-            params: { startDate, endDate }
-        })
-        
-        events.value = response.data.calendarEvents || []
+        const response = await axios.get('/appointments/calendar')
+        appointments.value = response.data.calendarEvents || []
     } catch (error) {
         console.error('Error loading appointments:', error)
-        // TODO: Show error notification
+        appointments.value = []
     } finally {
         loading.value = false
     }
 }
 
-const handleEventClick = (clickInfo) => {
-    selectedEvent.value = clickInfo.event
-}
+const handleDateSelected = (date, dayInfo) => {
+    selectedDate.value = date
 
-const handleEventDrop = async (dropInfo) => {
-    const { event } = dropInfo
-    const appointmentId = event.extendedProps.appointmentId
-    
-    try {
-        await axios.patch(`/appointments/${appointmentId}`, {
-            dateTime: event.start.toISOString(),
-            endTime: event.end?.toISOString()
-        })
-        
-        emit('appointmentUpdated', { id: appointmentId, type: 'moved' })
-        // TODO: Show success notification
-    } catch (error) {
-        console.error('Error updating appointment:', error)
-        dropInfo.revert() // Revert the change
-        // TODO: Show error notification
+    // If client and date has no appointments, allow booking
+    if (props.userRole === 'client' && dayInfo.events.length === 0) {
+        emit('openBooking', { date })
     }
 }
 
-const handleEventResize = async (resizeInfo) => {
-    const { event } = resizeInfo
-    const appointmentId = event.extendedProps.appointmentId
-    
-    try {
-        await axios.patch(`/appointments/${appointmentId}`, {
-            dateTime: event.start.toISOString(),
-            endTime: event.end?.toISOString()
-        })
-        
-        emit('appointmentUpdated', { id: appointmentId, type: 'resized' })
-        // TODO: Show success notification
-    } catch (error) {
-        console.error('Error updating appointment:', error)
-        resizeInfo.revert() // Revert the change
-        // TODO: Show error notification
-    }
+const handleMonthChanged = (newMonth) => {
+    // Optionally reload appointments for new month
+    loadAppointments()
 }
 
-const handleDateSelect = (selectInfo) => {
-    if (props.userRole === 'client') {
-        // Open booking modal with selected date
-        emit('openBooking', {
-            date: selectInfo.start,
-            endDate: selectInfo.end
-        })
-    }
-}
-
-const handleEventMount = (info) => {
-    // Add custom styling based on appointment status
-    const status = info.event.extendedProps.status
-    const element = info.el
-    
-    // Add status-specific classes
-    element.classList.add(`appointment-${status}`)
-    
-    // Add tooltips or other enhancements
-    element.title = `${info.event.title} - ${status}`
-}
-
-const handleEventMouseEnter = (mouseEnterInfo) => {
-    // Add hover effects if needed
-}
-
-const handleEventMouseLeave = (mouseLeaveInfo) => {
-    // Remove hover effects if needed
-}
-
-// Navigation methods
 const goToPreviousPeriod = () => {
-    calendar.value?.getApi().prev()
+    // Navigate to previous month
+    const calendar = document.querySelector('.reusable-calendar')
+    if (calendar) {
+        calendar.previousMonth()
+    }
 }
 
 const goToNextPeriod = () => {
-    calendar.value?.getApi().next()
+    // Navigate to next month
+    const calendar = document.querySelector('.reusable-calendar')
+    if (calendar) {
+        calendar.nextMonth()
+    }
 }
 
 const goToToday = () => {
-    calendar.value?.getApi().today()
+    selectedDate.value = new Date()
 }
 
 const changeView = (viewName) => {
     currentView.value = viewName
-    calendar.value?.getApi().changeView(viewName)
 }
 
-// Utility methods
-const formatEventDateTime = (event) => {
-    if (!event.start) return ''
-    const start = format(new Date(event.start), 'MMM d, yyyy h:mm a')
-    if (event.end) {
-        const end = format(new Date(event.end), 'h:mm a')
-        return `${start} - ${end}`
+const refreshCalendar = () => {
+    loadAppointments()
+}
+
+const getStatusColor = (status) => {
+    const colors = {
+        'scheduled': 'bg-blue-500',
+        'completed': 'bg-green-500',
+        'canceled': 'bg-red-500',
+        'no-show': 'bg-gray-500',
+        'pending-provider-confirmation': 'bg-purple-500',
+        'pending-payment': 'bg-yellow-500'
     }
-    return start
+    return colors[status] || 'bg-gray-500'
 }
 
-const isEventInFuture = (event) => {
-    return event.start && isFuture(new Date(event.start))
+const getClientName = (appointment) => {
+    const client = appointment.client
+    if (!client) return 'Unknown Client'
+    return `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Client'
 }
 
-const getStatusClass = (status) => {
-    const classes = {
-        'scheduled': 'bg-blue-100 text-blue-800',
-        'completed': 'bg-green-100 text-green-800',
-        'canceled': 'bg-red-100 text-red-800',
-        'no-show': 'bg-gray-100 text-gray-800',
-        'pending-provider-confirmation': 'bg-purple-100 text-purple-800',
-        'pending-payment': 'bg-yellow-100 text-yellow-800'
-    }
-    return classes[status] || 'bg-gray-100 text-gray-800'
+const getProviderName = (appointment) => {
+    const provider = appointment.provider
+    if (!provider) return 'Unknown Provider'
+    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || 'Provider'
 }
 
-// Action methods
-const editAppointment = (appointmentId) => {
-    selectedEvent.value = null
-    router.push(`/appointments/${appointmentId}/edit`)
+const formatDateTime = (dateTime) => {
+    return format(parseISO(dateTime), 'MMM d, yyyy h:mm a')
 }
 
-const cancelAppointment = async (appointmentId) => {
-    if (!confirm('Are you sure you want to cancel this appointment?')) return
-    
-    try {
-        await axios.patch(`/appointments/${appointmentId}`, { status: 'canceled' })
-        emit('appointmentUpdated', { id: appointmentId, type: 'cancelled' })
-        selectedEvent.value = null
-        await loadAppointments() // Refresh calendar
-        // TODO: Show success notification
-    } catch (error) {
-        console.error('Error cancelling appointment:', error)
-        // TODO: Show error notification
-    }
+const formatSelectedDate = (date) => {
+    return format(date, 'EEEE, MMMM d, yyyy')
 }
 
-const viewAppointmentDetails = (appointmentId) => {
-    selectedEvent.value = null
+const formatAppointmentTime = (dateTime) => {
+    return format(parseISO(dateTime), 'h:mm a')
+}
+
+const canEditAppointment = (appointment) => {
+    // Can edit if appointment is in the future and not completed/canceled
+    const appointmentDate = new Date(appointment.dateTime)
+    return isFuture(appointmentDate) &&
+        !['completed', 'canceled', 'no-show'].includes(appointment.status)
+}
+
+const viewAppointment = (appointmentId) => {
     router.push(`/appointments/${appointmentId}`)
 }
 
-// Lifecycle
-onMounted(async () => {
-    await nextTick()
-    await loadAppointments()
-})
+const editAppointment = (appointmentId) => {
+    router.push(`/appointments/${appointmentId}/edit`)
+}
 
-// Watch for view changes to reload data
-watch(currentView, () => {
-    nextTick(() => {
-        loadAppointments()
-    })
+// Lifecycle
+onMounted(() => {
+    loadAppointments()
 })
 
 // Expose methods for parent component
 defineExpose({
     refreshCalendar: loadAppointments,
-    goToDate: (date) => calendar.value?.getApi().gotoDate(date)
+    goToDate: (date) => {
+        selectedDate.value = date
+    }
 })
 </script>
 
 <style scoped>
-/* FullCalendar custom styles */
-:deep(.fc) {
-    font-family: inherit;
-}
-
-:deep(.fc-theme-standard td, .fc-theme-standard th) {
-    border-color: #e5e7eb;
-}
-
-:deep(.fc-theme-standard .fc-scrollgrid) {
-    border-color: #e5e7eb;
-}
-
-:deep(.fc-col-header-cell-cushion) {
-    color: #6b7280;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-:deep(.fc-daygrid-day-number) {
-    color: #374151;
-    font-weight: 500;
-    text-decoration: none;
-}
-
-/* Status-based event styling */
-:deep(.appointment-scheduled) {
-    background-color: #3b82f6 !important;
-    border-color: #2563eb !important;
-}
-
-:deep(.appointment-completed) {
-    background-color: #10b981 !important;
-    border-color: #059669 !important;
-}
-
-:deep(.appointment-canceled) {
-    background-color: #ef4444 !important;
-    border-color: #dc2626 !important;
-}
-
-:deep(.appointment-pending-provider-confirmation) {
-    background-color: #8b5cf6 !important;
-    border-color: #7c3aed !important;
-}
-
-:deep(.appointment-pending-payment) {
-    background-color: #f59e0b !important;
-    border-color: #d97706 !important;
-}
-
-:deep(.appointment-no-show) {
-    background-color: #6b7280 !important;
-    border-color: #4b5563 !important;
-}
-
-/* Event text styling */
-:deep(.fc-event-title) {
-    font-weight: 500;
-    font-size: 0.875rem;
-}
-
-/* Hover effects */
-:deep(.fc-event:hover) {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    transition: all 0.2s ease;
-}
-
-/* Today highlight */
-:deep(.fc-day-today) {
-    background-color: #fef3c7 !important;
-}
-
-/* Selection styling */
-:deep(.fc-highlight) {
-    background-color: #dbeafe !important;
+.brand-1 {
+    color: #0ea5e9;
 }
 </style>

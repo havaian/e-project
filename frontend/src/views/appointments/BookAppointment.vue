@@ -20,59 +20,13 @@
                     </div>
 
                     <form @submit.prevent="handleSubmit" class="mt-6 space-y-6">
-                        <!-- Beautiful Calendar -->
+                        <!-- Beautiful Calendar using ReusableCalendar -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">Select Date</label>
-                            
-                            <!-- Calendar Container -->
-                            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                                <!-- Calendar Header -->
-                                <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
-                                    <button type="button" @click="previousMonth" 
-                                        class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                        <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
-                                    </button>
-                                    
-                                    <h2 class="text-lg font-semibold text-gray-900">
-                                        {{ currentMonthYear }}
-                                    </h2>
-                                    
-                                    <button type="button" @click="nextMonth" 
-                                        class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                        <ChevronRightIcon class="w-5 h-5 text-gray-600" />
-                                    </button>
-                                </div>
 
-                                <!-- Days of Week -->
-                                <div class="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
-                                    <div v-for="day in daysOfWeek" :key="day" 
-                                        class="px-2 py-3 text-center text-sm font-medium text-gray-500">
-                                        {{ day }}
-                                    </div>
-                                </div>
+                            <ReusableCalendar v-model="selectedDateObj" :disable-past-dates="true" :max-future-days="30"
+                                :show-selected-date-info="true" @date-selected="handleDateSelected" />
 
-                                <!-- Calendar Grid -->
-                                <div class="grid grid-cols-7">
-                                    <button v-for="day in calendarDays" :key="day.key" type="button"
-                                        :disabled="!day.isCurrentMonth || day.isPast || day.isTooFar"
-                                        @click="selectDate(day)"
-                                        class="relative p-2 h-12 text-sm transition-buttery duration-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
-                                        :class="{
-                                            'text-gray-400 cursor-not-allowed': !day.isCurrentMonth,
-                                            'text-gray-300 cursor-not-allowed bg-gray-50': day.isPast || day.isTooFar,
-                                            'text-gray-900 hover:bg-blue-50': day.isCurrentMonth && !day.isPast && !day.isTooFar,
-                                            'bg-blue-600 text-white hover:bg-blue-700': day.isSelected,
-                                            'bg-blue-100 text-blue-800': day.isToday && !day.isSelected,
-                                            'ring-2 ring-blue-500': day.isSelected
-                                        }">
-                                        <span>{{ day.date }}</span>
-                                        <div v-if="day.isToday && !day.isSelected" 
-                                            class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full">
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
-                            
                             <p v-if="validationErrors.date" class="mt-2 text-sm text-red-600">
                                 {{ validationErrors.date }}
                             </p>
@@ -83,15 +37,15 @@
                             <label class="block text-sm font-medium text-gray-700 mb-3">Available Time Slots</label>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                                 <button v-for="slot in availableSlots" :key="slot.start" type="button"
-                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-buttery duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    :class="{ 
-                                        'ring-2 ring-blue-500 bg-blue-50 border-blue-500 text-blue-700': formData.time === slot.start 
-                                    }"
-                                    @click="formData.time = slot.start">
+                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    :class="{
+                                        'ring-2 ring-blue-500 bg-blue-50 border-blue-500 text-blue-700': formData.time === slot.start
+                                    }" @click="formData.time = slot.start">
                                     {{ formatTimeDisplay(slot.start) }}
                                 </button>
                             </div>
-                            <p v-if="availableSlots.length === 0" class="mt-3 text-sm text-gray-500 text-center py-4 bg-gray-50 rounded-lg">
+                            <p v-if="availableSlots.length === 0"
+                                class="mt-3 text-sm text-gray-500 text-center py-4 bg-gray-50 rounded-lg">
                                 No available slots for this date. Please select another date.
                             </p>
                             <p v-if="validationErrors.time" class="mt-2 text-sm text-red-600">
@@ -104,7 +58,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-3">Session Type</label>
                             <div class="grid grid-cols-3 gap-3">
                                 <button v-for="type in sessionTypes" :key="type.value" type="button"
-                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-buttery duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    class="px-4 py-3 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     :class="{
                                         'ring-2 ring-blue-500 bg-blue-50 border-blue-500 text-blue-700': formData.type === type.value,
                                         'border-red-500': validationErrors.type
@@ -122,9 +76,10 @@
 
                         <!-- Short description -->
                         <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Short description</label>
-                            <textarea id="description" v-model="formData.shortDescription" rows="3" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Short
+                                description</label>
+                            <textarea id="description" v-model="formData.shortDescription" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                 placeholder="Please describe what you'd like to discuss in this session..."
                                 :class="{ 'border-red-500': validationErrors.shortDescription }"></textarea>
                             <p v-if="validationErrors.shortDescription" class="mt-2 text-sm text-red-600">
@@ -149,13 +104,17 @@
                         </div>
 
                         <div>
-                            <button type="submit" 
-                                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" 
+                            <button type="submit"
+                                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                 :disabled="submitting">
                                 <div class="flex items-center justify-center space-x-2">
-                                    <svg v-if="submitting" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    <svg v-if="submitting" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
                                     </svg>
                                     <span>{{ submitting ? 'Processing...' : 'Proceed to Payment' }}</span>
                                 </div>
@@ -177,12 +136,13 @@
 </template>
 
 <script setup>
-import { ChevronLeftIcon, ChevronRightIcon, VideoCameraIcon, MicrophoneIcon, ChatBubbleLeftRightIcon, BanknotesIcon } from "@heroicons/vue/24/outline";
+import { VideoCameraIcon, MicrophoneIcon, ChatBubbleLeftRightIcon, BanknotesIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { format, addDays, parseISO, subMinutes, addMinutes, isWithinInterval, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, isAfter, addMonths, subMonths } from 'date-fns'
+import { format, parseISO, subMinutes, addMinutes, isWithinInterval } from 'date-fns'
 import { usePaymentStore } from '@/stores/payment'
 import axios from '@/plugins/axios'
+import ReusableCalendar from '@/components/calendar/ReusableCalendar.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -193,7 +153,6 @@ const loading = ref(true)
 const submitting = ref(false)
 const error = ref('')
 const availableSlots = ref([])
-const currentMonth = ref(new Date())
 const selectedDateObj = ref(null)
 
 const validationErrors = reactive({
@@ -204,16 +163,10 @@ const validationErrors = reactive({
 })
 
 // Icons for session types
-const VideoIcon = VideoCameraIcon
-
-const VoiceIcon = MicrophoneIcon
-
-const ChatIcon = ChatBubbleLeftRightIcon
-
 const sessionTypes = [
-    { value: 'video', label: 'Video', icon: VideoIcon },
-    { value: 'voice', label: 'Voice', icon: VoiceIcon },
-    { value: 'chat', label: 'Chat', icon: ChatIcon }
+    { value: 'video', label: 'Video', icon: VideoCameraIcon },
+    { value: 'voice', label: 'Voice', icon: MicrophoneIcon },
+    { value: 'chat', label: 'Chat', icon: ChatBubbleLeftRightIcon }
 ]
 
 const formData = reactive({
@@ -223,80 +176,19 @@ const formData = reactive({
     shortDescription: ''
 })
 
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-// Calendar computations
-const currentMonthYear = computed(() => {
-    return format(currentMonth.value, 'MMMM yyyy')
-})
-
-const calendarDays = computed(() => {
-    const start = startOfMonth(currentMonth.value)
-    const end = endOfMonth(currentMonth.value)
-    
-    // Get first day of the week for the month
-    const startDate = new Date(start)
-    startDate.setDate(startDate.getDate() - start.getDay())
-    
-    // Get last day of the week for the month
-    const endDate = new Date(end)
-    endDate.setDate(endDate.getDate() + (6 - end.getDay()))
-    
-    const days = eachDayOfInterval({ start: startDate, end: endDate })
-    const now = new Date()
-    const maxDate = addDays(now, 30)
-    
-    return days.map(day => ({
-        date: day.getDate(),
-        fullDate: day,
-        key: format(day, 'yyyy-MM-dd'),
-        isCurrentMonth: day.getMonth() === currentMonth.value.getMonth(),
-        isToday: isToday(day),
-        isPast: isBefore(day, new Date(now.getFullYear(), now.getMonth(), now.getDate())),
-        isTooFar: isAfter(day, maxDate),
-        isSelected: selectedDateObj.value && isSameDay(day, selectedDateObj.value)
-    }))
-})
-
-// Navigation functions
-const previousMonth = () => {
-    currentMonth.value = subMonths(currentMonth.value, 1)
-}
-
-const nextMonth = () => {
-    currentMonth.value = addMonths(currentMonth.value, 1)
-}
-
-const selectDate = (day) => {
-    if (!day.isCurrentMonth || day.isPast || day.isTooFar) return
-    
-    selectedDateObj.value = day.fullDate
-    formData.date = format(day.fullDate, 'yyyy-MM-dd')
+// Handle date selection from ReusableCalendar
+const handleDateSelected = (date) => {
+    selectedDateObj.value = date
+    formData.date = format(date, 'yyyy-MM-dd')
     validationErrors.date = ''
     fetchAvailableSlots()
 }
 
 // Watch for manual date changes
 watch(() => formData.date, (newDate) => {
-    if (newDate) {
-        selectedDateObj.value = parseISO(newDate)
+    if (newDate && selectedDateObj.value && format(selectedDateObj.value, 'yyyy-MM-dd') !== newDate) {
+        selectedDateObj.value = new Date(newDate)
     }
-})
-
-// Fixed to use UTC+5 timezone
-const minDate = computed(() => {
-    const now = new Date()
-    const utc5Offset = 5 * 60
-    const utc5Date = new Date(now.getTime() + (utc5Offset * 60 * 1000))
-    return format(utc5Date, 'yyyy-MM-dd')
-})
-
-const maxDate = computed(() => {
-    const now = new Date()
-    const utc5Offset = 5 * 60
-    const utc5Date = new Date(now.getTime() + (utc5Offset * 60 * 1000))
-    const maxDate = addDays(utc5Date, 30)
-    return format(maxDate, 'yyyy-MM-dd')
 })
 
 // Safe formatting function for currency
@@ -315,10 +207,6 @@ const formatCurrency = (amount) => {
 const formatFee = () => {
     if (!provider.value) return '0'
     return formatCurrency(provider.value.sessionFee)
-}
-
-const formatTime = (time) => {
-    return format(parseISO(time), 'h:mm a')
 }
 
 const formatTimeDisplay = (timeString) => {

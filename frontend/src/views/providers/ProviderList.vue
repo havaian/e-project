@@ -378,7 +378,7 @@ const getActiveSortsText = () => {
   return activeSorts.length > 0 ? `Sorted by: ${activeSorts.join(', ')}` : 'No sorting applied'
 }
 
-// FIXED: Debounced search input handler
+// Debounced search input handler
 const handleSearchInput = () => {
   // Clear any existing timeout
   if (searchTimeout) {
@@ -392,7 +392,7 @@ const handleSearchInput = () => {
   }, DEBOUNCE_DELAY)
 }
 
-// FIXED: Immediate handler for non-text inputs (dropdowns, etc.)
+// Immediate handler for non-text inputs (dropdowns, etc.)
 const handleFilterChange = () => {
   currentPage.value = 1
   fetchProviders()

@@ -12,10 +12,25 @@ exports.createAppointment = async (req, res) => {
 
         const { providerId, dateTime, type, shortDescription, notes, duration = 30 } = req.body;
 
+        // Validate required fields
+        if (!providerId || !dateTime) {
+            return res.status(400).json({ message: 'Provider ID and date/time are required' });
+        }
+
         // Validate duration is a multiple of 15 minutes
         if (duration % 15 !== 0 || duration < 15 || duration > 120) {
             return res.status(400).json({
                 message: 'Duration must be a multiple of 15 minutes (15, 30, 45, 60, etc.) and between 15-120 minutes'
+            });
+        }
+        
+        // Prevent booking appointments on past dates
+        const appointmentDate = new Date(dateTime);
+        const now = new Date();
+
+        if (appointmentDate <= now) {
+            return res.status(400).json({ 
+                message: 'Cannot book appointments for past dates or times. Please select a future date and time.' 
             });
         }
 
@@ -63,7 +78,6 @@ exports.createAppointment = async (req, res) => {
         }
 
         // Calculate end time based on duration
-        const appointmentDate = new Date(dateTime);
         const endTime = new Date(appointmentDate.getTime() + duration * 60000);
 
         // Check if the provider is available for the entire duration

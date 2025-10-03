@@ -5,7 +5,7 @@
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent">
             </div>
             <span class="ml-3 text-gray-600">Loading {{ mode === 'appointments' ? 'appointments' : 'availability'
-                }}...</span>
+            }}...</span>
         </div>
 
         <!-- Error State -->
@@ -31,25 +31,23 @@
                         <p class="text-blue-100 text-sm mt-1">{{ getSubtitle() }}</p>
                     </div>
 
-                    <!-- Week Navigation -->
+                    <!-- View Toggle -->
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center space-x-2">
-                            <button @click="previousWeek" class="p-2 hover:bg-blue-500 rounded-lg transition-colors">
-                                <ChevronLeftIcon class="w-5 h-5" />
+                            <button @click="currentView = 'weekly'"
+                                :class="currentView === 'weekly' ? 'bg-blue-500 text-white' : 'bg-blue-400 text-blue-100'"
+                                class="px-3 py-1 text-sm rounded-lg hover:bg-blue-500 transition-colors">
+                                Weekly View
                             </button>
-
-                            <button @click="goToCurrentWeek"
-                                class="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-400 transition-colors">
-                                This Week
-                            </button>
-
-                            <button @click="nextWeek" class="p-2 hover:bg-blue-500 rounded-lg transition-colors">
-                                <ChevronRightIcon class="w-5 h-5" />
+                            <button @click="currentView = 'calendar'"
+                                :class="currentView === 'calendar' ? 'bg-blue-500 text-white' : 'bg-blue-400 text-blue-100'"
+                                class="px-3 py-1 text-sm rounded-lg hover:bg-blue-500 transition-colors">
+                                Calendar View
                             </button>
                         </div>
 
                         <!-- Mode-specific controls -->
-                        <div v-if="mode === 'availability' && userRole === 'provider'"
+                        <div v-if="mode === 'availability' && userRole === 'provider' && currentView === 'weekly'"
                             class="flex items-center space-x-2">
                             <button @click="setPreset('business')"
                                 class="px-3 py-1 bg-blue-500 text-white text-xs rounded-full hover:bg-blue-400 transition-colors">
@@ -84,86 +82,165 @@
                 </div>
             </div>
 
-            <!-- Calendar Grid -->
-            <div class="flex">
-                <!-- Time Column -->
-                <div class="w-20 bg-gray-50 border-r border-gray-200 flex-shrink-0">
-                    <!-- Header spacer -->
-                    <div class="h-12 border-b border-gray-200"></div>
-
-                    <!-- Hour labels -->
-                    <div v-for="hour in hours" :key="hour"
-                        class="h-16 border-b border-gray-100 flex items-center justify-center text-xs text-gray-600 font-medium">
-                        {{ formatHour(hour) }}
-                    </div>
-                </div>
-
-                <!-- Days Grid -->
-                <div class="flex-1 overflow-x-auto">
-                    <div class="min-w-max">
-                        <!-- Day Headers -->
-                        <div class="flex h-12 border-b border-gray-200 bg-gray-50">
-                            <div v-for="(day, dayIndex) in currentWeekDays" :key="dayIndex"
-                                class="flex-1 min-w-32 border-r border-gray-200 flex flex-col items-center justify-center">
-                                <div class="text-xs font-medium text-gray-600">{{ getDayName(day) }}</div>
-                                <div class="text-sm font-semibold"
-                                    :class="isToday(day) ? 'text-blue-600' : 'text-gray-900'">
-                                    {{ getDayNumber(day) }}
+            <!-- Calendar View -->
+            <div v-if="currentView === 'calendar'" class="p-4">
+                <ReusableCalendar v-model="selectedDate" :events="calendarEvents"
+                    :disable-past-dates="mode === 'availability'" :max-future-days="90"
+                    :show-appointment-count="mode === 'appointments'" :show-event-indicators="mode === 'availability'"
+                    :show-selected-date-info="true" @date-selected="handleDateSelected"
+                    @month-changed="handleMonthChanged">
+                    <!-- Custom footer for availability editing -->
+                    <template #footer="{ selectedDate }">
+                        <div v-if="selectedDate && mode === 'availability' && userRole === 'provider'"
+                            class="border-t border-gray-200 p-4">
+                            <h3 class="text-sm font-medium text-gray-900 mb-3">
+                                Availability for {{ formatSelectedDate(selectedDate) }}
+                            </h3>
+                            <div class="space-y-2">
+                                <div v-for="(slot, index) in getSelectedDateAvailability(selectedDate)" :key="index"
+                                    class="flex items-center justify-between p-2 bg-green-50 rounded text-sm">
+                                    <span>{{ slot.startTime }} - {{ slot.endTime }}</span>
+                                    <button @click="removeTimeSlot(selectedDate, index)"
+                                        class="px-2 py-1 text-xs text-red-700 bg-red-100 rounded hover:bg-red-200">
+                                        Remove
+                                    </button>
+                                </div>
+                                <button @click="addTimeSlotForDate(selectedDate)"
+                                    class="w-full py-2 px-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors text-sm">
+                                    + Add Time Slot
+                                </button>
+                            </div>
+                        </div>
+                        <div v-else-if="selectedDate && mode === 'appointments'" class="border-t border-gray-200 p-4">
+                            <h3 class="text-sm font-medium text-gray-900 mb-3">
+                                Appointments for {{ formatSelectedDate(selectedDate) }}
+                            </h3>
+                            <div class="space-y-2">
+                                <div v-for="appointment in getSelectedDateAppointments(selectedDate)"
+                                    :key="appointment._id"
+                                    class="flex items-center justify-between p-2 bg-blue-50 rounded text-sm">
+                                    <div>
+                                        <span class="font-medium">{{ getAppointmentTitle(appointment) }}</span>
+                                        <span class="text-gray-600 ml-2">{{ getAppointmentTime(appointment) }}</span>
+                                    </div>
+                                    <button @click="$emit('appointmentClick', appointment)"
+                                        class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                        View
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </template>
+                </ReusableCalendar>
+            </div>
 
-                        <!-- Time Grid -->
-                        <div class="relative">
-                            <!-- Hours -->
-                            <div v-for="hour in hours" :key="hour" class="flex h-16 border-b border-gray-100">
-                                <!-- Days for this hour -->
+            <!-- Weekly Grid View -->
+            <div v-else-if="currentView === 'weekly'">
+                <!-- Week Navigation -->
+                <div class="flex items-center justify-center px-6 py-3 bg-gray-50 border-b border-gray-200">
+                    <div class="flex items-center space-x-4">
+                        <button @click="previousWeek" class="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+                            <ChevronLeftIcon class="w-5 h-5 text-gray-600" />
+                        </button>
+
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            {{ getWeekRangeText() }}
+                        </h3>
+
+                        <button @click="nextWeek" class="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+                            <ChevronRightIcon class="w-5 h-5 text-gray-600" />
+                        </button>
+
+                        <button @click="goToCurrentWeek"
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                            This Week
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Time Grid -->
+                <div class="flex">
+                    <!-- Time Column -->
+                    <div class="w-20 bg-gray-50 border-r border-gray-200 flex-shrink-0">
+                        <!-- Header spacer -->
+                        <div class="h-12 border-b border-gray-200"></div>
+
+                        <!-- Hour labels -->
+                        <div v-for="hour in hours" :key="hour"
+                            class="h-16 border-b border-gray-100 flex items-center justify-center text-xs text-gray-600 font-medium">
+                            {{ formatHour(hour) }}
+                        </div>
+                    </div>
+
+                    <!-- Days Grid -->
+                    <div class="flex-1 overflow-x-auto">
+                        <div class="min-w-max">
+                            <!-- Day Headers -->
+                            <div class="flex h-12 border-b border-gray-200 bg-gray-50">
                                 <div v-for="(day, dayIndex) in currentWeekDays" :key="dayIndex"
-                                    class="flex-1 min-w-32 border-r border-gray-200 relative">
+                                    class="flex-1 min-w-32 border-r border-gray-200 flex flex-col items-center justify-center">
+                                    <div class="text-xs font-medium text-gray-600">{{ getDayName(day) }}</div>
+                                    <div class="text-sm font-semibold"
+                                        :class="isToday(day) ? 'text-blue-600' : 'text-gray-900'">
+                                        {{ getDayNumber(day) }}
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <!-- 30-minute slots -->
-                                    <div v-for="slot in 2" :key="slot" :class="getSlotClasses(dayIndex, hour, slot - 1)"
-                                        @mousedown="handleSlotMouseDown(dayIndex, hour, slot - 1)"
-                                        @mouseenter="handleSlotMouseEnter(dayIndex, hour, slot - 1)"
-                                        @mouseup="handleSlotMouseUp(dayIndex, hour, slot - 1)">
+                            <!-- Time Grid -->
+                            <div class="relative">
+                                <!-- Hours -->
+                                <div v-for="hour in hours" :key="hour" class="flex h-16 border-b border-gray-100">
+                                    <!-- Days for this hour -->
+                                    <div v-for="(day, dayIndex) in currentWeekDays" :key="dayIndex"
+                                        class="flex-1 min-w-32 border-r border-gray-200 relative">
 
-                                        <!-- Availability indicator -->
-                                        <div v-if="mode === 'availability' && isSlotAvailable(dayIndex, hour, slot - 1)"
-                                            class="absolute inset-0 bg-green-400 opacity-75">
-                                        </div>
+                                        <!-- 30-minute slots -->
+                                        <div v-for="slot in 2" :key="slot"
+                                            :class="getSlotClasses(dayIndex, hour, slot - 1)"
+                                            @mousedown="handleSlotMouseDown(dayIndex, hour, slot - 1)"
+                                            @mouseenter="handleSlotMouseEnter(dayIndex, hour, slot - 1)"
+                                            @mouseup="handleSlotMouseUp(dayIndex, hour, slot - 1)">
 
-                                        <!-- Selection overlay -->
-                                        <div v-if="isInSelection(dayIndex, hour, slot - 1) && mode === 'availability'"
-                                            class="absolute inset-0 bg-blue-400 opacity-50">
-                                        </div>
-
-                                        <!-- Appointment overlay -->
-                                        <div v-if="mode === 'appointments'" class="absolute inset-0">
-                                            <!-- Available time background -->
-                                            <div v-if="isSlotAvailable(dayIndex, hour, slot - 1)"
-                                                class="absolute inset-0 bg-green-50 border border-green-100 opacity-60">
+                                            <!-- Availability indicator -->
+                                            <div v-if="mode === 'availability' && isSlotAvailable(dayIndex, hour, slot - 1)"
+                                                class="absolute inset-0 bg-green-400 opacity-75">
                                             </div>
 
-                                            <!-- Appointment blocks -->
-                                            <div v-for="appointment in getSlotAppointments(dayIndex, hour, slot - 1)"
-                                                :key="appointment._id" :class="getAppointmentClasses(appointment)"
-                                                @click="$emit('appointmentClick', appointment)"
-                                                class="absolute inset-0 p-1 cursor-pointer rounded-sm text-white text-xs font-medium overflow-hidden">
-                                                <div class="truncate">{{ getAppointmentTitle(appointment) }}</div>
-                                                <div class="text-xs opacity-75">{{ getAppointmentTime(appointment) }}
+                                            <!-- Selection overlay -->
+                                            <div v-if="isInSelection(dayIndex, hour, slot - 1) && mode === 'availability'"
+                                                class="absolute inset-0 bg-blue-400 opacity-50">
+                                            </div>
+
+                                            <!-- Appointment overlay -->
+                                            <div v-if="mode === 'appointments'" class="absolute inset-0">
+                                                <!-- Available time background -->
+                                                <div v-if="isSlotAvailable(dayIndex, hour, slot - 1)"
+                                                    class="absolute inset-0 bg-green-50 border border-green-100 opacity-60">
+                                                </div>
+
+                                                <!-- Appointment blocks -->
+                                                <div v-for="appointment in getSlotAppointments(dayIndex, hour, slot - 1)"
+                                                    :key="appointment._id" :class="getAppointmentClasses(appointment)"
+                                                    @click="$emit('appointmentClick', appointment)"
+                                                    class="absolute inset-0 p-1 cursor-pointer rounded-sm text-white text-xs font-medium overflow-hidden">
+                                                    <div class="truncate">{{ getAppointmentTitle(appointment) }}</div>
+                                                    <div class="text-xs opacity-75">{{ getAppointmentTime(appointment)
+                                                        }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Current time indicator -->
-                            <div v-if="showCurrentTime && isCurrentWeek"
-                                class="absolute left-0 w-full h-0.5 bg-red-500 z-10 pointer-events-none"
-                                :style="{ top: currentTimePosition + 'px' }">
-                                <div class="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                                <div class="absolute -right-1 -top-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                                <!-- Current time indicator -->
+                                <div v-if="showCurrentTime && isCurrentWeek"
+                                    class="absolute left-0 w-full h-0.5 bg-red-500 z-10 pointer-events-none"
+                                    :style="{ top: currentTimePosition + 'px' }">
+                                    <div class="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                                    <div class="absolute -right-1 -top-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -244,10 +321,11 @@ import {
 } from 'date-fns'
 import axios from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
+import ReusableCalendar from './ReusableCalendar.vue'
 
 const authStore = useAuthStore()
 
-// Props
+// Props (same as before)
 const props = defineProps({
     mode: {
         type: String,
@@ -273,7 +351,7 @@ const props = defineProps({
     }
 })
 
-// Emits
+// Emits (same as before)
 const emit = defineEmits([
     'saved',
     'error',
@@ -283,26 +361,28 @@ const emit = defineEmits([
     'weekChanged'
 ])
 
-// State
+// State (same as before plus new view state)
 const loading = ref(true)
 const saving = ref(false)
 const error = ref('')
 const currentWeek = ref(new Date())
+const currentView = ref('weekly') // 'weekly' or 'calendar'
+const selectedDate = ref(null)
 const isSelecting = ref(false)
 const selectionStart = ref(null)
 const selectionEnd = ref(null)
 const hasUnsavedChanges = ref(false)
 
-// Data stores
+// Data stores (same as before)
 const availability = reactive({})
 const appointments = ref([])
 const originalAvailability = ref([])
 
-// Calendar configuration
+// Calendar configuration (same as before)
 const hours = Array.from({ length: 24 }, (_, i) => i) // 0-23
 const daysOfWeek = [1, 2, 3, 4, 5, 6, 0] // Monday to Sunday
 
-// Computed properties
+// Computed properties (mostly same as before)
 const currentWeekDays = computed(() => {
     const start = startOfWeek(currentWeek.value, { weekStartsOn: 1 }) // Monday
     const end = endOfWeek(currentWeek.value, { weekStartsOn: 1 })
@@ -338,6 +418,32 @@ const appointmentsSummary = computed(() => {
     return { total, scheduled, pending }
 })
 
+const calendarEvents = computed(() => {
+    if (props.mode === 'availability') {
+        // Convert availability to events for calendar display
+        const events = []
+        Object.values(availability).forEach(day => {
+            if (day.isAvailable && day.timeSlots) {
+                const dayDate = currentWeekDays.value.find(d => d.getDay() === (day.dayOfWeek === 0 ? 7 : day.dayOfWeek) % 7)
+                if (dayDate) {
+                    day.timeSlots.forEach(slot => {
+                        events.push({
+                            id: `availability-${day.dayOfWeek}-${slot.startTime}`,
+                            date: dayDate,
+                            title: 'Available',
+                            type: 'availability',
+                            timeSlot: slot
+                        })
+                    })
+                }
+            }
+        })
+        return events
+    } else {
+        return appointments.value
+    }
+})
+
 // Methods
 const getTitle = () => {
     if (props.mode === 'availability') {
@@ -347,6 +453,12 @@ const getTitle = () => {
 }
 
 const getSubtitle = () => {
+    if (currentView.value === 'calendar') {
+        return props.mode === 'availability'
+            ? 'Select dates to view and edit availability'
+            : 'View appointments by date'
+    }
+
     const weekStart = format(currentWeekDays.value[0], 'MMM d')
     const weekEnd = format(currentWeekDays.value[6], 'MMM d, yyyy')
 
@@ -357,6 +469,70 @@ const getSubtitle = () => {
         return `${getTotalAvailableHours()} hours available • Week of ${weekStart} - ${weekEnd}`
     }
     return `Week of ${weekStart} - ${weekEnd}`
+}
+
+const getWeekRangeText = () => {
+    const weekStart = format(currentWeekDays.value[0], 'MMM d')
+    const weekEnd = format(currentWeekDays.value[6], 'MMM d, yyyy')
+    return `${weekStart} - ${weekEnd}`
+}
+
+// Calendar view methods
+const handleDateSelected = (date) => {
+    selectedDate.value = date
+    // Switch to weekly view and navigate to the selected week
+    currentView.value = 'weekly'
+    currentWeek.value = startOfWeek(date, { weekStartsOn: 1 })
+}
+
+const handleMonthChanged = (newMonth) => {
+    // Optionally reload data for appointments mode
+    if (props.mode === 'appointments') {
+        loadAppointments()
+    }
+}
+
+const formatSelectedDate = (date) => {
+    return format(date, 'EEEE, MMMM d, yyyy')
+}
+
+const getSelectedDateAvailability = (date) => {
+    const dayOfWeek = date.getDay()
+    const dayData = availability[dayOfWeek]
+    return dayData?.timeSlots || []
+}
+
+const getSelectedDateAppointments = (date) => {
+    return appointments.value.filter(appointment => {
+        const appointmentDate = new Date(appointment.dateTime || appointment.start)
+        return isSameDay(appointmentDate, date)
+    })
+}
+
+const addTimeSlotForDate = (date) => {
+    const dayOfWeek = date.getDay()
+    if (!availability[dayOfWeek]) {
+        availability[dayOfWeek] = {
+            dayOfWeek,
+            isAvailable: true,
+            timeSlots: []
+        }
+    }
+    availability[dayOfWeek].timeSlots.push({ startTime: '09:00', endTime: '17:00' })
+    availability[dayOfWeek].isAvailable = true
+    checkForChanges()
+}
+
+const removeTimeSlot = (date, slotIndex) => {
+    const dayOfWeek = date.getDay()
+    const dayData = availability[dayOfWeek]
+    if (dayData && dayData.timeSlots) {
+        dayData.timeSlots.splice(slotIndex, 1)
+        if (dayData.timeSlots.length === 0) {
+            dayData.isAvailable = false
+        }
+        checkForChanges()
+    }
 }
 
 const initializeAvailability = () => {
@@ -492,7 +668,7 @@ const refreshData = () => {
     loadData()
 }
 
-// Utility functions
+// Utility functions (same as before)
 const formatHour = (hour) => {
     if (hour === 0) return '12a'
     if (hour === 12) return '12p'
@@ -522,7 +698,7 @@ const minutesToTime = (minutes) => {
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
 }
 
-// Slot interaction methods
+// Slot interaction methods (same as before)
 const getSlotClasses = (dayIndex, hour, slotIndex) => {
     const baseClasses = [
         'h-8 border-b border-gray-50 relative transition-all duration-150'
@@ -561,7 +737,7 @@ const getSlotAppointments = (dayIndex, hour, slotIndex) => {
     const slotEnd = slotStart + 30
 
     return appointments.value.filter(appointment => {
-        const appointmentDate = parseISO(appointment.start)
+        const appointmentDate = parseISO(appointment.start || appointment.dateTime)
         if (!isSameDay(appointmentDate, dayDate)) return false
 
         const appointmentMinutes = appointmentDate.getHours() * 60 + appointmentDate.getMinutes()
@@ -578,7 +754,7 @@ const getAppointmentClasses = (appointment) => {
         'pending-payment': 'bg-orange-500 hover:bg-orange-600'
     }
 
-    return statusClasses[appointment.extendedProps?.status] || 'bg-gray-500 hover:bg-gray-600'
+    return statusClasses[appointment.extendedProps?.status || appointment.status] || 'bg-gray-500 hover:bg-gray-600'
 }
 
 const getAppointmentTitle = (appointment) => {
@@ -586,7 +762,7 @@ const getAppointmentTitle = (appointment) => {
 }
 
 const getAppointmentTime = (appointment) => {
-    const date = parseISO(appointment.start)
+    const date = parseISO(appointment.start || appointment.dateTime)
     return format(date, 'h:mm a')
 }
 
@@ -616,7 +792,7 @@ const compareSlotPositions = (pos1, pos2) => {
     return pos1.slot - pos2.slot
 }
 
-// Mouse interaction handlers
+// Mouse interaction handlers (same as before)
 const handleSlotMouseDown = (dayIndex, hour, slotIndex) => {
     if (props.mode !== 'availability' || props.userRole !== 'provider') return
 
@@ -855,61 +1031,3 @@ defineExpose({
     }
 })
 </script>
-
-<style scoped>
-.availability-calendar {
-    user-select: none;
-}
-
-.availability-calendar * {
-    box-sizing: border-box;
-}
-
-/* Custom scrollbar for horizontal scroll */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 8px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f5f9;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
-/* Prevent text selection during drag */
-.availability-calendar {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-/* Smooth transitions for slot interactions */
-.availability-calendar .relative {
-    transition: background-color 0.15s ease;
-}
-
-/* Current time indicator animation */
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-}
-
-.bg-red-500 {
-    animation: pulse 2s infinite;
-}
-</style>
