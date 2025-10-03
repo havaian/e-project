@@ -429,7 +429,7 @@ const availableLanguages = [
     "Español", "Français", "Deutsch", "العربية", "中文", "日本語", "한국어"
 ]
 
-// FIXED: Modified to use auth store data immediately and eliminate duplicate API calls
+// Modified to use auth store data immediately and eliminate duplicate API calls
 const fetchUserProfile = async () => {
     try {
         loading.value = true
@@ -656,7 +656,7 @@ const handleRemovePhoto = async () => {
     }
 }
 
-// FIXED: Modified to avoid duplicate API calls by directly updating auth store instead of calling refreshUserData
+// Modified to avoid duplicate API calls by directly updating auth store instead of calling refreshUserData
 const handleSubmit = async () => {
     // Validate form before submission
     if (authStore.isProvider && !isFormValid.value) {
@@ -686,7 +686,7 @@ const handleSubmit = async () => {
         // Update the profile
         const response = await axios.patch('/users/me', updateData)
 
-        // FIXED: Instead of calling refreshUserData (which makes another API call), 
+        // Instead of calling refreshUserData (which makes another API call), 
         // directly update the auth store with the returned data
         if (response.data) {
             authStore.user = { ...authStore.user, ...response.data }

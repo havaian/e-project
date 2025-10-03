@@ -22,8 +22,7 @@
         <div v-else-if="currentView === 'calendar'">
             <ReusableCalendar ref="calendarRef" v-model="selectedDate" :events="calendarEvents"
                 :disable-past-dates="true" :max-future-days="60" :show-appointment-count="true"
-                :show-selected-date-info="false" @date-selected="handleDateSelected"
-                @month-changed="handleMonthChanged">
+                :show-selected-date-info="false" @date-selected="handleDateSelected">
                 <!-- Custom footer with selected date appointments -->
                 <template #footer="{ selectedDate }">
                     <div v-if="selectedDate && selectedDateAppointments.length > 0"
@@ -153,6 +152,9 @@ const selectedDate = ref(null)
 const appointments = ref([])
 const calendarRef = ref(null)
 
+// Track last loaded month to prevent duplicate requests
+const lastLoadedMonth = ref(null)
+
 // Computed properties
 const calendarEvents = computed(() => {
     return appointments.value.map(appointment => ({
@@ -178,8 +180,16 @@ const selectedDateAppointments = computed(() => {
 
 // Methods
 const loadAppointmentsForMonth = async (month) => {
+    // Prevent duplicate requests for the same month
+    const monthKey = format(month, 'yyyy-MM')
+    if (lastLoadedMonth.value === monthKey) {
+        return
+    }
+
     loading.value = true
     try {
+        lastLoadedMonth.value = monthKey
+
         // Calculate start and end of the month
         const startDate = new Date(month.getFullYear(), month.getMonth(), 1).toISOString()
         const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0).toISOString()
@@ -189,8 +199,8 @@ const loadAppointmentsForMonth = async (month) => {
         const response = await axios.get('/appointments/calendar', {
             params: { startDate, endDate }
         })
-        appointments.value = response.data.calendarEvents || []
 
+        appointments.value = response.data.calendarEvents || []
         console.log('Loaded appointments:', appointments.value.length)
     } catch (error) {
         console.error('Error loading appointments for month:', error)
@@ -209,11 +219,7 @@ const handleDateSelected = (date, dayInfo) => {
     }
 }
 
-const handleMonthChanged = (newMonth) => {
-    console.log('Month changed to:', format(newMonth, 'MMMM yyyy'))
-    // Load appointments for the new month
-    loadAppointmentsForMonth(newMonth)
-}
+// REMOVED: handleMonthChanged - let calendar work independently
 
 const goToToday = () => {
     const today = new Date()
@@ -223,9 +229,6 @@ const goToToday = () => {
     if (calendarRef.value) {
         calendarRef.value.goToToday()
     }
-
-    // Load appointments for current month
-    loadAppointmentsForMonth(today)
 }
 
 const changeView = (viewName) => {
@@ -233,9 +236,8 @@ const changeView = (viewName) => {
 }
 
 const refreshCalendar = () => {
-    // Get current month from calendar or use current date
-    const currentMonth = calendarRef.value?.currentMonth || new Date()
-    loadAppointmentsForMonth(currentMonth)
+    // Simply reload the date range
+    loadAppointmentsForDateRange()
 }
 
 const getStatusColor = (status) => {
@@ -292,9 +294,45 @@ const editAppointment = (appointmentId) => {
 // Lifecycle
 onMounted(async () => {
     await nextTick()
-    // Load appointments for current month on mount
-    const currentMonth = new Date()
-    loadAppointmentsForMonth(currentMonth)
+    // Load appointments for current month range on mount
+    loadAppointmentsForDateRange()
+})
+
+// Load appointments for a wider date range instead of per-month
+const loadAppointmentsForDateRange = async () => {
+    loading.value = true
+    try {
+        const today = new Date()
+        const startDate = new Date(today.getFullYear(), today.getMonth() - 2, 1).toISOString() // 2 months ago
+        const endDate = new Date(today.getFullYear(), today.getMonth() + 4, 0).toISOString() // 3 months ahead
+
+        console.log('Loading appointments for date range:', { startDate, endDate })
+
+        const response = await axios.get('/appointments/calendar', {
+            params: { startDate, endDate }
+        })
+
+        appointments.value = response.data.calendarEvents || []
+        console.log('Loaded appointments:', appointments.value.length)
+    } catch (error) {
+        console.error('Error loading appointments:', error)
+        appointments.value = []
+    } finally {
+        loading.value = false
+    }
+}
+
+// Cleanup on unmount
+import { onBeforeUnmount } from 'vue'
+onBeforeUnmount(() => {
+    // Cancel any pending request
+    if (loadingRequest.value) {
+        loadingRequest.value.cancel?.()
+    }
+    // Clear any pending timeout
+    if (monthChangedTimeout.value) {
+        clearTimeout(monthChangedTimeout.value)
+    }
 })
 
 // Expose methods for parent component
@@ -305,7 +343,7 @@ defineExpose({
         if (calendarRef.value) {
             calendarRef.value.goToDate(date)
         }
-        loadAppointmentsForMonth(date)
+        // Don't reload appointments - they're already loaded for the range
     }
 })
 </script>
