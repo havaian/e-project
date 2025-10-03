@@ -359,7 +359,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { format, parseISO, differenceInMinutes, isWithinInterval, subMinutes, addMinutes, formatDistanceToNow, isToday } from 'date-fns'
 import axios from '@/plugins/axios'
-import AvailabilityCalendar from '@/components/AvailabilityCalendar.vue'
+import AvailabilityCalendar from '@/components/calendar/AvailabilityCalendar.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
