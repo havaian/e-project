@@ -61,7 +61,7 @@
           We couldn't find any FAQs matching your search or category.
         </p>
         <router-link to="/contact" class="btn-primary">
-          Contact Support
+          Contact support
         </router-link>
       </div>
 
@@ -73,10 +73,10 @@
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <router-link to="/contact" class="btn-primary px-6 py-3">
-            Contact Support
+            Contact support
           </router-link>
           <router-link to="/help" class="btn-secondary px-6 py-3">
-            Visit Help Center
+            Visit Help center
           </router-link>
         </div>
       </div>
@@ -175,7 +175,7 @@ const faqs = reactive([
         <li><strong>12-24 hours in advance:</strong> 50% refund</li>
         <li><strong>Less than 12 hours:</strong> No refund, but may be able to reschedule depending on provider availability</li>
       </ul>
-      <p class="mt-3">To reschedule or cancel, go to "My Appointments" in your dashboard and select the consultation you want to modify.</p>
+      <p class="mt-3">To reschedule or cancel, go to "My appointments" in your dashboard and select the consultation you want to modify.</p>
     `
   },
   {

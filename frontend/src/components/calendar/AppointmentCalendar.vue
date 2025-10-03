@@ -135,7 +135,7 @@
             </div>
             <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-purple-500 rounded"></div>
-                <span class="text-gray-600">Needs Confirmation</span>
+                <span class="text-gray-600">Needs confirmation</span>
             </div>
         </div>
     </div>

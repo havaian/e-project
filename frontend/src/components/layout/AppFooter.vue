@@ -47,7 +47,7 @@
           <ul class="space-y-3">
             <li>
               <router-link to="/providers" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Find Providers
+                Find providers
               </router-link>
             </li>
             <li>
@@ -58,7 +58,7 @@
             </li>
             <li>
               <router-link to="/about" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                About Us
+                About us
               </router-link>
             </li>
             <li>
@@ -75,7 +75,7 @@
           <ul class="space-y-3">
             <li>
               <router-link to="/help" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Help Center
+                Help center
               </router-link>
             </li>
             <li>
@@ -86,7 +86,7 @@
             <li>
               <a :href="`mailto:${supportEmail}`"
                 class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Contact Support
+                Contact support
               </a>
             </li>
             <li>

@@ -6,7 +6,7 @@
                 <div class="py-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">My Appointments</h1>
+                            <h1 class="text-2xl font-bold text-gray-900">My appointments</h1>
                             <p class="mt-1 text-sm text-gray-600">
                                 Manage your client appointments and sessions
                             </p>
@@ -49,7 +49,7 @@
 
             <!-- Calendar View -->
             <div v-if="currentView === 'calendar'" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <AppointmentCalendar ref="appointmentCalendar" user-role="provider" title="My Appointments"
+                <AppointmentCalendar ref="appointmentCalendar" user-role="provider" title="My appointments"
                     :calendar-view-mode="calendarViewMode" @appointment-updated="handleAppointmentUpdate" />
             </div>
 

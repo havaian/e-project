@@ -223,8 +223,13 @@ const getDayClasses = (day) => {
 
     // Base classes for non-current month
     if (!day.isCurrentMonth) {
-        classes.push('text-gray-400', 'cursor-not-allowed')
-        return classes
+        if (shouldDisableDay(day)) {
+            classes.push('text-gray-300', 'cursor-not-allowed', 'bg-gray-50')
+            return classes
+        } else {
+            classes.push('text-gray-400', 'cursor-not-allowed')
+            return classes
+        }
     }
 
     // Disabled states

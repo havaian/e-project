@@ -4,7 +4,7 @@
         <div class="bg-gradient-to-r from-sky-600 to-cyan-600 text-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div class="text-center">
-                    <h1 class="text-4xl font-bold mb-4">Help Center</h1>
+                    <h1 class="text-4xl font-bold mb-4">Help center</h1>
                     <p class="text-xl text-sky-100 mb-8">Find answers to your questions and get the support you need</p>
 
                     <!-- Search Bar -->
@@ -30,7 +30,7 @@
                         <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <ChatBubbleLeftRightIcon class="w-8 h-8 text-blue-600" />
                         </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Contact Support</h3>
+                        <h3 class="font-semibold text-gray-900 mb-2">Contact support</h3>
                         <p class="text-gray-600 text-sm">Get personalized help from our team</p>
                     </router-link>
 
@@ -112,7 +112,7 @@
                 <FaceFrownIcon class="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">No results found</h3>
                 <p class="text-gray-600 mb-4">We couldn't find any articles matching "{{ searchQuery }}"</p>
-                <router-link to="/contact" class="btn-primary">Contact Support</router-link>
+                <router-link to="/contact" class="btn-primary">Contact support</router-link>
             </div>
 
             <!-- Popular Articles -->
@@ -149,7 +149,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <router-link to="/contact" class="btn-primary px-6 py-3">
-                        Contact Support
+                        Contact support
                     </router-link>
                     <a :href="`mailto:${supportEmail}`" class="btn-secondary px-6 py-3">
                         Email Us
@@ -430,7 +430,7 @@ const startLiveChat = () => {
 // Meta tags
 import { useHead } from '@unhead/vue'
 useHead({
-    title: `Help Center | ${companyName}`,
+    title: `Help center | ${companyName}`,
     meta: [
         { name: 'description', content: 'Find answers to your questions in our comprehensive help center.' }
     ]

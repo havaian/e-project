@@ -26,13 +26,13 @@
                         <router-link to="/providers"
                             class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                             :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path === '/providers' }">
-                            Find Providers
+                            Find providers
                         </router-link>
                         <template v-if="authStore.isAuthenticated">
                             <router-link v-if="authStore.isClient" to="/appointments/client"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                                 :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/client') }">
-                                My Appointments
+                                My appointments
                             </router-link>
                             <router-link v-if="authStore.isProvider" to="/appointments/provider"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
@@ -126,14 +126,14 @@
                     class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                     :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/providers' }"
                     @click="closeMobileMenu">
-                    Find Providers
+                    Find providers
                 </router-link>
                 <template v-if="authStore.isAuthenticated">
                     <router-link v-if="authStore.isClient" to="/appointments/client"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                         :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/client') }"
                         @click="closeMobileMenu">
-                        My Appointments
+                        My appointments
                     </router-link>
                     <router-link v-if="authStore.isProvider" to="/appointments/provider"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"

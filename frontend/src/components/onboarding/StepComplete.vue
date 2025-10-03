@@ -165,7 +165,7 @@
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <QuestionMarkCircleIcon class="w-6 h-6 text-sky-500" />
                     <div class="text-left">
-                        <div class="font-medium text-gray-900">Help Center</div>
+                        <div class="font-medium text-gray-900">Help center</div>
                         <div class="text-sm text-gray-600">Browse FAQs & guides</div>
                     </div>
                 </a>
