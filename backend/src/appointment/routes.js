@@ -77,7 +77,11 @@ router.get(
     appointmentController.getCalendarAppointments
 );
 
-router.get('/all', authenticateToken, appointmentController.getAllUserAppointments);
+router.get(
+    '/all', 
+    authenticateUser, 
+    appointmentController.getAllUserAppointments
+);
 
 /**
  * @route GET /api/appointments/:id
