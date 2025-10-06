@@ -50,11 +50,11 @@ class EmailService {
                     <p>Your appointment with ${provider.firstName} ${provider.lastName} has been successfully booked.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
                         <p><strong>Specialization:</strong> ${provider.specializations.join(', ')}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                         ${payment && payment.amount ? `<p><strong>Amount Paid:</strong> ${formatCurrency(payment.amount)}</p>` : ''}
                     </div>
                     
@@ -74,10 +74,10 @@ class EmailService {
                     <p>A new appointment has been scheduled.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>Please log in to your ${process.env.VITE_PROJECT_URL_SHORT} account to view the complete appointment details.</p>
@@ -100,17 +100,17 @@ class EmailService {
 
             await this.notificationService.sendEmail({
                 to: client.email,
-                subject: `Appointment Booking Failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                subject: `Appointment Booking failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #e74c3c;">Appointment Booking Failed</h2>
+                    <h2 style="color: #e74c3c;">Appointment Booking failed</h2>
                     <p>Unfortunately, we couldn't complete your appointment booking.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                         <p><strong>Reason:</strong> ${error}</p>
                     </div>
                     
@@ -142,10 +142,10 @@ class EmailService {
                     <p>This is a reminder about your upcoming appointment tomorrow.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
@@ -163,10 +163,10 @@ class EmailService {
                     <p>This is a reminder about your upcoming appointment tomorrow.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
@@ -197,10 +197,10 @@ class EmailService {
                     <p>The following appointment has been cancelled by ${cancelledBy}.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>You can schedule a new appointment through our website.</p>
@@ -218,10 +218,10 @@ class EmailService {
                     <p>The following appointment has been cancelled by ${cancelledBy}.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>The time slot is now available for other appointments.</p>
@@ -252,10 +252,10 @@ class EmailService {
                     <p>Your appointment has been confirmed by ${provider.firstName} ${provider.lastName}.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>Your appointment is now fully scheduled. You'll receive a reminder before the appointment time.</p>
@@ -273,10 +273,10 @@ class EmailService {
                     <p>You have successfully confirmed the appointment with ${client.firstName} ${client.lastName}.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>The appointment is now scheduled in your calendar. You'll receive a reminder before the appointment time.</p>
@@ -299,17 +299,17 @@ class EmailService {
 
             await this.notificationService.sendEmail({
                 to: client.email,
-                subject: `Payment Successful - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                subject: `Payment successful - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #4a90e2;">Payment Successful</h2>
+                    <h2 style="color: #4a90e2;">Payment successful</h2>
                     <p>Your payment for the appointment has been processed successfully.</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                         <p><strong>Payment ID:</strong> ${paymentId}</p>
                     </div>
                     
@@ -355,13 +355,13 @@ class EmailService {
                     <p>This is a confirmation of your payment for the following appointment:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Payment Details</h3>
+                        <h3 style="margin-top: 0;">Payment details</h3>
                         <p><strong>Payment ID:</strong> ${payment._id}</p>
                         <p><strong>Amount:</strong> ${formatCurrency(payment.amount)}</p>
                         <p><strong>Status:</strong> ${payment.status}</p>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>Thank you for your payment. Your appointment is now confirmed.</p>
@@ -399,12 +399,12 @@ class EmailService {
                     <p>Your payment has been refunded for the following cancelled appointment:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Refund Details</h3>
+                        <h3 style="margin-top: 0;">Refund details</h3>
                         <p><strong>Payment ID:</strong> ${payment._id}</p>
                         <p><strong>Amount:</strong> ${formatCurrency(payment.amount)}</p>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                     </div>
                     
                     <p>The refund will be processed according to your payment method's standard processing times.</p>
@@ -433,8 +433,8 @@ class EmailService {
             recommendations.forEach((recommendation, index) => {
                 recommendationsHtml += `
                 <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;">
-                    <p><strong>Medication:</strong> ${recommendation.title}</p>
-                    <p><strong>Dosage:</strong> ${recommendation.description}</p>
+                    <p><strong>Title:</strong> ${recommendation.title}</p>
+                    <p><strong>Description:</strong> ${recommendation.description}</p>
                     <p><strong>Frequency:</strong> ${recommendation.frequency}</p>
                     <p><strong>Duration:</strong> ${recommendation.duration}</p>
                     ${recommendation.instructions ? `<p><strong>Instructions:</strong> ${recommendation.instructions}</p>` : ''}
@@ -484,10 +484,10 @@ class EmailService {
                     <p>${provider.firstName} ${provider.lastName} has recommended a follow-up appointment:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                         <p><strong>Reason:</strong> ${shortDescription}</p>
                     </div>
                     
@@ -505,10 +505,10 @@ class EmailService {
                     <p>You have successfully created a follow-up appointment for ${client.firstName} ${client.lastName}:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Appointment Details</h3>
+                        <h3 style="margin-top: 0;">Appointment details</h3>
                         <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
-                        <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                        <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                        <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                         <p><strong>Reason:</strong> ${shortDescription}</p>
                     </div>
                     
@@ -543,12 +543,12 @@ class EmailService {
                 
                 <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                     <h3 style="margin-top: 0;">Original Appointment</h3>
-                    <p><strong>Date & Time:</strong> ${formatDateTime(originalDate)}</p>
+                    <p><strong>Date & time:</strong> ${formatDateTime(originalDate)}</p>
                 </div>
 
                 <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
                     <h3 style="margin-top: 0;">Requested New Time</h3>
-                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
+                    <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
                     ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
                 </div>
                 
@@ -599,14 +599,14 @@ class EmailService {
                 <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
                     <h3 style="margin-top: 0;">Your New Appointment</h3>
                     <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                    <p><strong>Type:</strong> ${appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1)} Session</p>
+                    <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                    <p><strong>Type:</strong> ${appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1)} session</p>
                 </div>
                 
                 <div style="text-align: center; margin: 30px 0;">
                     <a href="${process.env.FRONTEND_URL}/appointments/${appointment._id}" 
                        style="background-color: #4a90e2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                        View Appointment Details
+                        View appointment details
                     </a>
                 </div>
                 
@@ -653,18 +653,18 @@ class EmailService {
                 <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
                     <h3 style="margin-top: 0;">Your Original Appointment Remains</h3>
                     <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                    <p><strong>Type:</strong> ${appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1)} Session</p>
+                    <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                    <p><strong>Type:</strong> ${appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1)} session</p>
                 </div>
                 
                 <div style="text-align: center; margin: 30px 0;">
                     <a href="${process.env.FRONTEND_URL}/appointments/${appointment._id}" 
                        style="background-color: #4a90e2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 0 10px;">
-                        View Appointment
+                        View appointment
                     </a>
                     <a href="${process.env.FRONTEND_URL}/book-appointment" 
                        style="background-color: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 0 10px;">
-                        Book New Appointment
+                        Book new appointment
                     </a>
                 </div>
                 
@@ -702,10 +702,10 @@ class EmailService {
                 <p>We encountered an issue processing your payment for the appointment with <strong>${provider.firstName} ${provider.lastName}</strong>.</p>
                 
                 <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                    <h3 style="margin-top: 0;">Appointment Details</h3>
+                    <h3 style="margin-top: 0;">Appointment details</h3>
                     <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-                    <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                    <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+                    <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
                 </div>
 
                 <div style="background-color: #fef2f2; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #e74c3c;">
@@ -726,7 +726,7 @@ class EmailService {
                     <h4 style="margin-top: 0; color: #1e40af;">Alternative Option</h4>
                     <p style="margin-bottom: 0;">You can also complete payment by visiting your appointment details page:</p>
                     <a href="${process.env.FRONTEND_URL}/appointments/${appointment._id}" 
-                       style="color: #1e40af;">View Appointment & Pay</a>
+                       style="color: #1e40af;">View appointment & Pay</a>
                 </div>
                 
                 <hr style="margin: 30px 0;">

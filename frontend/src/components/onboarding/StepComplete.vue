@@ -33,13 +33,13 @@
 
         <!-- Achievement Stats -->
         <div class="bg-gradient-to-r from-sky-50 to-emerald-50 rounded-2xl p-8 border border-sky-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-6">What You've Accomplished</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-6">What you've accomplished</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="text-center">
                     <div class="w-16 h-16 bg-sky-500 rounded-full flex items-center justify-center mx-auto mb-3">
                         <BookOpenIcon class="w-8 h-8 text-white" />
                     </div>
-                    <h4 class="font-semibold text-gray-900">Profile Created</h4>
+                    <h4 class="font-semibold text-gray-900">Profile created</h4>
                     <p class="text-sm text-gray-600 mt-1">Complete professional profile with credentials</p>
                 </div>
 
@@ -47,7 +47,7 @@
                     <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3">
                         <ClockIcon class="w-8 h-8 text-white" />
                     </div>
-                    <h4 class="font-semibold text-gray-900">Schedule Set</h4>
+                    <h4 class="font-semibold text-gray-900">Schedule set</h4>
                     <p class="text-sm text-gray-600 mt-1">Availability configured for client bookings</p>
                 </div>
 
@@ -55,7 +55,7 @@
                     <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
                         <CurrencyDollarIcon class="w-8 h-8 text-white" />
                     </div>
-                    <h4 class="font-semibold text-gray-900">Pricing Set</h4>
+                    <h4 class="font-semibold text-gray-900">Pricing set</h4>
                     <p class="text-sm text-gray-600 mt-1">Session fees configured and ready</p>
                 </div>
             </div>
@@ -63,7 +63,7 @@
 
         <!-- Quick Stats -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Profile Summary</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Your profile summary</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
                     <div class="text-2xl font-bold text-sky-600">{{ specializations.length }}</div>
@@ -76,7 +76,7 @@
                 </div>
                 <div>
                     <div class="text-2xl font-bold text-purple-600">{{ sessionDuration }}min</div>
-                    <div class="text-sm text-gray-600">Session Length</div>
+                    <div class="text-sm text-gray-600">Session length</div>
                 </div>
                 <div>
                     <div class="text-2xl font-bold text-orange-600">{{ languages.length }}</div>
@@ -87,14 +87,14 @@
 
         <!-- Next Steps -->
         <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
-            <h3 class="text-lg font-semibold text-blue-900 mb-4">What Happens Next?</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-4">What gappens next?</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                 <div class="flex items-start space-x-3">
                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                         <span class="text-white font-semibold text-sm">1</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Profile Review</h4>
+                        <h4 class="font-medium text-blue-900">Profile review</h4>
                         <p class="text-sm text-blue-700 mt-1">
                             Your profile will be reviewed by our team within 24 hours to ensure quality standards.
                         </p>
@@ -106,7 +106,7 @@
                         <span class="text-white font-semibold text-sm">2</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Go Live</h4>
+                        <h4 class="font-medium text-blue-900">Go live</h4>
                         <p class="text-sm text-blue-700 mt-1">
                             Once approved, your profile will be visible to clients and you can start receiving bookings.
                         </p>
@@ -118,7 +118,7 @@
                         <span class="text-white font-semibold text-sm">3</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Start Earning</h4>
+                        <h4 class="font-medium text-blue-900">Start earning</h4>
                         <p class="text-sm text-blue-700 mt-1">
                             Begin accepting appointments and building your client base on our platform.
                         </p>
@@ -130,7 +130,7 @@
                         <span class="text-white font-semibold text-sm">4</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Ongoing Support</h4>
+                        <h4 class="font-medium text-blue-900">Ongoing support</h4>
                         <p class="text-sm text-blue-700 mt-1">
                             Our team is here to help you succeed with training resources and support.
                         </p>
@@ -141,13 +141,13 @@
 
         <!-- Support Information -->
         <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Need Help Getting Started?</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Need help getting started?</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a :href="`mailto:${supportEmail}`"
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <EnvelopeIcon class="w-6 h-6 text-sky-500" />
                     <div class="text-left">
-                        <div class="font-medium text-gray-900">Email Support</div>
+                        <div class="font-medium text-gray-900">Email support</div>
                         <div class="text-sm text-gray-600">Get help via email</div>
                     </div>
                 </a>
@@ -156,7 +156,7 @@
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <PhoneIcon class="w-6 h-6 text-sky-500" />
                     <div class="text-left">
-                        <div class="font-medium text-gray-900">Phone Support</div>
+                        <div class="font-medium text-gray-900">Phone support</div>
                         <div class="text-sm text-gray-600">{{ supportPhone }}</div>
                     </div>
                 </a>
@@ -176,7 +176,7 @@
         <div class="pt-4">
             <button @click="$emit('finish')" class="btn-element-primary text-lg px-12 py-4">
                 <ArrowTrendingUpIcon class="w-5 h-5 mr-2" />
-                Go to My Dashboard
+                Go to my dashboard
             </button>
             <p class="text-sm text-gray-500 mt-3">
                 You can always update your profile settings later from your dashboard

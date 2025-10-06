@@ -464,7 +464,7 @@ exports.exportEarnings = async (req, res) => {
 
         if (format === 'csv') {
             // Generate CSV
-            const csvHeader = 'Period,Total Earnings,Net Earnings,Appointments,Completed,Canceled\n';
+            const csvHeader = 'Period,Total earnings,Net earnings,Appointments,Completed,Canceled\n';
             const csvRows = earnings.map(record => {
                 const periodStr = period === 'monthly'
                     ? `${record.year}-${record.month.toString().padStart(2, '0')}`

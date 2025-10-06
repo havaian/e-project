@@ -13,7 +13,7 @@
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
-                        Payment Successful!
+                        Payment successful!
                     </h2>
                     <p class="mt-2 text-sm text-gray-600">
                         Your appointment has been confirmed and payment has been processed.
@@ -23,11 +23,11 @@
                         <router-link v-if="appointment"
                             :to="{ name: 'appointment-details', params: { id: appointment._id } }"
                             class="btn-primary w-full justify-center">
-                            View Appointment Details
+                            View appointment details
                         </router-link>
 
                         <router-link :to="{ name: 'client-appointments' }" class="btn-secondary w-full justify-center">
-                            View All Appointments
+                            View all appointments
                         </router-link>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
-                        Payment Verification Failed
+                        Payment verification failed
                     </h2>
                     <p class="mt-2 text-sm text-gray-600">
                         We couldn't verify your payment. Please contact support if you believe this is an error.
@@ -46,7 +46,7 @@
 
                     <div class="mt-8">
                         <router-link :to="{ name: 'client-appointments' }" class="btn-primary w-full justify-center">
-                            Return to Appointments
+                            Return to appointments
                         </router-link>
                     </div>
                 </div>

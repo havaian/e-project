@@ -161,7 +161,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 6 // Steps: 1-Education, 2-Availability, 3-Session Settings, 4-Profile Info, 5-Review, 6-Complete
+        max: 6 // Steps: 1-Education, 2-Availability, 3-Session settings, 4-Profile info, 5-Review, 6-Complete
     },
     profileCompletedAt: {
         type: Date
@@ -174,7 +174,7 @@ const userSchema = new mongoose.Schema({
         default: false
     },
 
-    // Clients field for providers (mentorship relationships)
+    //My clients field for providers (mentorship relationships)
     clients: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -255,7 +255,7 @@ userSchema.index({ role: 1, isActive: 1 });
 userSchema.index({ role: 1, isProfileComplete: 1 }); // For filtering complete profiles
 userSchema.index({ role: 1, profileSetupStep: 1 }); // For onboarding tracking
 
-// Password hashing middleware
+// password hashing middleware
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
 
@@ -485,7 +485,7 @@ userSchema.methods.initializeDefaultAchievements = function() {
         },
         {
             id: 'verified_provider',
-            name: 'Verified Professional',
+            name: 'Verified professional',
             description: 'Get verified as a professional provider',
             category: 'professional',
             icon: 'shield-check',
@@ -497,7 +497,7 @@ userSchema.methods.initializeDefaultAchievements = function() {
         defaultAchievements.push(
             {
                 id: 'ten_appointments',
-                name: 'Experienced Professional',
+                name: 'Experienced professional',
                 description: 'Complete 10 successful appointments',
                 category: 'milestone',
                 icon: 'trophy',

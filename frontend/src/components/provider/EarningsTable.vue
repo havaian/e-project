@@ -25,16 +25,16 @@
                                 Appointments
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Total Earnings
+                                Total earnings
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Platform Fee
+                                Platform fee
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Net Earnings
+                                Net earnings
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Completion Rate
+                                Completion rate
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Growth
@@ -67,28 +67,28 @@
                                 </div>
                             </td>
 
-                            <!-- Total Earnings -->
+                            <!-- Total earnings -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ formatCurrency(row.totalEarnings) }}
                                 </div>
                             </td>
 
-                            <!-- Platform Fee -->
+                            <!-- Platform fee -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-red-600">
                                     -{{ formatCurrency(row.platformFee) }}
                                 </div>
                             </td>
 
-                            <!-- Net Earnings -->
+                            <!-- Net earnings -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-green-600">
                                     {{ formatCurrency(row.netEarnings) }}
                                 </div>
                             </td>
 
-                            <!-- Completion Rate -->
+                            <!-- Completion rate -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="flex-1">
@@ -127,19 +127,19 @@
             <div v-if="tableData.length > 0" class="bg-gray-50 px-6 py-4 border-t border-gray-200">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                        <span class="text-gray-600">Total Periods:</span>
+                        <span class="text-gray-600">Total periods:</span>
                         <span class="font-medium text-gray-900 ml-2">{{ tableData.length }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-600">Total Appointments:</span>
+                        <span class="text-gray-600">Total appointments:</span>
                         <span class="font-medium text-gray-900 ml-2">{{ totalAppointments }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-600">Total Earnings:</span>
+                        <span class="text-gray-600">Total earnings:</span>
                         <span class="font-medium text-gray-900 ml-2">{{ formatCurrency(totalEarnings) }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-600">Average per Period:</span>
+                        <span class="text-gray-600">Average per period:</span>
                         <span class="font-medium text-gray-900 ml-2">{{ formatCurrency(averageEarnings) }}</span>
                     </div>
                 </div>

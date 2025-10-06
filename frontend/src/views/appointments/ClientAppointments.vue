@@ -5,12 +5,12 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="py-6 flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">My Appointments</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">My appointments</h1>
                         <p class="text-gray-600">Manage your upcoming and past consultations</p>
                     </div>
                     <router-link to="/book-appointment" class="btn-primary">
                         <PlusIcon class="w-5 h-5 mr-2" />
-                        Book New Appointment
+                        Book new appointment
                     </router-link>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                             </span>
                         </div>
 
-                        <!-- Appointment Details -->
+                        <!-- Appointment details -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div class="flex items-center text-sm text-gray-600">
                                 <CalendarIcon class="w-5 h-5 mr-2" />
@@ -77,7 +77,7 @@
                             </div>
                             <div class="flex items-center text-sm text-gray-600">
                                 <ClockIcon class="w-5 h-5 mr-2" />
-                                {{ appointment.type || 'Video Session' }}
+                                {{ appointment.type || 'Video session' }}
                             </div>
                             <div class="flex items-center text-sm text-gray-600">
                                 <CurrencyDollarIcon class="w-5 h-5 mr-2" />
@@ -85,7 +85,7 @@
                             </div>
                         </div>
 
-                        <!-- Payment Status for Pending Payments -->
+                        <!-- Payment status for Pending Payments -->
                         <div v-if="appointment.payment?.status === 'failed' || appointment.payment?.status === 'pending'"
                             class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
                             <div class="flex items-center justify-between">
@@ -104,7 +104,7 @@
                             </div>
                         </div>
 
-                        <!-- Reschedule Request Status -->
+                        <!-- Reschedule Request status -->
                         <div v-if="appointment.status === 'pending-provider-confirmation' && appointment.rescheduleHistory?.length > 0"
                             class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
                             <div class="flex items-center">
@@ -125,10 +125,10 @@
                         <!-- Actions -->
                         <div class="flex items-center justify-between pt-4 border-t border-gray-100">
                             <div class="flex items-center space-x-2">
-                                <!-- View Details -->
+                                <!-- View details -->
                                 <router-link :to="`/appointments/${appointment._id}`"
                                     class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
-                                    View Details
+                                    View details
                                 </router-link>
 
                                 <!-- Reschedule (only for scheduled appointments, not already rescheduled, and more than 12 hours away) -->
@@ -139,11 +139,11 @@
                                     Reschedule
                                 </router-link>
 
-                                <!-- Join Session (for scheduled appointments within join window) -->
+                                <!-- Join session (for scheduled appointments within join window) -->
                                 <button v-if="canJoinSession(appointment)" @click="joinSession(appointment._id)"
                                     class="px-3 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
                                     <VideoCameraIcon class="w-4 h-4 mr-1 inline" />
-                                    Join Session
+                                    Join session
                                 </button>
                             </div>
 

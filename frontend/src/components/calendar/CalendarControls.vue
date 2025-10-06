@@ -15,7 +15,7 @@
 
         <!-- List View Controls -->
         <div v-if="currentView === 'list'" class="flex items-center space-x-2">
-            <!-- Sort Options -->
+            <!-- Sort options -->
             <select :value="sortBy" @change="$emit('sort-change', $event.target.value)"
                 class="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
                 <option value="dateTime">Date</option>

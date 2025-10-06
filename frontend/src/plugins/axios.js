@@ -62,7 +62,7 @@ function decodeHtmlEntities(text) {
 /**
  * Check if a field should be cleaned of HTML entities
  * These are typically user-input fields or predefined values that shouldn't be encoded
- * @param {string} fieldName - Name of the field
+ * @param {string} fieldName - name of the field
  * @returns {boolean} Whether field should be cleaned
  */
 function shouldCleanField(fieldName) {
@@ -70,7 +70,7 @@ function shouldCleanField(fieldName) {
     // Language and location fields
     'languages', 'language', 'country', 'city', 'state', 'region',
     
-    // Name and contact fields
+    // name and contact fields
     'firstName', 'lastName', 'name', 'displayName', 'username',
     'phone', 'email', 'website',
     
@@ -87,7 +87,7 @@ function shouldCleanField(fieldName) {
 
 /**
  * Check if a field contains user-generated content that should remain encoded
- * @param {string} fieldName - Name of the field
+ * @param {string} fieldName - name of the field
  * @returns {boolean} Whether field should keep HTML encoding for security
  */
 function shouldKeepEncoded(fieldName) {

@@ -18,7 +18,7 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
-                            Password reset successful! You can now login with your new password.
+                            password reset successful! You can now login with your new password.
                         </p>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                         </button>
                     </div>
 
-                    <!-- Password Requirements -->
+                    <!-- password requirements -->
                     <div class="mt-3 text-sm">
                         <p class="text-gray-600 mb-2">Password must contain:</p>
                         <div class="space-y-1">
@@ -98,7 +98,7 @@
                         </button>
                     </div>
 
-                    <!-- Password Match Indicator -->
+                    <!-- password Match Indicator -->
                     <div v-if="confirmPassword" class="mt-2 text-sm">
                         <div class="flex items-center gap-2">
                             <CheckCircleIcon v-if="passwordsMatch" class="h-4 w-4 text-green-500" />
@@ -123,7 +123,7 @@
                             </svg>
                             Resetting...
                         </span>
-                        <span v-else>Reset Password</span>
+                        <span v-else>Reset password</span>
                     </button>
                     <p v-if="!isValid && (password || confirmPassword)" class="mt-2 text-sm text-red-600 text-center">
                         Please ensure your password meets all requirements and passwords match
@@ -166,7 +166,7 @@ const success = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 
-// Password validation state
+// password validation state
 const passwordValidation = reactive({
     minLength: false,
     hasUppercase: false,
@@ -190,7 +190,7 @@ const isValid = computed(() => {
     return isPasswordValid.value && passwordsMatch.value
 })
 
-// Password validation function
+// password validation function
 const validatePassword = () => {
     const pwd = password.value
 

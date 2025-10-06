@@ -4,7 +4,7 @@
     <div class="bg-gradient-to-r from-sky-600 to-cyan-600 text-white">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="text-center">
-          <h1 class="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
+          <h1 class="text-4xl font-bold mb-4">Frequently asked questions</h1>
           <p class="text-xl text-sky-100">Quick answers to the most common questions</p>
         </div>
       </div>
@@ -65,9 +65,9 @@
         </router-link>
       </div>
 
-      <!-- Contact Section -->
+      <!-- Contact section -->
       <div class="mt-16 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl p-8 text-center">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Still Have Questions?</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Still have questions?</h2>
         <p class="text-gray-600 mb-6">
           Can't find the answer you're looking for? Our support team is here to help.
         </p>
@@ -76,7 +76,7 @@
             Contact support
           </router-link>
           <router-link to="/help" class="btn-secondary px-6 py-3">
-            Visit Help center
+            Visit help center
           </router-link>
         </div>
       </div>
@@ -96,19 +96,19 @@ const activeCategory = ref('All')
 const openFAQs = ref([])
 
 // Categories
-const categories = ['All', 'Getting Started', 'Consultations', 'Billing', 'Technical', 'Privacy', 'Providers']
+const categories = ['All', 'Getting started', 'Consultations', 'Billing', 'Technical', 'Privacy', 'Providers']
 
 // FAQ Data
 const faqs = reactive([
-  // Getting Started
+  // Getting started
   {
     id: 1,
-    category: 'Getting Started',
+    category: 'Getting started',
     question: 'How do I create an account?',
     answer: `
       <p>Creating an account is simple:</p>
       <ol class="list-decimal ml-6 mt-2 space-y-1">
-        <li>Click the "Get Started" or "Sign Up" button on our homepage</li>
+        <li>Click the "Get started" or "Sign up" button on our homepage</li>
         <li>Choose whether you're a student or a service provider</li>
         <li>Fill in your basic information (name, email, password)</li>
         <li>Verify your email address by clicking the link we send you</li>
@@ -119,7 +119,7 @@ const faqs = reactive([
   },
   {
     id: 2,
-    category: 'Getting Started',
+    category: 'Getting started',
     question: 'Do I need any special software to use the platform?',
     answer: `
       <p>No special software is required! Our platform works entirely in your web browser. However, we recommend:</p>
@@ -133,7 +133,7 @@ const faqs = reactive([
   },
   {
     id: 3,
-    category: 'Getting Started',
+    category: 'Getting started',
     question: 'Is my data secure and private?',
     answer: `
       <p>Absolutely! We take your privacy and security very seriously:</p>

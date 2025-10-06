@@ -21,7 +21,7 @@ exports.sendSessionCompletedNotification = async (appointment) => {
         // Send email to client
         await emailService.sendEmail({
             to: client.email,
-            subject: 'Your Session Has Ended - ' + process.env.VITE_APP_TITLE,
+            subject: 'Your session Has Ended - ' + process.env.VITE_APP_TITLE,
             text: `Your session with ${provider.firstName} ${provider.lastName} has ended. 
             If you need to schedule a follow-up appointment, please visit our website.`,
             html: `
@@ -40,12 +40,12 @@ exports.sendSessionCompletedNotification = async (appointment) => {
         // Send email to provider
         await emailService.sendEmail({
             to: provider.email,
-            subject: 'Session Completed - ' + process.env.VITE_APP_TITLE,
+            subject: 'Session completed - ' + process.env.VITE_APP_TITLE,
             text: `Your session with ${client.firstName} ${client.lastName} has ended. 
             Please complete your session summary if you haven't already done so.`,
             html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #4a90e2;">Session Completed</h2>
+              <h2 style="color: #4a90e2;">Session completed</h2>
               <p>Dear ${provider.firstName} ${provider.lastName},</p>
               <p>Your session with ${client.firstName} ${client.lastName} has ended.</p>
               <p><strong>Date:</strong> ${new Date(appointment.dateTime).toLocaleDateString()}</p>

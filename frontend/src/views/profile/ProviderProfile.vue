@@ -22,17 +22,17 @@
                 <span v-if="user?.isVerified"
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                   <CheckCircleIcon class="w-4 h-4 mr-1" />
-                  Verified Provider
+                  Verified provider
                 </span>
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                   <CalendarDaysIcon class="w-4 h-4 mr-1" />
-                  {{ appointmentStats.completed }} Completed Sessions
+                  {{ appointmentStats.completed }} completed sessions
                 </span>
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
                   <UsersIcon class="w-4 h-4 mr-1" />
-                  {{ clients.length }} Clients
+                  {{ clients.length }}My clients
                 </span>
               </div>
             </div>
@@ -41,7 +41,7 @@
             <router-link to="/profile/edit"
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
               <PencilIcon class="w-4 h-4 mr-2" />
-              Edit Profile
+              Edit profile
             </router-link>
             <router-link to="/profile/provider/dashboard"
               class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
@@ -59,11 +59,11 @@
           <!-- Left Column -->
           <div class="lg:col-span-2 space-y-8">
 
-            <!-- Professional Information -->
+            <!-- Professional information -->
             <div class="bg-gray-50 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <BriefcaseIcon class="w-5 h-5 mr-2 text-indigo-600" />
-                Professional Information
+                Professional information
               </h2>
               <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -75,7 +75,7 @@
                   <dd class="mt-1 text-gray-900">{{ user?.phone || 'Not provided' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-sm font-medium text-gray-500">License Number</dt>
+                  <dt class="text-sm font-medium text-gray-500">License number</dt>
                   <dd class="mt-1 text-gray-900">{{ user?.licenseNumber || 'Not provided' }}</dd>
                 </div>
                 <div>
@@ -97,12 +97,12 @@
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <CurrencyDollarIcon class="w-5 h-5 mr-2 text-green-600" />
-                Session Details
+                Session details
               </h2>
               <div class="grid grid-cols-2 gap-4">
                 <div class="text-center p-4 bg-green-50 rounded-lg">
                   <div class="text-2xl font-bold text-green-600">{{ formatCurrency(user?.sessionFee || 0) }}</div>
-                  <div class="text-sm text-green-600">Session Fee</div>
+                  <div class="text-sm text-green-600">Session fee</div>
                 </div>
                 <div class="text-center p-4 bg-blue-50 rounded-lg">
                   <div class="text-2xl font-bold text-blue-600">{{ formatDuration(user?.sessionDuration || 60) }}</div>
@@ -116,11 +116,11 @@
               <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-medium text-gray-900 flex items-center">
                   <UsersIcon class="w-5 h-5 mr-2 text-blue-600" />
-                  My Clients
+                  My clients
                 </h2>
                 <button @click="showAddClientModal = true"
                   class="text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">
-                  Add Client
+                  Add client
                 </button>
               </div>
 
@@ -137,7 +137,7 @@
                   </div>
                   <div class="flex items-center space-x-2">
                     <router-link :to="`/clients/${client._id}`" class="text-indigo-600 hover:text-indigo-700 text-sm">
-                      View Profile
+                      View profile
                     </router-link>
                     <button @click="removeClient(client._id)" class="text-red-600 hover:text-red-700 text-sm">
                       Remove
@@ -153,11 +153,11 @@
               </div>
             </div>
 
-            <!-- Recent Appointments -->
+            <!-- Recent appointments -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <CalendarDaysIcon class="w-5 h-5 mr-2 text-purple-600" />
-                Recent Appointments
+                Recent appointments
               </h2>
 
               <!-- Appointment Stats -->
@@ -200,7 +200,7 @@
                     <p class="text-sm font-medium text-gray-900">{{ appointment.type || 'Session' }}</p>
                     <router-link :to="`/appointments/${appointment._id}`"
                       class="text-xs text-indigo-600 hover:text-indigo-700">
-                      View Details
+                      View details
                     </router-link>
                   </div>
                 </div>
@@ -219,7 +219,7 @@
 
             <!-- About -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
-              <h3 class="text-lg font-medium text-gray-900 mb-4">About Me</h3>
+              <h3 class="text-lg font-medium text-gray-900 mb-4">About me</h3>
               <p class="text-gray-600 text-sm leading-relaxed">
                 {{ 
                   user?.bio || 
@@ -258,7 +258,7 @@
                 Achievements
               </h3>
 
-              <!-- Achievement Progress -->
+              <!-- Achievement progress -->
               <div class="mb-4">
                 <div class="flex justify-between text-sm text-gray-600 mb-1">
                   <span>Progress</span>
@@ -269,9 +269,9 @@
                 </div>
               </div>
 
-              <!-- Earned Achievements -->
+              <!-- Earned achievements -->
               <div v-if="earnedAchievements.length > 0" class="space-y-3 mb-4">
-                <h4 class="text-sm font-medium text-gray-700">Earned Achievements</h4>
+                <h4 class="text-sm font-medium text-gray-700">Earned achievements</h4>
                 <div
                   v-for="achievement in earnedAchievements.slice(0, showAllAchievements ? earnedAchievements.length : 3)"
                   :key="achievement.id"
@@ -291,7 +291,7 @@
 
               <!-- Unearned Achievements -->
               <div v-if="unearnedAchievements.length > 0" class="space-y-3">
-                <h4 class="text-sm font-medium text-gray-700">Available Achievements</h4>
+                <h4 class="text-sm font-medium text-gray-700">Available achievements</h4>
                 <div v-for="achievement in unearnedAchievements.slice(0, 3)" :key="achievement.id"
                   class="flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                   <div class="flex-shrink-0">
@@ -307,7 +307,7 @@
                 <div v-if="unearnedAchievements.length > 3" class="text-center">
                   <button @click="showAllAchievements = !showAllAchievements"
                     class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                    {{ showAllAchievements ? 'Show Less' : `View ${unearnedAchievements.length - 3} More` }}
+                    {{ showAllAchievements ? 'Show less' : `View ${unearnedAchievements.length - 3} More` }}
                   </button>
                 </div>
               </div>
@@ -317,21 +317,21 @@
               </div>
             </div>
 
-            <!-- Earnings Summary -->
+            <!-- Earnings summary -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
-              <h3 class="text-lg font-medium text-gray-900 mb-4">Earnings Summary</h3>
+              <h3 class="text-lg font-medium text-gray-900 mb-4">Earnings summary</h3>
               <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                  <span class="text-sm text-gray-600">This Month</span>
+                  <span class="text-sm text-gray-600">This month</span>
                   <span class="font-medium text-gray-900">{{ formatCurrency(earnings.thisMonth) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-sm text-gray-600">Total Earned</span>
+                  <span class="text-sm text-gray-600">Total earned</span>
                   <span class="font-medium text-gray-900">{{ formatCurrency(earnings.total) }}</span>
                 </div>
                 <router-link to="/profile/provider/dashboard"
                   class="block text-center text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-3">
-                  View Detailed Earnings
+                  View detailed earnings
                 </router-link>
               </div>
             </div>
@@ -340,11 +340,11 @@
       </div>
     </div>
 
-    <!-- Add Client Modal -->
+    <!-- Add client Modal -->
     <div v-if="showAddClientModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
       <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="mt-3 text-center">
-          <h3 class="text-lg font-medium text-gray-900">Add Client</h3>
+          <h3 class="text-lg font-medium text-gray-900">Add client</h3>
           <div class="mt-2 px-7 py-3">
             <input v-model="newClientEmail" type="email" placeholder="Client's email address"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
@@ -352,7 +352,7 @@
           <div class="flex justify-center space-x-4 px-4 py-3">
             <button @click="addClient"
               class="px-4 py-2 bg-indigo-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-indigo-700">
-              Add Client
+              Add client
             </button>
             <button @click="showAddClientModal = false"
               class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md shadow-sm hover:bg-gray-400">

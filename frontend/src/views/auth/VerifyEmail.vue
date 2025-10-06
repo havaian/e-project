@@ -13,7 +13,7 @@
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
-                        Email Verified!
+                        Email verified!
                     </h2>
                     <p class="mt-2 text-sm text-gray-600">
                         Your email has been verified successfully. You can now log in to your account.
@@ -21,7 +21,7 @@
 
                     <div class="mt-8">
                         <router-link to="/login" class="btn-primary w-full justify-center">
-                            Go to Login
+                            Go to login
                         </router-link>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
-                        Verification Failed
+                        Verification failed
                     </h2>
                     <p class="mt-2 text-sm text-gray-600">
                         {{ error || 'The verification link is invalid or has expired.' }}
@@ -40,7 +40,7 @@
 
                     <div class="mt-8">
                         <router-link to="/login" class="btn-primary w-full justify-center">
-                            Return to Login
+                            Return to login
                         </router-link>
                     </div>
                 </div>

@@ -18,14 +18,14 @@
                                 <h1 class="text-3xl font-bold text-gray-900">
                                     {{ provider.firstName }} {{ provider.lastName }}
                                 </h1>
-                                <p class="text-lg text-gray-600">Professional Provider</p>
+                                <p class="text-lg text-gray-600">Professional provider</p>
 
                                 <!-- Status & Rating -->
                                 <div class="mt-3 flex flex-wrap gap-2 justify-center sm:justify-start">
                                     <span v-if="provider.isVerified"
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                                         <CheckCircleIcon class="w-4 h-4 mr-1" />
-                                        Verified Provider
+                                        Verified provider
                                     </span>
                                     <div v-if="reviewStats.average > 0"
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
@@ -47,14 +47,14 @@
                             <button v-if="canContact" @click="initiateChat"
                                 class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 <ChatBubbleLeftRightIcon class="w-4 h-4 mr-2" />
-                                Send Message
+                                Send message
                             </button>
 
                             <router-link v-if="authStore.isClient"
                                 :to="{ name: 'book-appointment', params: { providerId: provider._id } }"
                                 class="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 <CalendarDaysIcon class="w-4 h-4 mr-2" />
-                                Book Appointment
+                                Book appointment
                             </router-link>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                                     <div class="text-center p-4">
                                         <div class="text-3xl font-bold text-orange-600">{{ provider.experience || 0 }}
                                         </div>
-                                        <div class="text-sm text-gray-600">Years of Experience</div>
+                                        <div class="text-sm text-gray-600">Years of experience</div>
                                     </div>
                                 </div>
 
@@ -145,7 +145,7 @@
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <StarIcon class="w-5 h-5 mr-2 text-yellow-600" />
-                                    Client Reviews
+                                    Client reviews
                                 </h2>
 
                                 <!-- Rating Summary -->
@@ -212,7 +212,7 @@
                                     <div v-if="reviews.length > 3" class="text-center">
                                         <button @click="showAllReviews = !showAllReviews"
                                             class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                                            {{ showAllReviews ? 'Show Less' : `View ${reviews.length - 3} More Reviews`
+                                            {{ showAllReviews ? 'Show less' : `View ${reviews.length - 3} More reviews`
                                             }}
                                         </button>
                                     </div>
@@ -229,11 +229,11 @@
                         <!-- Right Column - Sidebar Info -->
                         <div class="space-y-6">
 
-                            <!-- Consultation Fee -->
+                            <!-- Consultation fee -->
                             <div class="bg-white border border-gray-200 rounded-xl p-6 text-center">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-center">
                                     <CurrencyDollarIcon class="w-5 h-5 mr-2 text-green-600" />
-                                    Consultation Fee
+                                    Consultation fee
                                 </h3>
                                 <div class="text-3xl font-bold text-green-600 mb-2">{{ formatSessionFee }}</div>
                                 <div class="text-sm text-gray-600">per {{ provider.sessionDuration || 60 }} minutes
@@ -243,7 +243,7 @@
                                     <router-link v-if="authStore.isClient"
                                         :to="{ name: 'book-appointment', params: { providerId: provider._id } }"
                                         class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        Book Now
+                                        Book now
                                     </router-link>
                                     <div v-else class="text-sm text-gray-500">
                                         Sign in as a client to book appointments
@@ -258,7 +258,7 @@
                                     Achievements
                                 </h3>
 
-                                <!-- Achievement Progress -->
+                                <!-- Achievement progress -->
                                 <div class="mb-4">
                                     <div class="flex justify-between text-sm text-gray-600 mb-1">
                                         <span>Earned</span>
@@ -270,7 +270,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Earned Achievements -->
+                                <!-- Earned achievements -->
                                 <div v-if="earnedAchievements.length > 0" class="space-y-3">
                                     <div v-for="achievement in earnedAchievements.slice(0, showAllAchievements ? earnedAchievements.length : 4)"
                                         :key="achievement.id"
@@ -290,7 +290,7 @@
                                     <div v-if="earnedAchievements.length > 4" class="text-center">
                                         <button @click="showAllAchievements = !showAllAchievements"
                                             class="text-yellow-600 hover:text-yellow-700 text-sm font-medium">
-                                            {{ showAllAchievements ? 'Show Less' : `View ${earnedAchievements.length -
+                                            {{ showAllAchievements ? 'Show less' : `View ${earnedAchievements.length -
                                                 4} More` }}
                                         </button>
                                     </div>
@@ -301,35 +301,35 @@
                                 </div>
                             </div>
 
-                            <!-- Provider Stats -->
+                            <!-- Provider stats -->
                             <div class="bg-gray-50 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Provider Stats</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Provider stats</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Completed Sessions</span>
+                                        <span class="text-sm text-gray-600">Completed sessions</span>
                                         <span class="font-medium text-gray-900">{{ completedAppointments }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Response Rate</span>
+                                        <span class="text-sm text-gray-600">Response rate</span>
                                         <span class="font-medium text-gray-900">{{ responseRate }}%</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Member Since</span>
+                                        <span class="text-sm text-gray-600">Member since</span>
                                         <span class="font-medium text-gray-900">{{ formatDateShort(provider.createdAt)
                                         }}</span>
                                     </div>
                                     <div v-if="provider.lastLoginAt" class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Last Active</span>
+                                        <span class="text-sm text-gray-600">Last active</span>
                                         <span class="font-medium text-gray-900">{{
                                             formatRelativeTime(provider.lastLoginAt) }}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Similar Providers -->
+                            <!-- Similar providers -->
                             <div v-if="similarProviders.length > 0"
                                 class="bg-white border border-gray-200 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Similar Providers</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Similar providers</h3>
                                 <div class="space-y-3">
                                     <div v-for="similar in similarProviders.slice(0, 3)" :key="similar._id"
                                         class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">

@@ -16,12 +16,12 @@
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                   <UserIcon class="w-4 h-4 mr-1" />
-                  {{ completedAppointments }} Completed Sessions
+                  {{ completedAppointments }} completed sessions
                 </span>
                 <span v-if="isVerified"
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                   <CheckCircleIcon class="w-4 h-4 mr-1" />
-                  Verified Account
+                  Verified account
                 </span>
               </div>
             </div>
@@ -30,7 +30,7 @@
             <router-link to="/profile/edit"
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               <PencilIcon class="w-4 h-4 mr-2" />
-              Edit Profile
+              Edit profile
             </router-link>
           </div>
         </div>
@@ -43,11 +43,11 @@
           <!-- Left Column -->
           <div class="lg:col-span-2 space-y-8">
 
-            <!-- Personal Information -->
+            <!-- Personal information -->
             <div class="bg-gray-50 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <UserIcon class="w-5 h-5 mr-2 text-indigo-600" />
-                Personal Information
+                Personal information
               </h2>
               <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -59,17 +59,17 @@
                   <dd class="mt-1 text-gray-900">{{ user?.phone || 'N/A' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-sm font-medium text-gray-500">Member Since</dt>
+                  <dt class="text-sm font-medium text-gray-500">Member since</dt>
                   <dd class="mt-1 text-gray-900">{{ formatDate(user?.createdAt) }}</dd>
                 </div>
               </dl>
             </div>
 
-            <!-- Providers Associated -->
+            <!-- Associated providers -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <UsersIcon class="w-5 h-5 mr-2 text-blue-600" />
-                Associated Providers
+                Associated providers
               </h2>
               <div v-if="associatedProviders.length > 0" class="space-y-4">
                 <div v-for="provider in associatedProviders" :key="provider._id"
@@ -89,7 +89,7 @@
                   </div>
                   <router-link :to="`/providers/${provider._id}`"
                     class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                    View Profile
+                    View profile
                   </router-link>
                 </div>
               </div>
@@ -98,7 +98,7 @@
                 <p class="text-gray-500">No providers associated yet</p>
                 <router-link to="/providers"
                   class="inline-flex items-center mt-2 text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                  Browse Providers
+                  Browse providers
                   <ChevronRightIcon class="ml-1 w-4 h-4" />
                 </router-link>
               </div>
@@ -108,7 +108,7 @@
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <CalendarDaysIcon class="w-5 h-5 mr-2 text-green-600" />
-                Recent Appointments
+                Recent appointments
               </h2>
 
               <!-- Appointment Stats -->
@@ -127,7 +127,7 @@
                 </div>
               </div>
 
-              <!-- Recent Appointments List -->
+              <!-- Recent appointments List -->
               <div v-if="recentAppointments.length > 0" class="space-y-3">
                 <div v-for="appointment in recentAppointments" :key="appointment._id"
                   class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
@@ -149,7 +149,7 @@
                     <p class="text-sm font-medium text-gray-900">{{ appointment.type || 'Consultation' }}</p>
                     <router-link :to="`/appointments/${appointment._id}`"
                       class="text-xs text-indigo-600 hover:text-indigo-700">
-                      View Details
+                      View details
                     </router-link>
                   </div>
                 </div>
@@ -171,7 +171,7 @@
                 Achievements
               </h2>
 
-              <!-- Achievement Progress -->
+              <!-- Achievement progress -->
               <div class="mb-4">
                 <div class="flex justify-between text-sm text-gray-600 mb-1">
                   <span>Progress</span>
@@ -182,9 +182,9 @@
                 </div>
               </div>
 
-              <!-- Earned Achievements -->
+              <!-- Earned achievements -->
               <div v-if="earnedAchievements.length > 0" class="space-y-3 mb-4">
-                <h3 class="text-sm font-medium text-gray-700">Earned Achievements</h3>
+                <h3 class="text-sm font-medium text-gray-700">Earned achievements</h3>
                 <div v-for="achievement in earnedAchievements" :key="achievement.id"
                   class="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <div class="flex-shrink-0">
@@ -202,7 +202,7 @@
 
               <!-- Unearned Achievements -->
               <div v-if="unearnedAchievements.length > 0" class="space-y-3">
-                <h3 class="text-sm font-medium text-gray-700">Available Achievements</h3>
+                <h3 class="text-sm font-medium text-gray-700">Available achievements</h3>
                 <div v-for="achievement in unearnedAchievements.slice(0, 3)" :key="achievement.id"
                   class="flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                   <div class="flex-shrink-0">
@@ -218,7 +218,7 @@
                 <div v-if="unearnedAchievements.length > 3" class="text-center">
                   <button @click="showAllAchievements = !showAllAchievements"
                     class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                    {{ showAllAchievements ? 'Show Less' : `View ${unearnedAchievements.length - 3} More` }}
+                    {{ showAllAchievements ? 'Show less' : `View ${unearnedAchievements.length - 3} More` }}
                   </button>
                 </div>
               </div>
@@ -232,7 +232,7 @@
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <StarIcon class="w-5 h-5 mr-2 text-purple-600" />
-                Reviews Given
+                Reviews given
               </h2>
 
               <div v-if="reviews.length > 0" class="space-y-4">
@@ -254,7 +254,7 @@
                 <div v-if="reviews.length > 3" class="text-center">
                   <button @click="showAllReviews = !showAllReviews"
                     class="text-purple-600 hover:text-purple-700 text-sm font-medium">
-                    {{ showAllReviews ? 'Show Less' : `View ${reviews.length - 3} More Reviews` }}
+                    {{ showAllReviews ? 'Show less' : `View ${reviews.length - 3} More reviews` }}
                   </button>
                 </div>
               </div>

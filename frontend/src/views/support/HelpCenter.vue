@@ -21,9 +21,9 @@
         </div>
 
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <!-- Quick Actions -->
+            <!-- Quick actions -->
             <div class="mb-16">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Quick Actions</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Quick actions</h2>
                 <div class="grid md:grid-cols-4 gap-6">
                     <router-link to="/contact"
                         class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
@@ -39,7 +39,7 @@
                         <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <ChatBubbleLeftRightIcon class="w-8 h-8 text-green-600" />
                         </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Live Chat</h3>
+                        <h3 class="font-semibold text-gray-900 mb-2">Live chat</h3>
                         <p class="text-gray-600 text-sm">Chat with us in real-time</p>
                     </a>
 
@@ -48,7 +48,7 @@
                         <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <PhoneIcon class="w-8 h-8 text-purple-600" />
                         </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Call Us</h3>
+                        <h3 class="font-semibold text-gray-900 mb-2">Call us</h3>
                         <p class="text-gray-600 text-sm">{{ supportPhone }}</p>
                     </a>
 
@@ -65,7 +65,7 @@
 
             <!-- Help Categories -->
             <div class="mb-16">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Browse Help Topics</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Browse help topics</h2>
                 <div class="grid md:grid-cols-3 gap-8">
                     <div v-for="category in helpCategories" :key="category.id"
                         class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
@@ -91,9 +91,9 @@
                 </div>
             </div>
 
-            <!-- Search Results -->
+            <!-- Search results -->
             <div v-if="searchQuery && searchResults.length > 0" class="mb-16">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8">Search Results</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-8">Search results</h2>
                 <div class="space-y-4">
                     <div v-for="result in searchResults" :key="result.id"
                         class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
@@ -101,7 +101,7 @@
                         <p class="text-gray-600 mb-3">{{ result.excerpt }}</p>
                         <button @click="openArticle(result)"
                             class="text-sky-600 hover:text-sky-700 font-medium text-sm">
-                            Read More →
+                            Read more →
                         </button>
                     </div>
                 </div>
@@ -115,9 +115,9 @@
                 <router-link to="/contact" class="btn-primary">Contact support</router-link>
             </div>
 
-            <!-- Popular Articles -->
+            <!-- Popular articles -->
             <div class="mb-16">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Popular Articles</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Popular articles</h2>
                 <div class="grid md:grid-cols-2 gap-6">
                     <div v-for="article in popularArticles" :key="article.id"
                         class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
@@ -131,7 +131,7 @@
                                 <div class="flex items-center justify-between">
                                     <button @click="openArticle(article)"
                                         class="text-sky-600 hover:text-sky-700 font-medium text-sm">
-                                        Read Article →
+                                        Read article →
                                     </button>
                                     <span class="text-xs text-gray-500">{{ article.readTime }} min read</span>
                                 </div>
@@ -143,7 +143,7 @@
 
             <!-- Contact Options -->
             <div class="bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl p-8 text-center">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Still Need Help?</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Still need help?</h2>
                 <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
                     Can't find what you're looking for? Our support team is here to help you 24/7.
                 </p>
@@ -152,7 +152,7 @@
                         Contact support
                     </router-link>
                     <a :href="`mailto:${supportEmail}`" class="btn-secondary px-6 py-3">
-                        Email Us
+                        Email us
                     </a>
                 </div>
             </div>
@@ -214,16 +214,16 @@ const selectedArticle = ref(null)
 const helpCategories = reactive([
     {
         id: 1,
-        title: 'Getting Started',
+        title: 'Getting started',
         description: 'Learn the basics of using our platform',
         iconBg: 'bg-green-100',
         iconColor: 'text-green-600',
         iconPath: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253',
         articles: [
-            { id: 101, title: 'Creating Your Account' },
-            { id: 102, title: 'Setting Up Your Profile' },
-            { id: 103, title: 'Booking Your First Consultation' },
-            { id: 104, title: 'Understanding Platform Features' }
+            { id: 101, title: 'Creating your account' },
+            { id: 102, title: 'Setting up your profile' },
+            { id: 103, title: 'Booking your first consultation' },
+            { id: 104, title: 'Understanding platform features' }
         ]
     },
     {
@@ -234,38 +234,38 @@ const helpCategories = reactive([
         iconColor: 'text-blue-600',
         iconPath: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
         articles: [
-            { id: 201, title: 'How to Book a Consultation' },
-            { id: 202, title: 'Rescheduling and Cancellations' },
-            { id: 203, title: 'Preparing for Your Session' },
-            { id: 204, title: 'Technical Requirements' }
+            { id: 201, title: 'How to book a consultation' },
+            { id: 202, title: 'Rescheduling and cancellations' },
+            { id: 203, title: 'Preparing for your session' },
+            { id: 204, title: 'Technical requirements' }
         ]
     },
     {
         id: 3,
-        title: 'Account & Billing',
+        title: 'Account & billing',
         description: 'Manage your account settings and billing information',
         iconBg: 'bg-purple-100',
         iconColor: 'text-purple-600',
         iconPath: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z',
         articles: [
-            { id: 301, title: 'Updating Payment Methods' },
-            { id: 302, title: 'Understanding Your Bill' },
-            { id: 303, title: 'Refund Policy' },
-            { id: 304, title: 'Account Security' }
+            { id: 301, title: 'Updating payment methods' },
+            { id: 302, title: 'Understanding your bill' },
+            { id: 303, title: 'Refund policy' },
+            { id: 304, title: 'Account security' }
         ]
     },
     {
         id: 4,
-        title: 'Technical Support',
+        title: 'Technical support',
         description: 'Troubleshooting and technical assistance',
         iconBg: 'bg-red-100',
         iconColor: 'text-red-600',
         iconPath: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
         articles: [
-            { id: 401, title: 'Video Call Issues' },
-            { id: 402, title: 'Audio Problems' },
-            { id: 403, title: 'Browser Compatibility' },
-            { id: 404, title: 'Mobile App Support' }
+            { id: 401, title: 'Video call issues' },
+            { id: 402, title: 'Audio problems' },
+            { id: 403, title: 'Browser compatibility' },
+            { id: 404, title: 'Mobile app support' }
         ]
     },
     {
@@ -276,37 +276,37 @@ const helpCategories = reactive([
         iconColor: 'text-yellow-600',
         iconPath: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
         articles: [
-            { id: 501, title: 'Provider Onboarding' },
-            { id: 502, title: 'Setting Your Availability' },
-            { id: 503, title: 'Payment Processing' },
-            { id: 504, title: 'Professional Standards' }
+            { id: 501, title: 'Provider onboarding' },
+            { id: 502, title: 'Setting your availability' },
+            { id: 503, title: 'Payment processing' },
+            { id: 504, title: 'Professional standards' }
         ]
     },
     {
         id: 6,
-        title: 'Privacy & Security',
+        title: 'Privacy & security',
         description: 'Data protection and privacy information',
         iconBg: 'bg-indigo-100',
         iconColor: 'text-indigo-600',
         iconPath: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
         articles: [
-            { id: 601, title: 'Data Security Measures' },
-            { id: 602, title: 'Privacy Settings' },
-            { id: 603, title: 'Reporting Security Issues' }
+            { id: 601, title: 'Data security measures' },
+            { id: 602, title: 'Privacy settings' },
+            { id: 603, title: 'Reporting security issues' }
         ]
     }
 ])
 
-// Popular Articles Data
+// Popular articles Data
 const popularArticles = reactive([
     {
         id: 1001,
-        title: 'How to Book Your First Consultation',
+        title: 'How to Book your first consultation',
         excerpt: 'Step-by-step guide to scheduling your first consultation session.',
         readTime: 3,
         lastUpdated: 'January 15, 2025',
         content: `
-      <h3>Getting Started with Consultations</h3>
+      <h3>Getting started with consultations</h3>
       <p>Booking your first consultation is easy! Follow these simple steps:</p>
       <ol>
         <li>Log in to your account</li>
@@ -315,7 +315,7 @@ const popularArticles = reactive([
         <li>Choose an available time slot</li>
         <li>Complete the booking process</li>
       </ol>
-      <h3>Before Your Session</h3>
+      <h3>Before Your session</h3>
       <p>Make sure you have:</p>
       <ul>
         <li>A stable internet connection</li>
@@ -326,12 +326,12 @@ const popularArticles = reactive([
     },
     {
         id: 1002,
-        title: 'Troubleshooting Video Call Issues',
+        title: 'Troubleshooting video call issues',
         excerpt: 'Common solutions for video and audio problems during consultations.',
         readTime: 5,
         lastUpdated: 'January 12, 2025',
         content: `
-      <h3>Common Video Issues</h3>
+      <h3>Common video issues</h3>
       <p>If you're experiencing video problems, try these solutions:</p>
       <ol>
         <li>Check your camera permissions</li>
@@ -339,7 +339,7 @@ const popularArticles = reactive([
         <li>Close other applications using your camera</li>
         <li>Restart your browser</li>
       </ol>
-      <h3>Audio Troubleshooting</h3>
+      <h3>Audio troubleshooting</h3>
       <p>For audio issues:</p>
       <ul>
         <li>Check microphone permissions</li>
@@ -350,12 +350,12 @@ const popularArticles = reactive([
     },
     {
         id: 1004,
-        title: 'Payment and Billing Guide',
+        title: 'Payment and billing guide',
         excerpt: 'Everything you need to know about payments, refunds, and billing.',
         readTime: 6,
         lastUpdated: 'January 8, 2025',
         content: `
-      <h3>Payment Methods</h3>
+      <h3>Payment methods</h3>
       <p>We accept:</p>
       <ul>
         <li>Credit and debit cards</li>
@@ -363,7 +363,7 @@ const popularArticles = reactive([
         <li>Bank transfers</li>
         <li>Educational institution billing</li>
       </ul>
-      <h3>Refund Policy</h3>
+      <h3>Refund policy</h3>
       <p>Refunds are available for cancellations made 24+ hours in advance.</p>
     `
     }
@@ -372,12 +372,12 @@ const popularArticles = reactive([
 // Methods
 const getIconComponent = (categoryId) => {
     const iconMap = {
-        1: BookOpenIcon,      // Getting Started
+        1: BookOpenIcon,      // Getting started
         2: EyeIcon,           // Consultations  
-        3: CreditCardIcon,    // Account & Billing
-        4: CogIcon,           // Technical Support
+        3: CreditCardIcon,    // Account & billing
+        4: CogIcon,           // Technical support
         5: UsersIcon,         // Provider Resources
-        6: ShieldCheckIcon    // Privacy & Security
+        6: ShieldCheckIcon    // Privacy & security
     }
     return iconMap[categoryId] || BookOpenIcon
 }

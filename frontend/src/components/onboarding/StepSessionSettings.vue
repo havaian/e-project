@@ -2,17 +2,17 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Session Settings</h2>
+            <h2 class="text-3xl font-bold text-gray-900">Session settings</h2>
             <p class="mt-2 text-gray-600">Configure your session pricing and duration</p>
         </div>
 
         <!-- Session Configuration -->
         <div class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Session Duration -->
+                <!-- Session duration -->
                 <div class="bg-white border border-gray-200 rounded-xl p-6">
                     <label class="block text-sm font-medium text-gray-900 mb-4">
-                        Session Duration
+                        Session duration
                     </label>
                     <div class="space-y-3">
                         <div v-for="duration in durationOptions" :key="duration.value"
@@ -30,10 +30,10 @@
                     </div>
                 </div>
 
-                <!-- Session Fee -->
+                <!-- Session fee -->
                 <div class="bg-white border border-gray-200 rounded-xl p-6">
                     <label for="sessionFee" class="block text-sm font-medium text-gray-900 mb-4">
-                        Session Fee (UZS)
+                        Session fee (UZS)
                     </label>
                     <div class="relative">
                         <input id="sessionFee" v-model.number="modelValue.sessionFee" type="number" min="50000"
@@ -53,11 +53,11 @@
                         class="mt-4 p-3 bg-gray-50 rounded-lg">
                         <div class="text-xs text-gray-600 space-y-1">
                             <div class="flex justify-between">
-                                <span>Session Fee:</span>
+                                <span>Session fee:</span>
                                 <span class="font-medium">{{ formatCurrency(modelValue.sessionFee) }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>Platform Fee (10%):</span>
+                                <span>Platform fee (10%):</span>
                                 <span>{{ formatCurrency(modelValue.sessionFee * 0.1) }}</span>
                             </div>
                             <div class="flex justify-between font-medium border-t pt-1">
@@ -69,13 +69,13 @@
                 </div>
             </div>
 
-            <!-- Earnings Preview -->
+            <!-- Earnings preview -->
             <div v-if="modelValue.sessionFee && modelValue.sessionDuration"
                 class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
                 <div class="flex items-start space-x-3">
                     <CurrencyDollarIcon class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
-                        <h4 class="font-semibold text-gray-900">Earnings Preview</h4>
+                        <h4 class="font-semibold text-gray-900">Earnings preview</h4>
                         <p class="text-gray-700 mt-1">
                             With {{ modelValue.sessionDuration }}-minute sessions at {{
                                 formatCurrency(modelValue.sessionFee) }},
@@ -91,12 +91,12 @@
             </div>
         </div>
 
-        <!-- Pricing Strategy Tips -->
+        <!-- Pricing strategy tips -->
         <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
             <div class="flex items-start space-x-3">
                 <LightBulbIcon class="w-6 h-6 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div>
-                    <h4 class="font-semibold text-gray-900 mb-3">Pricing Strategy Tips</h4>
+                    <h4 class="font-semibold text-gray-900 mb-3">Pricing strategy tips</h4>
                     <div class="space-y-2 text-sm text-gray-700">
                         <div class="flex items-start space-x-2">
                             <span class="text-blue-500 mt-0.5">•</span>
@@ -128,7 +128,7 @@
             <div class="flex items-start space-x-3">
                 <InformationCircleIcon class="w-6 h-6 text-violet-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-gray-900 mb-2">Important Information</p>
+                    <p class="font-medium text-gray-900 mb-2">Important information</p>
                     <div class="space-y-1 text-gray-600">
                         <p>• You can update your session duration and fees anytime from your dashboard</p>
                         <p>• Price changes only apply to new bookings, not existing appointments</p>

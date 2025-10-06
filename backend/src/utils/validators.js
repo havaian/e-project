@@ -193,21 +193,21 @@ exports.validateAppointmentInput = (data) => {
 
 /**
  * Validate recommendation input
- * @param {Object} data Recommendation data for validation
+ * @param {Object} data recommendation data for validation
  * @returns {Object} Validation result
  */
 exports.validateRecommendationInput = (data) => {
     const recommendationSchema = Joi.object({
         title: Joi.string().trim().required()
             .messages({
-                'string.empty': 'Medication name is required',
-                'any.required': 'Medication name is required'
+                'string.empty': 'Title name is required',
+                'any.required': 'Title name is required'
             }),
 
         description: Joi.string().trim().required()
             .messages({
-                'string.empty': 'Dosage is required',
-                'any.required': 'Dosage is required'
+                'string.empty': 'Description is required',
+                'any.required': 'Description is required'
             }),
 
         frequency: Joi.string().trim().required()
@@ -352,7 +352,7 @@ exports.validateSessionSummaryInput = (data) => {
 
 /**
  * Validate follow-up input
- * @param {Object} data Follow-up data for validation
+ * @param {Object} data follow-up data for validation
  * @returns {Object} Validation result
  */
 exports.validateFollowUpInput = (data) => {

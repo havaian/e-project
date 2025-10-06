@@ -7,7 +7,7 @@
                     <div class="flex items-center space-x-3">
                         <img src="/images/logo.svg" alt="Logo" width="40" height="40" class="w-10 h-10" />
                         <div>
-                            <h1 class="text-xl font-bold text-gray-900">Provider Setup</h1>
+                            <h1 class="text-xl font-bold text-gray-900">Provider setup</h1>
                             <p class="text-sm text-gray-500">Complete your profile to start accepting appointments</p>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <!-- Auto-save Status Indicator -->
+        <!-- Auto-save status Indicator -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div v-if="autoSaveStatus" class="flex items-center justify-center mb-4">
                 <div class="flex items-center space-x-2 px-3 py-1 rounded-full text-xs transition-all duration-300"
@@ -124,7 +124,7 @@
                                 </svg>
                                 Saving...
                             </span>
-                            <span v-else>Save Draft</span>
+                            <span v-else>Save draft</span>
                         </button>
 
                         <button @click="nextStep" class="btn-element-primary transition-all duration-200" :class="{
@@ -142,7 +142,7 @@
                                 Saving...
                             </span>
                             <span class="flex items-center" v-else>
-                                {{ currentStep === 5 ? 'Complete Setup' : 'Next' }}
+                                {{ currentStep === 5 ? 'Complete setup' : 'Next' }}
                                 <ChevronRightIcon v-if="currentStep < 5" class="w-4 h-4 ml-2" />
                             </span>
                         </button>
@@ -151,13 +151,13 @@
             </div>
         </div>
 
-        <!-- Help Section -->
+        <!-- Help section -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
             <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
                 <div class="flex items-start space-x-3">
                     <InformationCircleIcon class="w-6 h-6 text-blue-500 mt-1 flex-shrink-0" />
                     <div>
-                        <h3 class="text-sm font-medium text-blue-900">Need Help?</h3>
+                        <h3 class="text-sm font-medium text-blue-900">Need help?</h3>
                         <p class="text-sm text-blue-700 mt-1">
                             Contact our support team at <a :href="`mailto:${supportEmail}`" class="underline">{{
                                 supportEmail }}</a>
@@ -230,11 +230,11 @@ const formData = reactive({
         { dayOfWeek: 7, isAvailable: false, startTime: '09:00', endTime: '17:00' }
     ],
 
-    // Step 3: Session Settings
+    // Step 3: session settings
     sessionDuration: 60,
     sessionFee: 0,
 
-    // Step 4: Profile Info
+    // Step 4: profile info
     specializations: [],
     bio: '',
     experience: 0,
@@ -298,14 +298,14 @@ const autoSaveCurrentStep = async (stepNumber = currentStep.value, showStatus = 
                 }
                 break
 
-            case 3: // Session Settings
+            case 3: // session settings
                 updateData = {
                     sessionDuration: formData.sessionDuration,
                     sessionFee: formData.sessionFee
                 }
                 break
 
-            case 4: // Profile
+            case 4: // profile
                 updateData = {
                     specializations: formData.specializations.filter(spec => spec !== ''),
                     bio: formData.bio,

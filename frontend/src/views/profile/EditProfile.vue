@@ -13,7 +13,7 @@
                     <!-- Header -->
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
+                            <h1 class="text-3xl font-bold text-gray-900">Edit profile</h1>
                             <p class="text-gray-600 mt-4">Update your information and preferences</p>
                         </div>
                         <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
@@ -24,13 +24,13 @@
 
                     <form @submit.prevent="handleSubmit" class="space-y-8">
 
-                        <!-- Profile Photo Section -->
+                        <!-- profile photo section -->
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
                                     <PhotoIcon class="w-4 h-4 text-brand-1" />
                                 </div>
-                                <h2 class="text-xl font-semibold text-gray-900">Profile Photo</h2>
+                                <h2 class="text-xl font-semibold text-gray-900">Profile photo</h2>
                             </div>
 
                             <div class="flex items-start space-x-6">
@@ -78,31 +78,31 @@
                             </div>
                         </div>
 
-                        <!-- Personal Information -->
+                        <!-- Personal information -->
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
                                     <UserIcon class="w-4 h-4 text-brand-1" />
                                 </div>
-                                <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
+                                <h2 class="text-xl font-semibold text-gray-900">Personal information</h2>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="form-group">
-                                    <label for="firstName" class="label">First Name</label>
+                                    <label for="firstName" class="label">First name</label>
                                     <input id="firstName" v-model="formData.firstName" type="text" class="input"
                                         required />
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastName" class="label">Last Name</label>
+                                    <label for="lastName" class="label">Last name</label>
                                     <input id="lastName" v-model="formData.lastName" type="text" class="input"
                                         required />
                                 </div>
                                 <div class="form-group">
-                                    <label for="phone" class="label">Phone Number</label>
+                                    <label for="phone" class="label">Phone number</label>
                                     <input id="phone" v-model="formData.phone" type="tel" class="input" required />
                                 </div>
                                 <div class="form-group">
-                                    <label for="email" class="label">Email Address</label>
+                                    <label for="email" class="label">Email address</label>
                                     <input id="email" v-model="formData.email" type="email" class="input" required />
                                 </div>
                             </div>
@@ -166,12 +166,12 @@
                                         </div>
                                     </div>
 
-                                    <!-- Add Specialization Button -->
+                                    <!-- Add specialization Button -->
                                     <button v-if="formData.specializations.length < availableSpecializations.length"
                                         @click="addSpecialization" type="button"
                                         class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
                                         <PlusIcon class="w-5 h-5" />
-                                        <span>Add Specialization</span>
+                                        <span>Add specialization</span>
                                     </button>
                                 </div>
                             </div>
@@ -188,7 +188,7 @@
                                     </div>
                                     <button type="button" @click="addEducation"
                                         class="text-green-600 hover:text-green-700 text-sm font-medium">
-                                        Add Education
+                                        Add education
                                     </button>
                                 </div>
                                 <div class="space-y-4">
@@ -217,12 +217,12 @@
                                         </div>
                                     </div>
                                     <div v-if="formData.education.length === 0" class="text-center py-4 text-gray-500">
-                                        No education entries. Click "Add Education" to get started.
+                                        No education entries. Click "Add education" to get started.
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Experience & Session Configuration -->
+                            <!-- Experience & session Configuration -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Experience -->
                                 <div class="bg-gray-50/50 rounded-2xl p-6">
@@ -234,7 +234,7 @@
                                         <h2 class="text-lg font-semibold text-gray-900">Experience</h2>
                                     </div>
                                     <div class="form-group">
-                                        <label for="experience" class="label">Years of Experience</label>
+                                        <label for="experience" class="label">Years of experience</label>
                                         <input id="experience" v-model.number="formData.experience" type="number"
                                             min="0" max="50" class="input" placeholder="0" />
                                     </div>
@@ -247,16 +247,16 @@
                                             class="w-8 h-8 bg-green-500/10 rounded-full flex items-center justify-center mr-3">
                                             <CurrencyDollarIcon class="w-4 h-4 text-green-500" />
                                         </div>
-                                        <h2 class="text-lg font-semibold text-gray-900">Session Settings</h2>
+                                        <h2 class="text-lg font-semibold text-gray-900">Session settings</h2>
                                     </div>
                                     <div class="space-y-4">
                                         <div class="form-group">
-                                            <label for="sessionFee" class="label">Session Fee (UZS)</label>
+                                            <label for="sessionFee" class="label">Session fee (UZS)</label>
                                             <input id="sessionFee" v-model.number="formData.sessionFee" type="number"
                                                 min="0" step="1000" class="input" placeholder="0" />
                                         </div>
                                         <div class="form-group">
-                                            <label for="sessionDuration" class="label">Session Duration
+                                            <label for="sessionDuration" class="label">Session duration
                                                 (minutes)</label>
                                             <select id="sessionDuration" v-model.number="formData.sessionDuration"
                                                 class="input">
@@ -307,22 +307,22 @@
                             </div>
                         </div>
 
-                        <!-- Password Change Section -->
+                        <!-- password Change section -->
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
                                 <div class="w-8 h-8 bg-gray-500/10 rounded-full flex items-center justify-center mr-3">
                                     <LockClosedIcon class="w-4 h-4 text-gray-500" />
                                 </div>
-                                <h2 class="text-xl font-semibold text-gray-900">Change Password</h2>
+                                <h2 class="text-xl font-semibold text-gray-900">Change password</h2>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="form-group">
-                                    <label for="currentPassword" class="label">Current Password</label>
+                                    <label for="currentPassword" class="label">Current password</label>
                                     <input id="currentPassword" v-model="passwordData.current" type="password"
                                         class="input" />
                                 </div>
                                 <div class="form-group">
-                                    <label for="newPassword" class="label">New Password</label>
+                                    <label for="newPassword" class="label">New password</label>
                                     <input id="newPassword" v-model="passwordData.new" type="password" class="input" />
                                 </div>
                             </div>
@@ -330,7 +330,7 @@
                                 <button type="button" @click="changePassword"
                                     :disabled="!passwordData.current || !passwordData.new"
                                     class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Update Password
+                                    Update password
                                 </button>
                             </div>
                         </div>
@@ -396,7 +396,7 @@ const formData = reactive({
     languages: []
 })
 
-// Password change data
+// password change data
 const passwordData = reactive({
     current: '',
     new: ''

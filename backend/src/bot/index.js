@@ -156,7 +156,7 @@
 //                         console.error(error.message);
 //                     } else {
 //                         await ctx.reply(
-//                             "❌ Failed to send verification code. Please try again later or contact support if the problem persists."
+//                             "❌ failed to send verification code. Please try again later or contact support if the problem persists."
 //                         );
 //                     }
                     
@@ -309,7 +309,7 @@
 //                             );
 //                         } else {
 //                             await ctx.reply(
-//                                 "❌ Failed to schedule appointment. Please try again later or book through the website."
+//                                 "❌ failed to schedule appointment. Please try again later or book through the website."
 //                             );
 //                         }
 //                     }
@@ -511,7 +511,7 @@
 //                     throw new Error('Invalid user data received');
 //                 }
 
-//                 let message = "👤 Your Profile\n\n";
+//                 let message = "👤 Your profile\n\n";
 //                 message += `Name: ${user.firstName || 'N/A'} ${user.lastName || ''}\n`;
 //                 message += `Email: ${user.email || 'N/A'}\n`;
 //                 message += `Phone: ${user.phone || 'N/A'}\n`;
@@ -529,7 +529,7 @@
 //                     message += `Experience: ${user.experience || 0} years\n`;
                     
 //                     if (user.sessionFee) {
-//                         message += `Session Fee: ${user.sessionFee} 'UZS'\n`;
+//                         message += `Session fee: ${user.sessionFee} 'UZS'\n`;
 //                     }
 //                 }
 
@@ -839,7 +839,7 @@
 //                     console.log(`✅ Telegram bot webhook set up at ${webhookDomain}${secretPath}`);
 //                 })
 //                 .catch(error => {
-//                     console.error('❌ Failed to set webhook:', error);
+//                     console.error('❌ failed to set webhook:', error);
 //                     console.log('❌ Falling back to long polling');
 //                     bot.start();
 //                 });

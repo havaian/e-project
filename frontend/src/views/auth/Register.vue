@@ -38,12 +38,12 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="form-group">
-                            <label for="firstName" class="label">First Name</label>
+                            <label for="firstName" class="label">First name</label>
                             <input id="firstName" v-model="formData.firstName" type="text" required class="input"
                                 placeholder="Enter first name" />
                         </div>
                         <div class="form-group">
-                            <label for="lastName" class="label">Last Name</label>
+                            <label for="lastName" class="label">Last name</label>
                             <input id="lastName" v-model="formData.lastName" type="text" required class="input"
                                 placeholder="Enter last name" />
                         </div>
@@ -75,7 +75,7 @@
                             </button>
                         </div>
 
-                        <!-- Password Requirements -->
+                        <!-- password requirements -->
                         <div class="mt-3 text-sm">
                             <p class="text-gray-600 mb-2">Password must contain:</p>
                             <div class="space-y-1">
@@ -117,7 +117,7 @@
                                 </div>
                             </div>
 
-                            <!-- Password Strength Indicator -->
+                            <!-- password Strength Indicator -->
                             <div class="mt-3">
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm text-gray-600">Strength:</span>
@@ -223,7 +223,7 @@ const registrationSuccess = ref(false)
 const loading = ref(false)
 const error = ref('')
 
-// Password validation state
+// password validation state
 const passwordValidation = reactive({
     minLength: false,
     hasUppercase: false,
@@ -239,7 +239,7 @@ const maxDate = computed(() => {
     return date.toISOString().split('T')[0]
 })
 
-// Password strength calculations
+// password strength calculations
 const passwordStrengthScore = computed(() => {
     const validations = Object.values(passwordValidation)
     return validations.filter(Boolean).length
@@ -281,7 +281,7 @@ const isPasswordValid = computed(() => {
     return Object.values(passwordValidation).every(Boolean)
 })
 
-// Password validation function
+// password validation function
 const validatePassword = () => {
     const password = formData.password
 

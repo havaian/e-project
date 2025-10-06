@@ -13,7 +13,7 @@
                             </div>
                             <div>
                                 <h1 class="text-xl font-bold text-gray-900">
-                                    Healthcare Session
+                                    Healthcare session
                                 </h1>
                                 <p class="text-sm text-gray-600">
                                     with {{ getParticipantName() }}
@@ -21,7 +21,7 @@
                             </div>
                         </div>
 
-                        <!-- Connection Status -->
+                        <!-- Connection status -->
                         <div class="flex items-center space-x-2">
                             <div class="flex items-center space-x-2">
                                 <div :class="[
@@ -50,11 +50,11 @@
                             <InformationCircleIcon class="w-4 h-4" />
                         </button>
 
-                        <!-- End Session Button -->
+                        <!-- End session Button -->
                         <button class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50"
                             @click="showEndSessionConfirm">
                             <FolderIcon class="w-4 h-4 mr-2" />
-                            End Session
+                            End session
                         </button>
                     </div>
                 </div>
@@ -99,10 +99,10 @@
                     :class="{ 'opacity-0': !isConnected, 'opacity-100': isConnected }"></div>
             </div>
 
-            <!-- Platform-Integrated Chat (Optional) -->
+            <!-- Platform-Integrated chat (Optional) -->
             <div v-if="showPlatformChat" class="mt-6 card-element p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Session Notes</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">Session notes</h3>
                     <button @click="showPlatformChat = false" class="text-gray-400 hover:text-gray-600">
                         <XMarkIcon class="w-5 h-5" />
                     </button>
@@ -124,14 +124,14 @@
                         <input v-model="newNote" type="text" class="input flex-1" placeholder="Add a session note..."
                             @keydown.enter="addSessionNote" />
                         <button @click="addSessionNote" class="btn-primary px-4">
-                            Add Note
+                            Add note
                         </button>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Enhanced End Session Confirmation Modal -->
+        <!-- Enhanced End session Confirmation Modal -->
         <div v-if="showEndConfirmation"
             class="fixed inset-0 bg-gray-500/75 backdrop-blur-sm flex items-center justify-center z-50">
             <div class="card-element max-w-md w-full mx-4 p-6">
@@ -139,7 +139,7 @@
                     <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
                         <ExclamationTriangleIcon class="w-5 h-5 text-red-600" />
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900">End Healthcare Session</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">End healthcare session</h3>
                 </div>
                 <p class="text-gray-600 mb-6">
                     Are you sure you want to end this session?
@@ -151,11 +151,11 @@
                 </p>
                 <div class="flex justify-end space-x-3">
                     <button @click="showEndConfirmation = false" class="btn-secondary">
-                        Continue Session
+                        Continue session
                     </button>
                     <button @click="confirmEndSession" class="btn-primary bg-red-600 hover:bg-red-700">
                         <CheckIcon class="w-4 h-4 mr-2" />
-                        End Session
+                        End session
                     </button>
                 </div>
             </div>
@@ -171,7 +171,7 @@
                             <DocumentTextIcon class="w-5 h-5 text-brand-1" />
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-gray-900">Complete Session Documentation</h3>
+                            <h3 class="text-xl font-bold text-gray-900">Complete session Documentation</h3>
                             <p class="text-sm text-gray-600">Provide session summary and recommendations for the patient
                             </p>
                         </div>
@@ -180,9 +180,9 @@
 
                 <div class="p-6 overflow-y-auto max-h-[calc(90vh-8rem)]">
                     <form @submit.prevent="submitPostSessionForm" class="space-y-6">
-                        <!-- Session Summary -->
+                        <!-- Session summary -->
                         <div class="form-group">
-                            <label for="sessionSummary" class="label">Session Summary</label>
+                            <label for="sessionSummary" class="label">Session summary</label>
                             <textarea id="sessionSummary" v-model="postSessionData.sessionSummary" rows="4"
                                 class="input"
                                 placeholder="Provide a comprehensive summary of the session, including key discussion points, observations, and outcomes..."
@@ -202,7 +202,7 @@
                                 <button type="button" @click="addRecommendation"
                                     class="btn-secondary text-brand-1 hover:bg-brand-1/10">
                                     <PlusIcon class="w-4 h-4 mr-2" />
-                                    Add Recommendation
+                                    Add recommendation
                                 </button>
                             </div>
 
@@ -211,13 +211,13 @@
                                     class="bg-gray-50/50 p-4 rounded-xl border border-gray-200">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                         <div class="form-group">
-                                            <label :for="`title-${index}`" class="label">Medication/Treatment</label>
+                                            <label :for="`title-${index}`" class="label">Title/Treatment</label>
                                             <input :id="`title-${index}`" v-model="recommendation.title" type="text"
                                                 class="input" placeholder="e.g., Ibuprofen, Physical Therapy"
                                                 required />
                                         </div>
                                         <div class="form-group">
-                                            <label :for="`description-${index}`" class="label">Dosage/Details</label>
+                                            <label :for="`description-${index}`" class="label">Description/Details</label>
                                             <input :id="`description-${index}`" v-model="recommendation.description"
                                                 type="text" class="input" placeholder="e.g., 200mg, 3 times daily"
                                                 required />
@@ -255,12 +255,12 @@
                                 class="bg-gray-50/50 p-8 rounded-xl text-center border-2 border-dashed border-gray-300">
                                 <BeakerIcon class="w-12 h-12 text-gray-400 mx-auto mb-4" />
                                 <p class="text-gray-500">No recommendations added yet</p>
-                                <p class="text-sm text-gray-400 mt-1">Click "Add Recommendation" to include treatment
+                                <p class="text-sm text-gray-400 mt-1">Click "Add recommendation" to include treatment
                                     recommendations</p>
                             </div>
                         </div>
 
-                        <!-- Follow-up Recommendation -->
+                        <!-- Follow-up recommendation -->
                         <div class="form-group">
                             <div class="bg-blue-50/50 rounded-xl p-4 border border-blue-200">
                                 <div class="flex items-start">
@@ -269,7 +269,7 @@
                                         class="mt-1 h-4 w-4 text-brand-1 border-gray-300 rounded focus:ring-brand-1" />
                                     <div class="ml-3">
                                         <label for="followUpRecommended" class="font-medium text-gray-900">
-                                            Recommend Follow-up Appointment
+                                            Recommend follow-up Appointment
                                         </label>
                                         <p class="text-sm text-gray-600 mt-1">
                                             Schedule a follow-up appointment to monitor progress or continue treatment
@@ -279,7 +279,7 @@
 
                                 <div v-if="postSessionData.followUp.recommended" class="mt-4 ml-7 space-y-4">
                                     <div class="form-group">
-                                        <label for="followUpDate" class="label">Recommended Follow-up Date</label>
+                                        <label for="followUpDate" class="label">Recommended follow-up Date</label>
                                         <input id="followUpDate" v-model="postSessionData.followUp.date" type="date"
                                             class="input" :min="minFollowUpDate" required />
                                     </div>
@@ -294,9 +294,9 @@
                             </div>
                         </div>
 
-                        <!-- Session Chat Log -->
+                        <!-- Session chat Log -->
                         <div v-if="chatLog.length > 0" class="form-group">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-3">Session Chat Log</h4>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3">Session chat Log</h4>
                             <div class="bg-gray-50/50 p-4 rounded-xl border border-gray-200 max-h-40 overflow-y-auto">
                                 <div v-for="(message, index) in chatLog" :key="index" class="mb-2 last:mb-0">
                                     <div class="flex items-start space-x-2">
@@ -325,11 +325,11 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                         </path>
                                     </svg>
-                                    Saving Session Data...
+                                    Saving session Data...
                                 </span>
                                 <span v-else class="flex items-center">
                                     <CheckIcon class="w-4 h-4 mr-2" />
-                                    Complete Session
+                                    Complete session
                                 </span>
                             </button>
                         </div>
@@ -338,20 +338,20 @@
             </div>
         </div>
 
-        <!-- Enhanced Follow-up Created Notification -->
+        <!-- Enhanced follow-up Created Notification -->
         <div v-if="showFollowUpNotification"
             class="fixed inset-0 bg-gray-500/75 backdrop-blur-sm flex items-center justify-center z-50">
             <div class="card-element max-w-md w-full mx-4 p-6 text-center">
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <CheckIcon class="h-8 w-8 text-green-600" />
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Session Completed Successfully</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Session completed successfully</h3>
                 <p class="text-gray-600 mb-6">
                     Follow-up appointment has been created and is pending payment confirmation from the patient.
                 </p>
                 <button @click="returnToAppointments" class="btn-primary w-full">
                     <CalendarIcon class="w-4 h-4 mr-2" />
-                    Return to Appointments
+                    Return to appointments
                 </button>
             </div>
         </div>

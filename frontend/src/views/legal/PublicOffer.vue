@@ -72,7 +72,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Pricing and Payment Terms</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Pricing and payment Terms</h2>
 
                         <h3 class="text-xl font-semibold text-gray-800 mb-3">Service Fees</h3>
                         <div class="bg-blue-50 rounded-lg p-6 mb-6">
@@ -81,7 +81,7 @@
                                 <li>Individual Consultation: Starting from $50 per session</li>
                                 <li>Monthly Subscription: $99 per month (unlimited consultations)</li>
                                 <li>Institutional Plans: Custom pricing based on requirements</li>
-                                <li>Platform Fee: 10% of consultation fees (for providers)</li>
+                                <li>Platform fee: 10% of consultation fees (for providers)</li>
                             </ul>
                             <p class="text-sm text-gray-600 italic">Prices are subject to change with 30 days notice.
                             </p>

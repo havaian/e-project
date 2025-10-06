@@ -21,7 +21,7 @@
         <!-- Summary Stats -->
         <div v-if="chartData && chartData.length > 0" class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-gray-50 rounded-lg p-4 text-center">
-                <p class="text-sm text-gray-600">Total Earnings</p>
+                <p class="text-sm text-gray-600">Total earnings</p>
                 <p class="text-lg font-bold text-gray-900">{{ formatCurrency(totalEarnings) }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4 text-center">
@@ -35,7 +35,7 @@
                 <p class="text-lg font-bold text-gray-900">{{ formatCurrency(maxEarnings) }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4 text-center">
-                <p class="text-sm text-gray-600">Growth Trend</p>
+                <p class="text-sm text-gray-600">Growth trend</p>
                 <div class="flex items-center justify-center space-x-1">
                     <ArrowTrendingUpIcon v-if="growthTrend >= 0" class="w-4 h-4 text-green-500" />
                     <ArrowTrendingDownIcon v-else class="w-4 h-4 text-red-500" />
@@ -112,9 +112,9 @@ const chartOptions = computed(() => ({
             intersect: false,
             callbacks: {
                 label: function (context) {
-                    if (context.dataset.label === 'Total Earnings') {
+                    if (context.dataset.label === 'Total earnings') {
                         return `Total: ${formatCurrency(context.parsed.y)}`
-                    } else if (context.dataset.label === 'Net Earnings') {
+                    } else if (context.dataset.label === 'Net earnings') {
                         return `Net: ${formatCurrency(context.parsed.y)}`
                     }
                     return context.dataset.label + ': ' + context.parsed.y

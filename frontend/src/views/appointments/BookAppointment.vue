@@ -61,7 +61,7 @@
                 <!-- Booking Form -->
                 <form @submit.prevent="bookAppointment"
                     class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-6">Appointment Details</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-6">Appointment details</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Date Selection using ReusableCalendar -->
@@ -98,7 +98,7 @@
                                 </div>
                             </div>
 
-                            <!-- Time Slots Status Messages -->
+                            <!-- Time Slots status Messages -->
                             <div v-if="formData.date && !loadingTimeSlots" class="mt-2">
                                 <p v-if="availableTimeSlots.length === 0" class="text-sm text-amber-600">
                                     No available time slots for selected date. Please choose a different date.
@@ -120,10 +120,10 @@
                         </div>
                     </div>
 
-                    <!-- Session Type -->
+                    <!-- Session type -->
                     <div class="mt-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Session Type <span class="text-red-500">*</span>
+                            Session type <span class="text-red-500">*</span>
                         </label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label v-for="type in sessionTypes" :key="type.value"
@@ -158,15 +158,15 @@
                                 <span class="font-medium">{{ getProviderName(selectedProvider) }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Date & Time:</span>
+                                <span class="text-gray-600">Date & time:</span>
                                 <span class="font-medium">{{ formatSelectedDateTime() }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Session Type:</span>
-                                <span class="font-medium capitalize">{{ formData.type }} Session</span>
+                                <span class="text-gray-600">Session type:</span>
+                                <span class="font-medium capitalize">{{ formData.type }} session</span>
                             </div>
                             <div class="flex justify-between pt-2 border-t border-gray-200">
-                                <span class="text-gray-600">Session Fee:</span>
+                                <span class="text-gray-600">Session fee:</span>
                                 <span class="font-bold text-brand-1">{{ formatCurrency(selectedProvider.sessionFee)
                                     }}</span>
                             </div>
@@ -191,7 +191,7 @@
                         <button type="submit" :disabled="booking || !formData.date || !formData.time || !formData.type"
                             class="px-8 py-3 text-white bg-brand-1 rounded-lg hover:bg-brand-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
                             <span v-if="booking">Creating Appointment...</span>
-                            <span v-else>Book Appointment</span>
+                            <span v-else>Book appointment</span>
                             <ArrowRightIcon v-if="!booking" class="w-4 h-4" />
                         </button>
                     </div>

@@ -18,11 +18,11 @@
                         <div class="flex items-center space-x-4">
                             <router-link to="/profile/provider" class="btn-secondary">
                                 <UserIcon class="w-5 h-5 mr-2" />
-                                Edit Profile
+                                View profile
                             </router-link>
                             <router-link to="/appointments/provider" class="btn-primary">
                                 <CalendarDaysIcon class="w-5 h-5 mr-2" />
-                                View All Appointments
+                                View all appointments
                             </router-link>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Quick Stats -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Today's Appointments -->
+                <!-- Today's appointments -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center">
                         <div class="p-3 bg-blue-100 rounded-lg">
@@ -41,12 +41,12 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.todayAppointments }}</p>
-                            <p class="text-sm text-gray-600">Today's Sessions</p>
+                            <p class="text-sm text-gray-600">Today's sessions</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- This Month's Earnings -->
+                <!-- This month's earnings -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center">
                         <div class="p-3 bg-green-100 rounded-lg">
@@ -54,12 +54,12 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(stats.monthlyEarnings) }}</p>
-                            <p class="text-sm text-gray-600">This Month</p>
+                            <p class="text-sm text-gray-600">This month</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Total Clients -->
+                <!-- Total clients -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center">
                         <div class="p-3 bg-purple-100 rounded-lg">
@@ -67,12 +67,12 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.totalClients }}</p>
-                            <p class="text-sm text-gray-600">Total Clients</p>
+                            <p class="text-sm text-gray-600">Total clients</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pending Confirmations -->
+                <!-- Pending confirmations -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center">
                         <div class="p-3 bg-orange-100 rounded-lg">
@@ -89,14 +89,14 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-8">
-                    <!-- Pending Confirmations Alert -->
+                    <!-- Pending confirmations Alert -->
                     <div v-if="dashboardSummary?.pendingConfirmations?.length > 0"
                         class="bg-orange-50 border border-orange-200 rounded-xl p-6">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
                                 <ExclamationCircleIcon class="w-6 h-6 text-orange-600 mr-3" />
                                 <div>
-                                    <h3 class="text-lg font-medium text-orange-900">Urgent: Confirmations Required</h3>
+                                    <h3 class="text-lg font-medium text-orange-900">Urgent: confirmations required</h3>
                                     <p class="text-sm text-orange-700 mt-1">
                                         You have {{ dashboardSummary.pendingConfirmations.length }} appointment{{
                                             dashboardSummary.pendingConfirmations.length > 1 ? 's' : '' }} waiting for your
@@ -106,16 +106,16 @@
                             </div>
                             <router-link to="/appointments/provider"
                                 class="px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors">
-                                Review Now
+                                Review now
                             </router-link>
                         </div>
                     </div>
 
-                    <!-- Today's Schedule -->
+                    <!-- Today's schedule -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
-                                <h2 class="text-lg font-semibold text-gray-900">Today's Schedule</h2>
+                                <h2 class="text-lg font-semibold text-gray-900">Today's schedule</h2>
                                 <span class="text-sm text-gray-500">{{ currentDate }}</span>
                             </div>
                         </div>
@@ -134,7 +134,7 @@
                                 </div>
                             </div>
 
-                            <!-- Today's Appointments -->
+                            <!-- Today's appointments -->
                             <div v-else-if="todayAppointments.length > 0" class="space-y-4">
                                 <div v-for="appointment in todayAppointments" :key="appointment._id"
                                     class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -156,7 +156,7 @@
                                             <p class="text-sm text-gray-600">
                                                 {{ formatTime(appointment.dateTime) }}
                                                 <span class="mx-2">•</span>
-                                                {{ appointment.type || 'Video Session' }}
+                                                {{ appointment.type || 'Video session' }}
                                             </p>
                                             <p v-if="appointment.shortDescription" class="text-xs text-gray-500 mt-1">
                                                 {{ appointment.shortDescription }}
@@ -165,7 +165,7 @@
                                     </div>
 
                                     <div class="flex items-center space-x-2">
-                                        <!-- Join Session (if within window) -->
+                                        <!-- Join session (if within window) -->
                                         <button v-if="isWithinJoinWindow(appointment.dateTime)"
                                             @click="joinSession(appointment._id)" class="btn-primary px-3 py-1 text-xs">
                                             <VideoCameraIcon class="w-4 h-4 mr-1" />
@@ -193,16 +193,16 @@
                                 <h3 class="text-lg font-medium text-gray-900 mb-2">No appointments today</h3>
                                 <p class="text-gray-600 mb-4">Enjoy your free time or update your availability</p>
                                 <router-link to="/profile/provider" class="btn-secondary px-4 py-2">
-                                    Update Availability
+                                    Update availability
                                 </router-link>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
+                    <!-- Recent activity -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
-                            <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
+                            <h2 class="text-lg font-semibold text-gray-900">Recent activity</h2>
                         </div>
 
                         <div class="p-6">
@@ -231,14 +231,14 @@
                         </div>
                     </div>
 
-                    <!-- Weekly Calendar Overview -->
+                    <!-- Weekly calendar overview -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
-                                <h2 class="text-lg font-semibold text-gray-900">This Week's Overview</h2>
+                                <h2 class="text-lg font-semibold text-gray-900">This week's overview</h2>
                                 <router-link to="/appointments/provider"
                                     class="text-sm text-brand-1 hover:text-brand-1/80 font-medium">
-                                    View Calendar
+                                    View calendar
                                 </router-link>
                             </div>
                         </div>
@@ -252,14 +252,14 @@
 
                 <!-- Sidebar -->
                 <div class="space-y-6">
-                    <!-- Earnings Summary -->
+                    <!-- Earnings summary -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Earnings Overview</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Earnings overview</h3>
 
                         <div class="space-y-4">
                             <div class="p-4 bg-green-50 rounded-lg">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium text-green-800">This Month</span>
+                                    <span class="text-sm font-medium text-green-800">This month</span>
                                     <span class="text-lg font-bold text-green-900">{{ formatCurrency(earnings.thisMonth)
                                         }}</span>
                                 </div>
@@ -271,16 +271,16 @@
 
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">Last Month</span>
+                                    <span class="text-sm text-gray-600">Last month</span>
                                     <span class="font-medium text-gray-900">{{ formatCurrency(earnings.lastMonth)
                                         }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">Total Earned</span>
+                                    <span class="text-sm text-gray-600">Total earned</span>
                                     <span class="font-medium text-gray-900">{{ formatCurrency(earnings.total) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">Average/Session</span>
+                                    <span class="text-sm text-gray-600">Average per session</span>
                                     <span class="font-medium text-gray-900">{{
                                         formatCurrency(earnings.averagePerSession) }}</span>
                                 </div>
@@ -289,7 +289,7 @@
 
                         <router-link to="/profile/provider/dashboard"
                             class="block text-center text-brand-1 hover:text-brand-1/80 text-sm font-medium mt-4">
-                            View Detailed Analytics
+                            View detailed analytics
                         </router-link>
                     </div>
 
@@ -300,7 +300,7 @@
                         <div class="space-y-4">
                             <!-- Rating -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Average Rating</span>
+                                <span class="text-sm text-gray-600">Average rating</span>
                                 <div class="flex items-center space-x-1">
                                     <div class="flex items-center">
                                         <StarIcon v-for="i in 5" :key="i"
@@ -312,21 +312,21 @@
                                 </div>
                             </div>
 
-                            <!-- Response Time -->
+                            <!-- Response time -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Avg Response Time</span>
+                                <span class="text-sm text-gray-600">Avg response time</span>
                                 <span class="text-sm font-medium text-gray-900">{{ performance.responseTime }}</span>
                             </div>
 
-                            <!-- Completion Rate -->
+                            <!-- Completion rate -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Completion Rate</span>
+                                <span class="text-sm text-gray-600">Completion rate</span>
                                 <span class="text-sm font-medium text-gray-900">{{ performance.completionRate }}%</span>
                             </div>
 
-                            <!-- Profile Views -->
+                            <!-- Profile views -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Profile Views</span>
+                                <span class="text-sm text-gray-600">Profile views</span>
                                 <span class="text-sm font-medium text-gray-900">{{ performance.profileViews }}</span>
                             </div>
                         </div>

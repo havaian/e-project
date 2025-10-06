@@ -2,13 +2,13 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Set Your Availability</h2>
+            <h2 class="text-3xl font-bold text-gray-900">Set your availability</h2>
             <p class="mt-2 text-gray-600">Choose when you're available to meet with clients</p>
         </div>
 
         <!-- Weekly Schedule -->
         <div class="space-y-4">
-            <h3 class="text-lg font-semibold text-gray-900">Weekly Schedule</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Weekly schedule</h3>
 
             <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 <div v-for="(day, index) in modelValue.availability" :key="day.dayOfWeek"
@@ -61,7 +61,7 @@
 
         <!-- Quick Setup Options -->
         <div class="space-y-4">
-            <h3 class="text-lg font-semibold text-gray-900">Quick Setup</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Quick setup</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button @click="setPreset('business')"
                     class="p-4 border border-gray-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-colors text-left">
@@ -71,13 +71,13 @@
 
                 <button @click="setPreset('flexible')"
                     class="p-4 border border-gray-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-colors text-left">
-                    <div class="font-medium text-gray-900">Flexible Hours</div>
+                    <div class="font-medium text-gray-900">Flexible hours</div>
                     <div class="text-sm text-gray-600 mt-1">Mon-Sat, 8:00 AM - 8:00 PM</div>
                 </button>
 
                 <button @click="setPreset('weekend')"
                     class="p-4 border border-gray-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-colors text-left">
-                    <div class="font-medium text-gray-900">Weekends Only</div>
+                    <div class="font-medium text-gray-900">Weekends only</div>
                     <div class="text-sm text-gray-600 mt-1">Sat-Sun, 10:00 AM - 6:00 PM</div>
                 </button>
             </div>
@@ -88,7 +88,7 @@
             <div class="flex items-start space-x-3">
                 <ClockIcon class="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-gray-900">Time Zone</p>
+                    <p class="font-medium text-gray-900">Time zone</p>
                     <p class="text-gray-600 mt-1">
                         All times are in your local time zone ({{ currentTimeZone }}).
                         Clients will see appointment times converted to their local time zone.
@@ -102,7 +102,7 @@
             <div class="flex items-start space-x-3">
                 <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-green-900">Availability Summary</p>
+                    <p class="font-medium text-green-900">Availability summary</p>
                     <p class="text-green-700 mt-1">
                         You're available {{ availableDaysCount }} {{ availableDaysCount === 1 ? 'day' : 'days' }} per
                         week,

@@ -2,11 +2,11 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Education & Experience</h2>
+            <h2 class="text-3xl font-bold text-gray-900">Education & experience</h2>
             <p class="mt-2 text-gray-600">Tell us about your academic background and professional qualifications</p>
         </div>
 
-        <!-- Education Section -->
+        <!-- Education section -->
         <div class="space-y-6">
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Education</h3>
@@ -44,32 +44,32 @@
                 <button @click="addEducation"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
                     <PlusIcon class="w-5 h-5" />
-                    <span>Add Education</span>
+                    <span>Add education</span>
                 </button>
             </div>
 
-            <!-- Certifications Section -->
+            <!-- Certifications section -->
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional Certifications</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional certifications</h3>
                 <div class="space-y-4">
                     <div v-for="(cert, index) in modelValue.certifications" :key="index"
                         class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Certification Name</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Certification name</label>
                                 <input v-model="cert.name" type="text"
                                     placeholder="e.g., Licensed Clinical Social Worker" class="input"
                                     @input="validateForm" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Issuing Organization</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Issuing organization</label>
                                 <input v-model="cert.issuer" type="text"
                                     placeholder="e.g., American Board of Psychology" class="input"
                                     @input="validateForm" />
                             </div>
                             <div class="flex items-end space-x-2">
                                 <div class="flex-1">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Year Obtained</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Year pbtained</label>
                                     <input v-model.number="cert.year" type="number" :min="1950"
                                         :max="new Date().getFullYear()" placeholder="2020" class="input"
                                         @input="validateForm" />
@@ -86,11 +86,11 @@
                 <button @click="addCertification"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
                     <PlusIcon class="w-5 h-5" />
-                    <span>Add Certification</span>
+                    <span>Add certification</span>
                 </button>
             </div>
 
-            <!-- Languages Section -->
+            <!-- Languages section -->
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Languages</h3>
                 <p class="text-sm text-gray-600 mb-4">Select the languages you can communicate in with clients</p>

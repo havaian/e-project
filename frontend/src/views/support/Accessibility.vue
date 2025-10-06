@@ -3,8 +3,8 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <!-- Header -->
             <div class="text-center mb-12">
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">Accessibility Statement</h1>
-                <p class="text-lg text-gray-600">Our Commitment to Digital Inclusion</p>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Accessibility statement</h1>
+                <p class="text-lg text-gray-600">Our commitment to digital inclusion</p>
                 <div class="w-24 h-1 bg-gradient-to-r from-sky-500 to-cyan-500 mx-auto mt-6"></div>
             </div>
 
@@ -12,7 +12,7 @@
             <div class="text-center mb-12">
                 <div class="inline-flex items-center bg-blue-100 rounded-full px-6 py-3">
                     <UserIcon class="w-6 h-6 text-blue-600 mr-3" />
-                    <span class="text-blue-800 font-semibold">WCAG 2.1 AA Compliant</span>
+                    <span class="text-blue-800 font-semibold">WCAG 2.1 AA compliant</span>
                 </div>
             </div>
 
@@ -26,7 +26,7 @@
                     </p>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Our Accessibility Commitment</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Our accessibility commitment</h2>
                         <p class="text-gray-700 mb-6">
                             We believe that access to education and professional consultation services should be
                             available to everyone,
@@ -37,9 +37,9 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility Standards</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility standards</h2>
                         <p class="text-gray-700 mb-4">
-                            Our website and platform aim to conform to the Web Content Accessibility Guidelines (WCAG)
+                            Our website and platform aim to conform to the web content accessibility guidelines (WCAG)
                             2.1 Level AA.
                             These guidelines explain how to make web content more accessible for people with
                             disabilities.
@@ -71,13 +71,13 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility Features</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility features</h2>
 
                         <div class="space-y-6">
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <EyeIcon class="w-5 h-5 text-blue-600 mr-2" />
-                                    Visual Accessibility
+                                    Visual accessibility
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
                                     <li>• High contrast color schemes</li>
@@ -91,7 +91,7 @@
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <MusicalNoteIcon class="w-5 h-5 text-green-600 mr-2" />
-                                    Audio Accessibility
+                                    Audio accessibility
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
                                     <li>• Closed captions for video consultations</li>
@@ -105,7 +105,7 @@
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <AdjustmentsHorizontalIcon class="w-5 h-5 text-purple-600 mr-2" />
-                                    Keyboard and Motor Accessibility
+                                    Keyboard and motor accessibility
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
                                     <li>• Full keyboard navigation support</li>
@@ -119,7 +119,7 @@
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <LightBulbIcon class="w-5 h-5 text-orange-600 mr-2" />
-                                    Cognitive Accessibility
+                                    Cognitive accessibility
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
                                     <li>• Clear and simple language</li>
@@ -133,23 +133,23 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Assistive Technology Support</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Assistive technology support</h2>
                         <p class="text-gray-700 mb-4">Our platform is compatible with a wide range of assistive
                             technologies:</p>
 
                         <div class="grid md:grid-cols-2 gap-6">
                             <div class="bg-gray-50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Screen Readers</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Screen readers</h3>
                                 <ul class="text-gray-700 space-y-1">
-                                    <li>• JAWS (Job Access With Speech)</li>
-                                    <li>• NVDA (NonVisual Desktop Access)</li>
+                                    <li>• JAWS (Job access with speech)</li>
+                                    <li>• NVDA (Non-visual desktop access)</li>
                                     <li>• VoiceOver (macOS/iOS)</li>
                                     <li>• TalkBack (Android)</li>
                                 </ul>
                             </div>
 
                             <div class="bg-gray-50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Other Tools</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Other tools</h3>
                                 <ul class="text-gray-700 space-y-1">
                                     <li>• Voice recognition software</li>
                                     <li>• Switch navigation devices</li>
@@ -161,7 +161,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Testing and Evaluation</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Testing and evaluation</h2>
                         <p class="text-gray-700 mb-6">
                             We regularly test our platform for accessibility compliance through:
                         </p>
@@ -176,7 +176,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Known Issues and Limitations</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Known issues and limitations</h2>
                         <p class="text-gray-700 mb-4">
                             While we strive for full accessibility, we acknowledge some current limitations:
                         </p>
@@ -195,25 +195,15 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility Support</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility support</h2>
                         <p class="text-gray-700 mb-6">
                             If you experience any accessibility barriers while using our platform, we want to help.
                             Our accessibility support team is available to assist you.
                         </p>
-
-                        <div class="bg-blue-50 rounded-lg p-6">
-                            <h3 class="text-lg font-semibold text-blue-900 mb-3">Get Accessibility Support</h3>
-                            <div class="space-y-2 text-blue-800">
-                                <p><strong>Accessibility Coordinator:</strong> Maria Rodriguez</p>
-                                <p><strong>Email:</strong> accessibility@ytech.space</p>
-                                <p><strong>Phone:</strong> {{ supportPhone }} (ext. 102)</p>
-                                <p><strong>Response Time:</strong> Within 24 hours</p>
-                            </div>
-                        </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Feedback and Continuous Improvement</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Feedback and continuous improvement</h2>
                         <p class="text-gray-700 mb-6">
                             We welcome your feedback on the accessibility of our platform. Your input helps us identify
                             areas
@@ -222,7 +212,7 @@
 
                         <div class="grid md:grid-cols-2 gap-6">
                             <div class="border border-gray-200 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">How to Provide Feedback</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">How to provide feedback</h3>
                                 <ul class="text-gray-700 space-y-2">
                                     <li>• Use our accessibility feedback form</li>
                                     <li>• Email our accessibility team</li>
@@ -232,7 +222,7 @@
                             </div>
 
                             <div class="border border-gray-200 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">What to Include</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">What to include</h3>
                                 <ul class="text-gray-700 space-y-2">
                                     <li>• Description of the accessibility barrier</li>
                                     <li>• Your assistive technology details</li>
@@ -244,7 +234,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Training and Awareness</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Training and awareness</h2>
                         <p class="text-gray-700 mb-6">
                             All {{ companyName }} team members receive accessibility training to ensure they understand
                             and can
@@ -260,7 +250,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Legal Compliance</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Legal compliance</h2>
                         <p class="text-gray-700 mb-6">
                             Our accessibility efforts align with various legal requirements and standards, including:
                         </p>
@@ -269,7 +259,7 @@
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Americans with Disabilities Act (ADA)</h4>
+                                    <h4 class="font-semibold text-gray-900">Americans with disabilities act (ADA)</h4>
                                     <p class="text-gray-700 text-sm">Ensuring equal access to public accommodations and
                                         services</p>
                                 </div>
@@ -278,7 +268,7 @@
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Section 508 of the Rehabilitation Act</h4>
+                                    <h4 class="font-semibold text-gray-900">Section 508 of the rehabilitation act</h4>
                                     <p class="text-gray-700 text-sm">Federal accessibility standards for electronic
                                         content</p>
                                 </div>
@@ -287,7 +277,7 @@
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Web Content Accessibility Guidelines (WCAG)
+                                    <h4 class="font-semibold text-gray-900">Web content accessibility guidelines (WCAG)
                                         2.1</h4>
                                     <p class="text-gray-700 text-sm">International standards for web accessibility</p>
                                 </div>
@@ -296,7 +286,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Alternative Formats</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Alternative formats</h2>
                         <p class="text-gray-700 mb-4">
                             We can provide information in alternative formats upon request:
                         </p>
@@ -315,7 +305,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Updates and Maintenance</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Updates and maintenance</h2>
                         <p class="text-gray-700 mb-6">
                             This accessibility statement is reviewed and updated regularly to reflect our current
                             accessibility status.
