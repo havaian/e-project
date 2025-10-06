@@ -746,20 +746,4 @@ class EmailService {
     }
 }
 
-// Helper function to format date/time consistently
-function formatDateTime(dateTime) {
-    if (!dateTime) return 'Date not available';
-
-    const date = new Date(dateTime);
-    return date.toLocaleString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZoneName: 'short'
-    });
-}
-
 module.exports = (notificationService) => new EmailService(notificationService);
