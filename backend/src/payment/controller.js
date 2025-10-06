@@ -23,13 +23,13 @@ exports.createCheckoutSession = async (req, res) => {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        // Check if appointment already has a payment
+        // Check if appointment already has a successful payment
         const existingPayment = await Payment.findOne({
             appointment: appointmentId,
-            status: { $in: ['pending', 'succeeded'] }
+            status: 'succeeded'
         });
 
-        if (existingPayment && existingPayment.status === 'succeeded') {
+        if (existingPayment) {
             return res.status(400).json({
                 message: 'Payment already completed for this appointment',
                 paymentId: existingPayment._id,
@@ -41,88 +41,103 @@ exports.createCheckoutSession = async (req, res) => {
         const amount = appointment.provider.sessionFee;
         const currency = 'uzs';
 
-        // Add validation to ensure amount is a valid number
+        // Validate amount
         if (!amount || isNaN(amount) || amount <= 0) {
-            return res.status(400).json({ 
+            // Handle fallback for missing session fee
+            await exports.handlePaymentFailure(appointmentId, 'Invalid session fee. Provider must have a valid session fee set.');
+            return res.status(400).json({
                 message: 'Invalid session fee. Provider must have a valid session fee set.',
-                debug: {
-                    sessionFee: appointment.provider.sessionFee,
-                    providerId: appointment.provider._id
-                }
+                needsConfiguration: true
             });
         }
 
-        // Format appointment date for display
-        const appointmentDate = new Date(appointment.dateTime).toLocaleString();
-
-        // Create a checkout session with Stripe
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [
-                {
+        try {
+            // Create Stripe checkout session
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [{
                     price_data: {
-                        currency: currency.toLowerCase(),
+                        currency: currency,
                         product_data: {
-                            name: `Educational Session with ${appointment.provider.firstName} ${appointment.provider.lastName}`,
-                            description: `${appointment.provider.specializations} - ${appointmentDate}`
+                            name: `Consultation with ${appointment.provider.firstName} ${appointment.provider.lastName}`,
+                            description: `${appointment.type} session scheduled for ${new Date(appointment.dateTime).toLocaleString()}`
                         },
-                        unit_amount: amount * 100, // Stripe uses smallest currency unit
+                        unit_amount: amount * 100 // Convert to cents
                     },
-                    quantity: 1,
-                },
-            ],
-            metadata: {
-                appointmentId: appointment._id.toString(),
-                clientId: appointment.client._id.toString(),
-                providerId: appointment.provider._id.toString(),
-                appointmentDate: appointment.dateTime.toISOString()
-            },
-            customer_email: appointment.client.email,
-            mode: 'payment',
-            success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.FRONTEND_URL}/payment/cancel?session_id={CHECKOUT_SESSION_ID}`,
-        });
+                    quantity: 1
+                }],
+                mode: 'payment',
+                success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&appointment_id=${appointmentId}`,
+                cancel_url: `${process.env.FRONTEND_URL}/payment/cancel?appointment_id=${appointmentId}`,
+                metadata: {
+                    appointmentId: appointmentId.toString(),
+                    clientId: appointment.client._id.toString(),
+                    providerId: appointment.provider._id.toString()
+                }
+            });
 
-        // Create or update payment record
-        let payment = existingPayment;
+            // Create or update payment record
+            let payment = await Payment.findOne({ appointment: appointmentId });
 
-        if (!payment) {
-            payment = new Payment({
-                appointment: appointment._id,
-                client: appointment.client._id,
-                provider: appointment.provider._id,
+            if (!payment) {
+                payment = new Payment({
+                    appointment: appointmentId,
+                    client: appointment.client._id,
+                    provider: appointment.provider._id,
+                    amount,
+                    currency,
+                    stripeSessionId: session.id,
+                    checkoutUrl: session.url,
+                    status: 'pending'
+                });
+            } else {
+                payment.stripeSessionId = session.id;
+                payment.checkoutUrl = session.url;
+                payment.status = 'pending';
+            }
+
+            await payment.save();
+
+            // Update appointment with payment reference
+            appointment.payment = {
                 amount,
-                currency,
-                stripeSessionId: session.id,
+                status: 'pending',
+                transactionId: payment._id
+            };
+
+            await appointment.save();
+
+            res.status(200).json({
+                paymentId: payment._id,
                 checkoutUrl: session.url,
                 status: 'pending'
             });
-        } else {
-            payment.stripeSessionId = session.id;
-            payment.checkoutUrl = session.url;
+
+        } catch (stripeError) {
+            console.error('Stripe error:', stripeError);
+
+            // Handle Stripe-specific errors with fallback
+            await exports.handlePaymentFailure(appointmentId, `Stripe error: ${stripeError.message}`);
+
+            res.status(500).json({
+                message: 'Payment system temporarily unavailable. Please try again.',
+                error: stripeError.message,
+                fallbackHandled: true
+            });
         }
 
-        await payment.save();
-
-        // Update appointment with payment reference
-        appointment.payment = {
-            amount,
-            status: 'pending',
-            transactionId: payment._id
-        };
-
-        await appointment.save();
-
-        res.status(200).json({
-            paymentId: payment._id,
-            checkoutUrl: session.url,
-            status: 'pending'
-        });
     } catch (error) {
         console.error('Error creating checkout session:', error);
+
+        // Handle general errors
+        if (req.body.appointmentId) {
+            await exports.handlePaymentFailure(req.body.appointmentId, error.message);
+        }
+
         res.status(500).json({
             message: 'Failed to create checkout session',
-            error: error.message
+            error: error.message,
+            fallbackHandled: true
         });
     }
 };
@@ -341,5 +356,166 @@ exports.processRefund = async (paymentId) => {
     } catch (error) {
         console.error(`Error processing refund for payment ${paymentId}:`, error);
         throw error;
+    }
+};
+
+// Handle payment failure fallback
+exports.handlePaymentFailure = async (appointmentId, error) => {
+    try {
+        console.log(`Handling payment failure for appointment ${appointmentId}:`, error);
+
+        // Find appointment with populated data
+        const appointment = await Appointment.findById(appointmentId)
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName email specializations sessionFee');
+
+        if (!appointment) {
+            console.error('Appointment not found for payment failure handling');
+            return false;
+        }
+
+        // Create or update payment record with failed status
+        let payment = await Payment.findOne({ appointment: appointmentId });
+
+        if (!payment) {
+            payment = new Payment({
+                appointment: appointmentId,
+                client: appointment.client._id,
+                provider: appointment.provider._id,
+                amount: appointment.provider.sessionFee,
+                currency: 'uzs',
+                status: 'failed',
+                failureReason: error,
+                createdAt: new Date()
+            });
+        } else {
+            payment.status = 'failed';
+            payment.failureReason = error;
+        }
+
+        await payment.save();
+
+        // Update appointment payment status
+        appointment.payment = {
+            amount: appointment.provider.sessionFee,
+            status: 'failed',
+            transactionId: payment._id
+        };
+        await appointment.save();
+
+        // Create new checkout session for retry
+        const retrySession = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'uzs',
+                    product_data: {
+                        name: `Consultation with ${appointment.provider.firstName} ${appointment.provider.lastName}`,
+                        description: `${appointment.type} session`
+                    },
+                    unit_amount: appointment.provider.sessionFee * 100 // Convert to cents
+                },
+                quantity: 1
+            }],
+            mode: 'payment',
+            success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&appointment_id=${appointmentId}`,
+            cancel_url: `${process.env.FRONTEND_URL}/payment/cancel?appointment_id=${appointmentId}`,
+            metadata: {
+                appointmentId: appointmentId.toString(),
+                clientId: appointment.client._id.toString(),
+                providerId: appointment.provider._id.toString(),
+                isRetry: 'true'
+            }
+        });
+
+        // Update payment with new session
+        payment.stripeSessionId = retrySession.id;
+        payment.checkoutUrl = retrySession.url;
+        payment.status = 'pending';
+        await payment.save();
+
+        // Send payment failure email with retry link
+        await NotificationService.sendPaymentFailureWithRetryEmail(appointment, retrySession.url, error);
+
+        console.log('Payment failure handled successfully, retry link created');
+        return {
+            success: true,
+            retryUrl: retrySession.url,
+            paymentId: payment._id
+        };
+
+    } catch (err) {
+        console.error('Error handling payment failure:', err);
+        return false;
+    }
+};
+
+// Get payment status for appointment page
+exports.getAppointmentPaymentStatus = async (req, res) => {
+    try {
+        const { appointmentId } = req.params;
+
+        // Find appointment
+        const appointment = await Appointment.findById(appointmentId)
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName email');
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+
+        // Verify user access
+        const userId = req.user.id;
+        const isClient = appointment.client._id.toString() === userId;
+        const isProvider = appointment.provider._id.toString() === userId;
+
+        if (!isClient && !isProvider && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        // Find payment record
+        const payment = await Payment.findOne({ appointment: appointmentId });
+
+        let paymentInfo = {
+            hasPayment: !!payment,
+            status: payment?.status || 'no_payment',
+            amount: payment?.amount || appointment.provider?.sessionFee,
+            currency: payment?.currency || 'uzs',
+            needsPayment: false,
+            retryUrl: null
+        };
+
+        // Determine if payment is needed
+        if (!payment || payment.status === 'failed' || payment.status === 'pending') {
+            paymentInfo.needsPayment = true;
+
+            // If there's a failed payment with retry URL, include it
+            if (payment && payment.checkoutUrl && payment.status === 'pending') {
+                paymentInfo.retryUrl = payment.checkoutUrl;
+            } else if (payment && payment.status === 'failed') {
+                // Create new checkout session for failed payment
+                try {
+                    const retryResult = await exports.handlePaymentFailure(appointmentId, 'Previous payment failed');
+                    if (retryResult && retryResult.success) {
+                        paymentInfo.retryUrl = retryResult.retryUrl;
+                    }
+                } catch (error) {
+                    console.error('Error creating retry payment:', error);
+                }
+            }
+        }
+
+        res.status(200).json({
+            appointment: {
+                id: appointment._id,
+                status: appointment.status,
+                dateTime: appointment.dateTime
+            },
+            payment: paymentInfo
+        });
+
+    } catch (error) {
+        console.error('Error getting payment status:', error);
+        res.status(500).json({ message: 'Error retrieving payment status' });
     }
 };

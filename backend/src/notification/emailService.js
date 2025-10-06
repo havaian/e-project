@@ -498,7 +498,7 @@ class EmailService {
 
             await this.notificationService.sendEmail({
                 to: provider.email,
-                subject: `Follow-up Appointment Created - ${process.env.VITE_PROJECT_URL_SHORT}`, 
+                subject: `Follow-up Appointment Created - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #4a90e2;">Follow-up Appointment Created</h2>
@@ -524,6 +524,242 @@ class EmailService {
             return false;
         }
     }
+
+    // Reschedule request notification (to provider)
+    async sendRescheduleRequestNotification(appointment, reason) {
+        try {
+            const { provider, client, dateTime } = appointment;
+            const originalDate = appointment.rescheduleHistory[appointment.rescheduleHistory.length - 1]?.originalDateTime;
+
+            await this.notificationService.sendEmail({
+                to: provider.email,
+                subject: `Reschedule Request - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #f39c12;">Appointment Reschedule Request</h2>
+                <p>Hello ${provider.firstName},</p>
+                
+                <p><strong>${client.firstName} ${client.lastName}</strong> has requested to reschedule their appointment.</p>
+                
+                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">Original Appointment</h3>
+                    <p><strong>Date & Time:</strong> ${formatDateTime(originalDate)}</p>
+                </div>
+
+                <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">Requested New Time</h3>
+                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
+                    ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${process.env.FRONTEND_URL}/appointments/provider" 
+                       style="background-color: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 0 10px;">
+                        Approve Reschedule
+                    </a>
+                    <a href="${process.env.FRONTEND_URL}/appointments/provider" 
+                       style="background-color: #e74c3c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 0 10px;">
+                        Reject Reschedule
+                    </a>
+                </div>
+                
+                <p>Please respond to this request as soon as possible.</p>
+                
+                <hr style="margin: 30px 0;">
+                <p style="color: #666; font-size: 12px;">
+                    You can manage all reschedule requests from your provider dashboard.
+                </p>
+            </div>
+            `
+            });
+
+            console.log('Reschedule request email sent to provider');
+            return true;
+        } catch (error) {
+            console.error('Error sending reschedule request email:', error);
+            return false;
+        }
+    }
+
+    // Reschedule approved notification (to client)
+    async sendRescheduleApprovedNotification(appointment) {
+        try {
+            const { provider, client, dateTime } = appointment;
+
+            await this.notificationService.sendEmail({
+                to: client.email,
+                subject: `Reschedule Approved - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #27ae60;">Reschedule Request Approved!</h2>
+                <p>Hello ${client.firstName},</p>
+                
+                <p>Great news! <strong>${provider.firstName} ${provider.lastName}</strong> has approved your reschedule request.</p>
+                
+                <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">Your New Appointment</h3>
+                    <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
+                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
+                    <p><strong>Type:</strong> ${appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1)} Session</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${process.env.FRONTEND_URL}/appointments/${appointment._id}" 
+                       style="background-color: #4a90e2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        View Appointment Details
+                    </a>
+                </div>
+                
+                <p>Please make sure to be available at the new scheduled time. You'll receive a reminder closer to your appointment.</p>
+                
+                <hr style="margin: 30px 0;">
+                <p style="color: #666; font-size: 12px;">
+                    Note: This was your one allowed reschedule for this appointment. Future changes will require booking a new appointment.
+                </p>
+            </div>
+            `
+            });
+
+            console.log('Reschedule approved email sent to client');
+            return true;
+        } catch (error) {
+            console.error('Error sending reschedule approved email:', error);
+            return false;
+        }
+    }
+
+    // Reschedule rejected notification (to client)
+    async sendRescheduleRejectedNotification(appointment, rejectionReason) {
+        try {
+            const { provider, client, dateTime } = appointment;
+
+            await this.notificationService.sendEmail({
+                to: client.email,
+                subject: `Reschedule Request Declined - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #e74c3c;">Reschedule Request Declined</h2>
+                <p>Hello ${client.firstName},</p>
+                
+                <p>Unfortunately, <strong>${provider.firstName} ${provider.lastName}</strong> was unable to approve your reschedule request.</p>
+                
+                ${rejectionReason ? `
+                <div style="background-color: #fef9e7; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f39c12;">
+                    <h4 style="margin-top: 0; color: #856404;">Reason from Provider:</h4>
+                    <p style="margin-bottom: 0;">${rejectionReason}</p>
+                </div>
+                ` : ''}
+                
+                <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">Your Original Appointment Remains</h3>
+                    <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
+                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
+                    <p><strong>Type:</strong> ${appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1)} Session</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${process.env.FRONTEND_URL}/appointments/${appointment._id}" 
+                       style="background-color: #4a90e2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 0 10px;">
+                        View Appointment
+                    </a>
+                    <a href="${process.env.FRONTEND_URL}/book-appointment" 
+                       style="background-color: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 0 10px;">
+                        Book New Appointment
+                    </a>
+                </div>
+                
+                <p>Your original appointment time is still confirmed. If you need to make changes, please contact the provider directly or book a new appointment.</p>
+                
+                <hr style="margin: 30px 0;">
+                <p style="color: #666; font-size: 12px;">
+                    If you have concerns about this decision, please contact our support team.
+                </p>
+            </div>
+            `
+            });
+
+            console.log('Reschedule rejected email sent to client');
+            return true;
+        } catch (error) {
+            console.error('Error sending reschedule rejected email:', error);
+            return false;
+        }
+    }
+
+    // Payment failure with retry link notification
+    async sendPaymentFailureWithRetryEmail(appointment, retryUrl, error) {
+        try {
+            const { provider, client, dateTime, type } = appointment;
+
+            await this.notificationService.sendEmail({
+                to: client.email,
+                subject: `Payment Issue - Action Required - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #e74c3c;">Payment Issue with Your Appointment</h2>
+                <p>Hello ${client.firstName},</p>
+                
+                <p>We encountered an issue processing your payment for the appointment with <strong>${provider.firstName} ${provider.lastName}</strong>.</p>
+                
+                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">Appointment Details</h3>
+                    <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
+                    <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
+                    <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+                </div>
+
+                <div style="background-color: #fef2f2; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #e74c3c;">
+                    <h4 style="margin-top: 0; color: #991b1b;">What happened?</h4>
+                    <p style="margin-bottom: 0;">Payment could not be processed. Please try again using the link below.</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${retryUrl}" 
+                       style="background-color: #27ae60; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                        Complete Payment Now
+                    </a>
+                </div>
+                
+                <p><strong>Important:</strong> Your appointment is not confirmed until payment is completed. Please complete payment as soon as possible to secure your appointment slot.</p>
+                
+                <div style="background-color: #f0f9ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h4 style="margin-top: 0; color: #1e40af;">Alternative Option</h4>
+                    <p style="margin-bottom: 0;">You can also complete payment by visiting your appointment details page:</p>
+                    <a href="${process.env.FRONTEND_URL}/appointments/${appointment._id}" 
+                       style="color: #1e40af;">View Appointment & Pay</a>
+                </div>
+                
+                <hr style="margin: 30px 0;">
+                <p style="color: #666; font-size: 12px;">
+                    If you continue to have payment issues, please contact our support team at ${process.env.VITE_SUPPORT_EMAIL || 'support@example.com'}.
+                </p>
+            </div>
+            `
+            });
+
+            console.log('Payment failure with retry email sent');
+            return true;
+        } catch (error) {
+            console.error('Error sending payment failure retry email:', error);
+            return false;
+        }
+    }
+}
+
+// Helper function to format date/time consistently
+function formatDateTime(dateTime) {
+    if (!dateTime) return 'Date not available';
+
+    const date = new Date(dateTime);
+    return date.toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZoneName: 'short'
+    });
 }
 
 module.exports = (notificationService) => new EmailService(notificationService);

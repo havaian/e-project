@@ -119,6 +119,36 @@ const appointmentSchema = new Schema({
     providerConfirmationExpires: {
         type: Date
     },
+
+    // Reschedule functionality fields
+    rescheduleCount: {
+        type: Number,
+        default: 0,
+        max: 1 // Only allow one reschedule
+    },
+    rescheduleHistory: [{
+        originalDateTime: {
+            type: Date,
+            required: true
+        },
+        newDateTime: {
+            type: Date,
+            required: true
+        },
+        reason: {
+            type: String,
+            default: ''
+        },
+        rescheduledAt: {
+            type: Date,
+            default: Date.now
+        },
+        rescheduledBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        }
+    }],
     createdAt: {
         type: Date,
         default: Date.now

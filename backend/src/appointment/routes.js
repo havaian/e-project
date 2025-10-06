@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const appointmentController = require('./controller');
-const { authenticateUser, authorizeRoles, ensureOwnership } = require('../auth');
-// Import multer configuration for file uploads
-const upload = require('../utils/multerConfig');
+const { authenticateUser, authorizeRoles } = require('../auth');
+const upload = require('../middleware/upload');
 
 /**
  * @route POST /api/appointments
  * @desc Create a new appointment
- * @access Private (Clients only - uses authenticated user ID)
+ * @access Private (client or admin)
  */
 router.post(
     '/',
@@ -18,52 +17,38 @@ router.post(
 );
 
 /**
- * @route GET /api/appointments/client/:clientId
- * @desc Get all appointments for a client
- * @access Private (Client must be the owner or Admin)
+ * @route GET /api/appointments/client
+ * @desc Get all appointments for the current client
+ * @access Private (client or admin)
  */
 router.get(
-    '/client/:clientId',
+    '/client',
     authenticateUser,
     authorizeRoles(['client', 'admin']),
-    ensureOwnership('clientId'),
     appointmentController.getClientAppointments
 );
 
 /**
- * @route GET /api/appointments/client/:clientId/pending-followups
- * @desc Get pending follow-up appointments for a client
- * @access Private (Client must be the owner or Admin)
+ * @route GET /api/appointments/provider
+ * @desc Get all appointments for the current provider
+ * @access Private (provider or admin)
  */
 router.get(
-    '/client/:clientId/pending-followups',
-    authenticateUser,
-    authorizeRoles(['client', 'admin']),
-    ensureOwnership('clientId'),
-    appointmentController.getPendingFollowUps
-);
-
-/**
- * @route GET /api/appointments/provider/:providerId/stats
- * @desc Get public provider statistics (completed sessions, response rate)
- * @access Public (no authentication required for public provider stats)
- */
-router.get(
-    '/provider/:providerId/stats',
-    appointmentController.getProviderStats
-);
-
-/**
- * @route GET /api/appointments/provider/:providerId
- * @desc Get all appointments for a provider
- * @access Private (Provider must be the owner or Admin)
- */
-router.get(
-    '/provider/:providerId',
+    '/provider',
     authenticateUser,
     authorizeRoles(['provider', 'admin']),
-    ensureOwnership('providerId'),
     appointmentController.getProviderAppointments
+);
+
+/**
+ * @route GET /api/appointments/all
+ * @desc Get all appointments for the current user (minimal data for calendar)
+ * @access Private
+ */
+router.get(
+    '/all',
+    authenticateUser,
+    appointmentController.getAllUserAppointments
 );
 
 /**
@@ -77,16 +62,56 @@ router.get(
     appointmentController.getCalendarAppointments
 );
 
+/**
+ * @route GET /api/appointments/availability/:providerId
+ * @desc Get provider's available time slots for a specific date
+ * @access Private (client or admin)
+ */
 router.get(
-    '/all', 
-    authenticateUser, 
-    appointmentController.getAllUserAppointments
+    '/availability/:providerId',
+    authenticateUser,
+    authorizeRoles(['client', 'admin']),
+    appointmentController.getProviderAvailability
+);
+
+/**
+ * @route GET /api/appointments/provider/:providerId/pending-confirmations
+ * @desc Get appointments pending provider confirmation
+ * @access Private (provider or admin)
+ */
+router.get(
+    '/provider/:providerId/pending-confirmations',
+    authenticateUser,
+    authorizeRoles(['provider', 'admin']),
+    appointmentController.getPendingConfirmations
+);
+
+/**
+ * @route GET /api/appointments/provider/:providerId/stats
+ * @desc Get provider statistics (public)
+ * @access Public
+ */
+router.get(
+    '/provider/:providerId/stats',
+    appointmentController.getProviderStats
+);
+
+/**
+ * @route GET /api/appointments/client/:clientId/pending-follow-ups
+ * @desc Get pending follow-up appointments for a client
+ * @access Private (client or admin)
+ */
+router.get(
+    '/client/:clientId/pending-follow-ups',
+    authenticateUser,
+    authorizeRoles(['client', 'admin']),
+    appointmentController.getPendingFollowUps
 );
 
 /**
  * @route GET /api/appointments/:id
  * @desc Get a specific appointment by ID
- * @access Private (Only involved parties or Admin)
+ * @access Private
  */
 router.get(
     '/:id',
@@ -95,125 +120,104 @@ router.get(
 );
 
 /**
- * @route PATCH /api/appointments/:id/status
- * @desc Update appointment status
- * @access Private (Provider, Client or Admin - only for their own appointments)
+ * @route PATCH /api/appointments/:id
+ * @desc Update appointment (limited fields only)
+ * @access Private
  */
 router.patch(
-    '/:id/status',
+    '/:id',
     authenticateUser,
-    appointmentController.updateAppointmentStatus
+    appointmentController.updateAppointment
+);
+
+/**
+ * @route POST /api/appointments/:id/reschedule
+ * @desc Request to reschedule an appointment (client only)
+ * @access Private (client)
+ */
+router.post(
+    '/:id/reschedule',
+    authenticateUser,
+    authorizeRoles(['client']),
+    appointmentController.rescheduleAppointment
+);
+
+/**
+ * @route POST /api/appointments/:id/confirm-reschedule
+ * @desc Confirm or reject reschedule request (provider only)
+ * @access Private (provider)
+ */
+router.post(
+    '/:id/confirm-reschedule',
+    authenticateUser,
+    authorizeRoles(['provider']),
+    appointmentController.confirmReschedule
 );
 
 /**
  * @route POST /api/appointments/:id/confirm
- * @desc Provider confirms appointment
- * @access Private (Providers only - only for their appointments)
+ * @desc Confirm appointment (provider only)
+ * @access Private (provider or admin)
  */
 router.post(
     '/:id/confirm',
     authenticateUser,
-    authorizeRoles(['provider']),
+    authorizeRoles(['provider', 'admin']),
     appointmentController.confirmAppointment
 );
 
 /**
- * @route PATCH /api/appointments/:id/recommendations
- * @desc Add/update recommendations for an appointment
- * @access Private (Providers only - only for their appointments)
+ * @route POST /api/appointments/:id/recommendations
+ * @desc Add recommendations to appointment
+ * @access Private (provider or admin)
  */
-router.patch(
+router.post(
     '/:id/recommendations',
     authenticateUser,
-    authorizeRoles(['provider']),
+    authorizeRoles(['provider', 'admin']),
     appointmentController.updateRecommendations
 );
 
 /**
- * @route POST /api/appointments/:id/documents
- * @desc Upload documents for an appointment
- * @access Private (Clients and Providers - only for their appointments)
- */
-router.post(
-    '/:id/documents',
-    authenticateUser,
-    appointmentController.uploadDocument
-);
-
-/**
- * @route GET /api/appointments/:id/documents
- * @desc Get documents for an appointment
- * @access Private (Only involved parties or Admin)
- */
-router.get(
-    '/:id/documents',
-    authenticateUser,
-    appointmentController.getDocuments
-);
-
-/**
  * @route POST /api/appointments/:id/follow-up
- * @desc Schedule a follow-up appointment
- * @access Private (Providers only - only for their appointments)
+ * @desc Schedule follow-up appointment
+ * @access Private (provider or admin)
  */
 router.post(
     '/:id/follow-up',
     authenticateUser,
-    authorizeRoles(['provider']),
+    authorizeRoles(['provider', 'admin']),
     appointmentController.scheduleFollowUp
 );
 
 /**
- * @route GET /api/appointments/availability/:providerId
- * @desc Get provider's availability slots
- * @access Public (no authentication needed for viewing availability)
+ * @route POST /api/appointments/:id/session-results
+ * @desc Update session results and recommendations
+ * @access Private (provider or admin)
  */
-router.get(
-    '/availability/:providerId',
-    appointmentController.getProviderAvailability
-);
-
-/**
- * @route GET /api/appointments/pending-confirmation/provider/:providerId
- * @desc Get appointments pending provider confirmation
- * @access Private (Provider must be the owner or Admin)
- */
-router.get(
-    '/pending-confirmation/provider/:providerId',
-    authenticateUser,
-    authorizeRoles(['provider', 'admin']),
-    ensureOwnership('providerId'),
-    appointmentController.getPendingConfirmations
-);
-
-/**
- * @route PATCH /api/appointments/:id/session-results
- * @desc Update session results (summary, recommendations, follow-up)
- * @access Private (Providers only - only for their appointments)
- */
-router.patch(
+router.post(
     '/:id/session-results',
     authenticateUser,
-    authorizeRoles(['provider']),
+    authorizeRoles(['provider', 'admin']),
     appointmentController.updateSessionResults
 );
 
 /**
- * @route POST /api/appointments/:id/documents
- * @desc Upload documents for an appointment
- * @access Private (Clients and Providers - only for their appointments)
+ * @route POST /api/appointments/:id/upload-document
+ * @desc Upload document for appointment
+ * @access Private (client, provider, or admin)
  */
 router.post(
-    '/:id/documents',
+    '/:id/upload-document',
     authenticateUser,
-    upload.single('document'), // Use multer middleware for file upload
+    upload.single('document'),
     appointmentController.uploadDocument
 );
 
 /**
  * @route GET /api/appointments/:id/documents
- * @desc Get documents for an appointment
- * @access Private (Only involved parties or Admin)
+ * @desc Get documents for appointment
+ * @access Private
  */
 router.get(
     '/:id/documents',
@@ -222,14 +226,14 @@ router.get(
 );
 
 /**
- * @route GET /api/appointments/calendar
- * @desc Get appointments in calendar format
+ * @route GET /api/appointments/:id/payment-status
+ * @desc Get payment status for appointment
  * @access Private
  */
 router.get(
-    '/calendar',
+    '/:id/payment-status',
     authenticateUser,
-    appointmentController.getCalendarAppointments
+    appointmentController.getAppointmentPaymentStatus
 );
 
 module.exports = router;

@@ -8,219 +8,269 @@ const emailService = require('../notification/emailService.js')(NotificationServ
 // Create a new appointment
 exports.createAppointment = async (req, res) => {
     try {
+        const { providerId, dateTime, type = 'video', shortDescription = '' } = req.body;
         const clientId = req.user.id;
 
-        const { providerId, dateTime, type, shortDescription, notes, duration = 30 } = req.body;
+        console.log('Creating appointment with data:', { providerId, dateTime, type, shortDescription, clientId });
 
-        // Validate required fields
-        if (!providerId || !dateTime) {
-            return res.status(400).json({ message: 'Provider ID and date/time are required' });
+        // Validation with detailed error messages
+        const validationErrors = [];
+
+        if (!providerId) {
+            validationErrors.push('Provider ID is required');
         }
 
-        // Validate duration is a multiple of 15 minutes
-        if (duration % 15 !== 0 || duration < 15 || duration > 120) {
+        if (!dateTime) {
+            validationErrors.push('Date and time are required');
+        }
+
+        if (!['video', 'phone', 'in-person'].includes(type)) {
+            validationErrors.push('Invalid appointment type. Must be video, phone, or in-person');
+        }
+
+        if (validationErrors.length > 0) {
             return res.status(400).json({
-                message: 'Duration must be a multiple of 15 minutes (15, 30, 45, 60, etc.) and between 15-120 minutes'
-            });
-        }
-        
-        // Prevent booking appointments on past dates
-        const appointmentDate = new Date(dateTime);
-        const now = new Date();
-
-        if (appointmentDate <= now) {
-            return res.status(400).json({ 
-                message: 'Cannot book appointments for past dates or times. Please select a future date and time.' 
+                message: 'Validation failed',
+                errors: validationErrors,
+                fallbackSuggestion: 'Please check all required fields and try again'
             });
         }
 
-        const appointmentData = {
-            providerId,
-            dateTime,
-            type,
-            shortDescription,
-            notes
-        };
+        // Find and validate provider with comprehensive data
+        const provider = await User.findById(providerId)
+            .select('firstName lastName email specializations sessionFee availability isActive profileCompleted');
 
-        const { error } = validateAppointmentInput(appointmentData);
-        if (error) {
-            // Send failure email to client
-            const client = await User.findById(clientId);
-            const provider = await User.findById(providerId);
-
-            await emailService.sendAppointmentBookingFailed({
-                client,
-                provider,
-                dateTime,
-                type,
-                error: error.details[0].message
+        if (!provider) {
+            await logBookingFailure(clientId, providerId, dateTime, 'Provider not found');
+            return res.status(404).json({
+                message: 'Provider not found',
+                fallbackSuggestion: 'Please select a different provider from the list'
             });
-
-            return res.status(400).json({ message: error.details[0].message });
         }
 
-        // Verify that provider exists
-        const provider = await User.findById(providerId);
-        if (!provider || provider.role !== 'provider') {
-            return res.status(404).json({ message: 'Provider not found' });
+        if (!provider.isActive) {
+            await logBookingFailure(clientId, providerId, dateTime, 'Provider is not active');
+            return res.status(400).json({
+                message: 'Provider is not currently available for bookings',
+                fallbackSuggestion: 'Please select an active provider'
+            });
         }
 
-        // Verify that client exists
-        const client = await User.findById(clientId);
-        if (!client || client.role !== 'client') {
-            return res.status(404).json({ message: 'Client not found' });
+        if (!provider.profileCompleted) {
+            await logBookingFailure(clientId, providerId, dateTime, 'Provider profile incomplete');
+            return res.status(400).json({
+                message: 'Provider has not completed their profile setup',
+                fallbackSuggestion: 'Please select a provider with a complete profile'
+            });
         }
 
-        // Check appointment type is valid
-        const validTypes = ['video', 'audio', 'chat'];
-        if (!validTypes.includes(type)) {
-            return res.status(400).json({ message: 'Invalid appointment type. Must be video, audio, or chat' });
+        if (!provider.sessionFee || provider.sessionFee <= 0) {
+            await logBookingFailure(clientId, providerId, dateTime, 'Provider session fee not set');
+            return res.status(400).json({
+                message: 'Provider has not set their session fee',
+                fallbackSuggestion: 'Please contact support or select a different provider'
+            });
         }
 
-        // Calculate end time based on duration
-        const endTime = new Date(appointmentDate.getTime() + duration * 60000);
+        // Find and validate client
+        const client = await User.findById(clientId)
+            .select('firstName lastName email isActive');
 
-        // Check if the provider is available for the entire duration
+        if (!client) {
+            await logBookingFailure(clientId, providerId, dateTime, 'Client not found');
+            return res.status(404).json({
+                message: 'Client account not found',
+                fallbackSuggestion: 'Please log in again'
+            });
+        }
+
+        if (!client.isActive) {
+            await logBookingFailure(clientId, providerId, dateTime, 'Client account inactive');
+            return res.status(403).json({
+                message: 'Your account is inactive. Please contact support.',
+                fallbackSuggestion: 'Contact support to reactivate your account'
+            });
+        }
+
+        // Validate appointment time
+        const appointmentTime = new Date(dateTime);
+        const currentTime = new Date();
+
+        if (appointmentTime <= currentTime) {
+            await logBookingFailure(clientId, providerId, dateTime, 'Appointment time in the past');
+            return res.status(400).json({
+                message: 'Appointment time must be in the future',
+                fallbackSuggestion: 'Please select a future date and time'
+            });
+        }
+
+        // Check provider availability with detailed validation
+        const availabilityCheck = await checkProviderAvailability(provider, appointmentTime);
+        if (!availabilityCheck.available) {
+            await logBookingFailure(clientId, providerId, dateTime, `Provider not available: ${availabilityCheck.reason}`);
+            return res.status(400).json({
+                message: availabilityCheck.reason,
+                fallbackSuggestion: 'Please select a different time slot or check provider availability'
+            });
+        }
+
+        // Check for conflicting appointments
         const conflictingAppointment = await Appointment.findOne({
             provider: providerId,
-            $or: [
-                // Case 1: New appointment starts during an existing appointment
-                {
-                    dateTime: { $lte: appointmentDate },
-                    endTime: { $gt: appointmentDate }
-                },
-                // Case 2: New appointment ends during an existing appointment
-                {
-                    dateTime: { $lt: endTime },
-                    endTime: { $gte: endTime }
-                },
-                // Case 3: New appointment completely contains an existing appointment
-                {
-                    dateTime: { $gte: appointmentDate },
-                    endTime: { $lte: endTime }
-                }
-            ],
-            status: 'scheduled'
+            dateTime: {
+                $gte: new Date(appointmentTime.getTime() - 30 * 60 * 1000), // 30 min before
+                $lt: new Date(appointmentTime.getTime() + 30 * 60 * 1000)   // 30 min after
+            },
+            status: { $in: ['scheduled', 'pending-provider-confirmation', 'pending-payment'] }
         });
 
         if (conflictingAppointment) {
-            // Send failure email to client
-            await emailService.sendAppointmentBookingFailed({
-                client,
-                provider,
-                dateTime,
-                type,
-                error: 'Provider is not available at this time'
+            await logBookingFailure(clientId, providerId, dateTime, 'Time slot already booked');
+            return res.status(400).json({
+                message: 'This time slot is no longer available',
+                fallbackSuggestion: 'Please refresh the page and select a different time'
             });
-
-            return res.status(409).json({ message: 'Provider is not available at this time' });
         }
 
-        // Check if provider's working hours allow this appointment
-        const dayOfWeek = appointmentDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
-        
-        // Convert JavaScript day (0=Sunday) to your backend format
-        // Your backend uses: Monday=1, Tuesday=2, ..., Sunday=7
-        const backendDayIndex = dayOfWeek === 0 ? 7 : dayOfWeek;
-
-        console.log(`Appointment date: ${appointmentDate.toISOString()}`);
-        console.log(`JavaScript day of week: ${dayOfWeek} (0=Sunday, 6=Saturday)`);
-        console.log(`Backend day index: ${backendDayIndex} (1=Monday, 7=Sunday)`);
-
-        const providerAvailability = provider.availability.find(a => a.dayOfWeek === backendDayIndex);
-
-        if (!providerAvailability || !providerAvailability.isAvailable) {
-            return res.status(400).json({ message: 'Provider is not available on this day' });
-        }
-
-        // Check if appointment falls within provider's working hours
-        // Get appointment time in local time (assuming UTC+5 timezone)
-        const appointmentHour = appointmentDate.getHours();
-        const appointmentMinute = appointmentDate.getMinutes();
-        const appointmentTimeMinutes = appointmentHour * 60 + appointmentMinute;
-
-        const endHour = endTime.getHours();
-        const endMinute = endTime.getMinutes();
-        const appointmentEndTimeMinutes = endHour * 60 + endMinute;
-
-        console.log(`Appointment time: ${appointmentHour}:${appointmentMinute} (${appointmentTimeMinutes} minutes)`);
-        console.log(`Appointment end time: ${endHour}:${endMinute} (${appointmentEndTimeMinutes} minutes)`);
-
-        let isWithinWorkingHours = false;
-
-        // Check each working time slot for the day
-        if (Array.isArray(providerAvailability.timeSlots) && providerAvailability.timeSlots.length > 0) {
-            console.log('Checking time slots:', providerAvailability.timeSlots);
-            
-            for (const slot of providerAvailability.timeSlots) {
-                const [startHour, startMinute] = slot.startTime.split(':').map(Number);
-                const [endHour, endMinute] = slot.endTime.split(':').map(Number);
-
-                const slotStartMinutes = startHour * 60 + startMinute;
-                const slotEndMinutes = endHour * 60 + endMinute;
-
-                console.log(`Checking slot: ${slot.startTime} - ${slot.endTime} (${slotStartMinutes} - ${slotEndMinutes} minutes)`);
-
-                // Check if appointment falls within this slot
-                if (appointmentTimeMinutes >= slotStartMinutes && appointmentEndTimeMinutes <= slotEndMinutes) {
-                    console.log('✅ Appointment fits within time slot');
-                    isWithinWorkingHours = true;
-                    break;
-                }
-            }
-        } else if (providerAvailability.startTime && providerAvailability.endTime) {
-            // Fallback to the old format if timeSlots is not available
-            console.log('Using fallback format:', providerAvailability.startTime, '-', providerAvailability.endTime);
-            
-            const [startHour, startMinute] = providerAvailability.startTime.split(':').map(Number);
-            const [endHour, endMinute] = providerAvailability.endTime.split(':').map(Number);
-
-            const workingStartMinutes = startHour * 60 + startMinute;
-            const workingEndMinutes = endHour * 60 + endMinute;
-
-            console.log(`Working hours: ${workingStartMinutes} - ${workingEndMinutes} minutes`);
-
-            if (appointmentTimeMinutes >= workingStartMinutes && appointmentEndTimeMinutes <= workingEndMinutes) {
-                console.log('✅ Appointment fits within working hours');
-                isWithinWorkingHours = true;
-            }
-        }
-
-        if (!isWithinWorkingHours) {
-            console.log('❌ Appointment is outside provider\'s working hours');
-            return res.status(400).json({ message: 'Appointment time is outside provider\'s working hours' });
-        }
-
-        // Create new appointment with pending-provider-confirmation status
-        const appointment = new Appointment({
+        // Create appointment with complete data and fallback values
+        const appointmentData = {
             client: clientId,
             provider: providerId,
-            dateTime: appointmentDate,
-            endTime: endTime,
-            duration: duration,
-            type,
-            shortDescription,
-            notes: notes || '',
-            status: 'pending-provider-confirmation',
-            providerConfirmationExpires: calculateProviderConfirmationDeadline(provider, appointmentDate)
-        });
+            dateTime: appointmentTime,
+            type: type,
+            shortDescription: shortDescription || `${type} consultation`,
+            status: 'pending-payment',
+            payment: {
+                amount: provider.sessionFee,
+                status: 'pending',
+                transactionId: null
+            },
+            createdAt: new Date(),
+            rescheduleCount: 0,
+            rescheduleHistory: [],
+            // Add fallback data in case of partial creation
+            fallbackData: {
+                clientName: `${client.firstName || 'Unknown'} ${client.lastName || 'Client'}`,
+                providerName: `${provider.firstName || 'Unknown'} ${provider.lastName || 'Provider'}`,
+                clientEmail: client.email,
+                providerEmail: provider.email,
+                sessionFee: provider.sessionFee,
+                creationAttempt: new Date()
+            }
+        };
 
-        await appointment.save();
+        console.log('Creating appointment with data:', appointmentData);
 
-        // Send confirmation emails
-        await emailService.sendAppointmentBookedEmails({
-            ...appointment.toObject(),
-            client,
-            provider
-        });
+        // Create appointment with transaction safety
+        let appointment;
+        try {
+            appointment = new Appointment(appointmentData);
+            await appointment.save();
+            console.log('Appointment created successfully:', appointment._id);
+        } catch (createError) {
+            console.error('Error creating appointment:', createError);
+
+            // Attempt to create with minimal required data
+            try {
+                const minimalAppointment = new Appointment({
+                    client: clientId,
+                    provider: providerId,
+                    dateTime: appointmentTime,
+                    type: 'video', // default fallback
+                    status: 'pending-payment',
+                    payment: {
+                        amount: provider.sessionFee || 50000, // fallback amount
+                        status: 'pending'
+                    },
+                    shortDescription: 'Consultation booking (auto-generated)',
+                    createdAt: new Date()
+                });
+
+                appointment = await minimalAppointment.save();
+                console.log('Minimal appointment created as fallback:', appointment._id);
+
+                // Log the fallback creation
+                await logBookingFallback(appointment._id, createError.message, appointmentData);
+
+            } catch (fallbackError) {
+                console.error('Fallback appointment creation also failed:', fallbackError);
+                await logBookingFailure(clientId, providerId, dateTime, `Creation failed: ${createError.message}, Fallback failed: ${fallbackError.message}`);
+
+                return res.status(500).json({
+                    message: 'Unable to create appointment. Please try again.',
+                    error: 'BOOKING_CREATION_FAILED',
+                    fallbackSuggestion: 'Please refresh the page and try booking again, or contact support if the issue persists',
+                    supportEmail: process.env.VITE_SUPPORT_EMAIL || 'support@example.com'
+                });
+            }
+        }
+
+        // Populate appointment data for response
+        await appointment.populate([
+            { path: 'client', select: 'firstName lastName email' },
+            { path: 'provider', select: 'firstName lastName email specializations sessionFee' }
+        ]);
+
+        // Send notifications with error handling
+        try {
+            await NotificationService.sendAppointmentBookingNotification(appointment);
+        } catch (notificationError) {
+            console.error('Failed to send booking notification:', notificationError);
+            // Don't fail the request for notification errors
+        }
+
+        // Set confirmation deadline
+        try {
+            const confirmationDeadline = calculateProviderConfirmationDeadline(provider, appointmentTime);
+            appointment.confirmationDeadline = confirmationDeadline;
+            await appointment.save();
+        } catch (deadlineError) {
+            console.error('Failed to set confirmation deadline:', deadlineError);
+            // Continue without deadline
+        }
 
         res.status(201).json({
-            message: 'Appointment created successfully, awaiting provider confirmation',
-            appointment
+            message: 'Appointment created successfully',
+            appointment: {
+                id: appointment._id,
+                dateTime: appointment.dateTime,
+                type: appointment.type,
+                status: appointment.status,
+                provider: {
+                    id: appointment.provider._id,
+                    name: `${appointment.provider.firstName} ${appointment.provider.lastName}`,
+                    specializations: appointment.provider.specializations
+                },
+                payment: {
+                    amount: appointment.payment.amount,
+                    status: appointment.payment.status,
+                    required: true
+                },
+                nextSteps: [
+                    'Complete payment to confirm your appointment',
+                    'You will receive a confirmation email after payment',
+                    'Provider will confirm availability within 24 hours'
+                ]
+            }
         });
+
     } catch (error) {
-        console.error('Error creating appointment:', error);
-        res.status(500).json({ message: 'An error occurred while creating the appointment' });
+        console.error('Unexpected error creating appointment:', error);
+
+        // Log the error with all available context
+        await logBookingFailure(
+            req.user?.id || 'unknown',
+            req.body?.providerId || 'unknown',
+            req.body?.dateTime || 'unknown',
+            `Unexpected error: ${error.message}`
+        );
+
+        res.status(500).json({
+            message: 'An unexpected error occurred while creating your appointment',
+            error: 'UNEXPECTED_ERROR',
+            fallbackSuggestion: 'Please try again in a few minutes, or contact support if the issue persists',
+            supportEmail: process.env.VITE_SUPPORT_EMAIL || 'support@example.com'
+        });
     }
 };
 
@@ -259,6 +309,104 @@ function calculateProviderConfirmationDeadline(provider, appointmentDate) {
     }
 
     return deadline;
+}
+
+// Helper function to check provider availability
+async function checkProviderAvailability(provider, appointmentTime) {
+    try {
+        const dayOfWeek = appointmentTime.getUTCDay();
+        const dayIndex = dayOfWeek === 0 ? 7 : dayOfWeek;
+        
+        const dayAvailability = provider.availability?.find(a => a.dayOfWeek === dayIndex);
+        
+        if (!dayAvailability || !dayAvailability.isAvailable) {
+            return { 
+                available: false, 
+                reason: 'Provider is not available on this day' 
+            };
+        }
+
+        // Check time slots if available
+        if (Array.isArray(dayAvailability.timeSlots) && dayAvailability.timeSlots.length > 0) {
+            const appointmentHour = appointmentTime.getUTCHours();
+            const appointmentMinute = appointmentTime.getUTCMinutes();
+            const appointmentMinutes = appointmentHour * 60 + appointmentMinute;
+
+            for (const slot of dayAvailability.timeSlots) {
+                const [startHour, startMinute] = slot.startTime.split(':').map(Number);
+                const [endHour, endMinute] = slot.endTime.split(':').map(Number);
+                
+                const slotStartMinutes = startHour * 60 + startMinute;
+                const slotEndMinutes = endHour * 60 + endMinute;
+
+                if (appointmentMinutes >= slotStartMinutes && appointmentMinutes < slotEndMinutes) {
+                    return { available: true };
+                }
+            }
+            
+            return { 
+                available: false, 
+                reason: 'Appointment time is outside provider working hours' 
+            };
+        }
+
+        return { available: true };
+    } catch (error) {
+        console.error('Error checking provider availability:', error);
+        return { 
+            available: false, 
+            reason: 'Unable to verify provider availability' 
+        };
+    }
+}
+
+// Helper function to log booking failures
+async function logBookingFailure(clientId, providerId, dateTime, reason) {
+    try {
+        // You can implement this to log to database, file, or external service
+        console.error('BOOKING_FAILURE_LOG:', {
+            clientId,
+            providerId,
+            dateTime,
+            reason,
+            timestamp: new Date()
+        });
+
+        // Optional: Create a BookingFailureLog model and save to database
+        // const BookingFailureLog = require('./BookingFailureLog');
+        // await BookingFailureLog.create({
+        //     clientId,
+        //     providerId,
+        //     dateTime,
+        //     reason,
+        //     timestamp: new Date()
+        // });
+    } catch (error) {
+        console.error('Failed to log booking failure:', error);
+    }
+}
+
+// Helper function to log fallback bookings
+async function logBookingFallback(appointmentId, originalError, originalData) {
+    try {
+        console.warn('BOOKING_FALLBACK_LOG:', {
+            appointmentId,
+            originalError,
+            originalData,
+            timestamp: new Date()
+        });
+
+        // Optional: Save to database for monitoring
+        // const BookingFallbackLog = require('./BookingFallbackLog');
+        // await BookingFallbackLog.create({
+        //     appointmentId,
+        //     originalError,
+        //     originalData,
+        //     timestamp: new Date()
+        // });
+    } catch (error) {
+        console.error('Failed to log booking fallback:', error);
+    }
 }
 
 // Get all appointments for a client
@@ -428,73 +576,54 @@ exports.confirmAppointment = async (req, res) => {
 };
 
 // Update appointment status
-exports.updateAppointmentStatus = async (req, res) => {
+exports.updateAppointment = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status, sessionSummary, cancellationReason } = req.body;
+        const userId = req.user.id;
+        const { dateTime, type, shortDescription } = req.body;
 
+        // Find appointment
         const appointment = await Appointment.findById(id)
-            .populate('client')
-            .populate('provider');
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName email');
 
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        // Validate status transition
-        const validTransitions = {
-            'pending-provider-confirmation': ['scheduled', 'canceled'],
-            'pending-payment': ['scheduled', 'canceled'],
-            'scheduled': ['completed', 'canceled', 'no-show'],
-            'completed': [],
-            'canceled': [],
-            'no-show': []
-        };
+        // Verify user is involved in the appointment
+        const isClient = appointment.client._id.toString() === userId;
+        const isProvider = appointment.provider._id.toString() === userId;
 
-        if (!validTransitions[appointment.status].includes(status)) {
+        if (!isClient && !isProvider && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'You are not authorized to update this appointment' });
+        }
+
+        // For clients: Only allow rescheduling through the reschedule endpoint
+        if (isClient && dateTime && dateTime !== appointment.dateTime.toISOString()) {
             return res.status(400).json({
-                message: `Cannot change status from ${appointment.status} to ${status}`
+                message: 'Please use the reschedule feature to change appointment date/time'
             });
         }
 
-        const oldStatus = appointment.status;
-        appointment.status = status;
-
-        if (status === 'completed' && sessionSummary) {
-            appointment.sessionSummary = sessionSummary;
+        // Update allowed fields only
+        if (type && ['video', 'phone', 'in-person'].includes(type)) {
+            appointment.type = type;
         }
 
-        if (status === 'canceled' && cancellationReason) {
-            appointment.cancellationReason = cancellationReason;
+        if (shortDescription !== undefined) {
+            appointment.shortDescription = shortDescription;
         }
 
         await appointment.save();
 
-        // Automatic payment refund for canceled appointments
-        if (status === 'canceled' && appointment.payment && appointment.payment.transactionId) {
-            const payment = await Payment.findById(appointment.payment.transactionId);
-            if (payment && payment.status !== 'refunded') {
-                payment.status = 'refunded';
-                await payment.save();
-
-                // Add refund notification logic here
-                await NotificationService.sendPaymentRefundNotification(payment);
-            }
-        }
-
-        // Send cancellation emails if appointment was canceled
-        if (status === 'canceled' && oldStatus === 'scheduled') {
-            const cancelledBy = req.user.role === 'provider' ? 'provider' : 'client';
-            await emailService.sendAppointmentCancelledEmails(appointment, cancelledBy);
-        }
-
         res.status(200).json({
-            message: 'Appointment status updated successfully',
+            message: 'Appointment updated successfully',
             appointment
         });
     } catch (error) {
-        console.error('Error updating appointment status:', error);
-        res.status(500).json({ message: 'An error occurred while updating appointment status' });
+        console.error('Error updating appointment:', error);
+        res.status(500).json({ message: 'An error occurred while updating the appointment' });
     }
 };
 
@@ -674,7 +803,7 @@ exports.getProviderAvailability = async (req, res) => {
 
         // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
         const dayOfWeek = requestedDate.getUTCDay();
-        
+
         // Convert to backend's day indexing: Monday=1, Tuesday=2, ..., Sunday=7
         const dayIndex = dayOfWeek === 0 ? 7 : dayOfWeek;
 
@@ -781,10 +910,10 @@ exports.getPendingConfirmations = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching pending confirmations:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
             message: 'An error occurred while fetching pending confirmations',
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -792,7 +921,7 @@ exports.getPendingConfirmations = async (req, res) => {
 // Helper function to generate time slots
 async function generateTimeSlots(date, startTimeStr, endTimeStr, providerId) {
     console.log(`Generating slots for date: ${date}, start: ${startTimeStr}, end: ${endTimeStr}`);
-    
+
     // Parse start and end times
     const [startHour, startMinute] = startTimeStr.split(':').map(Number);
     const [endHour, endMinute] = endTimeStr.split(':').map(Number);
@@ -834,7 +963,7 @@ async function generateTimeSlots(date, startTimeStr, endTimeStr, providerId) {
     // Remove slots that already have appointments
     const startOfDay = new Date(date);
     startOfDay.setUTCHours(0, 0, 0, 0);
-    
+
     const endOfDay = new Date(date);
     endOfDay.setUTCHours(23, 59, 59, 999);
 
@@ -853,7 +982,7 @@ async function generateTimeSlots(date, startTimeStr, endTimeStr, providerId) {
     const futureSlots = slots.filter(slot => {
         // Check if slot is in the future
         const isPastSlot = slot.start <= nowUTC;
-        
+
         if (isPastSlot) {
             console.log(`Filtering out past slot: ${slot.start.toISOString()}`);
             return false;
@@ -1235,9 +1364,9 @@ exports.getProviderStats = async (req, res) => {
         // Validate provider exists and is a provider
         const provider = await User.findById(providerId);
         if (!provider || provider.role !== 'provider') {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'Provider not found' 
+                message: 'Provider not found'
             });
         }
 
@@ -1254,15 +1383,15 @@ exports.getProviderStats = async (req, res) => {
 
         if (totalAppointments > 0) {
             // Count appointments that were NOT canceled by the provider
-            const respondedAppointments = appointments.filter(apt => 
+            const respondedAppointments = appointments.filter(apt =>
                 apt.status !== 'canceled' || apt.canceledBy !== 'provider'
             ).length;
-            
+
             responseRate = Math.round((respondedAppointments / totalAppointments) * 100);
-            
+
             // Ensure response rate is within reasonable bounds (0-100)
             responseRate = Math.max(0, Math.min(100, responseRate));
-            
+
             // If no data to calculate from, keep default
             if (totalAppointments < 5) {
                 responseRate = 95; // Keep default for new providers
@@ -1277,7 +1406,7 @@ exports.getProviderStats = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching provider stats:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
             message: 'An error occurred while fetching provider statistics',
             completedAppointments: 0,
@@ -1293,7 +1422,7 @@ exports.getAllUserAppointments = async (req, res) => {
         const userRole = req.user.role;
 
         let query = {};
-        
+
         // Build query based on user role
         if (userRole === 'client') {
             query.client = userId;
@@ -1341,5 +1470,194 @@ exports.getAllUserAppointments = async (req, res) => {
             success: false,
             message: 'Failed to fetch appointments'
         });
+    }
+};
+
+// Handle appointment rescheduling
+exports.rescheduleAppointment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { newDateTime, reason } = req.body;
+        const userId = req.user.id;
+
+        if (!newDateTime) {
+            return res.status(400).json({ message: 'New date and time are required' });
+        }
+
+        // Find appointment
+        const appointment = await Appointment.findById(id)
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName email');
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+
+        // Verify user is the client of this appointment
+        if (appointment.client._id.toString() !== userId) {
+            return res.status(403).json({ message: 'You are not authorized to reschedule this appointment' });
+        }
+
+        // Check if appointment can be rescheduled
+        if (appointment.status !== 'scheduled') {
+            return res.status(400).json({
+                message: 'Only scheduled appointments can be rescheduled'
+            });
+        }
+
+        // Check if appointment has already been rescheduled
+        if (appointment.rescheduleCount >= 1) {
+            return res.status(400).json({
+                message: 'This appointment has already been rescheduled. Only one reschedule is allowed.'
+            });
+        }
+
+        // Check if reschedule is within 12 hours of appointment
+        const appointmentTime = new Date(appointment.dateTime);
+        const currentTime = new Date();
+        const twelveHoursBeforeAppointment = new Date(appointmentTime.getTime() - (12 * 60 * 60 * 1000));
+
+        if (currentTime > twelveHoursBeforeAppointment) {
+            return res.status(400).json({
+                message: 'Cannot reschedule appointment less than 12 hours before the scheduled time'
+            });
+        }
+
+        // Validate new date/time is in the future
+        const newAppointmentTime = new Date(newDateTime);
+        if (newAppointmentTime <= currentTime) {
+            return res.status(400).json({ message: 'New appointment time must be in the future' });
+        }
+
+        // Check provider availability for new time slot
+        const providerId = appointment.provider._id;
+        const requestedDate = newAppointmentTime.toISOString().split('T')[0];
+
+        // Get provider availability
+        const provider = await User.findById(providerId);
+        if (!provider) {
+            return res.status(404).json({ message: 'Provider not found' });
+        }
+
+        // Check if provider is available on the requested day and time
+        const dayOfWeek = newAppointmentTime.getUTCDay();
+        const dayIndex = dayOfWeek === 0 ? 7 : dayOfWeek;
+
+        const dayAvailability = provider.availability.find(a => a.dayOfWeek === dayIndex);
+        if (!dayAvailability || !dayAvailability.isAvailable) {
+            return res.status(400).json({
+                message: 'Provider is not available on the requested day'
+            });
+        }
+
+        // Check if there's a conflicting appointment
+        const conflictingAppointment = await Appointment.findOne({
+            provider: providerId,
+            dateTime: {
+                $gte: new Date(newAppointmentTime.getTime() - 30 * 60 * 1000), // 30 min before
+                $lt: new Date(newAppointmentTime.getTime() + 30 * 60 * 1000)   // 30 min after
+            },
+            status: { $in: ['scheduled', 'pending-provider-confirmation'] },
+            _id: { $ne: id } // Exclude current appointment
+        });
+
+        if (conflictingAppointment) {
+            return res.status(400).json({
+                message: 'Provider is not available at the requested time'
+            });
+        }
+
+        // Store original appointment details for audit
+        const originalDateTime = appointment.dateTime;
+
+        // Update appointment
+        appointment.dateTime = newAppointmentTime;
+        appointment.status = 'pending-provider-confirmation'; // Requires provider confirmation
+        appointment.rescheduleCount = (appointment.rescheduleCount || 0) + 1;
+        appointment.rescheduleHistory = appointment.rescheduleHistory || [];
+        appointment.rescheduleHistory.push({
+            originalDateTime,
+            newDateTime: newAppointmentTime,
+            reason: reason || 'Client requested reschedule',
+            rescheduledAt: new Date(),
+            rescheduledBy: userId
+        });
+
+        await appointment.save();
+
+        // Send notifications
+        await NotificationService.sendRescheduleRequestNotification(appointment, reason);
+
+        res.status(200).json({
+            message: 'Reschedule request sent. Waiting for provider confirmation.',
+            appointment: {
+                id: appointment._id,
+                dateTime: appointment.dateTime,
+                status: appointment.status,
+                rescheduleCount: appointment.rescheduleCount
+            }
+        });
+    } catch (error) {
+        console.error('Error rescheduling appointment:', error);
+        res.status(500).json({ message: 'An error occurred while rescheduling the appointment' });
+    }
+};
+
+// Provider to confirm reschedule
+exports.confirmReschedule = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { approved, reason } = req.body;
+        const providerId = req.user.id;
+
+        // Find appointment
+        const appointment = await Appointment.findById(id)
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName email');
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+
+        // Verify user is the provider
+        if (appointment.provider._id.toString() !== providerId) {
+            return res.status(403).json({ message: 'You are not authorized to confirm this reschedule' });
+        }
+
+        // Check if appointment is pending reschedule confirmation
+        if (appointment.status !== 'pending-provider-confirmation') {
+            return res.status(400).json({
+                message: 'This appointment is not pending reschedule confirmation'
+            });
+        }
+
+        if (approved) {
+            // Approve reschedule
+            appointment.status = 'scheduled';
+
+            // Send confirmation to client
+            await NotificationService.sendRescheduleApprovedNotification(appointment);
+        } else {
+            // Reject reschedule - revert to original time if available in history
+            const lastReschedule = appointment.rescheduleHistory[appointment.rescheduleHistory.length - 1];
+            if (lastReschedule) {
+                appointment.dateTime = lastReschedule.originalDateTime;
+                appointment.rescheduleCount = Math.max(0, appointment.rescheduleCount - 1);
+            }
+            appointment.status = 'scheduled';
+
+            // Send rejection notification
+            await NotificationService.sendRescheduleRejectedNotification(appointment, reason);
+        }
+
+        await appointment.save();
+
+        res.status(200).json({
+            message: approved ? 'Reschedule approved successfully' : 'Reschedule rejected',
+            appointment
+        });
+    } catch (error) {
+        console.error('Error confirming reschedule:', error);
+        res.status(500).json({ message: 'An error occurred while processing the reschedule request' });
     }
 };
