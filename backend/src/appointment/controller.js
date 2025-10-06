@@ -1661,3 +1661,64 @@ exports.confirmReschedule = async (req, res) => {
         res.status(500).json({ message: 'An error occurred while processing the reschedule request' });
     }
 };
+
+// Get payment status for appointment
+exports.getAppointmentPaymentStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find appointment
+        const appointment = await Appointment.findById(id)
+            .populate('client', 'firstName lastName email')
+            .populate('provider', 'firstName lastName email sessionFee');
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+
+        // Verify user access
+        const userId = req.user.id;
+        const isClient = appointment.client._id.toString() === userId;
+        const isProvider = appointment.provider._id.toString() === userId;
+
+        if (!isClient && !isProvider && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        // Find payment record
+        const Payment = require('../payment/model');
+        const payment = await Payment.findOne({ appointment: id });
+
+        let paymentInfo = {
+            hasPayment: !!payment,
+            status: payment?.status || 'no_payment',
+            amount: payment?.amount || appointment.provider?.sessionFee,
+            currency: payment?.currency || 'uzs',
+            needsPayment: false,
+            retryUrl: null
+        };
+
+        // Determine if payment is needed
+        if (!payment || payment.status === 'failed' || payment.status === 'pending') {
+            paymentInfo.needsPayment = true;
+
+            // If there's a failed payment with retry URL, include it
+            if (payment && payment.checkoutUrl && payment.status === 'pending') {
+                paymentInfo.retryUrl = payment.checkoutUrl;
+            }
+        }
+
+        res.status(200).json({
+            appointment: {
+                id: appointment._id,
+                status: appointment.status,
+                dateTime: appointment.dateTime
+            },
+            payment: paymentInfo
+        });
+
+    } catch (error) {
+        console.error('Error getting payment status:', error);
+        res.status(500).json({ message: 'Error retrieving payment status' });
+    }
+};
