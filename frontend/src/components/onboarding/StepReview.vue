@@ -2,7 +2,7 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Review Your Profile</h2>
+            <h2 class="text-3xl font-bold text-gray-900">Review Your profile</h2>
             <p class="mt-2 text-gray-600">Please review all information before completing your setup</p>
         </div>
 
@@ -81,10 +81,10 @@
                 </div>
             </div>
 
-            <!-- Session Settings -->
+            <!-- Session settings -->
             <div class="bg-white rounded-xl border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Session Settings</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">Session settings</h3>
                     <button @click="$emit('editStep', 3)" class="text-sky-600 hover:text-sky-700 text-sm font-medium">
                         Edit
                     </button>
@@ -92,12 +92,12 @@
 
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Session Duration</span>
+                        <span class="text-sm text-gray-600">Session duration</span>
                         <span class="font-medium text-gray-900">{{ modelValue.sessionDuration }} minutes</span>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Session Fee</span>
+                        <span class="text-sm text-gray-600">Session fee</span>
                         <span class="font-medium text-gray-900">{{ formatCurrency(modelValue.sessionFee) }}</span>
                     </div>
 
@@ -134,13 +134,13 @@
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Years of Experience</span>
+                        <span class="text-sm text-gray-600">Years of experience</span>
                         <span class="font-medium text-gray-900">{{ modelValue.experience }} {{ modelValue.experience ===
                             1 ? 'year' : 'years' }}</span>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">License Number</span>
+                        <span class="text-sm text-gray-600">License number</span>
                         <span class="font-medium text-gray-900">{{ modelValue.licenseNumber }}</span>
                     </div>
 
@@ -152,7 +152,7 @@
             </div>
         </div>
 
-        <!-- Profile Completion Status -->
+        <!-- Profile Completion status -->
         <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
             <div class="flex items-center space-x-4">
                 <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
@@ -201,9 +201,9 @@
             <div class="flex items-start space-x-3">
                 <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-green-900">Ready to Complete Setup!</p>
+                    <p class="font-medium text-green-900">Ready to complete setup!</p>
                     <p class="text-green-700 mt-1">
-                        Your profile is complete and ready to be published. Click "Complete Setup" to finish the
+                        Your profile is complete and ready to be published. Click "Complete setup" to finish the
                         onboarding process.
                     </p>
                 </div>

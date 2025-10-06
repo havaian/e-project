@@ -7,7 +7,7 @@
                     <div class="relative">
                         <img :src="recipientAvatar" :alt="recipientName"
                             class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-md" />
-                        <!-- Online Status Indicator -->
+                        <!-- Online status Indicator -->
                         <div v-if="recipientOnlineStatus?.isOnline"
                             class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse">
                         </div>
@@ -29,7 +29,7 @@
                 <div class="flex items-center">
                     <button @click="$emit('view-profile')" class="btn-secondary flex items-center space-x-2 text-sm">
                         <UserIcon class="w-4 h-4" />
-                        <span>View Profile</span>
+                        <span>View profile</span>
                     </button>
                 </div>
             </div>

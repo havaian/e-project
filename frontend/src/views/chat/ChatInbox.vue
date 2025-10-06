@@ -33,12 +33,12 @@
                         :to="{ name: 'chat-conversation', params: { id: conversation._id } }"
                         class="block p-6 hover:bg-gray-50/50 transition-colors duration-200 relative group">
                         <div class="flex items-center space-x-4">
-                            <!-- Enhanced Avatar with Online Status -->
+                            <!-- Enhanced Avatar with Online status -->
                             <div class="relative flex-shrink-0">
                                 <img :src="getOtherParticipant(conversation).profilePicture ? `/api${getOtherParticipant(conversation).profilePicture}` : '/images/user-placeholder.jpg'"
                                     :alt="getOtherParticipant(conversation).firstName"
                                     class="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-brand-1/20 transition-buttery" />
-                                <!-- Online Status Indicator (you could add this based on real-time data) -->
+                                <!-- Online status Indicator (you could add this based on real-time data) -->
                                 <div
                                     class="absolute -bottom-1 -right-1 w-4 h-4 bg-gray-300 border-2 border-white rounded-full">
                                 </div>
@@ -68,7 +68,7 @@
                                         {{ conversation.lastMessage?.text || 'No messages yet' }}
                                     </p>
 
-                                    <!-- Message Status Icon -->
+                                    <!-- Message status Icon -->
                                     <div v-if="conversation.lastMessage && conversation.lastMessage.sender === authStore.user._id"
                                         class="flex-shrink-0 relative">
                                         <!-- Double check for read messages, single for sent -->
@@ -85,7 +85,7 @@
                                 <div class="mt-2">
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
                                         :class="getOtherParticipant(conversation).role === 'provider' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
-                                        {{ getOtherParticipant(conversation).role === 'provider' ? 'Healthcare Provider'
+                                        {{ getOtherParticipant(conversation).role === 'provider' ? 'Healthcare provider'
                                             : 'Client' }}
                                     </span>
                                 </div>

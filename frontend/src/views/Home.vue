@@ -6,7 +6,7 @@
 
     <!-- Show landing page for guests -->
     <div v-else class="min-h-screen">
-      <!-- Hero Section -->
+      <!-- Hero section -->
       <div class="element-gradient relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
           <div class="lg:grid lg:grid-cols-12 lg:gap-8">
@@ -25,10 +25,10 @@
               </p>
               <div class="mt-10 flex flex-col sm:flex-row gap-4 sm:justify-center lg:justify-start">
                 <router-link to="/providers" class="btn-element-primary">
-                  Find a Professional
+                  Find a professional
                 </router-link>
                 <router-link to="/register" class="btn-element-secondary">
-                  Join as Provider
+                  Join as provider
                 </router-link>
               </div>
             </div>
@@ -57,7 +57,7 @@
                         </path>
                       </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Secure Video Sessions</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Secure video sessions</h3>
                     <p class="text-gray-600">Professional consultations from the comfort of your home</p>
                   </div>
                 </div>
@@ -67,12 +67,12 @@
         </div>
       </div>
 
-      <!-- Features Section -->
+      <!-- Features section -->
       <div class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 academic-heading">
-              Why Choose Our Platform?
+              Why choose our platform?
             </h2>
             <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto scholarly-text">
               We provide a secure, convenient, and professional environment for online consultations
@@ -90,7 +90,7 @@
                   </path>
                 </svg>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Secure & Private</h4>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">Secure & private</h4>
               <p class="text-gray-600">End-to-end encrypted sessions ensuring your privacy and confidentiality are
                 protected.</p>
             </div>
@@ -104,7 +104,7 @@
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Flexible Scheduling</h4>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">Flexible scheduling</h4>
               <p class="text-gray-600">Book appointments that fit your schedule with real-time availability updates.</p>
             </div>
 
@@ -118,19 +118,19 @@
                   </path>
                 </svg>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Qualified Professionals</h4>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">Qualified professionals</h4>
               <p class="text-gray-600">Access to verified experts across various specializations and fields.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- How It Works Section -->
+      <!-- How it works section -->
       <div class="py-20 element-gradient">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center">
             <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 academic-heading">
-              How It Works
+              How it works
             </h2>
             <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto scholarly-text">
               Get professional consultation in three simple steps
@@ -143,7 +143,7 @@
                 class="bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <span class="text-white font-bold text-xl">1</span>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Choose a Professional</h4>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">Choose a professional</h4>
               <p class="text-gray-600">Browse our network of qualified professionals and select the right specialist for
                 your needs.</p>
             </div>
@@ -153,7 +153,7 @@
                 class="bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <span class="text-white font-bold text-xl">2</span>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Schedule Session</h4>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">Schedule session</h4>
               <p class="text-gray-600">Book your appointment at a convenient time that works for both you and your
                 chosen professional.</p>
             </div>
@@ -163,7 +163,7 @@
                 class="bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <span class="text-white font-bold text-xl">3</span>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Get Expert Guidance</h4>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">Get expert guidance</h4>
               <p class="text-gray-600">Join your secure video session and receive professional consultation from the
                 comfort of your location.</p>
             </div>
@@ -171,11 +171,11 @@
         </div>
       </div>
 
-      <!-- Call to Action Section -->
+      <!-- Call to action section -->
       <div class="py-20 bg-gradient-to-r from-gray-900 to-gray-800">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Ready to Get Professional Guidance?
+            Ready to get professional guidance?
           </h2>
           <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
             Join thousands of clients who have already discovered the convenience and quality of online professional
@@ -184,35 +184,35 @@
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <router-link to="/register?role=client"
               class="bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold py-3 px-8 rounded-2xl hover:from-emerald-500 hover:to-sky-500 transition-all duration-300 shadow-lg">
-              Get Started as Client
+              Get started as client
             </router-link>
             <router-link to="/register?role=provider"
               class="bg-white/10 backdrop-blur-sm text-white font-semibold py-3 px-8 rounded-2xl hover:bg-white/20 transition-all duration-300 border border-white/20">
-              Join as Professional
+              Join as professional
             </router-link>
           </div>
         </div>
       </div>
 
-      <!-- Stats Section -->
+      <!-- Stats section -->
       <div class="bg-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div class="text-3xl font-bold text-gray-900">500+</div>
-              <div class="text-sm text-gray-600 mt-1">Active Professionals</div>
+              <div class="text-sm text-gray-600 mt-1">Active professionals</div>
             </div>
             <div>
               <div class="text-3xl font-bold text-gray-900">10k+</div>
-              <div class="text-sm text-gray-600 mt-1">Successful Sessions</div>
+              <div class="text-sm text-gray-600 mt-1">Successful sessions</div>
             </div>
             <div>
               <div class="text-3xl font-bold text-gray-900">98%</div>
-              <div class="text-sm text-gray-600 mt-1">Client Satisfaction</div>
+              <div class="text-sm text-gray-600 mt-1">Client satisfaction</div>
             </div>
             <div>
               <div class="text-3xl font-bold text-gray-900">24/7</div>
-              <div class="text-sm text-gray-600 mt-1">Support Available</div>
+              <div class="text-sm text-gray-600 mt-1">Support available</div>
             </div>
           </div>
         </div>

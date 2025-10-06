@@ -3,7 +3,7 @@
     <div class="space-y-8">
       <!-- Header -->
       <div class="text-center">
-        <h1 class="text-3xl font-bold text-gray-900">Find Healthcare Providers</h1>
+        <h1 class="text-3xl font-bold text-gray-900">Find healthcare providers</h1>
         <p class="mt-3 text-gray-600">Discover qualified professionals for your healthcare needs</p>
       </div>
 
@@ -24,16 +24,16 @@
           <div class="form-group">
             <label for="specializations" class="label">Specialization</label>
             <select id="specializations" v-model="filters.specializations" class="input" @change="handleFilterChange">
-              <option value="">All Specializations</option>
+              <option value="">All specializations</option>
               <option v-for="spec in specializations" :key="spec" :value="spec">
                 {{ spec }}
               </option>
             </select>
           </div>
 
-          <!-- Price Range Filter -->
+          <!-- Price range Filter -->
           <div class="form-group">
-            <label class="label">Price Range (UZS)</label>
+            <label class="label">Price range (UZS)</label>
             <div class="grid grid-cols-2 gap-2">
               <input v-model="filters.minPrice" type="number" class="input text-sm" placeholder="Min price"
                 @input="handleSearchInput" />
@@ -45,7 +45,7 @@
 
         <!-- Sort Controls -->
         <div class="mt-6 pt-6 border-t border-gray-200">
-          <label class="label mb-3 block">Sort Options</label>
+          <label class="label mb-3 block">Sort options</label>
           <div class="flex flex-wrap gap-4">
             <!-- Experience Sort -->
             <button @click="toggleSort('experience')" :class="[
@@ -99,7 +99,7 @@
             <!-- Filter Tags -->
             <span v-if="filters.name"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              Name: {{ filters.name }}
+              name: {{ filters.name }}
               <button @click="clearNameFilter" class="ml-1 text-blue-800 hover:text-blue-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
@@ -208,7 +208,7 @@
                     </div>
                   </div>
 
-                  <!-- Provider Details -->
+                  <!-- Provider details -->
                   <div class="space-y-3 mb-6">
                     <div class="flex items-center text-sm">
                       <div class="w-6 h-6 bg-brand-1/10 rounded-full flex items-center justify-center mr-3">
@@ -269,7 +269,7 @@
                   <router-link :to="{ name: 'provider-profile-view', params: { id: provider._id } }"
                     class="btn-primary w-full justify-center group-hover:shadow-lg transition-buttery">
                     <EyeIcon class="w-4 h-4 mr-2" />
-                    View Profile & Book
+                    View profile & book
                   </router-link>
                 </div>
               </div>

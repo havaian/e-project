@@ -28,7 +28,7 @@
 
                     <div class="form-group">
                         <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                            Password
+                            password
                         </label>
                         <div class="input-group">
                             <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'"

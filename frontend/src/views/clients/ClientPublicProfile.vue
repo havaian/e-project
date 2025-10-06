@@ -20,7 +20,7 @@
                                 </h1>
                                 <p class="text-lg text-gray-600">Student</p>
 
-                                <!-- Student Status Indicators -->
+                                <!-- Student status Indicators -->
                                 <div class="mt-3 flex flex-wrap gap-2 justify-center sm:justify-start">
                                     <span v-if="student.isVerified"
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
@@ -30,7 +30,7 @@
                                     <span
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                         <CalendarDaysIcon class="w-4 h-4 mr-1" />
-                                        {{ completedSessions }} Sessions Completed
+                                        {{ completedSessions }} sessions completed
                                     </span>
                                     <span v-if="relationshipType"
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
@@ -46,13 +46,13 @@
                             <button v-if="canContact" @click="initiateChat"
                                 class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 <ChatBubbleLeftRightIcon class="w-4 h-4 mr-2" />
-                                Send Message
+                                Send message
                             </button>
 
                             <button v-if="canAddAsStudent" @click="addAsStudent"
                                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 <UserPlusIcon class="w-4 h-4 mr-2" />
-                                Add as Student
+                                Add as student
                             </button>
                         </div>
                     </div>
@@ -69,25 +69,25 @@
                             <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <UserIcon class="w-5 h-5 mr-2 text-blue-600" />
-                                    Student Information
+                                    Student information
                                 </h2>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <dt class="text-sm font-medium text-blue-700">Member Since</dt>
+                                        <dt class="text-sm font-medium text-blue-700">Member since</dt>
                                         <dd class="mt-1 text-blue-900 font-medium">{{ formatDate(student.createdAt) }}
                                         </dd>
                                     </div>
                                     <div v-if="student.lastLoginAt">
-                                        <dt class="text-sm font-medium text-blue-700">Last Active</dt>
+                                        <dt class="text-sm font-medium text-blue-700">Last active</dt>
                                         <dd class="mt-1 text-blue-900 font-medium">{{
                                             formatRelativeTime(student.lastLoginAt) }}</dd>
                                     </div>
                                     <div>
-                                        <dt class="text-sm font-medium text-blue-700">Learning Status</dt>
-                                        <dd class="mt-1 text-blue-900 font-medium">Active Student</dd>
+                                        <dt class="text-sm font-medium text-blue-700">Learning status</dt>
+                                        <dd class="mt-1 text-blue-900 font-medium">Active student</dd>
                                     </div>
                                     <div>
-                                        <dt class="text-sm font-medium text-blue-700">Sessions Completed</dt>
+                                        <dt class="text-sm font-medium text-blue-700">Sessions completed</dt>
                                         <dd class="mt-1 text-blue-900 font-medium">{{ completedSessions }}</dd>
                                     </div>
                                 </div>
@@ -95,16 +95,15 @@
                                 <!-- Relationship Context (if viewing as provider) -->
                                 <div v-if="showRelationshipContext"
                                     class="mt-4 p-3 bg-white rounded-lg border border-blue-200">
-                                    <h3 class="text-sm font-medium text-blue-900 mb-2">Your Professional
-                                        Relationship</h3>
+                                    <h3 class="text-sm font-medium text-blue-900 mb-2">Your professional relationship</h3>
                                     <div class="grid grid-cols-2 gap-4 text-sm">
                                         <div>
-                                            <span class="text-blue-700">Sessions Together:</span>
+                                            <span class="text-blue-700">Sessions together:</span>
                                             <span class="font-medium text-blue-900 ml-1">{{
                                                 sessionsWithViewer }}</span>
                                         </div>
                                         <div>
-                                            <span class="text-blue-700">Last Session:</span>
+                                            <span class="text-blue-700">Last session:</span>
                                             <span class="font-medium text-blue-900 ml-1">{{
                                                 formatDate(lastSessionDate) }}</span>
                                         </div>
@@ -119,7 +118,7 @@
                                     Achievements
                                 </h2>
 
-                                <!-- Achievement Progress -->
+                                <!-- Achievement progress -->
                                 <div class="mb-6">
                                     <div class="flex justify-between text-sm text-gray-600 mb-2">
                                         <span>Progress</span>
@@ -132,9 +131,9 @@
                                     <p class="text-xs text-gray-500 mt-1">{{ achievementProgress }}% Complete</p>
                                 </div>
 
-                                <!-- Earned Achievements -->
+                                <!-- Earned achievements -->
                                 <div v-if="earnedAchievements.length > 0" class="space-y-4 mb-6">
-                                    <h3 class="text-sm font-medium text-gray-700">Earned Achievements</h3>
+                                    <h3 class="text-sm font-medium text-gray-700">Earned achievements</h3>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div v-for="achievement in earnedAchievements" :key="achievement.id"
                                             class="flex items-center space-x-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -154,9 +153,9 @@
                                     </div>
                                 </div>
 
-                                <!-- Unearned Achievements Preview -->
+                                <!-- Unearned Achievements preview -->
                                 <div v-if="unearnedAchievements.length > 0" class="space-y-4">
-                                    <h3 class="text-sm font-medium text-gray-700">Next Goals</h3>
+                                    <h3 class="text-sm font-medium text-gray-700">Next goals</h3>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div v-for="achievement in unearnedAchievements.slice(0, 4)"
                                             :key="achievement.id"
@@ -177,7 +176,7 @@
                                     <div v-if="unearnedAchievements.length > 4" class="text-center">
                                         <button @click="showAllAchievements = !showAllAchievements"
                                             class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                                            {{ showAllAchievements ? 'Show Less' : `View ${unearnedAchievements.length -
+                                            {{ showAllAchievements ? 'Show less' : `View ${unearnedAchievements.length -
                                                 4} More Goals`
                                             }}
                                         </button>
@@ -190,11 +189,11 @@
                                 </div>
                             </div>
 
-                            <!-- Reviews Given -->
+                            <!-- Reviews given -->
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <StarIcon class="w-5 h-5 mr-2 text-purple-600" />
-                                    Reviews Given
+                                    Reviews given
                                 </h2>
 
                                 <div v-if="reviews.length > 0" class="space-y-6">
@@ -220,7 +219,7 @@
                                     <div v-if="reviews.length > 3" class="text-center">
                                         <button @click="showAllReviews = !showAllReviews"
                                             class="text-purple-600 hover:text-purple-700 text-sm font-medium">
-                                            {{ showAllReviews ? 'Show Less' : `View ${reviews.length - 3} More Reviews`
+                                            {{ showAllReviews ? 'Show less' : `View ${reviews.length - 3} More reviews`
                                             }}
                                         </button>
                                     </div>
@@ -242,13 +241,13 @@
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <ChartBarIcon class="w-5 h-5 mr-2 text-indigo-600" />
-                                    Learning Progress
+                                    Learning progress
                                 </h3>
 
                                 <div class="space-y-4">
                                     <div class="bg-indigo-50 p-4 rounded-lg">
                                         <div class="text-2xl font-bold text-indigo-600">{{ completedSessions }}</div>
-                                        <div class="text-sm text-indigo-600">Sessions Completed</div>
+                                        <div class="text-sm text-indigo-600">Sessions completed</div>
                                     </div>
                                     <div class="bg-green-50 p-4 rounded-lg">
                                         <div class="text-2xl font-bold text-green-600">{{ earnedAchievements.length }}
@@ -257,18 +256,18 @@
                                     </div>
                                     <div class="bg-purple-50 p-4 rounded-lg">
                                         <div class="text-2xl font-bold text-purple-600">{{ reviews.length }}</div>
-                                        <div class="text-sm text-purple-600">Reviews Given</div>
+                                        <div class="text-sm text-purple-600">Reviews given</div>
                                     </div>
                                     <div class="bg-yellow-50 p-4 rounded-lg">
                                         <div class="text-2xl font-bold text-yellow-600">{{ providersWorkedWith }}</div>
-                                        <div class="text-sm text-yellow-600">Providers Worked With</div>
+                                        <div class="text-sm text-yellow-600">Providers worked with</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Recent Activity -->
+                            <!-- Recent activity -->
                             <div class="bg-gray-50 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Recent activity</h3>
                                 <div class="space-y-3">
                                     <div v-if="recentActivity.length > 0">
                                         <div v-for="activity in recentActivity" :key="activity.id"
@@ -489,7 +488,7 @@ const fetchRecentActivity = async () => {
             {
                 id: 1,
                 type: 'achievement',
-                description: 'Earned "First Session" achievement',
+                description: 'Earned "First session" achievement',
                 timestamp: new Date(Date.now() - 86400000) // 1 day ago
             },
             {

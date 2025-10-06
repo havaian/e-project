@@ -20,13 +20,13 @@
             <!-- Message Text -->
             <div class="text-sm leading-relaxed">{{ message.text }}</div>
 
-            <!-- Timestamp and Read Status -->
+            <!-- Timestamp and Read status -->
             <div class="flex items-center justify-between mt-2">
                 <div class="text-xs" :class="isCurrentUser ? 'opacity-70' : 'text-gray-500'">
                     {{ formatTime(message.createdAt) }}
                 </div>
 
-                <!-- Read Status (only for sent messages) -->
+                <!-- Read status (only for sent messages) -->
                 <div v-if="isCurrentUser" class="ml-2 relative">
                     <div v-if="message.isRead" class="flex items-center" title="Read">
                         <CheckIcon class="w-4 h-4 text-white/70" />

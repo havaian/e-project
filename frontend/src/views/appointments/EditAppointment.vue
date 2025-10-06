@@ -30,7 +30,7 @@
                 </div>
                 <div class="mt-4">
                     <router-link to="/appointments/client" class="btn-primary">
-                        Back to Appointments
+                        Back to appointments
                     </router-link>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="mt-4">
                     <router-link to="/appointments/client" class="btn-primary">
-                        Back to Appointments
+                        Back to appointments
                     </router-link>
                 </div>
             </div>
@@ -73,12 +73,12 @@
                     <h3 class="text-lg font-medium text-blue-900 mb-4">Current Appointment</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                            <span class="text-blue-700 font-medium">Current Date & Time:</span>
+                            <span class="text-blue-700 font-medium">Current Date & time:</span>
                             <p class="text-blue-900">{{ formatDateTime(appointment.dateTime) }}</p>
                         </div>
                         <div>
                             <span class="text-blue-700 font-medium">Type:</span>
-                            <p class="text-blue-900 capitalize">{{ appointment.type || 'Video Session' }}</p>
+                            <p class="text-blue-900 capitalize">{{ appointment.type || 'Video session' }}</p>
                         </div>
                         <div>
                             <span class="text-blue-700 font-medium">Provider:</span>
@@ -112,7 +112,7 @@
 
                 <!-- New Date and Time Selection -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-6">Select New Date & Time</h2>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">Select New Date & time</h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Date -->

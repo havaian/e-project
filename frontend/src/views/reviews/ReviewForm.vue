@@ -1,8 +1,8 @@
 <template>
     <form @submit.prevent="handleSubmit" class="form-container">
-        <!-- Rating Section -->
+        <!-- Rating section -->
         <div class="form-group">
-            <label class="label">Rate Your Experience</label>
+            <label class="label">Rate your experience</label>
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-1">
                     <button v-for="i in 5" :key="i" type="button"
@@ -20,9 +20,9 @@
             </div>
         </div>
 
-        <!-- Comment Section -->
+        <!-- Comment section -->
         <div class="form-group">
-            <label for="comment" class="label">Share Your Experience</label>
+            <label for="comment" class="label">Share your experience</label>
             <div class="relative">
                 <textarea id="comment" v-model="comment" rows="5" class="input resize-none"
                     :class="comment.trim() ? 'success' : ''"
@@ -40,12 +40,12 @@
             </div>
         </div>
 
-        <!-- Review Guidelines -->
+        <!-- Review guidelines -->
         <div class="bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-2xl p-4">
             <div class="flex">
                 <InformationCircleIcon class="w-5 h-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
                 <div>
-                    <h4 class="text-sm font-medium text-blue-900 mb-1">Review Guidelines</h4>
+                    <h4 class="text-sm font-medium text-blue-900 mb-1">Review guidelines</h4>
                     <ul class="text-sm text-blue-700 space-y-1">
                         <li>• Be honest and specific about your experience</li>
                         <li>• Focus on the quality of care and service</li>
@@ -60,7 +60,7 @@
         <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
             <button type="button" @click="resetForm" class="btn-secondary">
                 <ArrowPathIcon class="w-4 h-4 mr-2" />
-                Reset Form
+                Reset form
             </button>
             <button type="submit" class="btn-primary" :disabled="loading || !isValid">
                 <span v-if="loading" class="flex items-center">
@@ -72,11 +72,11 @@
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                         </path>
                     </svg>
-                    Submitting Review...
+                    Submitting review...
                 </span>
                 <span v-else class="flex items-center">
                     <StarIcon class="w-4 h-4 mr-2" />
-                    Submit Review
+                    Submit review
                 </span>
             </button>
         </div>

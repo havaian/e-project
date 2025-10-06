@@ -312,13 +312,13 @@ class NotificationService {
 
         const emailData = {
             to: email,
-            subject: `Reset Your Password - ${process.env.VITE_PROJECT_URL_SHORT}`,
+            subject: `Reset Your password - ${process.env.VITE_PROJECT_URL_SHORT}`,
             text: `You requested a password reset. Please click the following link to reset your password: ${resetLink}`,
             html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">${process.env.VITE_PROJECT_URL_SHORT} Password Reset</h2>
+            <h2 style="color: #4a90e2;">${process.env.VITE_PROJECT_URL_SHORT} password Reset</h2>
             <p>We received a request to reset your password. Click the button below to set a new password:</p>
-            <a href="${resetLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset Password</a>
+            <a href="${resetLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset password</a>
             <p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
             <p>${resetLink}</p>
             <p>This link will expire in 10 minutes.</p>
@@ -359,7 +359,7 @@ class NotificationService {
             <p>Your appointment with ${provider.firstName} ${provider.lastName} has been confirmed.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
             <p>You can view your appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
@@ -378,7 +378,7 @@ class NotificationService {
             <p>You have a new appointment with ${client.firstName} ${client.lastName}.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
             <p>You can view appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
@@ -446,7 +446,7 @@ class NotificationService {
             <p>Your appointment with ${provider.firstName} ${provider.lastName} has been canceled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
             <p>You can schedule a new appointment by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
@@ -465,7 +465,7 @@ class NotificationService {
             <p>Your appointment with ${client.firstName} ${client.lastName} has been canceled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
           </div>
@@ -516,11 +516,11 @@ class NotificationService {
             // Email to client for feedback
             const clientEmailData = {
                 to: client.email,
-                subject: `Appointment Completed - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                subject: `Appointment completed - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your appointment with ${provider.firstName} ${provider.lastName} has been completed. Please leave your feedback.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">Appointment Completed</h2>
+            <h2 style="color: #4a90e2;">Appointment completed</h2>
             <p>Your appointment with ${provider.firstName} ${provider.lastName} has been completed.</p>
             <p>If any recommendations were provided, you can view them in your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
             <a href="${process.env.FRONTEND_URL}/appointments/feedback/${appointment._id}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Leave Feedback</a>
@@ -563,8 +563,8 @@ class NotificationService {
             recommendations.forEach((recommendation, index) => {
                 recommendationsHtml += `
           <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;">
-            <p><strong>Medication:</strong> ${recommendation.title}</p>
-            <p><strong>Dosage:</strong> ${recommendation.description}</p>
+            <p><strong>Title:</strong> ${recommendation.title}</p>
+            <p><strong>Description:</strong> ${recommendation.description}</p>
             <p><strong>Frequency:</strong> ${recommendation.frequency}</p>
             <p><strong>Duration:</strong> ${recommendation.duration}</p>
             <p><strong>Instructions:</strong> ${recommendation.instructions}</p>
@@ -610,7 +610,7 @@ class NotificationService {
 
     /**
      * Send follow-up notification
-     * @param {Object} followUpAppointment Follow-up appointment object
+     * @param {Object} followUpAppointment follow-up appointment object
      */
     async sendFollowUpNotification(followUpAppointment) {
         try {
@@ -637,7 +637,7 @@ class NotificationService {
             <p>A follow-up appointment with ${provider.firstName} ${provider.lastName} has been scheduled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
             <p>You can view your appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
@@ -656,7 +656,7 @@ class NotificationService {
             <p>A follow-up appointment with ${client.firstName} ${client.lastName} has been scheduled.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
             <p>You can view appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
@@ -724,7 +724,7 @@ class NotificationService {
             <p>This is a reminder that your appointment with ${provider.firstName} ${provider.lastName} is scheduled for tomorrow.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName} (${provider.specializations})</p>
             </div>
             <p>You can view your appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
@@ -743,7 +743,7 @@ class NotificationService {
             <p>This is a reminder that your appointment with ${client.firstName} ${client.lastName} is scheduled for tomorrow.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Date and Time:</strong> ${formattedDateTime}</p>
-              <p><strong>Session Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+              <p><strong>Session type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
             </div>
             <p>You can view appointment details and join the session by logging into your ${process.env.VITE_PROJECT_URL_SHORT} account.</p>
@@ -801,13 +801,13 @@ class NotificationService {
             // Email to client
             const clientEmailData = {
                 to: client.email,
-                subject: `Your Session Starts Soon - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                subject: `Your session Starts Soon - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 text: `Your session with ${provider.firstName} ${provider.lastName} starts in 15 minutes.`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">Your Session Starts Soon</h2>
+            <h2 style="color: #4a90e2;">Your session Starts Soon</h2>
             <p>Your session with ${provider.firstName} ${provider.lastName} starts in 15 minutes at ${formattedTime}.</p>
-            <a href="${sessionLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join Session</a>
+            <a href="${sessionLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join session</a>
             <p>Please ensure your device has a working camera and microphone for a video session.</p>
           </div>
         `
@@ -822,7 +822,7 @@ class NotificationService {
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #4a90e2;">Session Starts Soon</h2>
             <p>Your session with ${client.firstName} ${client.lastName} starts in 15 minutes at ${formattedTime}.</p>
-            <a href="${sessionLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join Session</a>
+            <a href="${sessionLink}" style="display: inline-block; background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">Join session</a>
             <p>Please ensure your device has a working camera and microphone for a video session.</p>
           </div>
         `
@@ -873,14 +873,14 @@ class NotificationService {
 
             const emailData = {
                 to: client.email,
-                subject: `Payment Successful - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                subject: `Payment successful - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4a90e2;">Payment Successful</h2>
+            <h2 style="color: #4a90e2;">Payment successful</h2>
             <p>Your payment for the appointment has been processed successfully.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-              <p><strong>Date & Time:</strong> ${formattedDate}</p>
+              <p><strong>Date & time:</strong> ${formattedDate}</p>
               <p><strong>Type:</strong> ${appointment.type}</p>
               <p><strong>Payment ID:</strong> ${paymentId}</p>
             </div>
@@ -913,7 +913,7 @@ class NotificationService {
             <p>A new appointment has been scheduled and payment has been received.</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
-              <p><strong>Date & Time:</strong> ${formattedDate}</p>
+              <p><strong>Date & time:</strong> ${formattedDate}</p>
               <p><strong>Type:</strong> ${appointment.type}</p>
             </div>
             <p>Please log in to your ${process.env.VITE_PROJECT_URL_SHORT} account to view the appointment details.</p>
@@ -939,14 +939,14 @@ class NotificationService {
 
             const emailData = {
                 to: client.email,
-                subject: `Payment Failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
+                subject: `Payment failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
                 html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #e74c3c;">Payment Failed</h2>
+            <h2 style="color: #e74c3c;">Payment failed</h2>
             <p>We were unable to process your payment for the following appointment:</p>
             <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-              <p><strong>Date & Time:</strong> ${formattedDate}</p>
+              <p><strong>Date & time:</strong> ${formattedDate}</p>
               <p><strong>Type:</strong> ${appointment.type}</p>
             </div>
             <p>Please try booking again or contact support if you need assistance.</p>

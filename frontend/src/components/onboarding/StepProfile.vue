@@ -2,7 +2,7 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Complete Your Profile</h2>
+            <h2 class="text-3xl font-bold text-gray-900">Complete your profile</h2>
             <p class="mt-2 text-gray-600">Add your specializations, experience, and professional bio</p>
         </div>
 
@@ -34,13 +34,13 @@
                     @click="addSpecialization"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
                     <PlusIcon class="w-5 h-5" />
-                    <span>Add Specialization</span>
+                    <span>Add specialization</span>
                 </button>
             </div>
 
-            <!-- Professional License Number -->
+            <!-- Professional License number -->
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional License Number</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional license number</h3>
                 <p class="text-sm text-gray-600 mb-4">Enter your professional license or certification number</p>
 
                 <div class="max-w-md">
@@ -58,9 +58,9 @@
                 </div>
             </div>
 
-            <!-- Years of Experience -->
+            <!-- Years of experience -->
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Years of Experience</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Years of experience</h3>
                 <p class="text-sm text-gray-600 mb-4">How many years of professional experience do you have?</p>
 
                 <div class="max-w-md">
@@ -74,7 +74,7 @@
 
             <!-- Professional Bio -->
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional Bio</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional bio</h3>
                 <p class="text-sm text-gray-600 mb-4">Write a brief description of your background and approach</p>
 
                 <div class="space-y-4">
@@ -94,7 +94,7 @@
 
                     <!-- Bio writing tips -->
                     <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                        <h4 class="text-sm font-medium text-blue-900 mb-2">Bio Writing Tips</h4>
+                        <h4 class="text-sm font-medium text-blue-900 mb-2">Bio writing tips</h4>
                         <ul class="text-sm text-blue-700 space-y-1">
                             <li>• Mention your educational background and certifications</li>
                             <li>• Describe your therapeutic approach or methodology</li>
@@ -107,9 +107,9 @@
             </div>
         </div>
 
-        <!-- Profile Preview -->
+        <!-- Profile preview -->
         <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">Profile Preview</h4>
+            <h4 class="text-lg font-semibold text-gray-900 mb-4">Profile preview</h4>
             <div class="bg-white rounded-lg p-4 border border-gray-200">
                 <div class="flex items-start space-x-4">
                     <div
@@ -161,7 +161,7 @@
             <div class="flex items-start space-x-3">
                 <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-green-900">Profile Complete!</p>
+                    <p class="font-medium text-green-900">Profile complete!</p>
                     <p class="text-green-700 mt-1">
                         Your profile information looks great. You're ready to proceed to the review step.
                     </p>

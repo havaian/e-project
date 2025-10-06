@@ -12,7 +12,7 @@
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex items-center justify-between">
                         <h1 class="text-2xl font-bold text-gray-900">
-                            Appointment Details
+                            Appointment details
                         </h1>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" :class="{
                             'bg-green-100 text-green-800': appointment.status === 'completed',
@@ -65,15 +65,15 @@
                         </div>
                     </div>
 
-                    <!-- Appointment Details -->
+                    <!-- Appointment details -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Date & Time</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Date & time</h3>
                             <p class="text-gray-900">{{ formatDateTime(appointment.dateTime) }}</p>
                         </div>
 
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Session Type</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Session type</h3>
                             <p class="text-gray-900">
                                 {{ appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1) }}
                             </p>
@@ -86,9 +86,9 @@
                         <p class="text-gray-900">{{ appointment.shortDescription }}</p>
                     </div>
 
-                    <!-- Session Summary (only for completed appointments) -->
+                    <!-- Session summary (only for completed appointments) -->
                     <div v-if="appointment.status === 'completed' && appointment.sessionSummary">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Session Summary</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Session summary</h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="text-gray-900 whitespace-pre-line">{{ appointment.sessionSummary }}</p>
                         </div>
@@ -103,11 +103,11 @@
                                 class="bg-gray-50 p-4 rounded-lg">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <p class="text-sm font-medium text-gray-500">Medication</p>
+                                        <p class="text-sm font-medium text-gray-500">Title</p>
                                         <p class="text-gray-900">{{ recommendation.title }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-500">Dosage</p>
+                                        <p class="text-sm font-medium text-gray-500">Description</p>
                                         <p class="text-gray-900">{{ recommendation.description }}</p>
                                     </div>
                                     <div>
@@ -130,11 +130,11 @@
                     <!-- Follow-up Information (only for completed appointments with follow-up) -->
                     <div
                         v-if="appointment.status === 'completed' && appointment.followUp && appointment.followUp.recommended">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Follow-up Recommendation</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Follow-up recommendation</h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <p class="text-sm font-medium text-gray-500">Recommended Date</p>
+                                    <p class="text-sm font-medium text-gray-500">Recommended date</p>
                                     <p class="text-gray-900">{{ formatDate(appointment.followUp.date) }}</p>
                                 </div>
                                 <div v-if="appointment.followUp.notes">
@@ -151,13 +151,13 @@
                                 <div v-if="followUpAppointment.status === 'pending-payment'" class="mt-2">
                                     <button @click="proceedToPayment(followUpAppointment._id)"
                                         class="btn-primary text-sm">
-                                        Proceed to Payment
+                                        Proceed to payment
                                     </button>
                                 </div>
                             </div>
                             <div v-else-if="authStore.isClient && appointment.followUp.recommended" class="mt-4">
                                 <button @click="findFollowUpAppointment" class="btn-primary text-sm">
-                                    View Follow-up Details
+                                    View follow-up details
                                 </button>
                             </div>
                         </div>
@@ -169,7 +169,7 @@
                             <h3 class="text-lg font-medium text-gray-900">Chat History</h3>
                             <button @click="showChatLog = !showChatLog"
                                 class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-900">
-                                {{ showChatLog ? 'Hide Chat' : 'Show Chat' }}
+                                {{ showChatLog ? 'Hide chat' : 'Show chat' }}
                             </button>
                         </div>
                         <div v-if="showChatLog" class="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
@@ -185,7 +185,7 @@
                         </div>
                     </div>
 
-                    <!-- Payment Information for Pending-Payment Appointments -->
+                    <!-- Payment Information for Pending-Payment appointments -->
                     <div v-if="appointment.status === 'pending-payment'">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Information</h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
@@ -199,7 +199,7 @@
                             </div>
                             <div class="mt-4">
                                 <button @click="proceedToPayment(appointment._id)" class="btn-primary">
-                                    Proceed to Payment
+                                    Proceed to payment
                                 </button>
                             </div>
                         </div>
@@ -214,7 +214,7 @@
                             </p>
                             <button @click="startChat" class="btn-primary flex items-center">
                                 <ChatBubbleLeftRightIcon class="h-5 w-5 mr-2" />
-                                Start Chat
+                                Start chat
                             </button>
                         </div>
                     </div>
@@ -227,7 +227,7 @@
                         </button>
                         <button v-if="appointment.status === 'scheduled' && isWithinJoinWindow" class="btn-primary"
                             @click="joinSession">
-                            {{ authStore.isProvider ? 'Start Session' : 'Join Session' }}
+                            {{ authStore.isProvider ? 'Start session' : 'Join session' }}
                         </button>
                         <div v-if="showFollowUpModal"
                             class="fixed inset-0 bg-gray-500 bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
@@ -235,7 +235,7 @@
                                 class="bg-white/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl max-w-md w-full mx-4 border border-gray-200">
                                 <div class="p-6">
                                     <div class="flex items-center justify-between mb-6">
-                                        <h3 class="text-xl font-semibold text-gray-900">Schedule Follow-up Appointment
+                                        <h3 class="text-xl font-semibold text-gray-900">Schedule follow-up Appointment
                                         </h3>
                                         <button type="button" @click="showFollowUpModal = false"
                                             class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -274,7 +274,7 @@
                                                     </svg>
                                                     Scheduling...
                                                 </span>
-                                                <span v-else>Schedule Follow-up</span>
+                                                <span v-else>Schedule follow-up</span>
                                             </button>
                                         </div>
                                     </form>
@@ -377,7 +377,7 @@ const formatCurrency = (amount) => {
 }
 
 const formatStatus = (status) => {
-    if (status === 'pending-payment') return 'Pending Payment'
+    if (status === 'pending-payment') return 'Pending payment'
     return status.charAt(0).toUpperCase() + status.slice(1)
 }
 

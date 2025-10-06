@@ -37,7 +37,7 @@ const getDefaultAchievements = (role) => {
         },
         {
             id: 'verified_provider',
-            name: 'Verified Professional',
+            name: 'Verified professional',
             description: 'Get verified as a professional provider',
             category: 'professional',
             icon: 'shield-check',
@@ -50,7 +50,7 @@ const getDefaultAchievements = (role) => {
         baseAchievements.push(
             {
                 id: 'ten_appointments',
-                name: 'Experienced Professional',
+                name: 'Experienced professional',
                 description: 'Complete 10 successful appointments',
                 category: 'milestone',
                 icon: 'trophy',

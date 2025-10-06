@@ -15,7 +15,7 @@
                         </div>
                         <router-link to="/providers" class="btn-primary px-6 py-3">
                             <PlusIcon class="w-5 h-5 mr-2" />
-                            Book New Appointment
+                            Book new appointment
                         </router-link>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.totalHours }}</p>
-                            <p class="text-sm text-gray-600">Total Hours</p>
+                            <p class="text-sm text-gray-600">Total hours</p>
                         </div>
                     </div>
                 </div>
@@ -77,16 +77,16 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-8">
-                    <!-- Upcoming Appointments -->
+                    <!-- Upcoming appointments -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <h2 class="text-lg font-semibold text-gray-900">
-                                    Upcoming Appointments
+                                    Upcoming appointments
                                 </h2>
                                 <router-link to="/appointments/client"
                                     class="text-sm text-brand-1 hover:text-brand-1/80 font-medium">
-                                    View All
+                                    View all
                                 </router-link>
                             </div>
                         </div>
@@ -128,7 +128,7 @@
                                                 {{ formatDateTime(appointment.dateTime) }}
                                             </p>
                                             <p class="text-xs text-gray-500 capitalize">
-                                                {{ appointment.type || 'Video Session' }} • {{ appointment.status }}
+                                                {{ appointment.type || 'Video session' }} • {{ appointment.status }}
                                             </p>
                                         </div>
                                     </div>
@@ -162,16 +162,16 @@
                                 <h3 class="text-lg font-medium text-gray-900 mb-2">No upcoming appointments</h3>
                                 <p class="text-gray-600 mb-4">Book your first appointment to get started</p>
                                 <router-link to="/providers" class="btn-primary px-4 py-2">
-                                    Browse Providers
+                                    Browse providers
                                 </router-link>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
+                    <!-- Recent activity -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
-                            <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
+                            <h2 class="text-lg font-semibold text-gray-900">Recent activity</h2>
                         </div>
 
                         <div class="p-6">
@@ -203,9 +203,9 @@
 
                 <!-- Sidebar -->
                 <div class="space-y-6">
-                    <!-- Your Providers -->
+                    <!-- Your providers -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Providers</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Your providers</h3>
 
                         <div v-if="favoriteProviders.length > 0" class="space-y-3">
                             <div v-for="provider in favoriteProviders" :key="provider._id"
@@ -231,7 +231,7 @@
                             <UsersIcon class="w-8 h-8 text-gray-400 mx-auto mb-2" />
                             <p class="text-sm text-gray-500">No providers yet</p>
                             <router-link to="/providers" class="text-xs text-brand-1 hover:text-brand-1/80 font-medium">
-                                Browse Providers
+                                Browse providers
                             </router-link>
                         </div>
                     </div>

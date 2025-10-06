@@ -84,7 +84,7 @@
                                         class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <UserIcon class="h-4 w-4" />
-                                            <span>My Profile</span>
+                                            <span>My profile</span>
                                         </div>
                                     </router-link>
                                 </div>
@@ -139,7 +139,7 @@
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                         :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/provider') }"
                         @click="closeMobileMenu">
-                        My Schedule
+                        My schedule
                     </router-link>
                     <div class="border-t border-gray-200 pt-4 pb-3">
                         <div class="flex items-center px-3 mb-3">
@@ -156,16 +156,16 @@
                         <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
-                            My Profile
+                            My profile
                         </router-link>
                         <router-link to="/profile/edit"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
-                            Edit Profile
+                            Edit profile
                         </router-link>
                         <button @click="logout"
                             class="block w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors duration-200">
-                            Sign Out
+                            Sign out
                         </button>
                     </div>
                 </template>
@@ -174,11 +174,11 @@
                         <router-link to="/login"
                             class="block px-3 py-2 text-base font-medium text-sky-500 hover:text-emerald-500 transition-colors duration-200"
                             @click="closeMobileMenu">
-                            Sign In
+                            Sign in
                         </router-link>
                         <router-link to="/register" class="block mx-3 btn-element-primary text-center text-sm"
                             @click="closeMobileMenu">
-                            Get Started
+                            Get started
                         </router-link>
                     </div>
                 </template>

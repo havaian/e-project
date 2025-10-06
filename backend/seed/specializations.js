@@ -54,7 +54,7 @@ async function seedDatabase() {
         
         // Create only the missing specializations
         const createdSpecializations = await Specialization.insertMany(missingSpecializations);
-        console.log(`✅ [db seed] Successfully created ${createdSpecializations.length} new specializations`);
+        console.log(`✅ [db seed] successfully created ${createdSpecializations.length} new specializations`);
         
         // Show final count
         const totalSpecializations = await Specialization.countDocuments();

@@ -28,7 +28,7 @@
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Pending Confirmations Alert -->
+            <!-- Pending confirmations Alert -->
             <div v-if="pendingCount > 0" class="mb-6">
                 <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
                     <div class="flex items-center">
@@ -41,7 +41,7 @@
                         </div>
                         <button @click="activeTab = 'pending'"
                             class="text-sm text-orange-600 hover:text-orange-800 font-medium">
-                            Review Now
+                            Review now
                         </button>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                     </div>
                 </div>
 
-                <!-- Pending Confirmations -->
+                <!-- Pending confirmations -->
                 <div v-if="activeTab === 'pending'" class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
                     <PendingConfirmations @refresh="fetchAppointments" />
                 </div>
@@ -162,7 +162,7 @@
                                             </div>
                                             <div class="flex items-center space-x-1">
                                                 <VideoCameraIcon class="w-4 h-4" />
-                                                <span class="capitalize">{{ appointment.type || 'Video Session'
+                                                <span class="capitalize">{{ appointment.type || 'Video session'
                                                     }}</span>
                                             </div>
                                             <div v-if="appointment.client?.dateOfBirth"
@@ -181,12 +181,12 @@
 
                                 <!-- Action Buttons -->
                                 <div class="flex items-center space-x-3">
-                                    <!-- Join Session (if within window) -->
+                                    <!-- Join session (if within window) -->
                                     <button
                                         v-if="isWithinJoinWindow(appointment.dateTime) && appointment.status === 'scheduled'"
                                         @click="joinSession(appointment._id)" class="btn-primary px-4 py-2 text-sm">
                                         <VideoCameraIcon class="w-4 h-4 mr-2" />
-                                        Start Session
+                                        Start session
                                     </button>
 
                                     <!-- Future appointment actions -->
@@ -211,11 +211,11 @@
                                         </button>
                                     </template>
 
-                                    <!-- View Details -->
+                                    <!-- View details -->
                                     <router-link :to="`/appointments/${appointment._id}`"
                                         class="px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                                         <EyeIcon class="w-4 h-4 mr-2" />
-                                        Details
+                                        details
                                     </router-link>
                                 </div>
                             </div>
@@ -230,7 +230,7 @@
                             {{ filters.status || filters.date ? 'Try adjusting your filters' : 'Clients will book appointments with you based on your availability' }}
                         </p>
                         <router-link to="/profile/provider" class="btn-primary px-6 py-3">
-                            Update Availability
+                            Update availability
                         </router-link>
                     </div>
 

@@ -95,7 +95,7 @@
 
                 <div class="space-y-3">
                     <router-link to="/login" class="btn-primary w-full inline-block text-center">
-                        Return to Login
+                        Return to login
                     </router-link>
                 </div>
             </div>

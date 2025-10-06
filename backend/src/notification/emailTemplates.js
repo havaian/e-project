@@ -21,11 +21,11 @@ exports.appointmentBookedClient = (appointment) => {
         <p>Your appointment has been successfully booked.</p>
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">Appointment Details</h3>
+          <h3 style="margin-top: 0;">Appointment details</h3>
           <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
           <p><strong>Specialization:</strong> ${provider.specializations.join(', ')}</p>
-          <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+          <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
           <p><strong>Amount Paid:</strong> ${formatCurrency(payment.amount)}</p>
         </div>
         
@@ -47,10 +47,10 @@ exports.appointmentBookedProvider = (appointment) => {
         <p>A new appointment has been scheduled.</p>
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">Appointment Details</h3>
+          <h3 style="margin-top: 0;">Appointment details</h3>
           <p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>
-          <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+          <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
         </div>
         
         <p>Please log in to your ${process.env.VITE_PROJECT_URL_SHORT} account to view the complete appointment details.</p>
@@ -63,17 +63,17 @@ exports.appointmentBookingFailed = (data) => {
   const { provider, dateTime, type, error } = data;
 
   return {
-    subject: `Appointment Booking Failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
+    subject: `Appointment Booking failed - ${process.env.VITE_PROJECT_URL_SHORT}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #e74c3c;">Appointment Booking Failed</h2>
+        <h2 style="color: #e74c3c;">Appointment Booking failed</h2>
         <p>Unfortunately, we couldn't complete your appointment booking.</p>
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">Appointment Details</h3>
+          <h3 style="margin-top: 0;">Appointment details</h3>
           <p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>
-          <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+          <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
           <p><strong>Reason:</strong> ${error}</p>
         </div>
         
@@ -95,13 +95,13 @@ exports.appointmentReminder = (appointment) => {
         <p>This is a reminder about your upcoming appointment tomorrow.</p>
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">Appointment Details</h3>
+          <h3 style="margin-top: 0;">Appointment details</h3>
           ${isProvider
         ? `<p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>`
         : `<p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>`
       }
-          <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+          <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
         </div>
         
         <p>Please make sure to join the session 5 minutes before the scheduled time.</p>
@@ -122,13 +122,13 @@ exports.appointmentCancelled = (appointment, cancelledBy) => {
         <p>The following appointment has been cancelled by ${cancelledBy}.</p>
         
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">Appointment Details</h3>
+          <h3 style="margin-top: 0;">Appointment details</h3>
           ${isProvider
         ? `<p><strong>Client:</strong> ${client.firstName} ${client.lastName}</p>`
         : `<p><strong>Provider:</strong> ${provider.firstName} ${provider.lastName}</p>`
       }
-          <p><strong>Date & Time:</strong> ${formatDateTime(dateTime)}</p>
-          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} Session</p>
+          <p><strong>Date & time:</strong> ${formatDateTime(dateTime)}</p>
+          <p><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)} session</p>
         </div>
         
         ${isProvider

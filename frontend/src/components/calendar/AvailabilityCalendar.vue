@@ -51,7 +51,7 @@
                             class="flex items-center space-x-2">
                             <button @click="setPreset('business')"
                                 class="px-3 py-1 bg-blue-500 text-white text-xs rounded-full hover:bg-blue-400 transition-colors">
-                                Business Hours
+                                Business hours
                             </button>
                             <button @click="setPreset('flexible')"
                                 class="px-3 py-1 bg-blue-500 text-white text-xs rounded-full hover:bg-blue-400 transition-colors">
@@ -59,7 +59,7 @@
                             </button>
                             <button @click="clearAll()"
                                 class="px-3 py-1 bg-red-500 text-white text-xs rounded-full hover:bg-red-400 transition-colors">
-                                Clear All
+                                Clear all
                             </button>
                         </div>
 
@@ -107,7 +107,7 @@
                                 </div>
                                 <button @click="addTimeSlotForDate(selectedDate)"
                                     class="w-full py-2 px-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors text-sm">
-                                    + Add Time Slot
+                                    + Add time slot
                                 </button>
                             </div>
                         </div>
@@ -153,7 +153,7 @@
 
                         <button @click="goToCurrentWeek"
                             class="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
-                            This Week
+                            This week
                         </button>
                     </div>
                 </div>
@@ -260,7 +260,7 @@
                         <div v-if="userRole === 'provider'" class="flex items-center space-x-3">
                             <button v-if="hasUnsavedChanges" @click="loadAvailability"
                                 class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                Cancel Changes
+                                Cancel changes
                             </button>
                             <button @click="saveAvailability" :disabled="saving || !hasValidAvailability"
                                 class="px-6 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
@@ -289,7 +289,7 @@
                         </button>
                         <button @click="$emit('viewFullCalendar')"
                             class="px-3 py-1 text-blue-600 hover:text-blue-800 font-medium">
-                            View Full Calendar
+                            View full calendar
                         </button>
                     </div>
                 </div>

@@ -133,7 +133,7 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Assistive Technology Support</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Assistive Technology support</h2>
                         <p class="text-gray-700 mb-4">Our platform is compatible with a wide range of assistive
                             technologies:</p>
 
@@ -195,19 +195,19 @@
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility Support</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility support</h2>
                         <p class="text-gray-700 mb-6">
                             If you experience any accessibility barriers while using our platform, we want to help.
                             Our accessibility support team is available to assist you.
                         </p>
 
                         <div class="bg-blue-50 rounded-lg p-6">
-                            <h3 class="text-lg font-semibold text-blue-900 mb-3">Get Accessibility Support</h3>
+                            <h3 class="text-lg font-semibold text-blue-900 mb-3">Get Accessibility support</h3>
                             <div class="space-y-2 text-blue-800">
                                 <p><strong>Accessibility Coordinator:</strong> Maria Rodriguez</p>
                                 <p><strong>Email:</strong> accessibility@ytech.space</p>
                                 <p><strong>Phone:</strong> {{ supportPhone }} (ext. 102)</p>
-                                <p><strong>Response Time:</strong> Within 24 hours</p>
+                                <p><strong>Response time:</strong> Within 24 hours</p>
                             </div>
                         </div>
                     </section>

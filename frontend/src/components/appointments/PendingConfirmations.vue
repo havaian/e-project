@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Pending Confirmations</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Pending confirmations</h1>
             <div class="text-sm text-gray-500">
                 {{ pendingCount }} appointment{{ pendingCount !== 1 ? 's' : '' }} awaiting confirmation
             </div>
@@ -65,10 +65,10 @@
                         </div>
                     </div>
 
-                    <!-- Appointment Details -->
+                    <!-- Appointment details -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <div>
-                            <p class="text-sm text-gray-500">Appointment Date & Time</p>
+                            <p class="text-sm text-gray-500">Appointment date & time</p>
                             <p class="text-gray-900 font-medium">{{ formatDateTime(appointment.dateTime) }}</p>
                         </div>
                         <div>
@@ -76,13 +76,13 @@
                             <p class="text-gray-900">{{ appointment.duration || 30 }} minutes</p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Session Type</p>
+                            <p class="text-sm text-gray-500">Session type</p>
                             <p class="text-gray-900">
                                 {{ appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1) }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Payment Status</p>
+                            <p class="text-sm text-gray-500">Payment status</p>
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 Paid
@@ -131,7 +131,7 @@
                                 </div>
                                 Confirming...
                             </span>
-                            <span v-else>Confirm Appointment</span>
+                            <span v-else>Confirm appointment</span>
                         </button>
                     </div>
                 </div>
@@ -156,7 +156,7 @@
                         <XMarkIcon class="h-6 w-6 text-red-600" />
                     </div>
                     <div class="mt-5 text-center">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject Appointment</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject appointment</h3>
                         <div class="mt-2">
                             <p class="text-sm text-gray-500">
                                 Are you sure you want to reject this appointment? This action cannot be undone and the
@@ -178,7 +178,7 @@
                     <button @click="rejectAppointment" :disabled="processingRejection"
                         class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">
                         <span v-if="processingRejection">Rejecting...</span>
-                        <span v-else>Reject Appointment</span>
+                        <span v-else>Reject appointment</span>
                     </button>
                 </div>
             </div>

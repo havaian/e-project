@@ -78,7 +78,7 @@ router.get('/earnings/export', providerDashboardController.exportEarnings);
  * @route GET /api/users/providers/appointments/stats
  * @desc Get detailed appointment statistics
  * @access Private (Provider only)
- * @query {string} period - Period for stats (default: monthly)
+ * @query {string} period - period for stats (default: monthly)
  * @query {number} limit - Number of periods to include (default: 6)
  */
 router.get('/appointments/stats', providerDashboardController.getAppointmentStats);
@@ -88,7 +88,7 @@ router.get('/appointments/stats', providerDashboardController.getAppointmentStat
  * @desc Update provider session settings (duration, fee)
  * @access Private (Provider only)
  * @body {number} sessionDuration - 15, 30, 45, or 60 minutes
- * @body {number} sessionFee - Session fee amount
+ * @body {number} sessionFee - session fee amount
  */
 router.patch('/session-settings', providerDashboardController.updateSessionSettings);
 

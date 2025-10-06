@@ -3,7 +3,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <!-- Header -->
             <div class="text-center mb-12">
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Contact us</h1>
                 <p class="text-lg text-gray-600">We're here to help. Reach out to us anytime.</p>
                 <div class="w-24 h-1 bg-gradient-to-r from-sky-500 to-cyan-500 mx-auto mt-6"></div>
             </div>
@@ -12,7 +12,7 @@
                 <!-- Contact Information -->
                 <div class="lg:col-span-1">
                     <div class="bg-white rounded-xl shadow-lg p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Get in touch</h2>
 
                         <!-- Support Hours -->
                         <div class="mb-8">
@@ -21,7 +21,7 @@
                                     <ClockIcon class="w-6 h-6 text-green-600" />
                                 </div>
                                 <div>
-                                    <h3 class="font-semibold text-gray-900">24/7 Support</h3>
+                                    <h3 class="font-semibold text-gray-900">24/7 support</h3>
                                     <p class="text-sm text-gray-600">Available around the clock</p>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                                     <PhoneIcon class="w-5 h-5 text-sky-600" />
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Phone Support</h4>
+                                    <h4 class="font-semibold text-gray-900">Phone support</h4>
                                     <a :href="`tel:${supportPhone}`"
                                         class="text-sky-600 hover:text-sky-700 transition-colors">
                                         {{ supportPhone }}
@@ -52,7 +52,7 @@
                                     <EnvelopeIcon class="w-5 h-5 text-purple-600" />
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Email Support</h4>
+                                    <h4 class="font-semibold text-gray-900">Email support</h4>
                                     <a :href="`mailto:${supportEmail}`"
                                         class="text-purple-600 hover:text-purple-700 transition-colors">
                                         {{ supportEmail }}
@@ -61,14 +61,14 @@
                                 </div>
                             </div>
 
-                            <!-- Live Chat -->
+                            <!-- Live chat -->
                             <div class="flex items-start space-x-4">
                                 <div
                                     class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                     <ChatBubbleLeftRightIcon class="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Live Chat</h4>
+                                    <h4 class="font-semibold text-gray-900">Live chat</h4>
                                     <button @click="openLiveChat"
                                         class="text-emerald-600 hover:text-emerald-700 transition-colors">
                                         Start a conversation
@@ -78,24 +78,24 @@
                             </div>
                         </div>
 
-                        <!-- Department Extensions -->
+                        <!-- Department extensions -->
                         <div class="mt-8 pt-8 border-t border-gray-200">
-                            <h3 class="font-semibold text-gray-900 mb-4">Department Extensions</h3>
+                            <h3 class="font-semibold text-gray-900 mb-4">Department extensions</h3>
                             <div class="space-y-3 text-sm">
                                 <div class="flex justify-between">
-                                    <span class="text-gray-600">General Support</span>
+                                    <span class="text-gray-600">General support</span>
                                     <span class="text-gray-900">ext. 101</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-600">Technical Support</span>
+                                    <span class="text-gray-600">Technical support</span>
                                     <span class="text-gray-900">ext. 102</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-600">Billing & Payments</span>
+                                    <span class="text-gray-600">Billing & payments</span>
                                     <span class="text-gray-900">ext. 103</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-600">Provider Support</span>
+                                    <span class="text-gray-600">Provider support</span>
                                     <span class="text-gray-900">ext. 104</span>
                                 </div>
                             </div>
@@ -106,14 +106,14 @@
                 <!-- Contact Form -->
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-xl shadow-lg p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
 
                         <form @submit.prevent="submitForm" class="space-y-6">
-                            <!-- Name and Email Row -->
+                            <!-- name and Email Row -->
                             <div class="grid md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Full Name *
+                                        Full name *
                                     </label>
                                     <input id="name" v-model="form.name" type="text" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
@@ -121,7 +121,7 @@
                                 </div>
                                 <div>
                                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Email Address *
+                                        Email address *
                                     </label>
                                     <input id="email" v-model="form.email" type="email" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
@@ -146,14 +146,14 @@
                                     <select id="category" v-model="form.category"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors">
                                         <option value="">Select a category</option>
-                                        <option value="general">General Inquiry</option>
-                                        <option value="technical">Technical Support</option>
-                                        <option value="billing">Billing & Payments</option>
-                                        <option value="provider">Provider Support</option>
+                                        <option value="general">General inquiry</option>
+                                        <option value="technical">Technical support</option>
+                                        <option value="billing">Billing & payments</option>
+                                        <option value="provider">Provider support</option>
                                         <option value="accessibility">Accessibility</option>
-                                        <option value="privacy">Privacy & Security</option>
-                                        <option value="feature">Feature Request</option>
-                                        <option value="bug">Bug Report</option>
+                                        <option value="privacy">Privacy & security</option>
+                                        <option value="feature">Feature request</option>
+                                        <option value="bug">Bug report</option>
                                     </select>
                                 </div>
                             </div>
@@ -161,7 +161,7 @@
                             <!-- Phone (Optional) -->
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Phone Number (Optional)
+                                    Phone number (Optional)
                                 </label>
                                 <input id="phone" v-model="form.phone" type="tel"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
@@ -178,10 +178,10 @@
                                     placeholder="Please describe your inquiry in detail..."></textarea>
                             </div>
 
-                            <!-- Priority Level -->
+                            <!-- Priority level -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-3">
-                                    Priority Level
+                                    Priority level
                                 </label>
                                 <div class="flex space-x-4">
                                     <label class="flex items-center">
@@ -219,7 +219,7 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                         </path>
                                     </svg>
-                                    {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+                                    {{ isSubmitting ? 'Sending...' : 'Send message' }}
                                 </button>
                             </div>
                         </form>
@@ -236,10 +236,10 @@
                 </div>
             </div>
 
-            <!-- FAQ Section -->
+            <!-- FAQ section -->
             <div class="mt-16">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
                     <p class="text-gray-600">Quick answers to common questions</p>
                 </div>
 
@@ -334,7 +334,7 @@ const openLiveChat = () => {
 // Meta tags
 import { useHead } from '@unhead/vue'
 useHead({
-    title: `Contact Us | ${companyName}`,
+    title: `Contact us | ${companyName}`,
     meta: [
         { name: 'description', content: `Contact ${companyName} support team. We provide 24/7 assistance for all your consultation needs.` }
     ]

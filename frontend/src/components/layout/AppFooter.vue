@@ -36,14 +36,14 @@
 
             <div class="pt-2">
               <p class="text-sm text-gray-400">Available</p>
-              <p class="text-white font-medium">24/7 Support</p>
+              <p class="text-white font-medium">24/7 support</p>
             </div>
           </div>
         </div>
 
         <!-- Quick Links -->
         <div class="col-span-1">
-          <h3 class="text-lg font-semibold mb-4 text-white">Quick Links</h3>
+          <h3 class="text-lg font-semibold mb-4 text-white">Quick links</h3>
           <ul class="space-y-3">
             <li>
               <router-link to="/providers" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
@@ -98,7 +98,7 @@
         </div>
       </div>
 
-      <!-- Bottom Section -->
+      <!-- Bottom section -->
       <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
         <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
           <p class="text-gray-400 text-sm">
@@ -106,11 +106,11 @@
           </p>
           <div class="flex space-x-6">
             <router-link to="/privacy" class="text-gray-400 hover:text-sky-500 text-sm transition-colors duration-200">
-              Privacy Policy
+              Privacy policy
             </router-link>
             <router-link to="/public-offer"
               class="text-gray-400 hover:text-sky-500 text-sm transition-colors duration-200">
-              Public Offer
+              Public offer
             </router-link>
           </div>
         </div>
@@ -119,7 +119,7 @@
         <div class="flex items-center space-x-4 mt-4 md:mt-0">
           <div class="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
             <CheckBadgeIcon class="w-4 h-4 text-success" />
-            <span class="text-xs text-gray-300">SSL Secured</span>
+            <span class="text-xs text-gray-300">SSL secured</span>
           </div>
           <div class="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
             <ShieldCheckIcon class="w-4 h-4 text-sky-500" />

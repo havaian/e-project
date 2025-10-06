@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent="handleSubmit" class="form-container">
         <div class="form-group">
-            <label for="response" class="label">Your Response</label>
+            <label for="response" class="label">Your response</label>
             <div class="relative">
                 <textarea id="response" v-model="response" rows="4" class="input resize-none"
                     :class="response.trim() ? 'success' : ''"
@@ -33,11 +33,11 @@
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                         </path>
                     </svg>
-                    Sending Response...
+                    Sending response...
                 </span>
                 <span v-else class="flex items-center">
                     <PaperAirplaneIcon class="w-4 h-4 mr-2" />
-                    Send Response
+                    Send response
                 </span>
             </button>
         </div>
