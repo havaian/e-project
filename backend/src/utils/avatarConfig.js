@@ -21,7 +21,7 @@ const createUploadDir = (dir) => {
 // Configure storage for avatars
 const avatarStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = createUploadDir(path.join(__dirname, '../../uploads/avatars'));
+        const uploadDir = createUploadDir(path.join(__dirname, '../../../uploads/avatars'));
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {

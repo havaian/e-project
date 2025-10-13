@@ -48,7 +48,7 @@ exports.uploadProfilePhoto = async (req, res) => {
 
         // Create new filename using user ID
         const newFileName = `${userId}${fileExtension}`;
-        const avatarsDir = path.join(__dirname, '../../../uploads/avatars');
+        const avatarsDir = path.join(__dirname, '../../../../uploads/avatars');
         const newFilePath = path.join(avatarsDir, newFileName);
 
         // Ensure avatars directory exists
@@ -139,7 +139,7 @@ exports.getAvatar = async (req, res) => {
         }
 
         // Construct full file path
-        const avatarPath = path.join(__dirname, '../../../uploads/avatars/', filename);
+        const avatarPath = path.join(__dirname, '../../../../uploads/avatars/', filename);
         
         // Check if file exists
         if (!fs.existsSync(avatarPath)) {
@@ -235,7 +235,7 @@ exports.getUserAvatar = async (req, res) => {
             });
         }
 
-        const avatarsDir = path.join(__dirname, '../../../uploads/avatars');
+        const avatarsDir = path.join(__dirname, '../../../../uploads/avatars');
         const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
         
         // Find avatar file for this user
@@ -286,7 +286,7 @@ exports.removeAvatar = async (req, res) => {
             });
         }
 
-        const avatarsDir = path.join(__dirname, '../../../uploads/avatars');
+        const avatarsDir = path.join(__dirname, '../../../../uploads/avatars');
         const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
         
         // Find and remove all avatar files for this user

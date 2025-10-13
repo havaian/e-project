@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 // Configure storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadDir = path.join(__dirname, '../../uploads/documents');
+        const uploadDir = path.join(__dirname, '../../../uploads/documents');
 
         // Create directory if it doesn't exist
         if (!fs.existsSync(uploadDir)) {
