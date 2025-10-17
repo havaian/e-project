@@ -142,9 +142,9 @@ export const useAuthStore = defineStore('auth', () => {
     if (isProvider.value && needsOnboarding.value) {
       return '/provider/onboarding'
     } else if (isProvider.value) {
-      return '/provider/dashboard'
+      return '/'
     } else {
-      return '/client/dashboard'
+      return '/'
     }
   }
 
