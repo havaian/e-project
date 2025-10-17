@@ -10,7 +10,7 @@ exports.registerUser = async (req, res) => {
     try {
         // First, we need to preprocess the data to prevent validation issues with role-specific fields
         const userData = { ...req.body };
-        
+
         // If the user is a client, explicitly remove all provider-specific fields before validation
         if (userData.role === 'client' || !userData.role) {
             delete userData.specializations;
@@ -24,7 +24,7 @@ exports.registerUser = async (req, res) => {
             delete userData.certifications;
             delete userData.availability;
         }
-        
+
         // Validate the processed data
         const { error } = validateUserInput(userData);
         if (error) {
@@ -64,56 +64,36 @@ exports.registerUser = async (req, res) => {
             } else {
                 user.specializations = [];
             }
-            
+
             user.licenseNumber = userData.licenseNumber || '';
             user.experience = userData.experience || 0;
-            user.bio = userData.bio ? decodeURIComponent(userData.bio) : '';
-            user.languages = userData.languages || [];
+            user.bio = userData.bio || '';
             user.sessionFee = userData.sessionFee || 0;
-            user.sessionDuration = userData.sessionDuration || 60; // Default 60 minutes
+            user.sessionDuration = userData.sessionDuration || 60;
+            user.languages = userData.languages || ['English'];
             user.education = userData.education || [];
             user.certifications = userData.certifications || [];
-
-            // Default availability (can be updated later)
-            user.availability = [
-                { dayOfWeek: 1, isAvailable: true, startTime: '09:00', endTime: '17:00' },
-                { dayOfWeek: 2, isAvailable: true, startTime: '09:00', endTime: '17:00' },
-                { dayOfWeek: 3, isAvailable: true, startTime: '09:00', endTime: '17:00' },
-                { dayOfWeek: 4, isAvailable: true, startTime: '09:00', endTime: '17:00' },
-                { dayOfWeek: 5, isAvailable: true, startTime: '09:00', endTime: '17:00' },
-                { dayOfWeek: 6, isAvailable: false, startTime: '00:00', endTime: '00:00' },
-                { dayOfWeek: 7, isAvailable: false, startTime: '00:00', endTime: '00:00' }
-            ];
-
-            // Set initial profile completion step
-            user.profileSetupStep = 1; // Start at step 1 (Education)
-        }
-        else if (role === 'client' || !role) {            
-            // Explicitly ensure provider-specific fields are unset for clients
-            user.specializations = undefined;
-            user.licenseNumber = undefined;
-            user.experience = undefined;
-            user.sessionFee = undefined;
-            user.sessionDuration = undefined;
-            user.bio = undefined;
-            user.languages = undefined;
-            user.education = undefined;
-            user.certifications = undefined;
-            user.availability = undefined;
+            user.availability = userData.availability || {};
         }
 
-        // Initialize default achievements and clients array
-        user.initializeDefaultAchievements();
-        if (role === 'provider') {
-            user.clients = [];
-        }
-
-        // Save user to database (this will trigger profile completion calculation for providers)
         await user.save();
 
         // Send verification email
-        await NotificationService.sendVerificationEmail(user.email, verificationToken);
+        const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
 
+        try {
+            // Only send email in production or if explicitly enabled
+            if (process.env.NODE_ENV === 'production' || process.env.SEND_EMAILS === 'true') {
+                await NotificationService.sendVerificationEmail(user.email, verificationUrl);
+            }
+        } catch (emailError) {
+            console.error('Error sending verification email:', emailError);
+            // Don't fail registration if email fails - user can still be verified manually
+        }
+
+        // IMPORTANT: For registration, we don't automatically log the user in
+        // They need to verify their email first
+        // So we return success without token and user data
         res.status(201).json({
             success: true,
             message: 'User registered successfully. Please verify your email before logging in.',
@@ -121,7 +101,26 @@ exports.registerUser = async (req, res) => {
         });
     } catch (error) {
         console.error('Error registering user:', error);
-        res.status(500).json({ message: 'An error occurred while registering the user' });
+
+        // Provide more specific error messages based on the error type
+        if (error.code === 11000) {
+            // Duplicate key error (email already exists)
+            return res.status(400).json({
+                message: 'User with this email already exists'
+            });
+        }
+
+        if (error.name === 'ValidationError') {
+            // Mongoose validation error
+            const validationErrors = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({
+                message: validationErrors.join(', ')
+            });
+        }
+
+        res.status(500).json({
+            message: 'An error occurred while registering the user'
+        });
     }
 };
 
@@ -180,12 +179,12 @@ exports.loginUser = async (req, res) => {
 
         // Update last login time
         user.lastLoginAt = new Date();
-        
+
         // For providers, check if profile completion calculation is needed
         if (user.role === 'provider') {
             user.calculateProfileCompletion();
         }
-        
+
         await user.save();
 
         // Generate token
@@ -270,8 +269,8 @@ exports.updateUserProfile = async (req, res) => {
 
         // Validate session duration if provided
         if (updates.sessionDuration && ![15, 30, 45, 60, 75, 90, 105, 120].includes(updates.sessionDuration)) {
-            return res.status(400).json({ 
-                message: 'Session duration must be 15, 30, 45, 60, 75, 90, 105, or 120 minutes' 
+            return res.status(400).json({
+                message: 'Session duration must be 15, 30, 45, 60, 75, 90, 105, or 120 minutes'
             });
         }
 
@@ -378,9 +377,9 @@ exports.resetPassword = async (req, res) => {
         const { password } = req.body;
 
         const resetPasswordToken = crypto
-                .createHash('sha256')
-                .update(token)
-                .digest('hex');
+            .createHash('sha256')
+            .update(token)
+            .digest('hex');
 
         if (!password) {
             return res.status(400).json({ message: 'Please provide a new password' });
@@ -463,7 +462,7 @@ exports.getProviders = async (req, res) => {
         // Updated price filtering to support both old and new parameter names
         const minPriceFilter = minPrice || maxSessionFee; // Support both parameter names for backward compatibility
         const maxPriceFilter = maxPrice;
-        
+
         if (minPriceFilter || maxPriceFilter) {
             filter.sessionFee = {};
             if (minPriceFilter) {
@@ -480,7 +479,7 @@ exports.getProviders = async (req, res) => {
 
         // Build sort options - Updated to handle new sorting system
         const sortOptions = {};
-        
+
         // Handle new individual sort parameters
         if (experienceSort) {
             sortOptions.experience = experienceSort === 'asc' ? 1 : -1;
@@ -491,7 +490,7 @@ exports.getProviders = async (req, res) => {
         } else {
             // Handle legacy sorting system
             const validSortFields = ['experience', 'sessionFee', 'createdAt', 'firstName'];
-            
+
             if (validSortFields.includes(sortBy)) {
                 sortOptions[sortBy] = order === 'asc' ? 1 : -1;
             } else {
@@ -501,7 +500,7 @@ exports.getProviders = async (req, res) => {
 
         // Execute query with pagination
         const skip = (parseInt(page) - 1) * parseInt(limit);
-        
+
         const [providers, total] = await Promise.all([
             User.find(filter)
                 .select('firstName lastName specializations experience sessionFee languages profilePicture bio profileCompletionPercentage')
@@ -513,20 +512,20 @@ exports.getProviders = async (req, res) => {
 
         // Add review data for each provider
         const Review = require('../review/model'); // Import Review model
-        
+
         const providersWithReviews = await Promise.all(
             providers.map(async (provider) => {
                 try {
                     // Get review statistics for this provider
                     const reviewStats = await Review.getProviderAverageRating(provider._id);
-                    
+
                     // Convert provider to object and add review data
                     const providerObj = provider.toObject();
                     providerObj.reviewStats = {
                         averageRating: reviewStats.averageRating || 0,
                         totalReviews: reviewStats.totalReviews || 0
                     };
-                    
+
                     return providerObj;
                 } catch (reviewError) {
                     console.error('Error fetching reviews for provider:', provider._id, reviewError);
@@ -558,12 +557,12 @@ exports.getProviders = async (req, res) => {
                 limit: parseInt(limit),
                 totalPages: Math.ceil(total / parseInt(limit))
             },
-            filters: { 
-                specializations, 
-                minExperience, 
-                maxSessionFee, 
-                language, 
-                sortBy, 
+            filters: {
+                specializations,
+                minExperience,
+                maxSessionFee,
+                language,
+                sortBy,
                 order,
                 // Include new filter parameters in response
                 name,
@@ -677,7 +676,7 @@ exports.deactivateAccount = async (req, res) => {
 exports.addAchievement = async (req, res) => {
     try {
         const { achievementData } = req.body;
-        
+
         if (!achievementData || !achievementData.id || !achievementData.name) {
             return res.status(400).json({ message: 'Achievement data is required' });
         }
@@ -708,7 +707,7 @@ exports.addAchievement = async (req, res) => {
 exports.earnAchievement = async (req, res) => {
     try {
         const { achievementId } = req.params;
-        
+
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -736,7 +735,7 @@ exports.getUserAchievements = async (req, res) => {
     try {
         const { id } = req.params;
         const targetUserId = id || req.user.id;
-        
+
         const user = await User.findById(targetUserId).select('achievements firstName lastName role');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -765,7 +764,7 @@ exports.getUserAchievements = async (req, res) => {
 exports.addClient = async (req, res) => {
     try {
         const { clientId } = req.body;
-        
+
         if (!clientId) {
             return res.status(400).json({ message: 'Client ID is required' });
         }
@@ -808,7 +807,7 @@ exports.addClient = async (req, res) => {
 exports.removeClient = async (req, res) => {
     try {
         const { clientId } = req.params;
-        
+
         const provider = await User.findById(req.user.id);
         if (!provider || provider.role !== 'provider') {
             return res.status(403).json({ message: 'Only providers can remove clients' });
@@ -836,11 +835,11 @@ exports.getProviderClients = async (req, res) => {
     try {
         const { id } = req.params;
         const targetProviderId = id || req.user.id;
-        
+
         const provider = await User.findById(targetProviderId)
             .populate('clients', 'firstName lastName profilePicture email phone')
             .select('firstName lastName clients role');
-            
+
         if (!provider || provider.role !== 'provider') {
             return res.status(404).json({ message: 'Provider not found' });
         }
@@ -910,24 +909,24 @@ exports.updateProviderAvailability = async (req, res) => {
         // Validate that user is a provider
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'User not found' 
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
             });
         }
 
         if (user.role !== 'provider') {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Only providers can set availability' 
+            return res.status(403).json({
+                success: false,
+                message: 'Only providers can set availability'
             });
         }
 
         // Validate availability data
         if (!Array.isArray(availability) || availability.length !== 7) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Availability must be an array of 7 days' 
+            return res.status(400).json({
+                success: false,
+                message: 'Availability must be an array of 7 days'
             });
         }
 
@@ -940,9 +939,9 @@ exports.updateProviderAvailability = async (req, res) => {
 
             // Validate dayOfWeek
             if (!daysOfWeek.includes(dayOfWeek)) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: `Invalid dayOfWeek: ${dayOfWeek}. Must be 1-7 (Monday-Sunday)` 
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid dayOfWeek: ${dayOfWeek}. Must be 1-7 (Monday-Sunday)`
                 });
             }
 
@@ -962,9 +961,9 @@ exports.updateProviderAvailability = async (req, res) => {
                     // Validate time format (HH:MM)
                     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
                     if (!timeRegex.test(startTime) || !timeRegex.test(endTime)) {
-                        return res.status(400).json({ 
-                            success: false, 
-                            message: 'Invalid time format. Use HH:MM (24-hour format)' 
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Invalid time format. Use HH:MM (24-hour format)'
                         });
                     }
 
@@ -976,17 +975,17 @@ exports.updateProviderAvailability = async (req, res) => {
                     const endMinutes = endHour * 60 + endMinute;
 
                     if (endMinutes <= startMinutes) {
-                        return res.status(400).json({ 
-                            success: false, 
-                            message: `End time must be after start time for ${getDayName(dayOfWeek)}` 
+                        return res.status(400).json({
+                            success: false,
+                            message: `End time must be after start time for ${getDayName(dayOfWeek)}`
                         });
                     }
 
                     // Minimum slot duration check (15 minutes)
                     if (endMinutes - startMinutes < 15) {
-                        return res.status(400).json({ 
-                            success: false, 
-                            message: `Minimum time slot duration is 15 minutes for ${getDayName(dayOfWeek)}` 
+                        return res.status(400).json({
+                            success: false,
+                            message: `Minimum time slot duration is 15 minutes for ${getDayName(dayOfWeek)}`
                         });
                     }
 
@@ -1007,14 +1006,14 @@ exports.updateProviderAvailability = async (req, res) => {
                 for (let i = 0; i < processedDay.timeSlots.length - 1; i++) {
                     const current = processedDay.timeSlots[i];
                     const next = processedDay.timeSlots[i + 1];
-                    
+
                     const currentEnd = convertTimeToMinutes(current.endTime);
                     const nextStart = convertTimeToMinutes(next.startTime);
 
                     if (currentEnd > nextStart) {
-                        return res.status(400).json({ 
-                            success: false, 
-                            message: `Overlapping time slots detected for ${getDayName(dayOfWeek)}` 
+                        return res.status(400).json({
+                            success: false,
+                            message: `Overlapping time slots detected for ${getDayName(dayOfWeek)}`
                         });
                     }
                 }
@@ -1031,13 +1030,13 @@ exports.updateProviderAvailability = async (req, res) => {
 
         // Update user's availability
         user.availability = processedAvailability;
-        
+
         // Update profile completion if this improves it
         await user.calculateProfileCompletion();
         await user.save();
 
         // Log the update for audit purposes
-        console.log(`Provider ${user.firstName} ${user.lastName} (${user._id}) updated availability:`, 
+        console.log(`Provider ${user.firstName} ${user.lastName} (${user._id}) updated availability:`,
             processedAvailability);
 
         res.status(200).json({
@@ -1049,10 +1048,10 @@ exports.updateProviderAvailability = async (req, res) => {
 
     } catch (error) {
         console.error('Error updating provider availability:', error);
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             message: 'An error occurred while updating availability',
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -1068,16 +1067,16 @@ exports.getProviderAvailability = async (req, res) => {
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'User not found' 
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
             });
         }
 
         if (user.role !== 'provider') {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Only providers have availability settings' 
+            return res.status(403).json({
+                success: false,
+                message: 'Only providers have availability settings'
             });
         }
 
@@ -1092,10 +1091,10 @@ exports.getProviderAvailability = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching provider availability:', error);
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             message: 'An error occurred while fetching availability',
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -1125,7 +1124,7 @@ const getDefaultAvailability = () => {
 
 const calculateTotalWeeklyHours = (availability) => {
     let totalMinutes = 0;
-    
+
     availability.forEach(day => {
         if (day.isAvailable && day.timeSlots) {
             day.timeSlots.forEach(slot => {
@@ -1135,6 +1134,6 @@ const calculateTotalWeeklyHours = (availability) => {
             });
         }
     });
-    
+
     return Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal place
 };

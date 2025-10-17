@@ -281,6 +281,20 @@ const isPasswordValid = computed(() => {
     return Object.values(passwordValidation).every(Boolean)
 })
 
+const fetchSpecializations = async () => {
+    try {
+        loading.value = true
+        const response = await axios.get('/specializations')
+        availableSpecializations.value = response.data.specializations || []
+    } catch (error) {
+        console.error('Error fetching specializations:', error)
+        // Fallback specializations
+        availableSpecializations.value = []
+    } finally {
+        loading.value = false
+    }
+}
+
 // password validation function
 const validatePassword = () => {
     const password = formData.password
@@ -302,12 +316,27 @@ async function handleSubmit() {
         loading.value = true;
         error.value = '';
 
+        // Validate password before submitting
+        if (!isPasswordValid.value) {
+            error.value = 'Please ensure your password meets all requirements';
+            return;
+        }
+
         // Create a copy of the formData to modify before sending
         const registrationData = { ...formData };
 
-        await authStore.register(registrationData);
-        registrationSuccess.value = true;
+        // Call the auth store register method
+        const response = await authStore.register(registrationData);
+
+        // If registration is successful, show success message
+        if (response.success) {
+            registrationSuccess.value = true;
+        } else {
+            throw new Error(response.message || 'Registration failed');
+        }
+
     } catch (err) {
+        console.error('Registration error:', err);
         error.value = err.message || 'Failed to create account';
     } finally {
         loading.value = false;
