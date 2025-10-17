@@ -78,13 +78,10 @@ exports.registerUser = async (req, res) => {
 
         await user.save();
 
-        // Send verification email
-        const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
-
         try {
             // Only send email in production or if explicitly enabled
             if (process.env.NODE_ENV === 'production' || process.env.SEND_EMAILS === 'true') {
-                await NotificationService.sendVerificationEmail(user.email, verificationUrl);
+                await NotificationService.sendVerificationEmail(user.email, verificationToken);
             }
         } catch (emailError) {
             console.error('Error sending verification email:', emailError);
