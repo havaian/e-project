@@ -2,16 +2,29 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from '@/plugins/axios'
 
+// Safe JSON parse helper function
+function safeJsonParse(jsonString, fallback = null) {
+  try {
+    if (!jsonString || jsonString === 'undefined' || jsonString === 'null') {
+      return fallback
+    }
+    return JSON.parse(jsonString)
+  } catch (error) {
+    console.error('Error parsing JSON:', error, 'String was:', jsonString)
+    return fallback
+  }
+}
+
 export const useAuthStore = defineStore('auth', () => {
-  // Ensure proper initialization from localStorage
-  const user = ref(JSON.parse(localStorage.getItem('user')) || null)
+  // Safe initialization from localStorage
+  const user = ref(safeJsonParse(localStorage.getItem('user'), null))
   const token = ref(localStorage.getItem('token') || null)
-  const needsOnboarding = ref(JSON.parse(localStorage.getItem('needsOnboarding')) || false)
-  const profileCompletion = ref(JSON.parse(localStorage.getItem('profileCompletion')) || {
+  const needsOnboarding = ref(safeJsonParse(localStorage.getItem('needsOnboarding'), false))
+  const profileCompletion = ref(safeJsonParse(localStorage.getItem('profileCompletion'), {
     percentage: 0,
     isComplete: false,
     currentStep: 0
-  })
+  }))
 
   // Set axios header if token exists during initialization
   if (token.value) {
@@ -23,48 +36,27 @@ export const useAuthStore = defineStore('auth', () => {
   const lastUserDataRefresh = ref(0)
   const PROFILE_COMPLETION_CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
   const USER_DATA_CACHE_DURATION = 2 * 60 * 1000 // 2 minutes
-  
+
   // Track pending requests to prevent duplicates
   const pendingProfileCompletionRequest = ref(false)
   const pendingUserDataRequest = ref(false)
 
-  // Computed properties now work correctly because user.value and token.value are properly set
+  // Computed properties
   const isAuthenticated = computed(() => {
-    const result = !!token.value && !!user.value
-    return result
+    return !!token.value && !!user.value
   })
-  
+
   const isProvider = computed(() => {
-    const result = user.value?.role === 'provider'
-    return result
+    return user.value?.role === 'provider'
   })
-  
+
   const isClient = computed(() => {
-    const result = user.value?.role === 'client'
-    return result
+    return user.value?.role === 'client'
   })
 
   const isProviderOnboardingComplete = computed(() => !needsOnboarding.value)
   const currentOnboardingStep = computed(() => profileCompletion.value?.currentStep || 0)
 
-  // Force reactive update on store initialization
-  function initializeStore() {
-    const storedUser = localStorage.getItem('user')
-    const storedToken = localStorage.getItem('token')
-    
-    if (storedUser && storedToken) {
-      user.value = JSON.parse(storedUser)
-      token.value = storedToken
-      
-      // Set axios header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
-    }
-  }
-
-  // Call initialization immediately
-  initializeStore()
-
-  // Rest of your existing methods...
   async function login(email, password) {
     try {
       const credentials = { email, password }
@@ -77,13 +69,13 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('token', token.value)
       axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
 
-      if (response.data.user.needsOnboarding !== undefined) {
-        needsOnboarding.value = response.data.user.needsOnboarding
+      if (response.data.needsOnboarding !== undefined) {
+        needsOnboarding.value = response.data.needsOnboarding
         localStorage.setItem('needsOnboarding', JSON.stringify(needsOnboarding.value))
       }
 
-      if (response.data.user.profileCompletion) {
-        profileCompletion.value = response.data.user.profileCompletion
+      if (response.data.profileCompletion) {
+        profileCompletion.value = response.data.profileCompletion
         localStorage.setItem('profileCompletion', JSON.stringify(profileCompletion.value))
       }
 
@@ -97,21 +89,62 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await axios.post('/users/register', userData)
 
-      user.value = response.data.user
-      token.value = response.data.token
+      // For registration, we only get a success message, not user data or token
+      // The user needs to verify their email first before they can log in
 
-      localStorage.setItem('user', JSON.stringify(user.value))
-      localStorage.setItem('token', token.value)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
+      return {
+        success: response.data.success || true,
+        message: response.data.message || 'Registration successful',
+        needsOnboarding: response.data.needsOnboarding || false
+      }
+    } catch (error) {
+      console.error('Registration error:', error)
 
-      if (response.data.user.profileCompletion) {
-        profileCompletion.value = response.data.user.profileCompletion
-        localStorage.setItem('profileCompletion', JSON.stringify(profileCompletion.value))
+      // Extract error message from different possible error structures
+      let errorMessage = 'Failed to create account'
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.response?.data) {
+        // Handle case where response.data is a string
+        if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data
+        } else {
+          errorMessage = error.response.data.message || 'Registration failed'
+        }
+      } else if (error.message) {
+        errorMessage = error.message
       }
 
-      return response.data
-    } catch (error) {
-      throw error.response?.data || error.message
+      throw new Error(errorMessage)
+    }
+  }
+
+  function logout() {
+    user.value = null
+    token.value = null
+    needsOnboarding.value = false
+    profileCompletion.value = {
+      percentage: 0,
+      isComplete: false,
+      currentStep: 0
+    }
+
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    localStorage.removeItem('needsOnboarding')
+    localStorage.removeItem('profileCompletion')
+
+    delete axios.defaults.headers.common['Authorization']
+  }
+
+  function getPostLoginRedirect() {
+    if (isProvider.value && needsOnboarding.value) {
+      return '/provider/onboarding'
+    } else if (isProvider.value) {
+      return '/provider/dashboard'
+    } else {
+      return '/client/dashboard'
     }
   }
 
@@ -121,7 +154,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (!isProvider.value) return
 
       const now = Date.now()
-      
+
       // Skip if recently checked and not forcing refresh
       if (!forceRefresh && (now - lastProfileCompletionCheck.value) < PROFILE_COMPLETION_CACHE_DURATION) {
         return
@@ -155,61 +188,11 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function updateOnboardingStep(step) {
-    try {
-      const response = await axios.patch('/users/providers/profile/setup-step', { step })
-
+  function updateOnboardingStep(step) {
+    if (profileCompletion.value) {
       profileCompletion.value.currentStep = step
-
-      if (response.data.onboardingCompleted) {
-        needsOnboarding.value = false
-        profileCompletion.value.isComplete = true
-        // Force refresh next time since completion status changed significantly
-        lastProfileCompletionCheck.value = 0
-      }
-
       localStorage.setItem('profileCompletion', JSON.stringify(profileCompletion.value))
-      localStorage.setItem('needsOnboarding', JSON.stringify(needsOnboarding.value))
-
-      return response.data
-    } catch (error) {
-      console.error('Error updating onboarding step:', error)
-      throw error
     }
-  }
-
-  function getPostLoginRedirect() {
-    if (!isProvider.value) {
-      return '/' // Clients go to home
-    }
-
-    if (needsOnboarding.value) {
-      return '/profile/provider/onboarding' // Incomplete providers go to onboarding
-    }
-
-    return '/profile/provider' // Complete providers go to dashboard
-  }
-
-  function logout() {
-    user.value = null
-    token.value = null
-    needsOnboarding.value = false
-    profileCompletion.value = {
-      percentage: 0,
-      isComplete: false,
-      currentStep: 0
-    }
-
-    // Reset cache timestamps
-    lastProfileCompletionCheck.value = 0
-    lastUserDataRefresh.value = 0
-
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    localStorage.removeItem('needsOnboarding')
-    localStorage.removeItem('profileCompletion')
-    
-    delete axios.defaults.headers.common['Authorization']
   }
 
   // Add caching and duplicate request prevention
