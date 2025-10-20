@@ -42,8 +42,7 @@ export default {
       animation: {
         'float-element': 'floatElement 4s ease-in-out infinite',
         'pulse-animation': 'pulse 3s ease-in-out infinite',
-        'slide-in': 'slideIn 1.2s ease-out',
-        'heartbeat': 'heartbeat 2s ease-in-out infinite',
+        'slide-in': 'slideIn 1.2s ease-out'
       },
       keyframes: {
         floatElement: {
@@ -68,14 +67,6 @@ export default {
           to: {
             opacity: '1',
             transform: 'translateY(0)',
-          },
-        },
-        heartbeat: {
-          '0%, 100%': {
-            transform: 'scale(1)',
-          },
-          '50%': {
-            transform: 'scale(1.1)',
           },
         },
       },

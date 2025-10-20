@@ -297,11 +297,6 @@ button span {
     height: 100%;
 }
 
-/* Smooth hover effects */
-button:hover:not(:disabled) {
-    transform: scale(1.02);
-}
-
 button:disabled {
     pointer-events: none;
 }

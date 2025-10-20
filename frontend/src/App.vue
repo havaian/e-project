@@ -102,22 +102,6 @@ body {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
 }
 
-.heartbeat {
-  animation: heartbeat 2s ease-in-out infinite;
-}
-
-@keyframes heartbeat {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-}
-
 /* Custom button styles */
 .btn-element-primary {
   @apply px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-emerald-500 hover:to-sky-500 focus:ring-4 focus:ring-sky-500/30 transition-buttery shadow-lg;
