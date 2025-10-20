@@ -1735,7 +1735,7 @@ exports.getClientAppointmentsById = async (req, res) => {
         const currentUserRole = req.user.role;
 
         // Authorization check: client can only see their own, providers/admins can see any
-        if (currentUserRole === 'client' && currentUserId !== clientId) {
+        if (currentUserRole === 'client' && currentUserId.toString() !== clientId) {
             return res.status(403).json({
                 success: false,
                 message: 'Access denied. You can only view your own appointments.'
@@ -1783,7 +1783,7 @@ exports.getClientStats = async (req, res) => {
         const currentUserRole = req.user.role;
 
         // Authorization check
-        if (currentUserRole === 'client' && currentUserId !== clientId) {
+        if (currentUserRole === 'client' && currentUserId.toString() !== clientId) {
             return res.status(403).json({
                 success: false,
                 message: 'Access denied'
@@ -1866,7 +1866,7 @@ exports.getProviderAppointmentsById = async (req, res) => {
         const currentUserRole = req.user.role;
 
         // Authorization check: provider can only see their own, admins can see any
-        if (currentUserRole === 'provider' && currentUserId !== providerId) {
+        if (currentUserRole === 'provider' && currentUserId.toString() !== providerId) {
             return res.status(403).json({
                 success: false,
                 message: 'Access denied. You can only view your own appointments.'
