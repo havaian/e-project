@@ -29,6 +29,30 @@ router.get(
 );
 
 /**
+ * @route GET /api/appointments/client/:clientId
+ * @desc Get all appointments for a specific client by ID
+ * @access Private (client or admin)
+ */
+router.get(
+    '/client/:clientId',
+    authenticateUser,
+    authorizeRoles(['client', 'provider', 'admin']),
+    appointmentController.getClientAppointmentsById
+);
+
+/**
+ * @route GET /api/appointments/client/:clientId/stats
+ * @desc Get appointment statistics for a specific client
+ * @access Private (client or admin)
+ */
+router.get(
+    '/client/:clientId/stats',
+    authenticateUser,
+    authorizeRoles(['client', 'provider', 'admin']),
+    appointmentController.getClientStats
+);
+
+/**
  * @route GET /api/appointments/provider
  * @desc Get all appointments for the current provider
  * @access Private (provider or admin)
@@ -38,6 +62,18 @@ router.get(
     authenticateUser,
     authorizeRoles(['provider', 'admin']),
     appointmentController.getProviderAppointments
+);
+
+/**
+ * @route GET /api/appointments/provider/:providerId
+ * @desc Get all appointments for a specific provider by ID
+ * @access Private (provider or admin)
+ */
+router.get(
+    '/provider/:providerId',
+    authenticateUser,
+    authorizeRoles(['provider', 'admin']),
+    appointmentController.getProviderAppointmentsById
 );
 
 /**
@@ -106,6 +142,17 @@ router.get(
     authenticateUser,
     authorizeRoles(['client', 'admin']),
     appointmentController.getPendingFollowUps
+);
+
+/**
+ * @route PATCH /api/appointments/:id/status
+ * @desc Update appointment status
+ * @access Private
+ */
+router.patch(
+    '/:id/status',
+    authenticateUser,
+    appointmentController.updateAppointmentStatus
 );
 
 /**

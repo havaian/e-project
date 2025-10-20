@@ -1722,3 +1722,263 @@ exports.getAppointmentPaymentStatus = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving payment status' });
     }
 };
+
+/**
+ * Get all appointments for a specific client by ID
+ * @route GET /api/appointments/client/:clientId
+ * @access Private (client, provider, or admin)
+ */
+exports.getClientAppointmentsById = async (req, res) => {
+    try {
+        const { clientId } = req.params;
+        const currentUserId = req.user.id;
+        const currentUserRole = req.user.role;
+
+        // Authorization check: client can only see their own, providers/admins can see any
+        if (currentUserRole === 'client' && currentUserId !== clientId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied. You can only view your own appointments.'
+            });
+        }
+
+        // Validate that the client exists
+        const client = await User.findById(clientId);
+        if (!client || client.role !== 'client') {
+            return res.status(404).json({
+                success: false,
+                message: 'Client not found'
+            });
+        }
+
+        const appointments = await Appointment.find({ client: clientId })
+            .populate('provider', 'firstName lastName email profilePicture specializations')
+            .populate('client', 'firstName lastName email')
+            .sort({ dateTime: -1 });
+
+        res.status(200).json({
+            success: true,
+            appointments,
+            count: appointments.length
+        });
+
+    } catch (error) {
+        console.error('Error fetching client appointments by ID:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while fetching appointments'
+        });
+    }
+};
+
+/**
+ * Get appointment statistics for a specific client
+ * @route GET /api/appointments/client/:clientId/stats
+ * @access Private (client, provider, or admin)
+ */
+exports.getClientStats = async (req, res) => {
+    try {
+        const { clientId } = req.params;
+        const currentUserId = req.user.id;
+        const currentUserRole = req.user.role;
+
+        // Authorization check
+        if (currentUserRole === 'client' && currentUserId !== clientId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+
+        // Validate that the client exists
+        const client = await User.findById(clientId);
+        if (!client || client.role !== 'client') {
+            return res.status(404).json({
+                success: false,
+                message: 'Client not found'
+            });
+        }
+
+        // Get all appointments for this client
+        const appointments = await Appointment.find({ client: clientId });
+
+        // Calculate stats
+        const now = new Date();
+        const stats = {
+            totalAppointments: appointments.length,
+            completedAppointments: appointments.filter(apt => apt.status === 'completed').length,
+            upcomingAppointments: appointments.filter(apt => 
+                apt.status === 'scheduled' && new Date(apt.dateTime) > now
+            ).length,
+            canceledAppointments: appointments.filter(apt => apt.status === 'canceled').length,
+            totalHours: 0,
+            uniqueProviders: new Set(),
+            firstAppointment: null,
+            lastAppointment: null
+        };
+
+        // Calculate additional stats
+        if (appointments.length > 0) {
+            // Sort appointments by date
+            const sortedAppointments = appointments.sort((a, b) => 
+                new Date(a.dateTime) - new Date(b.dateTime)
+            );
+            
+            stats.firstAppointment = sortedAppointments[0].dateTime;
+            stats.lastAppointment = sortedAppointments[sortedAppointments.length - 1].dateTime;
+
+            // Calculate total hours and unique providers
+            appointments.forEach(apt => {
+                if (apt.status === 'completed') {
+                    stats.totalHours += (apt.duration || 60) / 60; // Default 60 minutes
+                }
+                if (apt.provider) {
+                    stats.uniqueProviders.add(apt.provider.toString());
+                }
+            });
+
+            stats.uniqueProviders = stats.uniqueProviders.size;
+        }
+
+        res.status(200).json({
+            success: true,
+            ...stats
+        });
+
+    } catch (error) {
+        console.error('Error fetching client stats:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while fetching client statistics'
+        });
+    }
+};
+
+/**
+ * Get all appointments for a specific provider by ID
+ * @route GET /api/appointments/provider/:providerId
+ * @access Private (provider or admin)
+ */
+exports.getProviderAppointmentsById = async (req, res) => {
+    try {
+        const { providerId } = req.params;
+        const currentUserId = req.user.id;
+        const currentUserRole = req.user.role;
+
+        // Authorization check: provider can only see their own, admins can see any
+        if (currentUserRole === 'provider' && currentUserId !== providerId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied. You can only view your own appointments.'
+            });
+        }
+
+        // Validate that the provider exists
+        const provider = await User.findById(providerId);
+        if (!provider || provider.role !== 'provider') {
+            return res.status(404).json({
+                success: false,
+                message: 'Provider not found'
+            });
+        }
+
+        const appointments = await Appointment.find({ provider: providerId })
+            .populate('client', 'firstName lastName email profilePicture dateOfBirth')
+            .populate('provider', 'firstName lastName email')
+            .sort({ dateTime: -1 });
+
+        res.status(200).json({
+            success: true,
+            appointments,
+            count: appointments.length
+        });
+
+    } catch (error) {
+        console.error('Error fetching provider appointments by ID:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while fetching appointments'
+        });
+    }
+};
+
+/**
+ * Update appointment status
+ * @route PATCH /api/appointments/:id/status
+ * @access Private
+ */
+exports.updateAppointmentStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const currentUserId = req.user.id;
+        const currentUserRole = req.user.role;
+
+        // Validate status
+        const validStatuses = ['scheduled', 'completed', 'canceled', 'no-show', 'pending-payment'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status provided'
+            });
+        }
+
+        // Find the appointment
+        const appointment = await Appointment.findById(id);
+        if (!appointment) {
+            return res.status(404).json({
+                success: false,
+                message: 'Appointment not found'
+            });
+        }
+
+        // Authorization check
+        const isAuthorized = currentUserRole === 'admin' ||
+            appointment.client.toString() === currentUserId ||
+            appointment.provider.toString() === currentUserId;
+
+        if (!isAuthorized) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+
+        // Business rules for status changes
+        if (status === 'completed' && currentUserRole !== 'provider' && currentUserRole !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Only providers can mark appointments as completed'
+            });
+        }
+
+        // Update appointment
+        appointment.status = status;
+        appointment.updatedAt = new Date();
+
+        // Add metadata about who changed the status
+        if (status === 'canceled') {
+            appointment.canceledBy = currentUserRole;
+            appointment.canceledAt = new Date();
+        }
+
+        await appointment.save();
+
+        // Populate for response
+        await appointment.populate('client', 'firstName lastName email');
+        await appointment.populate('provider', 'firstName lastName email');
+
+        res.status(200).json({
+            success: true,
+            appointment,
+            message: `Appointment status updated to ${status}`
+        });
+
+    } catch (error) {
+        console.error('Error updating appointment status:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while updating appointment status'
+        });
+    }
+};
