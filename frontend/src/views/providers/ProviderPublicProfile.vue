@@ -464,7 +464,7 @@ const fetchSimilarProviders = async () => {
 // Updated to handle the new backend response format
 const fetchCompletedAppointments = async () => {
     try {
-        const response = await axios.get(`/appointments/provider/${route.params.id}/stats`)
+        const response = await axios.get(`/appointments/me/${route.params.id}/stats`)
         if (response.data.success) {
             completedAppointments.value = response.data.completedAppointments || 0
             responseRate.value = response.data.responseRate || 95

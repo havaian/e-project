@@ -29,14 +29,14 @@
                             Find providers
                         </router-link>
                         <template v-if="authStore.isAuthenticated">
-                            <router-link v-if="authStore.isClient" to="/appointments/client"
+                            <router-link v-if="authStore.isClient" to="/appointments/me"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
-                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/client') }">
+                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/me') }">
                                 My appointments
                             </router-link>
-                            <router-link v-if="authStore.isProvider" to="/appointments/provider"
+                            <router-link v-if="authStore.isProvider" to="/appointments/me"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
-                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/provider') }">
+                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/me') }">
                                 My Schedule
                             </router-link>
                         </template>
@@ -80,7 +80,7 @@
                             <div v-if="showProfileMenu"
                                 class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-sky-500/10">
                                 <div class="py-1">
-                                    <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
+                                    <router-link :to="authStore.isProvider ? '/profile/me' : '/profile/me'"
                                         class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <UserIcon class="h-4 w-4" />
@@ -129,15 +129,15 @@
                     Find providers
                 </router-link>
                 <template v-if="authStore.isAuthenticated">
-                    <router-link v-if="authStore.isClient" to="/appointments/client"
+                    <router-link v-if="authStore.isClient" to="/appointments/me"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/client') }"
+                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/me') }"
                         @click="closeMobileMenu">
                         My appointments
                     </router-link>
-                    <router-link v-if="authStore.isProvider" to="/appointments/provider"
+                    <router-link v-if="authStore.isProvider" to="/appointments/me"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/provider') }"
+                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/me') }"
                         @click="closeMobileMenu">
                         My schedule
                     </router-link>
@@ -153,12 +153,12 @@
                                 <div class="text-sm font-medium text-gray-500">{{ authStore.user?.email }}</div>
                             </div>
                         </div>
-                        <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
+                        <router-link :to="authStore.isProvider ? '/profile/me' : '/profile/me'"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
                             My profile
                         </router-link>
-                        <router-link to="/profile/edit"
+                        <router-link to="/profile/me/edit"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
                             Edit profile

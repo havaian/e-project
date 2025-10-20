@@ -84,7 +84,7 @@
                                 <h2 class="text-lg font-semibold text-gray-900">
                                     Upcoming appointments
                                 </h2>
-                                <router-link to="/appointments/client"
+                                <router-link to="/appointments/me"
                                     class="text-sm text-brand-1 hover:text-brand-1/80 font-medium">
                                     View all
                                 </router-link>
@@ -300,7 +300,7 @@ const loadDashboardData = async () => {
         loadingAppointments.value = true
 
         // Single API call to get all appointments - this eliminates duplicate requests
-        const appointmentsResponse = await axios.get(`/appointments/client/${userId}`)
+        const appointmentsResponse = await axios.get(`/appointments/me/${userId}`)
         const allAppointments = appointmentsResponse.data.appointments || []
 
         // Filter upcoming appointments for display (limit to 5 most recent)

@@ -425,7 +425,7 @@ const completeOnboarding = async () => {
         await authStore.updateOnboardingStep(6)
 
         // Redirect to provider dashboard with refresh flag
-        router.push('/profile/provider?refreshProfile=true')
+        router.push('/profile/me?refreshProfile=true')
 
     } catch (error) {
         console.error('Error completing onboarding:', error)

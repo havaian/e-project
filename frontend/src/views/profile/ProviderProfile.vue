@@ -38,12 +38,12 @@
             </div>
           </div>
           <div class="mt-4 sm:mt-0 flex gap-2">
-            <router-link to="/profile/edit"
+            <router-link to="/profile/me/edit"
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
               <PencilIcon class="w-4 h-4 mr-2" />
               Edit profile
             </router-link>
-            <router-link to="/profile/provider/dashboard"
+            <router-link to="/profile/me/dashboard"
               class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
               <ChartBarIcon class="w-4 h-4 mr-2" />
               Dashboard
@@ -329,7 +329,7 @@
                   <span class="text-sm text-gray-600">Total earned</span>
                   <span class="font-medium text-gray-900">{{ formatCurrency(earnings.total) }}</span>
                 </div>
-                <router-link to="/profile/provider/dashboard"
+                <router-link to="/profile/me/dashboard"
                   class="block text-center text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-3">
                   View detailed earnings
                 </router-link>
@@ -437,7 +437,7 @@ const fetchClients = async () => {
 
 const fetchAppointments = async () => {
   try {
-    const response = await axios.get(`/appointments/provider/${authStore.user._id}`)
+    const response = await axios.get(`/appointments/me/${authStore.user._id}`)
     const appointments = response.data.appointments || []
 
     // Calculate stats

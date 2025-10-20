@@ -229,7 +229,7 @@
                         <p class="text-gray-600 mb-6">
                             {{ filters.status || filters.date ? 'Try adjusting your filters' : 'Clients will book appointments with you based on your availability' }}
                         </p>
-                        <router-link to="/profile/provider" class="btn-primary px-6 py-3">
+                        <router-link to="/profile/me" class="btn-primary px-6 py-3">
                             Update availability
                         </router-link>
                     </div>
@@ -391,7 +391,7 @@ const fetchAppointments = async () => {
             params.status = 'pending-provider-confirmation'
         }
 
-        const response = await axios.get(`/appointments/provider/${authStore.user._id}`, { params })
+        const response = await axios.get(`/appointments/me/${authStore.user._id}`, { params })
         appointments.value = response.data.appointments || []
         totalAppointments.value = response.data.pagination?.total || 0
         totalPages.value = Math.ceil(totalAppointments.value / 10)

@@ -189,7 +189,7 @@ const appointments = ref([])
 const loadAppointments = async () => {
     try {
         loading.value = true
-        const response = await axios.get('/appointments/client')
+        const response = await axios.get('/appointments/me')
         appointments.value = response.data.appointments || []
     } catch (err) {
         console.error('Error loading appointments:', err)

@@ -16,7 +16,7 @@
                             <h1 class="text-3xl font-bold text-gray-900">Edit profile</h1>
                             <p class="text-gray-600 mt-4">Update your information and preferences</p>
                         </div>
-                        <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
+                        <router-link :to="authStore.isProvider ? '/profile/me' : '/profile/me'"
                             class="text-gray-500 hover:text-gray-700">
                             <XMarkIcon class="w-6 h-6" />
                         </router-link>
@@ -337,7 +337,7 @@
 
                         <!-- Submit Button -->
                         <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-                            <router-link :to="authStore.isProvider ? '/profile/provider' : '/profile/client'"
+                            <router-link :to="authStore.isProvider ? '/profile/me' : '/profile/me'"
                                 class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 Cancel
                             </router-link>
@@ -694,7 +694,7 @@ const handleSubmit = async () => {
         }
 
         // Navigate back
-        const targetRoute = authStore.isProvider ? '/profile/provider' : '/profile/client'
+        const targetRoute = authStore.isProvider ? '/profile/me' : '/profile/me'
         await router.push(targetRoute)
     } catch (error) {
         console.error('Error updating profile:', error)

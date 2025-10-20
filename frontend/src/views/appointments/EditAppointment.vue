@@ -4,7 +4,7 @@
             <!-- Header -->
             <div class="mb-8">
                 <div class="flex items-center space-x-4">
-                    <router-link to="/appointments/client" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
+                    <router-link to="/appointments/me" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                         <ArrowLeftIcon class="w-5 h-5" />
                     </router-link>
                     <div>
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <router-link to="/appointments/client" class="btn-primary">
+                    <router-link to="/appointments/me" class="btn-primary">
                         Back to appointments
                     </router-link>
                 </div>
@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <router-link to="/appointments/client" class="btn-primary">
+                    <router-link to="/appointments/me" class="btn-primary">
                         Back to appointments
                     </router-link>
                 </div>
@@ -158,7 +158,7 @@
 
                 <!-- Actions -->
                 <div class="flex items-center justify-between pt-6 border-t border-gray-200">
-                    <router-link to="/appointments/client"
+                    <router-link to="/appointments/me"
                         class="px-6 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                         Cancel
                     </router-link>
@@ -287,7 +287,7 @@ const rescheduleAppointment = async () => {
 
         // Show success and redirect
         router.push({
-            path: '/appointments/client',
+            path: '/appointments/me',
             query: { message: 'Reschedule request sent successfully. Waiting for provider confirmation.' }
         })
     } catch (err) {

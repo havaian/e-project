@@ -16,11 +16,11 @@
                         </div>
 
                         <div class="flex items-center space-x-4">
-                            <router-link to="/profile/provider" class="btn-secondary">
+                            <router-link to="/profile/me" class="btn-secondary">
                                 <UserIcon class="w-5 h-5 mr-2" />
                                 View profile
                             </router-link>
-                            <router-link to="/appointments/provider" class="btn-primary">
+                            <router-link to="/appointments/me" class="btn-primary">
                                 <CalendarDaysIcon class="w-5 h-5 mr-2" />
                                 View all appointments
                             </router-link>
@@ -104,7 +104,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <router-link to="/appointments/provider"
+                            <router-link to="/appointments/me"
                                 class="px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors">
                                 Review now
                             </router-link>
@@ -192,7 +192,7 @@
                                 <CalendarDaysIcon class="w-12 h-12 text-gray-400 mx-auto mb-4" />
                                 <h3 class="text-lg font-medium text-gray-900 mb-2">No appointments today</h3>
                                 <p class="text-gray-600 mb-4">Enjoy your free time or update your availability</p>
-                                <router-link to="/profile/provider" class="btn-secondary px-4 py-2">
+                                <router-link to="/profile/me" class="btn-secondary px-4 py-2">
                                     Update availability
                                 </router-link>
                             </div>
@@ -236,7 +236,7 @@
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <h2 class="text-lg font-semibold text-gray-900">This week's overview</h2>
-                                <router-link to="/appointments/provider"
+                                <router-link to="/appointments/me"
                                     class="text-sm text-brand-1 hover:text-brand-1/80 font-medium">
                                     View calendar
                                 </router-link>
@@ -287,7 +287,7 @@
                             </div>
                         </div>
 
-                        <router-link to="/profile/provider/dashboard"
+                        <router-link to="/profile/me/dashboard"
                             class="block text-center text-brand-1 hover:text-brand-1/80 text-sm font-medium mt-4">
                             View detailed analytics
                         </router-link>
@@ -405,7 +405,7 @@ const loadDashboardData = async () => {
 
         // Load today's appointments
         const today = format(new Date(), 'yyyy-MM-dd')
-        const appointmentsResponse = await axios.get(`/appointments/provider/${authStore.user._id}`, {
+        const appointmentsResponse = await axios.get(`/appointments/me/${authStore.user._id}`, {
             params: {
                 date: today,
                 status: 'scheduled'
@@ -557,7 +557,7 @@ const viewAppointment = (appointment) => {
 }
 
 const goToAppointments = () => {
-    router.push('/appointments/provider')
+    router.push('/appointments/me')
 }
 
 const downloadReport = async () => {

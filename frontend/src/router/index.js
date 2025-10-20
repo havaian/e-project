@@ -46,68 +46,59 @@ const router = createRouter({
       component: () => import('@/views/auth/ResetPassword.vue')
     },
 
-    // Dashboard routes (NEW)
+    // Unified Dashboard route (role-based component loading)
     {
-      path: '/dashboard/client',
-      name: 'client-dashboard',
-      component: () => import('@/views/dashboard/ClientDashboard.vue'),
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('@/views/shared/UnifiedDashboard.vue'),
       meta: {
-        requiresAuth: true,
-        requiresClient: true
+        requiresAuth: true
       }
     },
 
-    // Profile routes
+    // Unified Profile routes (role-based component loading)
     {
-      path: '/profile/client',
-      name: 'client-profile',
-      component: () => import('@/views/profile/ClientProfile.vue'),
+      path: '/profile/me',
+      name: 'my-profile',
+      component: () => import('@/views/shared/UnifiedProfile.vue'),
       meta: {
-        requiresAuth: true,
-        requiresClient: true
+        requiresAuth: true
       }
     },
     {
-      path: '/profile/provider',
-      name: 'provider-profile',
-      component: () => import('@/views/profile/ProviderProfile.vue'),
-      meta: {
-        requiresAuth: true,
-        requiresProvider: true,
-        // requiresCompleteProfile: true
-      }
-    },
-
-    // Provider onboarding routes
-    {
-      path: '/profile/provider/onboarding',
-      name: 'provider-onboarding',
+      path: '/profile/me/onboarding',
+      name: 'my-profile-onboarding',
       component: () => import('@/views/profile/ProviderOnboarding.vue'),
       meta: {
         requiresAuth: true,
         requiresProvider: true,
-        // requiresIncompleteProfile: true,
         hideNavBar: true,
         hideFooter: true
       }
     },
-
-    // Provider dashboard with earnings
     {
-      path: '/profile/provider/dashboard',
-      name: 'provider-dashboard',
+      path: '/profile/me/dashboard',
+      name: 'my-profile-dashboard',
       component: () => import('@/views/dashboard/ProviderDashboard.vue'),
       meta: {
         requiresAuth: true,
-        requiresProvider: true,
-        // requiresCompleteProfile: true
+        requiresProvider: true
+      }
+    },
+    {
+      path: '/profile/me/edit',
+      name: 'my-profile-edit',
+      component: () => import('@/views/profile/EditProfile.vue'),
+      meta: {
+        requiresAuth: true
       }
     },
 
+    // Unified Appointments route (role-based component loading)
     {
-      path: '/profile/edit',
-      name: 'profile-edit',
-      component: () => import('@/views/profile/EditProfile.vue'),
+      path: '/appointments/me',
+      name: 'my-appointments',
+      component: () => import('@/views/shared/UnifiedAppointments.vue'),
       meta: {
         requiresAuth: true
       }
@@ -143,25 +134,6 @@ const router = createRouter({
       }
     },
     {
-      path: '/appointments/client',
-      name: 'client-appointments',
-      component: () => import('@/views/appointments/ClientAppointments.vue'),
-      meta: {
-        requiresAuth: true,
-        requiresClient: true
-      }
-    },
-    {
-      path: '/appointments/provider',
-      name: 'provider-appointments',
-      component: () => import('@/views/appointments/ProviderAppointments.vue'),
-      meta: {
-        requiresAuth: true,
-        requiresProvider: true,
-        requiresCompleteProfile: true
-      }
-    },
-    {
       path: '/appointments/:id',
       name: 'appointment-details',
       component: () => import('@/views/appointments/AppointmentDetails.vue'),
@@ -173,6 +145,14 @@ const router = createRouter({
       path: '/appointments/:id/edit',
       name: 'appointment-edit',
       component: () => import('@/views/appointments/EditAppointment.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/appointments/:id/reschedule',
+      name: 'appointment-reschedule',
+      component: () => import('@/views/appointments/RescheduleAppointment.vue'),
       meta: {
         requiresAuth: true
       }
@@ -284,7 +264,7 @@ const router = createRouter({
   ]
 })
 
-// Enhanced navigation guards with reduced API calls
+// Enhanced navigation guards with role-based routing logic
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
@@ -297,12 +277,12 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
     // Redirect authenticated users to their appropriate dashboard
     if (authStore.isClient) {
-      next('/dashboard/client')
+      next('/dashboard')
     } else if (authStore.isProvider) {
       if (authStore.needsOnboarding) {
-        next('/profile/provider/onboarding')
+        next('/profile/me/onboarding')
       } else {
-        next('/profile/provider/dashboard')
+        next('/profile/me/dashboard')
       }
     } else {
       next('/')
@@ -327,21 +307,21 @@ router.beforeEach(async (to, from, next) => {
     const needsProfileCheck =
       to.meta.requiresCompleteProfile ||
       to.meta.requiresIncompleteProfile ||
-      to.path.includes('/profile/provider')
+      to.path.includes('/profile/me')
 
-    if (needsProfileCheck) {      
+    if (needsProfileCheck) {
       // Don't force refresh on every navigation, use cache
       await authStore.updateProfileCompletion(false)
 
       // Check if provider needs onboarding and is trying to access complete-profile routes
       if (to.meta.requiresCompleteProfile && authStore.needsOnboarding) {
-        next('/profile/provider/onboarding')
+        next('/profile/me/onboarding')
         return
       }
 
       // Check if provider is complete and trying to access onboarding
       if (to.meta.requiresIncompleteProfile && !authStore.needsOnboarding) {
-        next('/profile/provider')
+        next('/profile/me')
         return
       }
     }
@@ -357,13 +337,13 @@ router.afterEach((to, from) => {
   if (authStore.isAuthenticated) {
     // Only refresh on specific high-priority pages, not every navigation
     const criticalPages = [
-      '/profile/edit',
-      '/profile/provider/onboarding'
+      '/profile/me/edit',
+      '/profile/me/onboarding'
     ]
 
     // Force refresh only when completing onboarding or editing profile
     const shouldForceRefresh =
-      to.path === '/profile/provider' && from.path === '/profile/provider/onboarding'
+      to.path === '/profile/me' && from.path === '/profile/me/onboarding'
 
     if (criticalPages.some(page => to.path.includes(page)) || shouldForceRefresh) {
       authStore.refreshUserData(shouldForceRefresh)
