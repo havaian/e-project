@@ -33,8 +33,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import ClientProfile from './ClientProfile.vue'
-import ProviderProfile from './ProviderProfile.vue'
+import ClientProfile from '@/views/profile/ClientProfile.vue'
+import ProviderProfile from '@/views/profile/ProviderProfile.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

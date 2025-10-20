@@ -33,8 +33,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import ClientAppointments from './ClientAppointments.vue'
-import ProviderAppointments from './ProviderAppointments.vue'
+import ClientAppointments from '@/views/appointments/ClientAppointments.vue'
+import ProviderAppointments from '@/views/appointments/ProviderAppointments.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
