@@ -35,6 +35,13 @@
                 </div>
             </div>
 
+            <div v-else-if="loadingProvider" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                <div class="flex items-center justify-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent"></div>
+                    <p class="ml-3 text-gray-600">Loading provider...</p>
+                </div>
+            </div>
+
             <!-- Booking Form -->
             <div v-else class="space-y-6">
                 <!-- Selected Provider Info -->
@@ -203,7 +210,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { format, addDays, parseISO } from 'date-fns'
 import axios from '@/plugins/axios'
 import { usePaymentStore } from '@/stores/payment'
@@ -214,6 +221,7 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
+const route = useRoute()
 const paymentStore = usePaymentStore()
 
 // State
@@ -226,6 +234,7 @@ const timeSlotsError = ref(null)
 const booking = ref(false)
 const error = ref(null)
 const selectedDateObj = ref(null)
+const loadingProvider = ref(false)
 
 const formData = ref({
     date: '',
@@ -294,9 +303,55 @@ const loadProviders = async () => {
     try {
         const response = await axios.get('/users/providers/active')
         providers.value = response.data.providers || []
+        
+        // After loading providers, check if we need to pre-select one from the URL
+        await handleProviderFromRoute()
     } catch (err) {
         console.error('Error loading providers:', err)
         error.value = 'Failed to load providers. Please refresh the page.'
+    }
+}
+
+const handleProviderFromRoute = async () => {
+    const providerId = route.params.providerId
+    
+    if (providerId) {
+        // First check if the provider is in our loaded providers list
+        const provider = providers.value.find(p => p._id === providerId)
+        
+        if (provider) {
+            selectedProvider.value = provider
+            console.log('Pre-selected provider from route:', provider)
+        } else {
+            // If not found in the list, try to fetch it directly
+            await loadSpecificProvider(providerId)
+        }
+    }
+}
+
+const loadSpecificProvider = async (providerId) => {
+    try {
+        loadingProvider.value = true
+        console.log('Loading specific provider:', providerId)
+        
+        const response = await axios.get(`/users/providers/${providerId}`)
+        const provider = response.data.provider || response.data
+        
+        if (provider) {
+            selectedProvider.value = provider
+            console.log('Loaded specific provider:', provider)
+        } else {
+            error.value = 'Provider not found or is not available for booking.'
+            // Redirect back to provider list if provider not found
+            router.push('/providers')
+        }
+    } catch (err) {
+        console.error('Error loading specific provider:', err)
+        error.value = 'Failed to load provider. Please try again.'
+        // Redirect back to provider list on error
+        router.push('/providers')
+    } finally {
+        loadingProvider.value = false
     }
 }
 
