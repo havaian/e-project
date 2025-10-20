@@ -525,7 +525,6 @@ const handleSortDirectionChange = () => {
 
 const handleExport = (format) => {
     // TODO: Implement export functionality
-    console.log(`Exporting as ${format}`)
 }
 
 const handlePrint = () => {
@@ -540,7 +539,6 @@ const handleRefresh = () => {
 
 const handleBulkAction = (action) => {
     // TODO: Implement bulk actions
-    console.log(`Bulk action: ${action}`)
 }
 
 // Calendar event handlers

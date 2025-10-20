@@ -328,7 +328,6 @@ const submitForm = async () => {
 const openLiveChat = () => {
     // Here you would integrate with your live chat system
     // For example, opening a chat widget
-    // console.log('Opening live chat...')
 }
 
 // Meta tags

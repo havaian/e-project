@@ -418,12 +418,10 @@ const closeArticle = () => {
 }
 
 const rateArticle = (rating) => {
-    // console.log(`Article rated as: ${rating}`)
     // Here you would send the rating to your backend
 }
 
 const startLiveChat = () => {
-    // console.log('Starting live chat...')
     // Here you would integrate with your live chat system
 }
 

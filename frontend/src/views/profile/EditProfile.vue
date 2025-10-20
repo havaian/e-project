@@ -612,7 +612,6 @@ const handlePhotoUpload = async (event) => {
 
         if (response.data.success) {
             formData.profilePicture = response.data.profilePicture
-            console.log('Photo uploaded successfully:', response.data.profilePicture)
         } else {
             throw new Error(response.data.message || 'Upload failed')
         }

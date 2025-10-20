@@ -563,7 +563,6 @@ const goToAppointments = () => {
 const downloadReport = async () => {
     try {
         // TODO: Implement report download
-        console.log('Downloading report...')
     } catch (error) {
         console.error('Error downloading report:', error)
     }

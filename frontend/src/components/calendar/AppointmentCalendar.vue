@@ -179,12 +179,9 @@ const selectedDateAppointments = computed(() => {
 const loadAllAppointments = async () => {
     loading.value = true
     try {
-        console.log('Loading all user appointments...')
-
         const response = await axios.get('/appointments/all')
 
         appointments.value = response.data.appointments || []
-        console.log('Loaded appointments:', appointments.value.length)
     } catch (error) {
         console.error('Error loading appointments:', error)
         appointments.value = []

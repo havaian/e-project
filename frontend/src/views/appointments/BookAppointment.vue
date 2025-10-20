@@ -321,7 +321,6 @@ const handleProviderFromRoute = async () => {
         
         if (provider) {
             selectedProvider.value = provider
-            console.log('Pre-selected provider from route:', provider)
         } else {
             // If not found in the list, try to fetch it directly
             await loadSpecificProvider(providerId)
@@ -332,14 +331,11 @@ const handleProviderFromRoute = async () => {
 const loadSpecificProvider = async (providerId) => {
     try {
         loadingProvider.value = true
-        console.log('Loading specific provider:', providerId)
-        
         const response = await axios.get(`/users/providers/${providerId}`)
         const provider = response.data.provider || response.data
         
         if (provider) {
             selectedProvider.value = provider
-            console.log('Loaded specific provider:', provider)
         } else {
             error.value = 'Provider not found or is not available for booking.'
             // Redirect back to provider list if provider not found
@@ -378,16 +374,9 @@ const loadAvailableTimeSlots = async () => {
         loadingTimeSlots.value = true
         timeSlotsError.value = null
 
-        console.log('Loading time slots for:', {
-            providerId: selectedProvider.value._id,
-            date: formData.value.date
-        })
-
         const response = await axios.get(`/appointments/availability/${selectedProvider.value._id}`, {
             params: { date: formData.value.date }
         })
-
-        console.log('Time slots response:', response.data)
 
         if (response.data.availableSlots && Array.isArray(response.data.availableSlots)) {
             // Transform the slots to the expected format
@@ -416,9 +405,7 @@ const loadAvailableTimeSlots = async () => {
                 }
             })
 
-            console.log('Processed time slots:', availableTimeSlots.value)
         } else {
-            console.log('No available slots in response or invalid format')
             availableTimeSlots.value = []
         }
 
@@ -448,12 +435,8 @@ const bookAppointment = async () => {
             shortDescription: formData.value.shortDescription || ''
         }
 
-        console.log('Booking appointment with data:', appointmentData)
-
         const response = await axios.post('/appointments', appointmentData)
         const appointment = response.data.appointment
-
-        console.log('Appointment created:', appointment)
 
         // Redirect to payment
         if (appointment.payment.required) {

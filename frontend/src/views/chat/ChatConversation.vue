@@ -138,7 +138,6 @@ function initializeSocket() {
 
     // Socket event handlers
     socket.value.on('connect', () => {
-        console.log('Socket connected successfully')
         socket.value.emit('join-conversation', route.params.id)
     })
 
@@ -150,7 +149,6 @@ function initializeSocket() {
     })
 
     socket.value.on('disconnect', (reason) => {
-        console.log('Socket disconnected:', reason)
     })
 
     socket.value.on('error', (error) => {
@@ -259,7 +257,6 @@ function handleMessageSubmit(messageText) {
 
         socket.value.emit('new-message', messageData, (response) => {
             if (response && response.success) {
-                console.log('Message sent successfully')
             } else {
                 console.error('Failed to send message:', response)
                 alert('Failed to send message. Please try again.')

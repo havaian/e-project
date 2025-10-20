@@ -541,7 +541,6 @@ const initiateChat = async () => {
         const response = await axios.post('/chat/conversations', {
             participantId: student.value._id
         })
-        // console.log('Chat initiated:', response.data)
     } catch (error) {
         console.error('Error initiating chat:', error)
     }
