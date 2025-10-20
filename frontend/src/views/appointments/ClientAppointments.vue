@@ -8,7 +8,7 @@
                         <h1 class="text-2xl font-bold text-gray-900">My appointments</h1>
                         <p class="text-gray-600">Manage your upcoming and past consultations</p>
                     </div>
-                    <router-link to="/book-appointment" class="btn-primary">
+                    <router-link to="/providers" class="btn-primary">
                         <PlusIcon class="w-5 h-5 mr-2" />
                         Book new appointment
                     </router-link>
@@ -38,7 +38,7 @@
                 <CalendarDaysIcon class="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 class="text-lg font-medium text-gray-900 mb-2">No appointments yet</h3>
                 <p class="text-gray-600 mb-6">Book your first consultation to get started</p>
-                <router-link to="/book-appointment" class="btn-primary">
+                <router-link to="/providers" class="btn-primary">
                     Book Your First Appointment
                 </router-link>
             </div>
