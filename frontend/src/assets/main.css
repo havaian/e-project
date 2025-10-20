@@ -85,7 +85,6 @@
 
   .btn-primary:hover {
     background: linear-gradient(135deg, var(--color-brand-2), var(--color-brand-1));
-    transform: translateY(-1px);
     box-shadow: 0 15px 35px color-mix(in srgb, var(--color-brand-1) 20%, transparent);
   }
 
@@ -105,7 +104,6 @@
   .btn-secondary:hover {
     background: rgba(255, 255, 255, 1);
     border-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
-    transform: translateY(-1px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   }
 
@@ -123,7 +121,6 @@
 
   .btn-element-primary:hover {
     background: linear-gradient(135deg, var(--color-brand-3), var(--color-brand-1));
-    transform: translateY(-2px);
     box-shadow: 0 25px 50px color-mix(in srgb, var(--color-brand-1) 20%, transparent);
   }
 
@@ -144,7 +141,6 @@
   .btn-element-secondary:hover {
     background: rgba(255, 255, 255, 1);
     border-color: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
-    transform: translateY(-2px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   }
 
@@ -195,7 +191,6 @@
 
   .card:hover {
     @apply shadow-lg;
-    transform: translateY(-2px);
   }
 
   .card-element {
@@ -539,7 +534,6 @@
 
   .btn-primary:hover {
     background: linear-gradient(135deg, var(--color-brand-2), var(--color-brand-1));
-    transform: translateY(-1px);
     box-shadow: 0 15px 35px color-mix(in srgb, var(--color-brand-1) 20%, transparent);
   }
 
@@ -648,17 +642,12 @@
     transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  .hover-lift:hover {
-    transform: translateY(-4px);
-  }
-
   /* Card hover improvements */
   .card-hover-smooth {
     transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .card-hover-smooth:hover {
-    transform: translateY(-6px);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
   }
 
@@ -667,12 +656,7 @@
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  .btn-hover-smooth:hover {
-    transform: translateY(-2px);
-  }
-
   .btn-hover-smooth:active {
-    transform: translateY(0);
     transition-duration: 150ms;
   }
   
@@ -694,12 +678,10 @@
 
   .btn-primary:hover {
     background: linear-gradient(135deg, var(--color-brand-2), var(--color-brand-1));
-    transform: translateY(-2px);
     box-shadow: 0 20px 40px color-mix(in srgb, var(--color-brand-1) 25%, transparent);
   }
 
   .btn-primary:active {
-    transform: translateY(0);
     transition-duration: 150ms;
   }
 
@@ -709,7 +691,6 @@
 
   .btn-secondary:hover {
     @apply bg-gray-50 border-gray-400;
-    transform: translateY(-1px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   }
 
