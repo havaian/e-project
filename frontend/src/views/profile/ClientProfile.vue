@@ -332,7 +332,7 @@ const fetchUserProfile = async () => {
 // This eliminates the duplicate API call
 const fetchAppointmentsAndProviders = async () => {
   try {
-    const response = await axios.get(`/appointments/me/${authStore.user._id}`)
+    const response = await axios.get(`/appointments/all`)
     const appointments = response.data.appointments || []
 
     // Calculate appointment stats

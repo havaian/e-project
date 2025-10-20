@@ -300,7 +300,7 @@ const loadDashboardData = async () => {
         loadingAppointments.value = true
 
         // Single API call to get all appointments - this eliminates duplicate requests
-        const appointmentsResponse = await axios.get(`/appointments/me/${userId}`)
+        const appointmentsResponse = await axios.get(`/appointments/all`)
         const allAppointments = appointmentsResponse.data.appointments || []
 
         // Filter upcoming appointments for display (limit to 5 most recent)

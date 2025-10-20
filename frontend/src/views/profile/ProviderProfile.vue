@@ -437,7 +437,7 @@ const fetchClients = async () => {
 
 const fetchAppointments = async () => {
   try {
-    const response = await axios.get(`/appointments/me/${authStore.user._id}`)
+    const response = await axios.get(`/appointments/all`)
     const appointments = response.data.appointments || []
 
     // Calculate stats

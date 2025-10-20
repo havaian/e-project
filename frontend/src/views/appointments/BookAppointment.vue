@@ -301,7 +301,7 @@ const maxDate = computed(() => {
 // Methods
 const loadProviders = async () => {
     try {
-        const response = await axios.get('/users/providers/active')
+        const response = await axios.get('/users/providers')
         providers.value = response.data.providers || []
         
         // After loading providers, check if we need to pre-select one from the URL

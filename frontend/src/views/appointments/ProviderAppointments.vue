@@ -391,7 +391,7 @@ const fetchAppointments = async () => {
             params.status = 'pending-provider-confirmation'
         }
 
-        const response = await axios.get(`/appointments/me/${authStore.user._id}`, { params })
+        const response = await axios.get(`/appointments/all`, { params })
         appointments.value = response.data.appointments || []
         totalAppointments.value = response.data.pagination?.total || 0
         totalPages.value = Math.ceil(totalAppointments.value / 10)

@@ -430,11 +430,11 @@ const fetchStudentReviews = async () => {
 
 const fetchStudentStats = async () => {
     try {
-        const response = await axios.get(`/appointments/me/${route.params.id}/stats`)
+        const response = await axios.get(`/appointments/provider/${route.params.id}/stats`)
         completedSessions.value = response.data.completedAppointments || 0
 
         // Get detailed appointment data
-        const appointmentsResponse = await axios.get(`/appointments/me/${route.params.id}`)
+        const appointmentsResponse = await axios.get(`/appointments/provider/${route.params.id}`)
         const appointments = appointmentsResponse.data.appointments || []
 
         // Calculate unique days with appointments
@@ -462,7 +462,7 @@ const fetchStudentStats = async () => {
 
 const checkProviderRelationship = async () => {
     try {
-        const response = await axios.get(`/appointments/me/${authStore.user._id}`)
+        const response = await axios.get(`/appointments/all`)
         const appointments = response.data.appointments || []
 
         // Filter appointments with this specific student

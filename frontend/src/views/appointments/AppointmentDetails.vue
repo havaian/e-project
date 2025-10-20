@@ -440,7 +440,7 @@ async function fetchAppointment() {
 async function findFollowUpAppointment() {
     try {
         // Get client's pending-payment appointments
-        const response = await axios.get(`/appointments/me/${authStore.user._id}/pending-followups`)
+        const response = await axios.get(`/appointments/client/${authStore.user._id}/pending-followups`)
 
         // Find follow-up for this appointment
         const followUps = response.data.appointments || []
