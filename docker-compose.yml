@@ -55,8 +55,6 @@ services:
     container_name: ${PROJECT_NAME}-backend
     restart: always
     depends_on:
-      mongodb:
-        condition: service_healthy
       redis:
         condition: service_healthy
       rabbitmq:
