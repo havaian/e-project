@@ -361,7 +361,7 @@ const popularArticles = reactive([
         <li>Credit and debit cards</li>
         <li>PayPal</li>
         <li>Bank transfers</li>
-        <li>Educational institution billing</li>
+        <li>Secure billing</li>
       </ul>
       <h3>Refund policy</h3>
       <p>Refunds are available for cancellations made 24+ hours in advance.</p>

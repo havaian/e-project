@@ -49,7 +49,7 @@
                     <ul class="text-sm text-blue-700 space-y-1">
                         <li>• Be honest and specific about your experience</li>
                         <li>• Focus on the quality of care and service</li>
-                        <li>• Avoid sharing personal medical information</li>
+                        <li>• Avoid sharing personal confidential information</li>
                         <li>• Keep your review respectful and constructive</li>
                     </ul>
                 </div>

@@ -2,10 +2,10 @@ const axios = require('axios');
 const { redisClient } = require('../utils/redisClient');
 
 /**
- * AI Educational Assistant
+ * AI Personal Assistant
  * Provides basic information and guidance
  */
-class EducationalAssistant {
+class PersonalAssistant {
     constructor() {
         this.openaiKey = process.env.OPENAI_API_KEY;
         this.modelName = 'gpt-4.5-turbo';
@@ -188,8 +188,8 @@ Remember that your primary role is to provide general information, not personal 
 }
 
 // Create singleton instance
-constAssistant = new EducationalAssistant();
+constAssistant = new PersonalAssistant();
 
 module.exports = {
-    EducationalAssistant:Assistant
+    PersonalAssistant:Assistant
 };

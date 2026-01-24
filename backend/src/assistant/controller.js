@@ -1,4 +1,4 @@
-const { EducationalAssistant } = require('./index');
+const { PersonalAssistant } = require('./index');
 const User = require('../user/model');
 const { redisClient } = require('../utils/redisClient');
 
@@ -23,7 +23,7 @@ exports.chatWithAssistant = async (req, res) => {
         }
 
         // Generate response from AI assistant
-        const result = await EducationalAssistant.generateResponse(message, userId, chatId);
+        const result = await PersonalAssistant.generateResponse(message, userId, chatId);
 
         // Create or update chat session
         let sessionId = chatId;
@@ -153,7 +153,7 @@ exports.clearConversationHistory = async (req, res) => {
         }
 
         // Clear conversation history in the AI assistant
-        await EducationalAssistant.clearConversationHistory(userId);
+        await PersonalAssistant.clearConversationHistory(userId);
 
         res.status(200).json({
             success: true,
@@ -188,7 +188,7 @@ exports.getPerformanceInfo = async (req, res) => {
         const message = `Can you provide general information about ${topic}?`;
 
         // Generate response from AI assistant
-        const result = await EducationalAssistant.generateResponse(message, userId);
+        const result = await PersonalAssistant.generateResponse(message, userId);
 
         res.status(200).json({
             topic,
@@ -228,7 +228,7 @@ exports.checkProblems = async (req, res) => {
         const message = `I'm experiencing the following problems: ${problems.join(', ')}. What could this mean and what should I do?`;
 
         // Generate response from AI assistant
-        const result = await EducationalAssistant.generateResponse(message, userId);
+        const result = await PersonalAssistant.generateResponse(message, userId);
 
         res.status(200).json({
             problems,

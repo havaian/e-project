@@ -97,7 +97,7 @@
                         <h4 class="text-sm font-medium text-blue-900 mb-2">Bio writing tips</h4>
                         <ul class="text-sm text-blue-700 space-y-1">
                             <li>• Mention your educational background and certifications</li>
-                            <li>• Describe your therapeutic approach or methodology</li>
+                            <li>• Describe your approach or methodology</li>
                             <li>• Include areas of expertise and client populations you work with</li>
                             <li>• Keep it professional but personable</li>
                             <li>• Avoid overly technical jargon</li>

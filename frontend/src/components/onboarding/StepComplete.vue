@@ -87,7 +87,7 @@
 
         <!-- Next Steps -->
         <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
-            <h3 class="text-lg font-semibold text-blue-900 mb-4">What gappens next?</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-4">What happens next?</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                 <div class="flex items-start space-x-3">
                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">

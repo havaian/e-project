@@ -312,9 +312,9 @@ const faqs = reactive([
   {
     id: 14,
     category: 'Privacy',
-    question: 'How do you protect my educational records?',
+    question: 'How do you protect my data?',
     answer: `
-      <p>We take educational record protection very seriously:</p>
+      <p>We take user data protection very seriously:</p>
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>Encryption:</strong> All data is encrypted both in transit and at rest</li>
         <li><strong>Access Controls:</strong> Only authorized personnel can access your records</li>
@@ -332,7 +332,7 @@ const faqs = reactive([
       <ul class="list-disc ml-6 mt-2 space-y-1">
         <li><strong>You:</strong> Full access to your own records</li>
         <li><strong>Your provider:</strong> Can see only the sessions they conducted with you</li>
-        <li><strong>Authorized school officials:</strong> Only with proper consent and legitimate educational interest</li>
+        <li><strong>Authorized officials:</strong> Only with proper consent and legitimate interest</li>
         <li><strong>Our staff:</strong> Limited access only for technical support or compliance purposes</li>
       </ul>
       <p class="mt-3">We never share your information with third parties without your explicit consent or legal requirement.</p>

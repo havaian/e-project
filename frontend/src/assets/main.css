@@ -19,7 +19,7 @@
     --secondary: var(--color-brand-2);
     --accent: var(--color-brand-3);
 
-    /* Educational theme fallbacks */
+    /* Theme fallbacks */
     --color1: var(--color-brand-1);
     --success: var(--color-success);
     --color2: var(--color-brand-2);
@@ -216,7 +216,7 @@
     box-shadow: 0 20px 40px color-mix(in srgb, var(--color-brand-2) 15%, transparent);
   }
 
-  /* Educational animations */
+  /* Animations */
   .pulse-animation {
     animation: pulse 3s ease-in-out infinite;
   }

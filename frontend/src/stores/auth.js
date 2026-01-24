@@ -140,7 +140,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function getPostLoginRedirect() {
     if (isProvider.value && needsOnboarding.value) {
-      return '/provider/onboarding'
+      return '/profile/me/onboarding'
     } else if (isProvider.value) {
       return '/'
     } else {

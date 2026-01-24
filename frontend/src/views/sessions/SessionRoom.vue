@@ -145,7 +145,7 @@
                     Are you sure you want to end this session?
                     {{
                         isProvider ?
-                        "You\'ll be asked to provide a summary and recommendations for the patient." : 
+                        "You\'ll be asked to provide a summary and recommendations for the client." : 
                         "The session recording and notes will be saved to your appointment history."
                     }}
                 </p>
@@ -172,7 +172,7 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-900">Complete session Documentation</h3>
-                            <p class="text-sm text-gray-600">Provide session summary and recommendations for the patient
+                            <p class="text-sm text-gray-600">Provide session summary and recommendations for the client
                             </p>
                         </div>
                     </div>
@@ -187,17 +187,15 @@
                                 class="input"
                                 placeholder="Provide a comprehensive summary of the session, including key discussion points, observations, and outcomes..."
                                 required></textarea>
-                            <p class="text-sm text-gray-500 mt-1">This summary will be included in the patient's medical
-                                record.</p>
+                            <p class="text-sm text-gray-500 mt-1">This summary will be included in the client's record.</p>
                         </div>
 
                         <!-- Recommendations -->
                         <div class="form-group">
                             <div class="flex justify-between items-center mb-4">
                                 <div>
-                                    <h4 class="text-lg font-semibold text-gray-900">Treatment Recommendations</h4>
-                                    <p class="text-sm text-gray-600">Add medications, treatments, or lifestyle
-                                        recommendations</p>
+                                    <h4 class="text-lg font-semibold text-gray-900">Recommendations</h4>
+                                    <p class="text-sm text-gray-600">Add recommendations</p>
                                 </div>
                                 <button type="button" @click="addRecommendation"
                                     class="btn-secondary text-brand-1 hover:bg-brand-1/10">
@@ -211,16 +209,14 @@
                                     class="bg-gray-50/50 p-4 rounded-xl border border-gray-200">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                         <div class="form-group">
-                                            <label :for="`title-${index}`" class="label">Title/Treatment</label>
+                                            <label :for="`title-${index}`" class="label">Title</label>
                                             <input :id="`title-${index}`" v-model="recommendation.title" type="text"
-                                                class="input" placeholder="e.g., Ibuprofen, Physical Therapy"
-                                                required />
+                                                class="input" required />
                                         </div>
                                         <div class="form-group">
-                                            <label :for="`description-${index}`" class="label">Description/Details</label>
+                                            <label :for="`description-${index}`" class="label">Details</label>
                                             <input :id="`description-${index}`" v-model="recommendation.description"
-                                                type="text" class="input" placeholder="e.g., 200mg, 3 times daily"
-                                                required />
+                                                type="text" class="input" required />
                                         </div>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -241,7 +237,7 @@
                                         <label :for="`instructions-${index}`" class="label">Special Instructions</label>
                                         <textarea :id="`instructions-${index}`" v-model="recommendation.instructions"
                                             rows="2" class="input"
-                                            placeholder="Additional instructions, warnings, or notes for the patient..."></textarea>
+                                            placeholder="Additional instructions, warnings, or notes for the client..."></textarea>
                                     </div>
                                     <button type="button" @click="removeRecommendation(index)"
                                         class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50 text-sm">
@@ -347,7 +343,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Session completed successfully</h3>
                 <p class="text-gray-600 mb-6">
-                    Follow-up appointment has been created and is pending payment confirmation from the patient.
+                    Follow-up appointment has been created and is pending payment confirmation from the client.
                 </p>
                 <button @click="returnToAppointments" class="btn-primary w-full">
                     <CalendarIcon class="w-4 h-4 mr-2" />
@@ -413,7 +409,7 @@ function getParticipantName() {
     if (!session.value) return 'Loading...'
 
     if (isProvider.value) {
-        return session.value.client?.name || `${session.value.client?.firstName} ${session.value.client?.lastName}` || 'Patient'
+        return session.value.client?.name || `${session.value.client?.firstName} ${session.value.client?.lastName}` || 'client'
     } else {
         return session.value.provider?.name || `Dr. ${session.value.provider?.firstName} ${session.value.provider?.lastName}` || 'Healthcare Provider'
     }
@@ -442,7 +438,7 @@ function addSessionNote() {
         sessionNotes.value.push({
             text: newNote.value.trim(),
             time: format(new Date(), 'h:mm a'),
-            author: isProvider.value ? 'Provider' : 'Patient'
+            author: isProvider.value ? 'Provider' : 'client'
         })
         newNote.value = ''
     }

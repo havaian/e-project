@@ -56,7 +56,7 @@
                             <li>Appointment scheduling and management tools</li>
                             <li>Payment processing services</li>
                             <li>24/7 technical support</li>
-                            <li>Secure data handling for educational records</li>
+                            <li>Secure data handling for user records</li>
                         </ul>
                     </section>
 

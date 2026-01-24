@@ -20,9 +20,9 @@
                     <div>
                         <h2 class="text-3xl font-bold text-gray-900 mb-6">Our mission</h2>
                         <p class="text-gray-700 text-lg leading-relaxed mb-6">
-                            To democratize access to quality educational support and professional consultation services
+                            To democratize access to quality support and professional consultation services
                             by leveraging cutting-edge technology while maintaining the highest standards of privacy,
-                            security, and educational compliance.
+                            security, and compliance.
                         </p>
                         <p class="text-gray-700 leading-relaxed">
                             We believe every student deserves access to personalized support that helps them achieve
@@ -32,8 +32,8 @@
                     <div class="bg-gradient-to-br from-sky-50 to-cyan-50 rounded-2xl p-8">
                         <h3 class="text-2xl font-bold text-gray-900 mb-4">Our vision</h3>
                         <p class="text-gray-700 leading-relaxed">
-                            To become the leading platform for educational consultation services, fostering a global
-                            community where learning has no boundaries and every educational challenge can be addressed
+                            To become the leading platform for consultation services, fostering a global
+                            community where learning has no boundaries and every challenge can be addressed
                             through expert guidance and collaborative support.
                         </p>
                     </div>
@@ -56,7 +56,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 mb-3">The beginning</h3>
                         <p class="text-gray-600">
-                            Founded with a vision to bridge the gap between students and expert educational support
+                            Founded with a vision to bridge the gap between students and expert support
                             during the global shift to remote learning.
                         </p>
                     </div>
@@ -69,7 +69,7 @@
                         <h3 class="text-xl font-semibold text-gray-900 mb-3">Growth & innovation</h3>
                         <p class="text-gray-600">
                             Expanded our platform capabilities serving over 10,000
-                            students across 200+ educational institutions.
+                            students across 200+ institutions.
                         </p>
                     </div>
 
@@ -148,7 +148,7 @@
                 <div class="text-center mb-16">
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Meet our leadership team</h2>
                     <p class="text-gray-600 max-w-2xl mx-auto">
-                        Passionate educators and technologists dedicated to transforming educational support.
+                        Passionate educators and technologists dedicated to transforming support services.
                     </p>
                 </div>
 
@@ -161,7 +161,7 @@
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Dr. Sarah Chen</h3>
                         <p class="text-sky-600 font-medium mb-3">Chief executive officer</p>
                         <p class="text-gray-600 text-sm">
-                            Former education administrator with 15+ years of experience in educational technology
+                            Former education administrator with 15+ years of experience in technology
                             and student support services.
                         </p>
                     </div>
@@ -174,7 +174,7 @@
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Michael Rodriguez</h3>
                         <p class="text-emerald-600 font-medium mb-3">Chief technology officer</p>
                         <p class="text-gray-600 text-sm">
-                            Technology leader with expertise in secure platform development and educational compliance
+                            Technology leader with expertise in secure platform development and compliance
                             standards.
                         </p>
                     </div>
@@ -187,7 +187,7 @@
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Dr. Emily Johnson</h3>
                         <p class="text-purple-600 font-medium mb-3">Chief product officer</p>
                         <p class="text-gray-600 text-sm">
-                            Product strategist focused on user experience and educational outcomes, with a background
+                            Product strategist focused on user experience and outcomes, with a background
                             in learning sciences and UX design.
                         </p>
                     </div>
@@ -232,7 +232,7 @@
                 <div class="text-center mb-16">
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Certifications & compliance</h2>
                     <p class="text-gray-600 max-w-2xl mx-auto">
-                        We maintain the highest standards of security, privacy, and educational compliance.
+                        We maintain the highest standards of security, privacy, and compliance.
                     </p>
                 </div>
             </div>
