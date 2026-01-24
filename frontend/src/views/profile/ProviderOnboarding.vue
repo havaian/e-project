@@ -161,7 +161,8 @@
                         <p class="text-sm text-blue-700 mt-1">
                             Contact our support team at <a :href="`mailto:${supportEmail}`" class="underline">{{
                                 supportEmail }}</a>
-                            or call us at <a :href="`tel:${supportPhone}`" class="underline">{{ supportPhone }}</a> if you need assistance completing your profile.
+                            or call us at <a :href="`tel:${supportPhone}`" class="underline">{{ supportPhone }}</a> if
+                            you need assistance completing your profile.
                         </p>
                     </div>
                 </div>
@@ -219,15 +220,15 @@ const formData = reactive({
     certifications: [],
     languages: [],
 
-    // Step 2: Availability  
+    // Step 2: Availability (using new timeSlots structure)
     availability: [
-        { dayOfWeek: 1, isAvailable: false, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 2, isAvailable: false, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 3, isAvailable: false, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 4, isAvailable: false, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 5, isAvailable: false, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 6, isAvailable: false, startTime: '09:00', endTime: '17:00' },
-        { dayOfWeek: 7, isAvailable: false, startTime: '09:00', endTime: '17:00' }
+        { dayOfWeek: 1, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 2, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 3, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 4, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 5, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 6, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 7, isAvailable: false, timeSlots: [] }
     ],
 
     // Step 3: session settings
@@ -459,6 +460,31 @@ const handleBeforeUnload = (event) => {
     }
 }
 
+// Helper function to normalize availability data from server
+const normalizeAvailability = (serverAvailability) => {
+    if (!Array.isArray(serverAvailability)) {
+        return formData.availability // Return default
+    }
+
+    return serverAvailability.map(day => {
+        // If old format (direct startTime/endTime), convert to new format
+        if (day.startTime && day.endTime && !day.timeSlots) {
+            return {
+                dayOfWeek: day.dayOfWeek,
+                isAvailable: day.isAvailable,
+                timeSlots: day.isAvailable ? [{ startTime: day.startTime, endTime: day.endTime }] : []
+            }
+        }
+
+        // Already in new format or handle edge cases
+        return {
+            dayOfWeek: day.dayOfWeek,
+            isAvailable: day.isAvailable || false,
+            timeSlots: Array.isArray(day.timeSlots) ? day.timeSlots : []
+        }
+    })
+}
+
 // Load existing data on mount
 onMounted(async () => {
     try {
@@ -473,7 +499,12 @@ onMounted(async () => {
         if (user.education) formData.education = [...user.education]
         if (user.certifications) formData.certifications = [...user.certifications]
         if (user.languages) formData.languages = [...user.languages]
-        if (user.availability) formData.availability = [...user.availability]
+
+        // Normalize availability data to ensure correct format
+        if (user.availability) {
+            formData.availability = normalizeAvailability(user.availability)
+        }
+
         if (user.sessionDuration) formData.sessionDuration = user.sessionDuration
         if (user.sessionFee) formData.sessionFee = user.sessionFee
         if (user.specializations) formData.specializations = [...user.specializations]

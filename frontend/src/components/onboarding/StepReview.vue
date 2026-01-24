@@ -63,10 +63,15 @@
                 </div>
 
                 <div class="space-y-3">
-                    <div v-for="day in availableDays" :key="day.dayOfWeek" class="flex justify-between items-center">
-                        <span class="text-sm font-medium text-gray-900">{{ getDayName(day.dayOfWeek) }}</span>
-                        <span class="text-sm text-gray-600">{{ formatTime(day.startTime) }} - {{ formatTime(day.endTime)
-                            }}</span>
+                    <div v-for="day in availableDays" :key="day.dayOfWeek">
+                        <div class="flex justify-between items-start">
+                            <span class="text-sm font-medium text-gray-900">{{ getDayName(day.dayOfWeek) }}</span>
+                            <div class="text-right">
+                                <div v-for="(slot, index) in day.timeSlots" :key="index" class="text-sm text-gray-600">
+                                    {{ formatTime(slot.startTime) }} - {{ formatTime(slot.endTime) }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div v-if="availableDays.length === 0" class="text-sm text-gray-500">
                         No availability set
@@ -76,7 +81,7 @@
                 <div class="mt-4 pt-4 border-t border-gray-200">
                     <div class="flex justify-between items-center text-sm">
                         <span class="text-gray-600">Total weekly hours:</span>
-                        <span class="font-medium text-gray-900">{{ totalWeeklyHours }} hours</span>
+                        <span class="font-medium text-gray-900">{{ totalWeeklyHours.toFixed(1) }} hours</span>
                     </div>
                 </div>
             </div>
@@ -249,14 +254,19 @@ const validSpecializations = computed(() => {
 })
 
 const availableDays = computed(() => {
-    return props.modelValue.availability?.filter(day => day.isAvailable) || []
+    return props.modelValue.availability?.filter(day =>
+        day.isAvailable && day.timeSlots && day.timeSlots.length > 0
+    ) || []
 })
 
 const totalWeeklyHours = computed(() => {
     return availableDays.value.reduce((total, day) => {
-        const start = timeToMinutes(day.startTime)
-        const end = timeToMinutes(day.endTime)
-        return total + ((end - start) / 60)
+        const dayTotal = (day.timeSlots || []).reduce((daySum, slot) => {
+            const start = timeToMinutes(slot.startTime)
+            const end = timeToMinutes(slot.endTime)
+            return daySum + ((end - start) / 60)
+        }, 0)
+        return total + dayTotal
     }, 0)
 })
 
@@ -341,6 +351,7 @@ const getDayName = (dayOfWeek) => {
 }
 
 const formatTime = (time) => {
+    if (!time) return ''
     const [hours, minutes] = time.split(':')
     const hour = parseInt(hours)
     const ampm = hour >= 12 ? 'PM' : 'AM'
@@ -349,6 +360,7 @@ const formatTime = (time) => {
 }
 
 const timeToMinutes = (time) => {
+    if (!time) return 0
     const [hours, minutes] = time.split(':').map(Number)
     return hours * 60 + minutes
 }

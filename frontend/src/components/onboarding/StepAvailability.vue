@@ -19,7 +19,7 @@
                             <div class="flex items-center space-x-3">
                                 <input :id="`day-${day.dayOfWeek}`" v-model="day.isAvailable" type="checkbox"
                                     class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
-                                    @change="validateForm" />
+                                    @change="handleDayToggle(day)" />
                                 <label :for="`day-${day.dayOfWeek}`" class="text-sm font-medium text-gray-900 w-20">
                                     {{ getDayName(day.dayOfWeek) }}
                                 </label>
@@ -30,9 +30,9 @@
                         <div v-if="day.isAvailable" class="flex items-center space-x-4">
                             <div class="flex items-center space-x-2">
                                 <label class="text-sm text-gray-600">From:</label>
-                                <select v-model="day.startTime"
-                                    class="text-sm border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500"
-                                    @change="validateForm">
+                                <select :value="getFirstTimeSlot(day)?.startTime || '09:00'"
+                                    @change="updateTimeSlot(day, 'start', $event.target.value)"
+                                    class="text-sm border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500">
                                     <option v-for="time in timeOptions" :key="time" :value="time">
                                         {{ formatTime(time) }}
                                     </option>
@@ -41,10 +41,12 @@
 
                             <div class="flex items-center space-x-2">
                                 <label class="text-sm text-gray-600">To:</label>
-                                <select v-model="day.endTime"
-                                    class="text-sm border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500"
-                                    @change="validateForm">
-                                    <option v-for="time in getEndTimeOptions(day.startTime)" :key="time" :value="time">
+                                <select :value="getFirstTimeSlot(day)?.endTime || '17:00'"
+                                    @change="updateTimeSlot(day, 'end', $event.target.value)"
+                                    class="text-sm border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500">
+                                    <option
+                                        v-for="time in getEndTimeOptions(getFirstTimeSlot(day)?.startTime || '09:00')"
+                                        :key="time" :value="time">
                                         {{ formatTime(time) }}
                                     </option>
                                 </select>
@@ -151,18 +153,83 @@ const timeOptions = ref([
 // Current timezone
 const currentTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
+// Helper to get first time slot or undefined
+const getFirstTimeSlot = (day) => {
+    if (!day.timeSlots || day.timeSlots.length === 0) {
+        return null
+    }
+    return day.timeSlots[0]
+}
+
+// Ensure day has timeSlots array initialized
+const ensureTimeSlotsArray = (day) => {
+    if (!Array.isArray(day.timeSlots)) {
+        day.timeSlots = []
+    }
+}
+
+// Handle day toggle
+const handleDayToggle = (day) => {
+    ensureTimeSlotsArray(day)
+
+    if (day.isAvailable) {
+        // When enabling, add default time slot if none exists
+        if (day.timeSlots.length === 0) {
+            day.timeSlots.push({ startTime: '09:00', endTime: '17:00' })
+        }
+    } else {
+        // When disabling, clear time slots
+        day.timeSlots = []
+    }
+
+    validateForm()
+}
+
+// Update time slot
+const updateTimeSlot = (day, type, value) => {
+    ensureTimeSlotsArray(day)
+
+    // Get or create first time slot
+    if (day.timeSlots.length === 0) {
+        day.timeSlots.push({ startTime: '09:00', endTime: '17:00' })
+    }
+
+    const slot = day.timeSlots[0]
+
+    if (type === 'start') {
+        slot.startTime = value
+        // Ensure end time is after start time
+        const startMinutes = timeToMinutes(value)
+        const endMinutes = timeToMinutes(slot.endTime)
+        if (endMinutes <= startMinutes + 30) {
+            // Find next valid end time
+            const validEndTimes = getEndTimeOptions(value)
+            slot.endTime = validEndTimes[0] || value
+        }
+    } else {
+        slot.endTime = value
+    }
+
+    validateForm()
+}
+
 // Computed properties
 const availableDaysCount = computed(() => {
-    return props.modelValue.availability.filter(day => day.isAvailable).length
+    return props.modelValue.availability.filter(day =>
+        day.isAvailable && day.timeSlots && day.timeSlots.length > 0
+    ).length
 })
 
 const totalHoursPerWeek = computed(() => {
     return props.modelValue.availability
-        .filter(day => day.isAvailable)
+        .filter(day => day.isAvailable && day.timeSlots && day.timeSlots.length > 0)
         .reduce((total, day) => {
-            const start = timeToMinutes(day.startTime)
-            const end = timeToMinutes(day.endTime)
-            return total + ((end - start) / 60)
+            const dayTotal = day.timeSlots.reduce((daySum, slot) => {
+                const start = timeToMinutes(slot.startTime)
+                const end = timeToMinutes(slot.endTime)
+                return daySum + ((end - start) / 60)
+            }, 0)
+            return total + dayTotal
         }, 0)
 })
 
@@ -196,37 +263,40 @@ const getEndTimeOptions = (startTime) => {
 const setPreset = (preset) => {
     switch (preset) {
         case 'business':
-            props.modelValue.availability.forEach((day, index) => {
+            props.modelValue.availability.forEach((day) => {
+                ensureTimeSlotsArray(day)
                 if (day.dayOfWeek >= 1 && day.dayOfWeek <= 5) { // Mon-Fri
                     day.isAvailable = true
-                    day.startTime = '09:00'
-                    day.endTime = '17:00'
+                    day.timeSlots = [{ startTime: '09:00', endTime: '17:00' }]
                 } else {
                     day.isAvailable = false
+                    day.timeSlots = []
                 }
             })
             break
 
         case 'flexible':
-            props.modelValue.availability.forEach((day, index) => {
+            props.modelValue.availability.forEach((day) => {
+                ensureTimeSlotsArray(day)
                 if (day.dayOfWeek >= 1 && day.dayOfWeek <= 6) { // Mon-Sat
                     day.isAvailable = true
-                    day.startTime = '08:00'
-                    day.endTime = '20:00'
+                    day.timeSlots = [{ startTime: '08:00', endTime: '20:00' }]
                 } else {
                     day.isAvailable = false
+                    day.timeSlots = []
                 }
             })
             break
 
         case 'weekend':
-            props.modelValue.availability.forEach((day, index) => {
+            props.modelValue.availability.forEach((day) => {
+                ensureTimeSlotsArray(day)
                 if (day.dayOfWeek === 6 || day.dayOfWeek === 7) { // Sat-Sun
                     day.isAvailable = true
-                    day.startTime = '10:00'
-                    day.endTime = '18:00'
+                    day.timeSlots = [{ startTime: '10:00', endTime: '18:00' }]
                 } else {
                     day.isAvailable = false
+                    day.timeSlots = []
                 }
             })
             break
@@ -236,25 +306,37 @@ const setPreset = (preset) => {
 
 const validateForm = () => {
     // At least one day must be available
-    const hasAvailableDays = props.modelValue.availability.some(day => day.isAvailable)
+    const hasAvailableDays = props.modelValue.availability.some(day =>
+        day.isAvailable && day.timeSlots && day.timeSlots.length > 0
+    )
 
     // All available days must have valid time ranges
     const hasValidTimes = props.modelValue.availability
-        .filter(day => day.isAvailable)
+        .filter(day => day.isAvailable && day.timeSlots && day.timeSlots.length > 0)
         .every(day => {
-            const startMinutes = timeToMinutes(day.startTime)
-            const endMinutes = timeToMinutes(day.endTime)
-            return endMinutes > startMinutes + 30 // At least 30 minutes
+            return day.timeSlots.every(slot => {
+                const startMinutes = timeToMinutes(slot.startTime)
+                const endMinutes = timeToMinutes(slot.endTime)
+                return endMinutes > startMinutes + 30 // At least 30 minutes
+            })
         })
 
     const isValid = hasAvailableDays && hasValidTimes
     emit('validate', isValid)
 }
 
-// Watch for changes
-watch(() => props.modelValue.availability, validateForm, { deep: true })
-
+// Initialize timeSlots arrays on mount
 onMounted(() => {
+    props.modelValue.availability.forEach(day => {
+        ensureTimeSlotsArray(day)
+        // If day is available but has no timeSlots, add default
+        if (day.isAvailable && day.timeSlots.length === 0) {
+            day.timeSlots.push({ startTime: '09:00', endTime: '17:00' })
+        }
+    })
     validateForm()
 })
+
+// Watch for changes
+watch(() => props.modelValue.availability, validateForm, { deep: true })
 </script>
