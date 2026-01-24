@@ -10,7 +10,14 @@
         <div class="space-y-4">
             <h3 class="text-lg font-semibold text-gray-900">Weekly schedule</h3>
 
-            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <!-- Debug info -->
+            <div v-if="!modelValue.availability || modelValue.availability.length === 0"
+                class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p class="text-red-800 text-sm">⚠️ Debug: Availability data is missing or empty</p>
+                <p class="text-red-600 text-xs mt-1">availability: {{ modelValue.availability }}</p>
+            </div>
+
+            <div v-else class="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 <div v-for="(day, index) in modelValue.availability" :key="day.dayOfWeek"
                     class="border-b border-gray-100 last:border-b-0">
                     <div class="p-4 flex items-center justify-between">
@@ -327,6 +334,17 @@ const validateForm = () => {
 
 // Initialize timeSlots arrays on mount
 onMounted(() => {
+    console.log('StepAvailability mounted')
+    console.log('modelValue.availability:', props.modelValue.availability)
+    console.log('availability length:', props.modelValue.availability?.length)
+
+    // Ensure availability array exists and has 7 days
+    if (!props.modelValue.availability || props.modelValue.availability.length === 0) {
+        console.warn('Availability array is empty or undefined, initializing...')
+        // This shouldn't happen if ProviderOnboarding is set up correctly
+        return
+    }
+
     props.modelValue.availability.forEach(day => {
         ensureTimeSlotsArray(day)
         // If day is available but has no timeSlots, add default
