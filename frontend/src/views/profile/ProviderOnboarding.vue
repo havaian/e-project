@@ -244,6 +244,8 @@ const formData = reactive({
     licenseNumber: ''
 })
 
+console.log('[ProviderOnboarding] formData initialized with availability:', formData.availability.length, 'days')
+
 // Auto-save computed properties
 const autoSaveStatusClass = computed(() => {
     switch (autoSaveStatus.value) {
@@ -462,25 +464,49 @@ const handleBeforeUnload = (event) => {
 
 // Helper function to normalize availability data from server
 const normalizeAvailability = (serverAvailability) => {
-    if (!Array.isArray(serverAvailability)) {
-        return formData.availability // Return default
+    console.log('[ProviderOnboarding] Normalizing availability:', serverAvailability)
+
+    // Create default structure for all 7 days
+    const defaultAvailability = [
+        { dayOfWeek: 1, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 2, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 3, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 4, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 5, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 6, isAvailable: false, timeSlots: [] },
+        { dayOfWeek: 7, isAvailable: false, timeSlots: [] }
+    ]
+
+    if (!Array.isArray(serverAvailability) || serverAvailability.length === 0) {
+        console.log('[ProviderOnboarding] No server data, using defaults')
+        return defaultAvailability
     }
 
-    return serverAvailability.map(day => {
+    // Map server data to default structure
+    return defaultAvailability.map(defaultDay => {
+        const serverDay = serverAvailability.find(d => d.dayOfWeek === defaultDay.dayOfWeek)
+
+        if (!serverDay) {
+            return defaultDay
+        }
+
         // If old format (direct startTime/endTime), convert to new format
-        if (day.startTime && day.endTime && !day.timeSlots) {
+        if (serverDay.startTime && serverDay.endTime && !serverDay.timeSlots) {
             return {
-                dayOfWeek: day.dayOfWeek,
-                isAvailable: day.isAvailable,
-                timeSlots: day.isAvailable ? [{ startTime: day.startTime, endTime: day.endTime }] : []
+                dayOfWeek: defaultDay.dayOfWeek,
+                isAvailable: serverDay.isAvailable || false,
+                timeSlots: serverDay.isAvailable ? [{
+                    startTime: serverDay.startTime,
+                    endTime: serverDay.endTime
+                }] : []
             }
         }
 
-        // Already in new format or handle edge cases
+        // Already in new format
         return {
-            dayOfWeek: day.dayOfWeek,
-            isAvailable: day.isAvailable || false,
-            timeSlots: Array.isArray(day.timeSlots) ? day.timeSlots : []
+            dayOfWeek: defaultDay.dayOfWeek,
+            isAvailable: serverDay.isAvailable || false,
+            timeSlots: Array.isArray(serverDay.timeSlots) ? serverDay.timeSlots : []
         }
     })
 }
@@ -491,19 +517,24 @@ onMounted(async () => {
         // Add beforeunload listener for auto-save
         window.addEventListener('beforeunload', handleBeforeUnload)
 
+        console.log('[ProviderOnboarding] Loading user data...')
+
         // Get current user data
         const response = await axios.get('/users/me')
         const user = response.data
+
+        console.log('[ProviderOnboarding] User data received:', user)
+        console.log('[ProviderOnboarding] User availability:', user.availability)
 
         // Populate form with existing data
         if (user.education) formData.education = [...user.education]
         if (user.certifications) formData.certifications = [...user.certifications]
         if (user.languages) formData.languages = [...user.languages]
 
-        // Normalize availability data to ensure correct format
-        if (user.availability) {
-            formData.availability = normalizeAvailability(user.availability)
-        }
+        // Normalize availability data to ensure correct format - ALWAYS
+        const normalizedAvailability = normalizeAvailability(user.availability)
+        console.log('[ProviderOnboarding] Normalized availability:', normalizedAvailability)
+        formData.availability = normalizedAvailability
 
         if (user.sessionDuration) formData.sessionDuration = user.sessionDuration
         if (user.sessionFee) formData.sessionFee = user.sessionFee
@@ -515,6 +546,11 @@ onMounted(async () => {
         // Set current step from auth store or user profile
         currentStep.value = authStore.currentOnboardingStep || user.profileSetupStep || 1
         lastSavedStep.value = currentStep.value
+
+        console.log('[ProviderOnboarding] Form data initialized:', {
+            availabilityLength: formData.availability.length,
+            currentStep: currentStep.value
+        })
 
     } catch (error) {
         console.error('Error loading user data:', error)
