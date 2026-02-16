@@ -90,7 +90,7 @@
                             </button>
                             <div v-if="showProfileMenu"
                                 class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white backdrop-blur-md ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 border border-sky-500/10">
-                                <div class="py-1">
+                                <div class="pb-1">
                                     <router-link :to="authStore.isProvider ? '/profile/me' : '/profile/me'"
                                         class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
@@ -99,7 +99,7 @@
                                         </div>
                                     </router-link>
                                 </div>
-                                <div class="py-1">
+                                <div class="pt-1">
                                     <button @click="logout"
                                         class="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
