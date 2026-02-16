@@ -69,7 +69,7 @@
           </ul>
         </div>
 
-        Support
+        <!-- Support -->
         <div class="col-span-1">
           <h3 class="text-lg font-semibold mb-4 text-white">Support</h3>
           <ul class="space-y-3">
