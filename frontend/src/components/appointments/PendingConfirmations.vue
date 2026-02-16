@@ -165,7 +165,7 @@
                         </div>
                         <div class="mt-4">
                             <textarea v-model="rejectionReason" placeholder="Optional: Provide a short descriptionrejection"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                class="input"
                                 rows="3"></textarea>
                         </div>
                     </div>

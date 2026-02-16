@@ -180,7 +180,7 @@
                         </label>
                         <textarea id="reason" v-model="formData.reason" rows="3"
                             placeholder="Please explain why you need to reschedule this appointment..."
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1"></textarea>
+                            class="input resize-none"></textarea>
                     </div>
 
                     <!-- New Appointment Summary -->

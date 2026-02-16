@@ -144,7 +144,7 @@
                                         (0–100)</p>
                                     <input v-model.number="gradeForm.grade" type="number" min="0" max="100"
                                         placeholder="e.g. 85"
-                                        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                        class="input w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                                 </div>
 
                                 <div>
@@ -152,7 +152,7 @@
                                         Feedback</p>
                                     <textarea v-model="gradeForm.feedback" rows="4"
                                         placeholder="Constructive feedback for the learner..."
-                                        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"></textarea>
+                                        class="input resize-none"></textarea>
                                 </div>
 
                                 <div class="flex gap-2">

@@ -59,7 +59,7 @@
                             </span>
                             <input v-else v-model="editingBlockTitle" @blur="saveBlockTitle(block)"
                                 @keyup.enter="saveBlockTitle(block)"
-                                class="font-semibold text-gray-900 bg-transparent border-b border-sky-400 focus:outline-none flex-1"
+                                class="input font-semibold text-gray-900 bg-transparent border-b border-sky-400 focus:outline-none flex-1"
                                 autofocus />
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
@@ -141,34 +141,34 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Course Title</label>
                         <input v-model="settingsForm.title" type="text"
-                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                            class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
                         <textarea v-model="settingsForm.description" rows="4"
-                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"></textarea>
+                            class="input resize-none"></textarea>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
                             <input v-model="settingsForm.category" type="text"
-                                class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Subcategory</label>
                             <input v-model="settingsForm.subcategory" type="text"
-                                class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Price (UZS)</label>
                         <input v-model.number="settingsForm.price" type="number" min="0"
-                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                            class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Thumbnail URL</label>
                         <input v-model="settingsForm.thumbnail" type="text" placeholder="https://..."
-                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                            class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                     </div>
 
                     <div class="flex gap-3 pt-2">
@@ -243,7 +243,7 @@
 
                                 <div v-if="videoMode === 'url'">
                                     <input v-model="lessonModal.form.videoUrl" type="text" placeholder="https://..."
-                                        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                        class="input w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                                 </div>
                                 <div v-else>
                                     <input ref="videoFileInput" type="file" accept="video/*" class="hidden"
@@ -265,7 +265,7 @@
                                         Title
                                     </p>
                                     <input v-model="lessonModal.form.title" type="text"
-                                        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                        class="input w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                                 </div>
 
                                 <div>
@@ -298,7 +298,7 @@
                                 Transcription / Description</p>
                             <textarea v-model="lessonModal.form.text" rows="4"
                                 placeholder="Detailed content for this lesson..."
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"></textarea>
+                                class="input resize-none"></textarea>
                         </div>
 
                         <!-- Assignment prompt -->
@@ -308,7 +308,7 @@
                                 Prompt</p>
                             <textarea v-model="lessonModal.form.assignmentPrompt" rows="3"
                                 placeholder="What should students do after this lesson?"
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none bg-gray-900 text-white placeholder-gray-500"></textarea>
+                                class="input resize-none"></textarea>
                         </div>
 
                         <button @click="saveLessonConfig" :disabled="lessonModal.saving"
@@ -340,7 +340,7 @@
                                 <div class="flex items-start gap-3 mb-3">
                                     <span class="text-xs font-bold text-gray-400 mt-2.5 shrink-0">Q{{ qi + 1 }}</span>
                                     <input v-model="q.question" type="text" placeholder="Question text"
-                                        class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                        class="input flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                                     <button @click="quizModal.questions.splice(qi, 1)"
                                         class="text-red-300 hover:text-red-500 mt-2 shrink-0">
                                         <XMarkIcon class="w-4 h-4" />
@@ -350,9 +350,9 @@
                                 <div class="space-y-2 mb-3">
                                     <div v-for="(opt, oi) in q.options" :key="oi" class="flex items-center gap-2">
                                         <input type="radio" :name="`q${qi}-correct`" :value="oi"
-                                            v-model="q.correctAnswer" class="accent-sky-500" />
+                                            v-model="q.correctAnswer" class="input accent-sky-500" />
                                         <input v-model="q.options[oi]" type="text" :placeholder="`Option ${oi + 1}`"
-                                            class="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                            class="input flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                                         <button v-if="q.options.length > 2" @click="q.options.splice(oi, 1)"
                                             class="text-red-300 hover:text-red-500">
                                             <XMarkIcon class="w-3.5 h-3.5" />

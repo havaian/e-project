@@ -158,7 +158,7 @@
                                     class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your
                                     Answer</label>
                                 <textarea v-model="homeworkText" rows="6" placeholder="Write your answer here…"
-                                    class="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"></textarea>
+                                    class="input resize-none"></textarea>
                             </div>
 
                             <div>

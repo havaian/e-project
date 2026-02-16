@@ -174,7 +174,7 @@
                                     Message *
                                 </label>
                                 <textarea id="message" v-model="form.message" rows="6" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors resize-none"
+                                    class="input resize-none"
                                     placeholder="Please describe your inquiry in detail..."></textarea>
                             </div>
 

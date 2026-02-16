@@ -106,22 +106,22 @@
                                     class="text-red-500">*</span></label>
                             <input v-model="newCourse.title" type="text"
                                 placeholder="e.g. Modern React & TypeScript Mastery"
-                                class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
                             <input v-model="newCourse.category" type="text" placeholder="e.g. Web Programming"
-                                class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Subcategory</label>
                             <input v-model="newCourse.subcategory" type="text" placeholder="e.g. Development"
-                                class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Price (UZS)</label>
                             <input v-model.number="newCourse.price" type="number" min="0" placeholder="0 for free"
-                                class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                                class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                     </div>
 

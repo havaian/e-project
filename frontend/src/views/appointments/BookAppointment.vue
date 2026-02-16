@@ -153,7 +153,7 @@
                         </label>
                         <textarea id="description" v-model="formData.shortDescription" rows="3"
                             placeholder="Briefly describe what you'd like to discuss in this consultation..."
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1"></textarea>
+                            class="input"></textarea>
                     </div>
 
                     <!-- Appointment Summary -->
