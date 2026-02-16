@@ -182,6 +182,30 @@ exports.handleStripeWebhook = async (req, res) => {
  */
 async function handleCheckoutSessionCompleted(session) {
     try {
+        // ── Course enrollment payment ────────────────────────────────────
+        // Course checkout sessions embed courseId in metadata.
+        // They do NOT create a Payment document — only an Enrollment.
+        if (session.metadata?.courseId) {
+            const { Enrollment } = require('../course/model');
+
+            const enrollment = await Enrollment.findOne({
+                'payment.stripeSessionId': session.id
+            });
+
+            if (!enrollment) {
+                console.error('Enrollment not found for course session:', session.id);
+                return;
+            }
+
+            enrollment.payment.status = 'succeeded';
+            enrollment.payment.paidAt = new Date();
+            await enrollment.save();
+
+            console.log(`Course enrollment confirmed via webhook — session ${session.id}`);
+            return;
+        }
+
+        // ── Appointment payment (existing logic unchanged) ───────────────
         const payment = await Payment.findOne({ stripeSessionId: session.id });
 
         if (!payment) {
@@ -218,6 +242,27 @@ async function handleCheckoutSessionCompleted(session) {
  */
 async function handleCheckoutSessionExpired(session) {
     try {
+        // ── Course enrollment expired ────────────────────────────────────
+        if (session.metadata?.courseId) {
+            const { Enrollment } = require('../course/model');
+
+            const enrollment = await Enrollment.findOne({
+                'payment.stripeSessionId': session.id
+            });
+
+            if (!enrollment) {
+                console.error('Enrollment not found for expired session:', session.id);
+                return;
+            }
+
+            enrollment.payment.status = 'failed';
+            await enrollment.save();
+
+            console.log(`Course enrollment expired via webhook — session ${session.id}`);
+            return;
+        }
+
+        // ── Appointment payment expired (existing logic) ─────────────────
         const payment = await Payment.findOne({ stripeSessionId: session.id });
 
         if (!payment) {
@@ -225,11 +270,9 @@ async function handleCheckoutSessionExpired(session) {
             return;
         }
 
-        // Update payment status
         payment.status = 'failed';
         await payment.save();
 
-        // Update appointment payment status
         const appointment = await Appointment.findById(payment.appointment);
         if (appointment) {
             await NotificationService.sendPaymentFailureEmail(payment._id, appointment);

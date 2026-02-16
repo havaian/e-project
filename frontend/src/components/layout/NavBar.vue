@@ -7,12 +7,13 @@
                     <!-- Logo -->
                     <router-link to="/" class="flex items-center space-x-3">
                         <div class="rounded-xl shadow-lg">
-                            <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="40" height="40" class="w-15 h-15" />
+                            <img src="/images/logo.svg" :alt="`${appTitle} Logo`" width="40" height="40"
+                                class="w-15 h-15" />
                         </div>
                         <span class="text-xl font-bold">
                             {{ appTitle1 }}<span
-                                class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">{{ appTitle2 }}</span><span
-                                class="text-success">{{ appTitle3 }}</span>
+                                class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">{{
+                                appTitle2 }}</span><span class="text-success">{{ appTitle3 }}</span>
                         </span>
                     </router-link>
 
@@ -38,6 +39,16 @@
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                                 :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/me') }">
                                 My Schedule
+                            </router-link>
+                            <router-link v-if="authStore.isProvider" to="/courses/my"
+                                class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.startsWith('/courses') }">
+                                Courses
+                            </router-link>
+                            <router-link v-if="authStore.isClient" to="/courses"
+                                class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                                :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.startsWith('/courses') }">
+                                Courses
                             </router-link>
                         </template>
                         <router-link to="/chat"
@@ -69,7 +80,7 @@
                                 <div
                                     class="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                                     <span class="text-white font-semibold text-sm">{{ authStore.user?.firstName?.[0]
-                                    }}</span>
+                                        }}</span>
                                 </div>
                                 <span class="text-sm font-medium text-gray-700">{{ authStore.user?.firstName }}</span>
                                 <ChevronDownIcon :class="[
@@ -114,18 +125,17 @@
         </div>
 
         <!-- Mobile menu -->
-        <div v-if="showMobileMenu" class="sm:hidden bg-white/95 backdrop-blur-md border-t border-sky-500/10" ref="mobileMenuRef">
+        <div v-if="showMobileMenu" class="sm:hidden bg-white/95 backdrop-blur-md border-t border-sky-500/10"
+            ref="mobileMenuRef">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <router-link to="/"
                     class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/' }"
-                    @click="closeMobileMenu">
+                    :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/' }" @click="closeMobileMenu">
                     Home
                 </router-link>
                 <router-link to="/providers"
                     class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/providers' }"
-                    @click="closeMobileMenu">
+                    :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/providers' }" @click="closeMobileMenu">
                     Find providers
                 </router-link>
                 <template v-if="authStore.isAuthenticated">
@@ -140,6 +150,18 @@
                         :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/me') }"
                         @click="closeMobileMenu">
                         My schedule
+                    </router-link>
+                    <router-link v-if="authStore.isProvider" to="/courses/my"
+                        class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.startsWith('/courses') }"
+                        @click="closeMobileMenu">
+                        Courses
+                    </router-link>
+                    <router-link v-if="authStore.isClient" to="/courses"
+                        class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                        :class="{ 'text-sky-500 bg-sky-500/5': $route.path.startsWith('/courses') }"
+                        @click="closeMobileMenu">
+                        Courses
                     </router-link>
                     <div class="border-t border-gray-200 pt-4 pb-3">
                         <div class="flex items-center px-3 mb-3">
@@ -202,7 +224,7 @@ const profileMenuRef = ref(null)
 const mobileMenuRef = ref(null)
 
 const appTitle = import.meta.env.VITE_APP_TITLE
-const appTitle1 = import.meta.env.VITE_APP_TITLE_1  
+const appTitle1 = import.meta.env.VITE_APP_TITLE_1
 const appTitle2 = import.meta.env.VITE_APP_TITLE_2
 const appTitle3 = import.meta.env.VITE_APP_TITLE_3
 
@@ -233,7 +255,7 @@ const handleClickOutside = (event) => {
     if (profileMenuRef.value && !profileMenuRef.value.contains(event.target)) {
         showProfileMenu.value = false
     }
-    
+
     // Close mobile menu if clicking outside of it
     if (mobileMenuRef.value && !mobileMenuRef.value.contains(event.target)) {
         showMobileMenu.value = false

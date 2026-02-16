@@ -63,9 +63,14 @@
                 <!-- Step Circles -->
                 <div v-for="(step, index) in steps" :key="index" class="flex flex-col items-center relative z-10">
                     <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200 bg-white border-2"
-                        :class="index + 1 <= currentStep
-                            ? 'bg-white text-sky-500 border-sky-500'
-                            : 'bg-white text-gray-500 border-gray-300'">
+                        :class="[
+                            index + 1 <= currentStep
+                                ? 'bg-white text-sky-500 border-sky-500'
+                                : 'bg-white text-gray-500 border-gray-300',
+                            index + 1 < currentStep
+                                ? 'cursor-pointer hover:border-sky-700 hover:text-sky-700'
+                                : 'cursor-default'
+                        ]" @click="index + 1 < currentStep ? goToStep(index + 1) : null">
                         <CheckIcon v-if="index + 1 < currentStep" class="w-5 h-5" />
                         <span v-else>{{ index + 1 }}</span>
                     </div>
@@ -379,11 +384,15 @@ const prevStep = async () => {
 
 // Enhanced goToStep with auto-save for edit functionality
 const goToStep = async (stepNumber) => {
-    if (stepNumber >= 1 && stepNumber <= 5 && stepNumber !== currentStep.value) {
-        // Auto-save current step before navigating
+    // Only allow navigating to steps already reached — never skip forward
+    if (
+        stepNumber >= 1 &&
+        stepNumber <= 5 &&
+        stepNumber !== currentStep.value &&
+        stepNumber < currentStep.value   // ← key restriction: only backwards
+    ) {
         await autoSaveCurrentStep(currentStep.value, true)
         currentStep.value = stepNumber
-        // Reset validation state when jumping to a different step
         isStepValid.value = false
     }
 }

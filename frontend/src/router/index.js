@@ -255,6 +255,68 @@ const router = createRouter({
       component: () => import('@/views/company/About.vue')
     },
 
+    // ── Course routes
+    {
+      path: '/courses',
+      name: 'course-catalog',
+      component: () => import('@/views/courses/client/CourseCatalog.vue')
+      // public — no auth required
+    },
+    {
+      path: '/courses/dashboard',
+      name: 'course-dashboard',
+      component: () => import('@/views/courses/provider/CourseDashboard.vue'),
+      meta: { requiresAuth: true, requiresProvider: true }
+    },
+    {
+      path: '/courses/my',
+      name: 'course-portfolio',
+      component: () => import('@/views/courses/provider/CoursePortfolio.vue'),
+      meta: { requiresAuth: true, requiresProvider: true }
+    },
+    {
+      path: '/courses/homework',
+      name: 'grading-center',
+      component: () => import('@/views/courses/provider/GradingCenter.vue'),
+      meta: { requiresAuth: true, requiresProvider: true }
+    },
+    {
+      path: '/courses/my-learning',
+      name: 'my-learning',
+      component: () => import('@/views/courses/client/MyLearning.vue'),
+      meta: { requiresAuth: true, requiresClient: true }
+    },
+    {
+      path: '/courses/payment/success',
+      name: 'course-payment-success',
+      component: () => import('@/views/courses/CoursePaymentSuccess.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/courses/:id/builder',
+      name: 'course-builder',
+      component: () => import('@/views/courses/provider/CourseBuilder.vue'),
+      meta: { requiresAuth: true, requiresProvider: true }
+    },
+    {
+      path: '/courses/:id/learn',
+      name: 'course-learn',
+      component: () => import('@/views/courses/client/CourseLearn.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/courses/:id/lesson/:lessonId',
+      name: 'lesson-viewer',
+      component: () => import('@/views/courses/client/LessonViewer.vue'),
+      meta: { requiresAuth: true, hideNavBar: true, hideFooter: true }
+    },
+    {
+      path: '/courses/:id',
+      name: 'course-detail',
+      component: () => import('@/views/courses/client/CourseDetail.vue')
+      // public — handles auth check internally for enroll button
+    },
+
     // Error routes
     {
       path: '/:pathMatch(.*)*',

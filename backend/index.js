@@ -31,7 +31,14 @@ app.use(cors({
 }));
 
 // Set security HTTP headers
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'same-origin' }
+}));
+
+// Static file serving for uploads
+// Serves: /uploads/avatars/, /uploads/documents/,
+//         /uploads/videos/, /uploads/course-materials/
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
@@ -323,6 +330,7 @@ app.use('/api/admin', require('./src/admin/routes'));
 app.use('/api/specializations', require('./src/specialization/routes'));
 app.use('/api/chat', require('./src/chat/routes'));
 app.use('/api/reviews', require('./src/review/routes'));
+app.use('/api/courses', require('./src/course/routes'));
 
 // Conditional module routes
 if (process.env.MODULE_GROUP_CONSULTATIONS_ENABLED === 'true' && groupConsultationRoutes) {
