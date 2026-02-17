@@ -363,6 +363,9 @@ import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios, { uploadApi } from '@/plugins/axios'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -466,7 +469,7 @@ const fetchUserProfile = async () => {
             populateFormData(authStore.user)
         } else {
             console.error('No fallback data available')
-            alert('Failed to load profile data. Please refresh the page.')
+            toast.error('Failed to load profile data. Please refresh the page.')
         }
     } finally {
         loading.value = false
@@ -573,12 +576,12 @@ const changePassword = async () => {
             newPassword: passwordData.new
         })
 
-        alert('Password updated successfully!')
+        toast.error('Password updated successfully!')
         passwordData.current = ''
         passwordData.new = ''
     } catch (error) {
         console.error('Error changing password:', error)
-        alert('Error changing password. Please check your current password and try again.')
+        toast.error('Error changing password. Please check your current password and try again.')
     }
 }
 
@@ -590,14 +593,14 @@ const handlePhotoUpload = async (event) => {
     // Validate file size (2MB limit)
     const maxSize = 2 * 1024 * 1024 // 2MB
     if (file.size > maxSize) {
-        alert('File size must be less than 2MB')
+        toast.error('File size must be less than 2MB')
         return
     }
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
     if (!allowedTypes.includes(file.type)) {
-        alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)')
+        toast.error('Please select a valid image file (JPEG, PNG, GIF, or WebP)')
         return
     }
 
@@ -618,7 +621,7 @@ const handlePhotoUpload = async (event) => {
     } catch (error) {
         console.error('Error uploading photo:', error)
         const errorMessage = error.response?.data?.message || 'Error uploading photo. Please try again.'
-        alert(errorMessage)
+        toast.error(errorMessage)
     } finally {
         avatarUploading.value = false
         // Clear file input
@@ -649,7 +652,7 @@ const handleRemovePhoto = async () => {
     } catch (error) {
         console.error('Error removing photo:', error)
         const errorMessage = error.response?.data?.message || 'Error removing photo. Please try again.'
-        alert(errorMessage)
+        toast.error(errorMessage)
     } finally {
         avatarUploading.value = false
     }
@@ -659,7 +662,7 @@ const handleRemovePhoto = async () => {
 const handleSubmit = async () => {
     // Validate form before submission
     if (authStore.isProvider && !isFormValid.value) {
-        alert('Please fix validation errors before submitting.')
+        toast.error('Please fix validation errors before submitting.')
         return
     }
 
@@ -697,7 +700,7 @@ const handleSubmit = async () => {
         await router.push(targetRoute)
     } catch (error) {
         console.error('Error updating profile:', error)
-        alert('Error updating profile. Please try again.')
+        toast.error('Error updating profile. Please try again.')
     } finally {
         loading.value = false
     }

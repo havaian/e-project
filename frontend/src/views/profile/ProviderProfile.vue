@@ -371,6 +371,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
 import { isAchievementsEnabled } from '@/utils/modules'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 // Simple computed property
 const showAchievements = computed(() => isAchievementsEnabled())
@@ -509,7 +512,7 @@ const addClient = async () => {
     await fetchClients()
   } catch (error) {
     console.error('Error adding client:', error)
-    alert('Failed to add client. Please try again.')
+    toast.error('Failed to add client. Please try again.')
   }
 }
 

@@ -1272,3 +1272,97 @@ exports.rateCourse = async (req, res) => {
         res.status(500).json({ message: 'Failed to submit rating' });
     }
 };
+
+/**
+ * POST /api/courses/:id/upload-thumbnail
+ * Expects multipart/form-data field: thumbnail (image)
+ * @access Private (provider)
+ */
+exports.uploadCourseThumbnail = async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
+
+        const course = await Course.findOne({ _id: req.params.id, provider: req.user.id });
+        if (!course) {
+            removeFile(`/uploads/course-materials/${req.file.filename}`);
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        if (course.thumbnail) removeFile(course.thumbnail);
+        course.thumbnail = `/uploads/course-materials/${req.file.filename}`;
+        await course.save();
+
+        res.status(200).json({ success: true, data: { thumbnail: course.thumbnail } });
+    } catch (error) {
+        if (req.file) removeFile(`/uploads/course-materials/${req.file.filename}`);
+        console.error('uploadCourseThumbnail error:', error);
+        res.status(500).json({ message: 'Failed to upload thumbnail' });
+    }
+};
+
+/**
+ * POST /api/courses/:id/blocks/:blockId/upload-thumbnail
+ * @access Private (provider)
+ */
+exports.uploadBlockThumbnail = async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
+
+        const course = await Course.findOne({ _id: req.params.id, provider: req.user.id });
+        if (!course) {
+            removeFile(`/uploads/course-materials/${req.file.filename}`);
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        const block = course.blocks.id(req.params.blockId);
+        if (!block) {
+            removeFile(`/uploads/course-materials/${req.file.filename}`);
+            return res.status(404).json({ message: 'Block not found' });
+        }
+
+        if (block.thumbnail) removeFile(block.thumbnail);
+        block.thumbnail = `/uploads/course-materials/${req.file.filename}`;
+        await course.save();
+
+        res.status(200).json({ success: true, data: { thumbnail: block.thumbnail } });
+    } catch (error) {
+        if (req.file) removeFile(`/uploads/course-materials/${req.file.filename}`);
+        console.error('uploadBlockThumbnail error:', error);
+        res.status(500).json({ message: 'Failed to upload block thumbnail' });
+    }
+};
+
+/**
+ * POST /api/courses/:id/blocks/:blockId/topics/:topicId/lessons/:lessonId/upload-thumbnail
+ * @access Private (provider)
+ */
+exports.uploadLessonThumbnail = async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
+
+        const { id, blockId, topicId, lessonId } = req.params;
+        const course = await Course.findOne({ _id: id, provider: req.user.id });
+        if (!course) {
+            removeFile(`/uploads/course-materials/${req.file.filename}`);
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        const block  = course.blocks.id(blockId);
+        const topic  = block?.topics.id(topicId);
+        const lesson = topic?.lessons.id(lessonId);
+        if (!lesson) {
+            removeFile(`/uploads/course-materials/${req.file.filename}`);
+            return res.status(404).json({ message: 'Lesson not found' });
+        }
+
+        if (lesson.thumbnail) removeFile(lesson.thumbnail);
+        lesson.thumbnail = `/uploads/course-materials/${req.file.filename}`;
+        await course.save();
+
+        res.status(200).json({ success: true, data: { thumbnail: lesson.thumbnail } });
+    } catch (error) {
+        if (req.file) removeFile(`/uploads/course-materials/${req.file.filename}`);
+        console.error('uploadLessonThumbnail error:', error);
+        res.status(500).json({ message: 'Failed to upload lesson thumbnail' });
+    }
+};

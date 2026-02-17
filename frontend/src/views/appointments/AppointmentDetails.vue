@@ -300,6 +300,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePaymentStore } from '@/stores/payment'
 import axios from '@/plugins/axios'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -482,9 +485,9 @@ async function joinSession() {
         console.error('Error joining session:', error)
         // If session is not ready yet, show the time remaining
         if (error.response && error.response.data && error.response.data.startsInMinutes) {
-            alert(`This session will be available in ${error.response.data.startsInMinutes} minutes.`)
+            toast.error(`This session will be available in ${error.response.data.startsInMinutes} minutes.`)
         } else {
-            alert('Unable to join session at this time. Please try again later.')
+            toast.error('Unable to join session at this time. Please try again later.')
         }
     }
 }
@@ -495,7 +498,7 @@ async function proceedToPayment(appointmentId) {
         // Redirect handled by payment store
     } catch (error) {
         console.error('Error creating payment session:', error)
-        alert('There was a problem processing your payment. Please try again.')
+        toast.error('There was a problem processing your payment. Please try again.')
     }
 }
 
@@ -540,7 +543,7 @@ async function createFollowUp() {
         await fetchAppointment()
     } catch (error) {
         console.error('Error creating follow-up:', error)
-        alert('Failed to schedule follow-up appointment. Please try again.')
+        toast.error('Failed to schedule follow-up appointment. Please try again.')
     } finally {
         submitting.value = false
     }

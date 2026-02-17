@@ -9,6 +9,7 @@
       </router-view>
     </main>
     <app-footer v-if="showFooter" />
+    <app-toast />
   </div>
 </template>
 
@@ -17,6 +18,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NavBar from '@/components/layout/NavBar.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import AppToast  from '@/components/ui/AppToast.vue'
 
 const route = useRoute()
 

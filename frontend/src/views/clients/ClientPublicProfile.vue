@@ -339,6 +339,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -480,32 +483,27 @@ const checkProviderRelationship = async () => {
         console.error('Error checking provider relationship:', error)
     }
 }
-
 const fetchRecentActivity = async () => {
+    // No dedicated activity endpoint exists — derive from completed appointments
+    // that were already fetched by fetchStudentStats. We re-fetch here to keep
+    // this function self-contained and avoid tight coupling.
     try {
-        // This would come from a dedicated activity endpoint
-        recentActivity.value = [
-            {
-                id: 1,
-                type: 'achievement',
-                description: 'Earned "First session" achievement',
-                timestamp: new Date(Date.now() - 86400000) // 1 day ago
-            },
-            {
-                id: 2,
-                type: 'review',
-                description: 'Left a review for Dr. Smith',
-                timestamp: new Date(Date.now() - 172800000) // 2 days ago
-            },
-            {
-                id: 3,
-                type: 'session',
-                description: 'Completed session with Dr. Johnson',
-                timestamp: new Date(Date.now() - 259200000) // 3 days ago
-            }
-        ]
-    } catch (error) {
-        console.error('Error fetching recent activity:', error)
+        const res = await axios.get(`/appointments/user/${route.params.id}`)
+        const appointments = res.data.appointments || []
+
+        recentActivity.value = appointments
+            .filter(a => a.status === 'completed')
+            .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
+            .slice(0, 5)
+            .map((a, i) => ({
+                id:          i,
+                type:        'appointment',
+                description: `Completed session with ${a.provider?.firstName || 'a provider'}`,
+                timestamp:   a.dateTime
+            }))
+    } catch {
+        // Endpoint unavailable or access denied — show empty state silently
+        recentActivity.value = []
     }
 }
 
@@ -551,10 +549,10 @@ const addAsStudent = async () => {
         await axios.post('/users/students', {
             studentId: student.value._id
         })
-        alert('Student added successfully!')
+        toast.error('Student added successfully!')
     } catch (error) {
         console.error('Error adding student:', error)
-        alert('Error adding student. Please try again.')
+        toast.error('Error adding student. Please try again.')
     }
 }
 

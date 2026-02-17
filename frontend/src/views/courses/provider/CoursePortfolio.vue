@@ -40,7 +40,7 @@
                     class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                     <!-- Thumbnail -->
                     <div class="relative h-44 bg-gray-100">
-                        <img v-if="course.thumbnail" :src="course.thumbnail" :alt="course.title"
+                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)" :alt="course.title"
                             class="w-full h-full object-cover" />
                         <div v-else class="w-full h-full flex items-center justify-center">
                             <BookOpenIcon class="w-12 h-12 text-gray-300" />
@@ -147,6 +147,9 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { PlusIcon, BookOpenIcon, AcademicCapIcon, StarIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useCourseStore } from '@/stores/course'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const router = useRouter()
 const courseStore = useCourseStore()
@@ -190,10 +193,11 @@ async function handleCreate() {
             subcategory: newCourse.value.subcategory.trim(),
             price: newCourse.value.price || 0
         })
+        toast.success('Course created!')
         router.push(`/courses/${created._id}/builder`)
     } catch (e) {
         console.error('createCourse error:', e)
-        alert(e?.response?.data?.message || 'Failed to create course')
+        toast.error(e?.response?.data?.message || 'Failed to create course')
     } finally {
         creating.value = false
     }

@@ -22,7 +22,7 @@
                     class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
                     <!-- Thumbnail -->
                     <div class="h-44 bg-gray-100 overflow-hidden relative">
-                        <img v-if="enrollment.course?.thumbnail" :src="enrollment.course.thumbnail"
+                        <img v-if="enrollment.course?.thumbnail" :src="$uploadsUrl(enrollment.course?.thumbnail)"
                             :alt="enrollment.course.title" class="w-full h-full object-cover" />
                         <div v-else class="w-full h-full flex items-center justify-center">
                             <BookOpenIcon class="w-12 h-12 text-gray-300" />

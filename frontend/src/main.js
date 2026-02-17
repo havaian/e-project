@@ -6,11 +6,13 @@ import App from './App.vue'
 import router from './router'
 import './assets/main.css'
 import { useAuthStore } from '@/stores/auth'
+import globalsPlugin from '@/plugins/globals'
 
 const app = createApp(App)
 const head = createHead() 
 
 app.use(createPinia())
+app.use(globalsPlugin)
 app.use(router)
 app.use(head)
 

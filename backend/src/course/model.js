@@ -27,12 +27,12 @@ const materialSchema = new Schema({
 const lessonSchema = new Schema({
     title: { type: String, required: true, trim: true },
     order: { type: Number, default: 0 },
-    // Provider can set either an external URL or upload a file; both optional at creation
-    videoUrl: { type: String, trim: true },   // external link (YouTube, Vimeo, etc.)
-    videoFile: { type: String },               // path to uploaded file
-    text: { type: String },               // transcription / description
+    thumbnail: { type: String, default: null },
+    videoUrl: { type: String, trim: true },
+    videoFile: { type: String },
+    text: { type: String },
     materials: [materialSchema],
-    assignmentPrompt: { type: String, trim: true }    // post-lesson homework prompt
+    assignmentPrompt: { type: String, trim: true }
 });
 
 // ─── Topic (contains lessons + optional quiz) ───────────────────────────────
@@ -49,6 +49,7 @@ const topicSchema = new Schema({
 const blockSchema = new Schema({
     title: { type: String, required: true, trim: true },
     order: { type: Number, default: 0 },
+    thumbnail: { type: String, default: null },
     quiz: quizSchema,
     topics: [topicSchema]
 });

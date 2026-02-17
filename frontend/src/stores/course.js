@@ -226,6 +226,32 @@ export const useCourseStore = defineStore('course', () => {
         return res.data.data  // { score, passed, correctCount, totalQuestions, answers }
     }
 
+    // ─── Upload thumbnail helpers ──────────────────────────────────────────
+
+    async function uploadCourseThumbnail(courseId, file) {
+        const formData = new FormData()
+        formData.append('thumbnail', file)
+        const res = await uploadApi.post(`/courses/${courseId}/upload-thumbnail`, formData)
+        return res.data.data // { thumbnail }
+    }
+
+    async function uploadBlockThumbnail(courseId, blockId, file) {
+        const formData = new FormData()
+        formData.append('thumbnail', file)
+        const res = await uploadApi.post(`/courses/${courseId}/blocks/${blockId}/upload-thumbnail`, formData)
+        return res.data.data
+    }
+
+    async function uploadLessonThumbnail(courseId, blockId, topicId, lessonId, file) {
+        const formData = new FormData()
+        formData.append('thumbnail', file)
+        const res = await uploadApi.post(
+            `/courses/${courseId}/blocks/${blockId}/topics/${topicId}/lessons/${lessonId}/upload-thumbnail`,
+            formData
+        )
+        return res.data.data
+    }
+
     return {
         loading, error,
         fetchDashboard, fetchMyCourses, createCourse, updateCourse,
@@ -238,6 +264,7 @@ export const useCourseStore = defineStore('course', () => {
         browseCourses, getCoursePublic,
         fetchMyLearning, getCourseContent,
         initiateEnrollment, confirmEnrollment,
-        completeLesson, submitHomework, submitQuizAttempt
+        completeLesson, submitHomework, submitQuizAttempt,
+        uploadCourseThumbnail, uploadBlockThumbnail, uploadLessonThumbnail
     }
 })

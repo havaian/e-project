@@ -279,6 +279,9 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '@/stores/auth'
 import { useCourseStore } from '@/stores/course'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -382,7 +385,7 @@ async function submitHw() {
         homeworkText.value = ''
         hwFiles.value = []
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to submit assignment')
+        toast.error(e?.response?.data?.message || 'Failed to submit assignment')
     } finally {
         hwSubmitting.value = false
     }
@@ -427,7 +430,7 @@ async function submitQuiz() {
         const content = await courseStore.getCourseContent(courseId)
         progress.value = content.progress
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to submit quiz')
+        toast.error(e?.response?.data?.message || 'Failed to submit quiz')
     } finally {
         quizModal.submitting = false
     }

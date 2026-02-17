@@ -83,6 +83,21 @@ router.get('/:id', authenticateUser, authorizeRoles(['provider']), ctrl.getCours
  */
 router.put('/:id', authenticateUser, authorizeRoles(['provider']), ctrl.updateCourse);
 
+router.post('/:id/upload-thumbnail',
+    authenticateUser, authorizeRoles(['provider']),
+    materialUpload.single('thumbnail'),
+    ctrl.uploadCourseThumbnail);
+
+router.post('/:id/blocks/:blockId/upload-thumbnail',
+    authenticateUser, authorizeRoles(['provider']),
+    materialUpload.single('thumbnail'),
+    ctrl.uploadBlockThumbnail);
+
+router.post('/:id/blocks/:blockId/topics/:topicId/lessons/:lessonId/upload-thumbnail',
+    authenticateUser, authorizeRoles(['provider']),
+    materialUpload.single('thumbnail'),
+    ctrl.uploadLessonThumbnail);
+
 /**
  * @route DELETE /api/courses/:id
  * @desc Delete a draft/archived course

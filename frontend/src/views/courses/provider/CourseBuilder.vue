@@ -12,7 +12,7 @@
             <div class="bg-white border-b border-gray-100">
                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center gap-5">
                     <div class="w-16 h-16 rounded-2xl bg-gray-100 overflow-hidden shrink-0">
-                        <img v-if="course.thumbnail" :src="course.thumbnail" class="w-full h-full object-cover" />
+                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)" class="w-full h-full object-cover" />
                         <div v-else class="w-full h-full flex items-center justify-center">
                             <PhotoIcon class="w-8 h-8 text-gray-300" />
                         </div>
@@ -42,6 +42,12 @@
 
             <!-- Builder tab -->
             <div v-if="activeTab === 'builder'" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+                <div v-if="course.status === 'draft'"
+                    class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-2 text-sm text-amber-700">
+                    <ExclamationTriangleIcon class="w-4 h-4 shrink-0 text-amber-500" />
+                    This course is a <strong class="mx-1">draft</strong> — it won't appear in the client catalog until
+                    you publish it from the Settings tab.
+                </div>
 
                 <div v-for="(block, bi) in course.blocks" :key="block._id"
                     class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -145,8 +151,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
-                        <textarea v-model="settingsForm.description" rows="4"
-                            class="input resize-none"></textarea>
+                        <textarea v-model="settingsForm.description" rows="4" class="input resize-none"></textarea>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -169,6 +174,19 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Thumbnail URL</label>
                         <input v-model="settingsForm.thumbnail" type="text" placeholder="https://..."
                             class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Or Upload Thumbnail</label>
+                        <input ref="courseThumbInput" type="file" accept="image/*" class="hidden"
+                            @change="handleCourseThumbUpload" />
+                        <div v-if="course.thumbnail" class="w-full h-32 rounded-xl overflow-hidden mb-2 bg-gray-100">
+                            <img :src="$uploadsUrl(course.thumbnail)" class="w-full h-full object-cover" />
+                        </div>
+                        <button @click="$refs.courseThumbInput.click()" :disabled="courseThumbUploading"
+                            class="w-full border border-dashed border-gray-200 rounded-xl py-2.5 text-sm text-gray-400 hover:border-sky-300 hover:text-sky-500 transition-colors disabled:opacity-50">
+                            {{ courseThumbUploading ? 'Uploading…' : 'Choose image file' }}
+                        </button>
                     </div>
 
                     <div class="flex gap-3 pt-2">
@@ -223,7 +241,8 @@
 
                                 <!-- Video preview -->
                                 <div class="w-full aspect-video rounded-xl bg-gray-100 overflow-hidden mb-2">
-                                    <video v-if="lessonModal.form.videoFile" :src="lessonModal.form.videoFile" controls
+                                    <video v-if="lessonModal.form.videoFile"
+                                        :src="$uploadsUrl(lessonModal.form.videoFile)" controls
                                         class="w-full h-full object-cover"></video>
                                     <img v-else-if="videoThumb" :src="videoThumb" class="w-full h-full object-cover" />
                                     <div v-else class="w-full h-full flex items-center justify-center">
@@ -289,6 +308,27 @@
                                         {{ materialUploading ? 'Uploading…' : '+ Add files' }}
                                     </button>
                                 </div>
+
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Lesson
+                                        Cover
+                                        Image</p>
+                                    <div class="w-full h-24 bg-gray-100 rounded-xl overflow-hidden mb-2">
+                                        <img v-if="lessonModal.form.thumbnail"
+                                            :src="$uploadsUrl(lessonModal.form.thumbnail)"
+                                            class="w-full h-full object-cover" />
+                                        <div v-else
+                                            class="w-full h-full flex items-center justify-center text-gray-300 text-xs">
+                                            No
+                                            image</div>
+                                    </div>
+                                    <input ref="lessonThumbInput" type="file" accept="image/*" class="hidden"
+                                        @change="handleLessonThumbUpload" />
+                                    <button @click="$refs.lessonThumbInput.click()" :disabled="lessonThumbUploading"
+                                        class="w-full border border-dashed border-gray-200 rounded-xl py-2 text-xs text-gray-400 hover:border-sky-300 hover:text-sky-500 transition-colors disabled:opacity-50">
+                                        {{ lessonThumbUploading ? 'Uploading…' : 'Upload cover image' }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -297,8 +337,7 @@
                             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Lesson Text /
                                 Transcription / Description</p>
                             <textarea v-model="lessonModal.form.text" rows="4"
-                                placeholder="Detailed content for this lesson..."
-                                class="input resize-none"></textarea>
+                                placeholder="Detailed content for this lesson..." class="input resize-none"></textarea>
                         </div>
 
                         <!-- Assignment prompt -->
@@ -392,9 +431,12 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
     XMarkIcon, ChevronDownIcon, PencilSquareIcon, PlayIcon,
-    PhotoIcon, FilmIcon, DocumentIcon, PlusIcon
+    PhotoIcon, FilmIcon, DocumentIcon, PlusIcon, ExclamationTriangleIcon
 } from '@heroicons/vue/24/outline'
 import { useCourseStore } from '@/stores/course'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -404,6 +446,8 @@ const courseId = route.params.id
 const loading = ref(true)
 const saving = ref(false)
 const course = ref(null)
+const lessonThumbUploading = ref(false)
+const courseThumbUploading = ref(false)
 
 const tabs = [
     { key: 'builder', label: 'Builder' },
@@ -497,10 +541,51 @@ async function handleSave() {
             description: course.value.description
         })
         refresh(updated)
+        toast.success('Course saved')
     } catch (e) {
-        alert(e?.response?.data?.message || 'Save failed')
+        toast.error(e?.response?.data?.message || 'Save failed')
     } finally {
         saving.value = false
+    }
+}
+
+async function handleLessonThumbUpload(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    lessonThumbUploading.value = true
+    try {
+        const result = await courseStore.uploadLessonThumbnail(
+            courseId,
+            lessonModal.blockId,
+            lessonModal.topicId,
+            lessonModal.lesson._id,
+            file
+        )
+        lessonModal.form.thumbnail = result.thumbnail
+        const updated = await courseStore.fetchCourseById(courseId)
+        refresh(updated)
+        toast.success('Cover image uploaded')
+    } catch (e) {
+        toast.error(e?.response?.data?.message || 'Failed to upload cover image')
+    } finally {
+        lessonThumbUploading.value = false
+        e.target.value = ''
+    }
+}
+
+async function handleCourseThumbUpload(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    courseThumbUploading.value = true
+    try {
+        const result = await courseStore.uploadCourseThumbnail(courseId, file)
+        course.value.thumbnail = result.thumbnail
+        toast.success('Thumbnail uploaded')
+    } catch (e) {
+        toast.error(e?.response?.data?.message || 'Failed to upload thumbnail')
+    } finally {
+        courseThumbUploading.value = false
+        e.target.value = ''
     }
 }
 
@@ -556,6 +641,7 @@ function openLessonModal(block, topic, lesson) {
     lessonModal.lesson = lesson
     lessonModal.form = {
         title: lesson.title,
+        thumbnail: lesson.thumbnail || null,
         videoUrl: lesson.videoUrl || '',
         videoFile: lesson.videoFile || null,
         text: lesson.text || '',
@@ -587,9 +673,10 @@ async function saveLessonConfig() {
             }
         )
         refresh(updated)
+        toast.success('Lesson saved')
         lessonModal.open = false
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to save lesson')
+        toast.error(e?.response?.data?.message || 'Failed to save lesson')
     } finally {
         lessonModal.saving = false
     }
@@ -614,8 +701,9 @@ async function handleVideoUpload(e) {
         // Refresh course to sync
         const updated = await courseStore.fetchCourseById(courseId)
         refresh(updated)
+        toast.success('Video uploaded')
     } catch (e) {
-        alert(e?.response?.data?.message || 'Video upload failed')
+        toast.error(e?.response?.data?.message || 'Video upload failed')
         videoUploadProgress.value = 0
     }
     e.target.value = ''
@@ -636,8 +724,9 @@ async function handleMaterialUpload(e) {
         lessonModal.form.materials.push(...added)
         const updated = await courseStore.fetchCourseById(courseId)
         refresh(updated)
+        toast.success('Lesson materials saved')
     } catch (e) {
-        alert(e?.response?.data?.message || 'Material upload failed')
+        toast.error(e?.response?.data?.message || 'Material upload failed')
     } finally {
         materialUploading.value = false
         e.target.value = ''
@@ -698,9 +787,10 @@ async function saveQuiz() {
         }
         const updated = await courseStore.fetchCourseById(courseId)
         refresh(updated)
+        toast.success('Quiz saved')
         quizModal.open = false
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to save quiz')
+        toast.error(e?.response?.data?.message || 'Failed to save quiz')
     } finally {
         quizModal.saving = false
     }
@@ -712,8 +802,9 @@ async function saveSettings() {
     try {
         const updated = await courseStore.updateCourse(courseId, { ...settingsForm })
         refresh(updated)
+        toast.success('Settings saved')
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to save settings')
+        toast.error(e?.response?.data?.message || 'Failed to save settings')
     } finally {
         saving.value = false
     }
@@ -725,8 +816,9 @@ async function handlePublish() {
     try {
         const updated = await courseStore.publishCourse(courseId)
         refresh(updated)
+        toast.success('Course published — students can now find it in the catalog')
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to publish')
+        toast.error(e?.response?.data?.message || 'Failed to publish')
     } finally {
         saving.value = false
     }
@@ -738,8 +830,9 @@ async function handleArchive() {
     try {
         const updated = await courseStore.archiveCourse(courseId)
         refresh(updated)
+        toast.info('Course archived')
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to archive')
+        toast.error(e?.response?.data?.message || 'Failed to archive')
     } finally {
         saving.value = false
     }

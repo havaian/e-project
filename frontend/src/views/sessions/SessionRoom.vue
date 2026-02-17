@@ -361,6 +361,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { format, addDays } from 'date-fns'
 import axios from '@/plugins/axios'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -682,7 +685,7 @@ async function submitPostSessionForm() {
         }
     } catch (error) {
         console.error('Error submitting post-session data:', error)
-        alert('An error occurred while saving the session data. Please try again.')
+        toast.error('An error occurred while saving the session data. Please try again.')
     } finally {
         submitting.value = false
     }

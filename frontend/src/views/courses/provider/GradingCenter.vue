@@ -179,6 +179,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { CheckIcon, ChevronRightIcon, DocumentIcon } from '@heroicons/vue/24/outline'
 import { useCourseStore } from '@/stores/course'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const courseStore = useCourseStore()
 
@@ -226,7 +229,7 @@ async function loadSubmissions() {
 
 async function submitGrade(status) {
     if (gradeForm.grade === null && status === 'graded') {
-        alert('Please enter a grade before submitting.')
+        toast.error('Please enter a grade before submitting.')
         return
     }
     grading.value = true
@@ -241,7 +244,7 @@ async function submitGrade(status) {
         if (idx !== -1) submissions.value[idx] = { ...submissions.value[idx], ...updated }
         selectedSub.value = { ...selectedSub.value, ...updated }
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to save grade')
+        toast.error(e?.response?.data?.message || 'Failed to save grade')
     } finally {
         grading.value = false
     }

@@ -13,7 +13,7 @@
                 <!-- Course header -->
                 <div class="flex items-center gap-5 mb-8">
                     <div class="w-16 h-16 rounded-2xl bg-gray-200 overflow-hidden shrink-0">
-                        <img v-if="course.thumbnail" :src="course.thumbnail" class="w-full h-full object-cover" />
+                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)" class="w-full h-full object-cover" />
                         <div v-else class="w-full h-full flex items-center justify-center">
                             <BookOpenIcon class="w-7 h-7 text-gray-400" />
                         </div>
@@ -159,6 +159,9 @@ import {
 } from '@heroicons/vue/24/outline'
 import axios from '@/plugins/axios'
 import { useCourseStore } from '@/stores/course'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -196,7 +199,7 @@ async function submitRating(value) {
         courseAvgRating.value  = res.data.data.averageRating
         courseTotalRatings.value = res.data.data.totalRatings
     } catch (e) {
-        alert(e?.response?.data?.message || 'Failed to submit rating')
+        toast.error(e?.response?.data?.message || 'Failed to submit rating')
     } finally {
         ratingSubmitting.value = false
     }

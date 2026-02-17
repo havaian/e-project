@@ -45,7 +45,7 @@
                     @click="$router.push(`/courses/${course._id}`)">
                     <!-- Thumbnail -->
                     <div class="h-44 bg-gray-100 overflow-hidden">
-                        <img v-if="course.thumbnail" :src="course.thumbnail" :alt="course.title"
+                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)" :alt="course.title"
                             class="w-full h-full object-cover" />
                         <div v-else class="w-full h-full flex items-center justify-center">
                             <BookOpenIcon class="w-12 h-12 text-gray-300" />
@@ -62,7 +62,7 @@
                         <!-- Provider -->
                         <div class="flex items-center gap-2 mb-3">
                             <div class="w-6 h-6 rounded-full bg-sky-100 overflow-hidden">
-                                <img v-if="course.provider?.profilePicture" :src="course.provider.profilePicture"
+                                <img v-if="course.provider?.profilePicture" :src="$uploadsUrl(course.provider?.profilePicture)"
                                     class="w-full h-full object-cover" />
                                 <div v-else
                                     class="w-full h-full flex items-center justify-center text-sky-600 text-xs font-bold">

@@ -192,7 +192,9 @@ import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { format, parseISO, differenceInYears } from 'date-fns'
 import axios from '@/plugins/axios'
+import { useGlobals } from '@/plugins/globals'
 
+const { toast, uploadsUrl } = useGlobals()
 const authStore = useAuthStore()
 
 // Reactive data
@@ -272,7 +274,7 @@ async function fetchPendingConfirmations() {
     } catch (error) {
         console.error('Error fetching pending confirmations:', error)
         // Show user-friendly error message
-        alert('Failed to load pending confirmations. Please refresh the page.')
+        toast.error('Failed to load pending confirmations. Please refresh the page.')
     } finally {
         loading.value = false
     }
@@ -292,18 +294,18 @@ async function confirmAppointment(appointment) {
         appointments.value = appointments.value.filter(app => app._id !== appointment._id)
 
         // Show success message
-        alert('Appointment confirmed successfully! The client has been notified.')
+        toast.error('Appointment confirmed successfully! The client has been notified.')
 
     } catch (error) {
         console.error('Error confirming appointment:', error)
 
         // Handle specific error cases
         if (error.response?.status === 400 && error.response.data?.message?.includes('deadline')) {
-            alert('This appointment confirmation has expired and has been automatically canceled.')
+            toast.error('This appointment confirmation has expired and has been automatically canceled.')
             // Remove from list since it's been canceled
             appointments.value = appointments.value.filter(app => app._id !== appointment._id)
         } else {
-            alert('Failed to confirm appointment. Please try again.')
+            toast.error('Failed to confirm appointment. Please try again.')
         }
     } finally {
         processingAppointments.value.delete(appointment._id)
@@ -338,11 +340,11 @@ async function rejectAppointment() {
         appointments.value = appointments.value.filter(app => app._id !== selectedAppointment.value._id)
 
         closeRejectModal()
-        alert('Appointment rejected successfully. The client has been notified and refunded.')
+        toast.error('Appointment rejected successfully. The client has been notified and refunded.')
 
     } catch (error) {
         console.error('Error rejecting appointment:', error)
-        alert('Failed to reject appointment. Please try again.')
+        toast.error('Failed to reject appointment. Please try again.')
     } finally {
         processingRejection.value = false
     }

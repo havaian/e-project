@@ -25,7 +25,7 @@
                         <!-- Provider info -->
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-white/10 overflow-hidden">
-                                <img v-if="course.provider?.profilePicture" :src="course.provider.profilePicture"
+                                <img v-if="course.provider?.profilePicture" :src="$uploadsUrl(course.provider?.profilePicture)"
                                     class="w-full h-full object-cover" />
                                 <div v-else
                                     class="w-full h-full flex items-center justify-center text-white font-bold text-sm">
@@ -62,7 +62,7 @@
                     <!-- Right: enroll card -->
                     <div class="w-full lg:w-72 shrink-0 bg-white rounded-2xl shadow-2xl overflow-hidden text-gray-900">
                         <div class="h-36 bg-gray-100 overflow-hidden">
-                            <img v-if="course.thumbnail" :src="course.thumbnail" class="w-full h-full object-cover" />
+                            <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)" class="w-full h-full object-cover" />
                             <div v-else class="w-full h-full flex items-center justify-center">
                                 <BookOpenIcon class="w-12 h-12 text-gray-300" />
                             </div>
@@ -166,6 +166,9 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '@/stores/auth'
 import { useCourseStore } from '@/stores/course'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -210,7 +213,7 @@ async function handleEnroll() {
             window.location.href = result.checkoutUrl
         }
     } catch (e) {
-        alert(e?.response?.data?.message || 'Enrollment failed. Please try again.')
+        toast.error(e?.response?.data?.message || 'Enrollment failed. Please try again.')
     } finally {
         enrolling.value = false
     }
