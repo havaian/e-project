@@ -2,6 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Payment = require('./model');
 const Appointment = require('../appointment/model');
 const { NotificationService } = require('../notification');
+const { uzsToUsdCents } = require('../utils/exchangeRate')
 
 /**
  * Create a checkout session for an appointment
@@ -52,17 +53,22 @@ exports.createCheckoutSession = async (req, res) => {
         }
 
         try {
+            // UZS is not supported by Stripe. Convert to USD cents using the
+            // daily CBU rate (cached in Redis for 24 h). Price is stored and
+            // displayed in UZS; we only send USD to Stripe.
             // Create Stripe checkout session
+            const amountCents = await uzsToUsdCents(course.price)
+
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 line_items: [{
                     price_data: {
-                        currency: currency,
+                        currency: 'usd',
                         product_data: {
                             name: `Consultation with ${appointment.provider.firstName} ${appointment.provider.lastName}`,
                             description: `${appointment.type} session scheduled for ${new Date(appointment.dateTime).toLocaleString()}`
                         },
-                        unit_amount: amount * 100 // Convert to cents
+                        unit_amount: amountCents
                     },
                     quantity: 1
                 }],

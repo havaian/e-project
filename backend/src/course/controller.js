@@ -4,6 +4,7 @@ const path = require('path');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Course, Enrollment, HomeworkSubmission, QuizAttempt } = require('./model');
 const { PATHS: UPLOAD_PATHS } = require('../utils/uploadPaths');
+const { uzsToUsdCents } = require('../utils/exchangeRate')
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -876,17 +877,24 @@ exports.initiateEnrollment = async (req, res) => {
             return res.status(201).json({ success: true, data: { enrollment, free: true } });
         }
 
-        // Paid course — create Stripe session
+        // UZS is not supported by Stripe. Convert to USD cents using the
+        // daily CBU rate (cached in Redis for 24 h). Price is stored and
+        // displayed in UZS; we only send USD to Stripe.
+        const amountCents = await uzsToUsdCents(course.price)
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
                 price_data: {
-                    currency: course.currency || 'uzs',
+                    currency: 'usd',
                     product_data: {
                         name: course.title,
-                        description: course.description?.substring(0, 255)
+                        description: [
+                            course.description?.substring(0, 200),
+                            `Price: ${course.price.toLocaleString('ru-UZ')} UZS`
+                        ].filter(Boolean).join(' | ')
                     },
-                    unit_amount: course.price * 100
+                    unit_amount: amountCents
                 },
                 quantity: 1
             }],
@@ -894,8 +902,8 @@ exports.initiateEnrollment = async (req, res) => {
             success_url: `${process.env.FRONTEND_URL}/courses/payment/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.FRONTEND_URL}/courses/${courseId}`,
             metadata: {
-                courseId: courseId,
-                clientId: clientId.toString(),
+                courseId:   courseId.toString(),
+                clientId:   clientId.toString(),
                 providerId: course.provider._id.toString()
             }
         });
