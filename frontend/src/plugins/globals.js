@@ -22,9 +22,9 @@ import { useToastStore } from '@/stores/toast'
 export function uploadsUrl(path) {
     if (!path) return null
     if (path.startsWith('http')) return path
-    // Strip trailing /api so we get the bare origin
-    const base = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '')
-    return base + path
+    // /uploads/... paths are proxied by nginx to the backend.
+    // Return as-is — no base URL manipulation needed.
+    return path
 }
 
 // ── useGlobals composable ─────────────────────────────────────────────────────
