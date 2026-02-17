@@ -194,7 +194,7 @@ import { format, parseISO, differenceInYears } from 'date-fns'
 import axios from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 const authStore = useAuthStore()
 
 // Reactive data
@@ -281,7 +281,7 @@ async function fetchPendingConfirmations() {
 }
 
 async function confirmAppointment(appointment) {
-    if (!confirm(`Confirm appointment with ${appointment.client.firstName} ${appointment.client.lastName}?`)) {
+    if (!modal.confirm(`Confirm appointment with ${appointment.client.firstName} ${appointment.client.lastName}?`)) {
         return
     }
 

@@ -293,6 +293,9 @@ import axios from '@/plugins/axios'
 import PendingConfirmations from '@/components/appointments/PendingConfirmations.vue'
 import AppointmentCalendar from '@/components/calendar/AppointmentCalendar.vue'
 import CalendarControls from '@/components/calendar/CalendarControls.vue'
+import { useGlobals } from '@/plugins/globals'
+
+const { toast, uploadsUrl, modal } = useGlobals()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -472,7 +475,7 @@ const rescheduleAppointment = (appointmentId) => {
 }
 
 const cancelAppointment = async (appointmentId) => {
-    if (!confirm('Are you sure you want to cancel this appointment?')) return
+    if (!modal.confirm('Are you sure you want to cancel this appointment?')) return
 
     try {
         await axios.patch(`/appointments/${appointmentId}`, {

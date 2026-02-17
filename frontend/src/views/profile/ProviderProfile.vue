@@ -373,7 +373,7 @@ import axios from '@/plugins/axios'
 import { isAchievementsEnabled } from '@/utils/modules'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 
 // Simple computed property
 const showAchievements = computed(() => isAchievementsEnabled())
@@ -517,7 +517,7 @@ const addClient = async () => {
 }
 
 const removeClient = async (clientId) => {
-  if (!confirm('Are you sure you want to remove this client?')) return
+  if (!conmodal.confirmfirm('Are you sure you want to remove this client?')) return
 
   try {
     await axios.delete(`/users/clients/${clientId}`)

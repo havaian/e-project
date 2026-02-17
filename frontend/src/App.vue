@@ -10,6 +10,7 @@
     </main>
     <app-footer v-if="showFooter" />
     <app-toast />
+    <app-modal />
   </div>
 </template>
 

@@ -302,7 +302,7 @@ import { usePaymentStore } from '@/stores/payment'
 import axios from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -460,7 +460,7 @@ async function findFollowUpAppointment() {
 }
 
 async function cancelAppointment() {
-    if (!confirm('Are you sure you want to cancel this appointment?')) return
+    if (!modal.confirm('Are you sure you want to cancel this appointment?')) return
 
     try {
         await axios.patch(`/appointments/${appointment.value._id}/status`, {

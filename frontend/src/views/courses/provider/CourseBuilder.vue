@@ -436,7 +436,7 @@ import {
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
 const router = useRouter()
@@ -591,7 +591,7 @@ async function handleCourseThumbUpload(e) {
 
 // ── Block actions ────────────────────────────────────────────────────────────
 async function promptAddBlock() {
-    const title = prompt('Block title:')
+    const title = modal.prompt('Block title:')
     if (!title?.trim()) return
     const updated = await courseStore.addBlock(courseId, title.trim())
     refresh(updated)
@@ -608,28 +608,28 @@ async function saveBlockTitle(block) {
 }
 
 async function handleDeleteBlock(blockId) {
-    if (!confirm('Delete this block and all its content?')) return
+    if (!modal.confirm('Delete this block and all its content?')) return
     const updated = await courseStore.deleteBlock(courseId, blockId)
     refresh(updated)
 }
 
 // ── Topic actions ────────────────────────────────────────────────────────────
 async function promptAddTopic(block) {
-    const title = prompt('Topic title:')
+    const title = modal.prompt('Topic title:')
     if (!title?.trim()) return
     const updated = await courseStore.addTopic(courseId, block._id, title.trim())
     refresh(updated)
 }
 
 async function handleDeleteTopic(blockId, topicId) {
-    if (!confirm('Delete this topic and all its lessons?')) return
+    if (!modal.confirm('Delete this topic and all its lessons?')) return
     const updated = await courseStore.deleteTopic(courseId, blockId, topicId)
     refresh(updated)
 }
 
 // ── Lesson actions ───────────────────────────────────────────────────────────
 async function promptAddLesson(block, topic) {
-    const title = prompt('Lesson title:')
+    const title = modal.prompt('Lesson title:')
     if (!title?.trim()) return
     const updated = await courseStore.addLesson(courseId, block._id, topic._id, title.trim())
     refresh(updated)
@@ -734,7 +734,7 @@ async function handleMaterialUpload(e) {
 }
 
 async function deleteMaterial(materialId) {
-    if (!confirm('Remove this material?')) return
+    if (!modal.confirm('Remove this material?')) return
     await courseStore.deleteLessonMaterial(
         courseId,
         lessonModal.blockId,
@@ -748,7 +748,7 @@ async function deleteMaterial(materialId) {
 }
 
 async function handleDeleteLesson(blockId, topicId, lessonId) {
-    if (!confirm('Delete this lesson?')) return
+    if (!modal.confirm('Delete this lesson?')) return
     const updated = await courseStore.deleteLesson(courseId, blockId, topicId, lessonId)
     refresh(updated)
 }
@@ -811,7 +811,7 @@ async function saveSettings() {
 }
 
 async function handlePublish() {
-    if (!confirm('Publish this course? It will be visible to all students.')) return
+    if (!modal.confirm('Publish this course? It will be visible to all students.')) return
     saving.value = true
     try {
         const updated = await courseStore.publishCourse(courseId)
@@ -825,7 +825,7 @@ async function handlePublish() {
 }
 
 async function handleArchive() {
-    if (!confirm('Archive this course? It will no longer be visible to new students.')) return
+    if (!modal.confirm('Archive this course? It will no longer be visible to new students.')) return
     saving.value = true
     try {
         const updated = await courseStore.archiveCourse(courseId)

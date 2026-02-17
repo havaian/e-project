@@ -14,6 +14,7 @@
 //     const { toast, uploadsUrl } = useGlobals()
 
 import { useToastStore } from '@/stores/toast'
+import { useModalStore } from '@/stores/modal'
 
 // ── uploadsUrl ────────────────────────────────────────────────────────────────
 // Converts relative /uploads/... paths returned by the backend into absolute
@@ -31,8 +32,9 @@ export function uploadsUrl(path) {
 // Use this inside <script setup> blocks:
 //   const { toast, uploadsUrl } = useGlobals()
 export function useGlobals() {
-    const toast = useToastStore()
-    return { toast, uploadsUrl }
+    const toast  = useToastStore()
+    const modal  = useModalStore()
+    return { toast, modal, uploadsUrl }
 }
 
 // ── Vue plugin install ────────────────────────────────────────────────────────
@@ -41,9 +43,10 @@ export default {
         // $uploadsUrl available in every template with no import
         app.config.globalProperties.$uploadsUrl = uploadsUrl
 
-        // $toast available in every template with no import.
+        // $toast & $modal available in every template with no import.
         // We expose the store directly; Pinia stores are reactive singletons
         // so this is safe and always reflects the current state.
         app.config.globalProperties.$toast = useToastStore()
+        app.config.globalProperties.$modal  = useModalStore()
     }
 }

@@ -341,7 +341,7 @@ import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
 const authStore = useAuthStore()

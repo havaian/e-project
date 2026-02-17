@@ -365,7 +365,7 @@ import { useAuthStore } from '@/stores/auth'
 import axios, { uploadApi } from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -633,7 +633,7 @@ const handlePhotoUpload = async (event) => {
 
 // Remove photo handler with backend call
 const handleRemovePhoto = async () => {
-    if (!confirm('Are you sure you want to remove your profile photo?')) {
+    if (!modal.confirm('Are you sure you want to remove your profile photo?')) {
         return
     }
 

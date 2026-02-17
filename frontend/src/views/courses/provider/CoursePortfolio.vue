@@ -149,7 +149,7 @@ import { PlusIcon, BookOpenIcon, AcademicCapIcon, StarIcon, XMarkIcon } from '@h
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 
 const router = useRouter()
 const courseStore = useCourseStore()

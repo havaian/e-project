@@ -181,7 +181,7 @@ import { CheckIcon, ChevronRightIcon, DocumentIcon } from '@heroicons/vue/24/out
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
 
-const { toast, uploadsUrl } = useGlobals()
+const { toast, uploadsUrl, modal } = useGlobals()
 
 const courseStore = useCourseStore()
 
