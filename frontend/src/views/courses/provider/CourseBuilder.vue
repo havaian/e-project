@@ -591,7 +591,7 @@ async function handleCourseThumbUpload(e) {
 
 // ── Block actions ────────────────────────────────────────────────────────────
 async function promptAddBlock() {
-    const title = modal.prompt('Block title:')
+    const title = await modal.prompt('Block title:')
     if (!title?.trim()) return
     const updated = await courseStore.addBlock(courseId, title.trim())
     refresh(updated)
@@ -615,7 +615,7 @@ async function handleDeleteBlock(blockId) {
 
 // ── Topic actions ────────────────────────────────────────────────────────────
 async function promptAddTopic(block) {
-    const title = modal.prompt('Topic title:')
+    const title = await modal.prompt('Topic title:')
     if (!title?.trim()) return
     const updated = await courseStore.addTopic(courseId, block._id, title.trim())
     refresh(updated)
@@ -629,7 +629,7 @@ async function handleDeleteTopic(blockId, topicId) {
 
 // ── Lesson actions ───────────────────────────────────────────────────────────
 async function promptAddLesson(block, topic) {
-    const title = modal.prompt('Lesson title:')
+    const title = await modal.prompt('Lesson title:')
     if (!title?.trim()) return
     const updated = await courseStore.addLesson(courseId, block._id, topic._id, title.trim())
     refresh(updated)
