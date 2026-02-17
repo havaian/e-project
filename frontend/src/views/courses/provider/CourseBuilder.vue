@@ -389,7 +389,7 @@
                                 <div class="space-y-2 mb-3">
                                     <div v-for="(opt, oi) in q.options" :key="oi" class="flex items-center gap-2">
                                         <input type="radio" :name="`q${qi}-correct`" :value="oi"
-                                            v-model="q.correctAnswer" class="input accent-sky-500" />
+                                            v-model="q.correctAnswer" class="w-4 h-4 shrink-0 accent-sky-500" />
                                         <input v-model="q.options[oi]" type="text" :placeholder="`Option ${oi + 1}`"
                                             class="input flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                                         <button v-if="q.options.length > 2" @click="q.options.splice(oi, 1)"

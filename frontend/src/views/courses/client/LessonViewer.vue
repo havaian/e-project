@@ -250,7 +250,7 @@
                                             ? 'border-sky-500 bg-sky-500/10 text-white'
                                             : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/30'">
                                         <input type="radio" :name="`q${qi}`" :value="oi" v-model="quizModal.answers[qi]"
-                                            class="accent-sky-500 shrink-0" />
+                                            class=" w-4 h-4 shrink-0 accent-sky-500" />
                                         <span class="text-sm">{{ opt }}</span>
                                     </label>
                                 </div>

@@ -1,3 +1,4 @@
+<!-- frontend/src/App.vue -->
 <template>
   <div class="min-h-screen">
     <nav-bar v-if="showNavBar" />
@@ -9,6 +10,8 @@
       </router-view>
     </main>
     <app-footer v-if="showFooter" />
+
+    <!-- Global UI overlays — must be outside main so they always render -->
     <app-toast />
     <app-modal />
   </div>
@@ -19,7 +22,8 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NavBar from '@/components/layout/NavBar.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
-import AppToast  from '@/components/ui/AppToast.vue'
+import AppToast from '@/components/ui/AppToast.vue'
+import AppModal from '@/components/ui/AppModal.vue'
 
 const route = useRoute()
 
@@ -42,22 +46,22 @@ const showFooter = computed(() => !route.meta.hideFooter)
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
 /* Academic heading style */
 .academic-heading {
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
 }
 
 /* Scholarly text style */
 .scholarly-text {
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: 1.6;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
 }
 
 @keyframes floatElement {
