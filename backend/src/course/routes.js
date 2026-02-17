@@ -181,7 +181,7 @@ router.post('/:id/blocks/:blockId/topics/:topicId/lessons/:lessonId/upload-video
 
 /**
  * @route POST .../lessons/:lessonId/upload-material
- * @desc Upload one or more material files for a lesson (max 5 MB each)
+ * @desc Upload one or more material files for a lesson (max 10 MB each)
  * @access Private (provider)
  */
 router.post('/:id/blocks/:blockId/topics/:topicId/lessons/:lessonId/upload-material',

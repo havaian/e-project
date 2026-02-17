@@ -3,21 +3,25 @@ const fs = require('fs');
 const path = require('path');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Course, Enrollment, HomeworkSubmission, QuizAttempt } = require('./model');
+const { PATHS: UPLOAD_PATHS } = require('../utils/uploadPaths');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-const UPLOADS_ROOT = path.join(__dirname, '../../../uploads');
 
 /**
  * Remove a file from disk safely (no throw if not found).
  */
-const removeFile = (relativePath) => {
-    if (!relativePath) return;
-    const abs = path.join(UPLOADS_ROOT, relativePath.replace(/^\/uploads\//, ''));
-    if (fs.existsSync(abs)) {
-        try { fs.unlinkSync(abs); } catch (e) { /* ignore */ }
+function removeFile(filePath) {
+    if (!filePath) return;
+    try {
+        // filePath is stored as '/uploads/videos/filename' or '/uploads/course-materials/filename'
+        // Strip the leading '/uploads/' and resolve against UPLOAD_ROOT
+        const relative = filePath.replace(/^\/uploads\//, '');
+        const abs = path.join(UPLOAD_PATHS.root, relative);
+        if (fs.existsSync(abs)) fs.unlinkSync(abs);
+    } catch (e) {
+        console.error('removeFile error:', e);
     }
-};
+}
 
 /**
  * Count all lessons across a course's block/topic tree.
@@ -1182,7 +1186,7 @@ exports.streamLessonVideo = async (req, res) => {
 
         if (!lesson?.videoFile) return res.status(404).json({ message: 'No uploaded video for this lesson' });
 
-        const videoPath = path.join(UPLOADS_ROOT, lesson.videoFile.replace(/^\/uploads\//, ''));
+        const videoPath = path.join(UPLOAD_PATHS.root, lesson.videoFile.replace(/^\/uploads\//, ''));
 
         if (!fs.existsSync(videoPath)) return res.status(404).json({ message: 'Video file not found on server' });
 

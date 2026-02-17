@@ -1,28 +1,12 @@
 // backend/src/utils/avatarConfig.js
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
-
-// Create upload directory with proper error handling
-const createUploadDir = (dir) => {
-    try {
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true, mode: 0o755 });
-        }
-    } catch (error) {
-        console.error(`Failed to create directory ${dir}:`, error);
-        // Fallback to a writable directory
-        return path.join(process.cwd(), 'temp', 'avatars');
-    }
-    return dir;
-};
+const { PATHS: UP, ensureDir: ED } = require('./uploadPaths');
 
 // Configure storage for avatars
 const avatarStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = createUploadDir(path.join(__dirname, '../../../uploads/avatars'));
-        cb(null, uploadDir);
+        cb(null, ED(UP.avatars));
     },
     filename: function (req, file, cb) {
         // Generate filename: userId-timestamp.extension

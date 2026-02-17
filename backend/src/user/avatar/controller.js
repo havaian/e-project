@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const User = require('../model'); // Import user model from parent directory
+const { PATHS: UPLOAD_PATHS } = require('../../utils/uploadPaths');
 
 /**
  * Upload profile photo/avatar using user ID as filename
@@ -48,13 +49,8 @@ exports.uploadProfilePhoto = async (req, res) => {
 
         // Create new filename using user ID
         const newFileName = `${userId}${fileExtension}`;
-        const avatarsDir = path.join(__dirname, '../../../../uploads/avatars');
+        const avatarsDir = UPLOAD_PATHS.avatars ;
         const newFilePath = path.join(avatarsDir, newFileName);
-
-        // Ensure avatars directory exists
-        if (!fs.existsSync(avatarsDir)) {
-            fs.mkdirSync(avatarsDir, { recursive: true });
-        }
 
         // Remove existing avatar files for this user (any extension)
         const existingFiles = fs.readdirSync(avatarsDir).filter(file => 
@@ -139,7 +135,7 @@ exports.getAvatar = async (req, res) => {
         }
 
         // Construct full file path
-        const avatarPath = path.join(__dirname, '../../../../uploads/avatars/', filename);
+        const avatarPath = UPLOAD_PATHS.avatars;
         
         // Check if file exists
         if (!fs.existsSync(avatarPath)) {
@@ -235,7 +231,7 @@ exports.getUserAvatar = async (req, res) => {
             });
         }
 
-        const avatarsDir = path.join(__dirname, '../../../../uploads/avatars');
+        const avatarsDir = UPLOAD_PATHS.avatars;
         const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
         
         // Find avatar file for this user
@@ -286,7 +282,7 @@ exports.removeAvatar = async (req, res) => {
             });
         }
 
-        const avatarsDir = path.join(__dirname, '../../../../uploads/avatars');
+        const avatarsDir = UPLOAD_PATHS.avatars;
         const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
         
         // Find and remove all avatar files for this user
