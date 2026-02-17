@@ -460,7 +460,7 @@ async function findFollowUpAppointment() {
 }
 
 async function cancelAppointment() {
-    if (!modal.confirm('Are you sure you want to cancel this appointment?')) return
+    if (!(await modal.confirm('Are you sure you want to cancel this appointment?'))) return
 
     try {
         await axios.patch(`/appointments/${appointment.value._id}/status`, {

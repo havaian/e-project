@@ -475,7 +475,7 @@ const rescheduleAppointment = (appointmentId) => {
 }
 
 const cancelAppointment = async (appointmentId) => {
-    if (!modal.confirm('Are you sure you want to cancel this appointment?')) return
+    if (!(await modal.confirm('Are you sure you want to cancel this appointment?'))) return
 
     try {
         await axios.patch(`/appointments/${appointmentId}`, {

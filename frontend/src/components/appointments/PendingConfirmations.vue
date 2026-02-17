@@ -281,7 +281,7 @@ async function fetchPendingConfirmations() {
 }
 
 async function confirmAppointment(appointment) {
-    if (!modal.confirm(`Confirm appointment with ${appointment.client.firstName} ${appointment.client.lastName}?`)) {
+    if (!(await modal.confirm(`Confirm appointment with ${appointment.client.firstName} ${appointment.client.lastName}?`))) {
         return
     }
 

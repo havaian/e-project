@@ -633,7 +633,7 @@ const handlePhotoUpload = async (event) => {
 
 // Remove photo handler with backend call
 const handleRemovePhoto = async () => {
-    if (!modal.confirm('Are you sure you want to remove your profile photo?')) {
+    if (!(await modal.confirm('Are you sure you want to remove your profile photo?'))) {
         return
     }
 

@@ -608,7 +608,7 @@ async function saveBlockTitle(block) {
 }
 
 async function handleDeleteBlock(blockId) {
-    if (!modal.confirm('Delete this block and all its content?')) return
+    if (!(await modal.confirm('Delete this block and all its content?'))) return
     const updated = await courseStore.deleteBlock(courseId, blockId)
     refresh(updated)
 }
@@ -622,7 +622,7 @@ async function promptAddTopic(block) {
 }
 
 async function handleDeleteTopic(blockId, topicId) {
-    if (!modal.confirm('Delete this topic and all its lessons?')) return
+    if (!(await modal.confirm('Delete this topic and all its lessons?'))) return
     const updated = await courseStore.deleteTopic(courseId, blockId, topicId)
     refresh(updated)
 }
@@ -734,7 +734,7 @@ async function handleMaterialUpload(e) {
 }
 
 async function deleteMaterial(materialId) {
-    if (!modal.confirm('Remove this material?')) return
+    if (!(await modal.confirm('Remove this material?'))) return
     await courseStore.deleteLessonMaterial(
         courseId,
         lessonModal.blockId,
@@ -748,7 +748,7 @@ async function deleteMaterial(materialId) {
 }
 
 async function handleDeleteLesson(blockId, topicId, lessonId) {
-    if (!modal.confirm('Delete this lesson?')) return
+    if (!(await modal.confirm('Delete this lesson?'))) return
     const updated = await courseStore.deleteLesson(courseId, blockId, topicId, lessonId)
     refresh(updated)
 }
@@ -811,7 +811,7 @@ async function saveSettings() {
 }
 
 async function handlePublish() {
-    if (!modal.confirm('Publish this course? It will be visible to all students.')) return
+    if (!(await modal.confirm('Publish this course? It will be visible to all students.'))) return
     saving.value = true
     try {
         const updated = await courseStore.publishCourse(courseId)
@@ -825,7 +825,7 @@ async function handlePublish() {
 }
 
 async function handleArchive() {
-    if (!modal.confirm('Archive this course? It will no longer be visible to new students.')) return
+    if (!(await modal.confirm('Archive this course? It will no longer be visible to new students.'))) return
     saving.value = true
     try {
         const updated = await courseStore.archiveCourse(courseId)
