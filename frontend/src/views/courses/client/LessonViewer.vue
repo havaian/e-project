@@ -287,7 +287,7 @@ import {
     DocumentArrowDownIcon, ArrowDownTrayIcon, DocumentIcon, XMarkIcon,
     LockClosedIcon
 } from '@heroicons/vue/24/outline'
-import api from '@/plugins/axios'
+import api, { uploadApi } from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
@@ -419,7 +419,7 @@ async function fetchVideo() {
     videoLoading.value = true
     try {
         const url = `/courses/${courseId}/blocks/${currentBlock.value._id}/topics/${currentTopic.value._id}/lessons/${lessonId}/stream`
-        const response = await api.get(url, { responseType: 'blob' })
+        const response = await uploadApi.get(url, { responseType: 'blob' })
         videoBlobUrl.value = URL.createObjectURL(response.data)
     } catch (e) {
         console.error('Failed to fetch video:', e)
