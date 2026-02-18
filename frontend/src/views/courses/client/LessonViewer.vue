@@ -52,9 +52,13 @@
                                         class="flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer transition-colors text-sm"
                                         :class="l._id === lessonId
                                             ? 'bg-sky-500/20 text-sky-300'
-                                            : 'text-gray-400 hover:text-white hover:bg-white/5'">
+                                            : isLessonLocked(l._id)
+                                                ? 'text-gray-600 cursor-not-allowed'
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'">
                                         <CheckCircleIcon v-if="isLessonComplete(l._id)"
                                             class="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                        <LockClosedIcon v-else-if="isLessonLocked(l._id)"
+                                            class="w-3.5 h-3.5 shrink-0 text-gray-600" />
                                         <PlayIcon v-else class="w-3.5 h-3.5 shrink-0" />
                                         <span class="truncate">{{ l.title }}</span>
                                     </div>
@@ -99,10 +103,15 @@
                         <!-- Video -->
                         <div v-if="lesson.videoFile || lesson.videoUrl"
                             class="w-full aspect-video rounded-2xl overflow-hidden bg-black">
-                            <!-- Uploaded video (streamed) -->
-                            <video v-if="lesson.videoFile"
-                                :src="`/api/courses/${courseId}/blocks/${currentBlock._id}/topics/${currentTopic._id}/lessons/${lessonId}/stream`"
-                                controls class="w-full h-full"></video>
+                            <!-- Uploaded video (streamed via authenticated blob) -->
+                            <div v-if="lesson.videoFile && videoLoading"
+                                class="w-full h-full flex items-center justify-center">
+                                <div
+                                    class="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin">
+                                </div>
+                            </div>
+                            <video v-else-if="lesson.videoFile && videoBlobUrl" :src="videoBlobUrl" controls
+                                class="w-full h-full"></video>
                             <!-- External URL -->
                             <iframe v-else-if="isYoutube(lesson.videoUrl)" :src="youtubeEmbed(lesson.videoUrl)"
                                 class="w-full h-full" allowfullscreen frameborder="0"></iframe>
@@ -271,12 +280,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
     ArrowLeftIcon, CheckCircleIcon, PlayIcon, QuestionMarkCircleIcon,
-    DocumentArrowDownIcon, ArrowDownTrayIcon, DocumentIcon, XMarkIcon
+    DocumentArrowDownIcon, ArrowDownTrayIcon, DocumentIcon, XMarkIcon,
+    LockClosedIcon
 } from '@heroicons/vue/24/outline'
+import api from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
@@ -294,6 +305,10 @@ const loading = ref(true)
 const completing = ref(false)
 const course = ref(null)
 const progress = ref(null)
+
+// ── Video blob URL (auth-protected streaming) ────────────────────────────────
+const videoBlobUrl = ref(null)
+const videoLoading = ref(false)
 
 const tabs = ['Lesson', 'Materials', 'Homework']
 const activeTab = ref('Lesson')
@@ -328,8 +343,37 @@ const isCompleted = computed(() =>
     progress.value?.completedLessons?.some(cl => cl.lessonId === lessonId || cl.lessonId?.toString() === lessonId)
 )
 
+// ── Ordered flat list of all lesson IDs (for locking logic) ──────────────────
+const allLessonIds = computed(() => {
+    if (!course.value) return []
+    const ids = []
+    for (const block of course.value.blocks) {
+        for (const topic of block.topics) {
+            for (const l of topic.lessons) {
+                ids.push(l._id)
+            }
+        }
+    }
+    return ids
+})
+
+// ── Lesson locking: a lesson is accessible only if it's the first one or the previous one is completed ──
+function isLessonLocked(id) {
+    const ids = allLessonIds.value
+    const idx = ids.indexOf(id)
+    // First lesson in the entire course is never locked
+    if (idx <= 0) return false
+    // Locked if the previous lesson is NOT completed
+    const prevId = ids[idx - 1]
+    return !isLessonComplete(prevId)
+}
+
 // ── Lesson navigation ─────────────────────────────────────────────────────────
 function navigateToLesson(block, topic, l) {
+    if (isLessonLocked(l._id)) {
+        toast.error('Complete the previous lesson first')
+        return
+    }
     router.push(`/courses/${courseId}/lesson/${l._id}`)
 }
 
@@ -361,6 +405,35 @@ function youtubeEmbed(url) {
     const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)
     return match ? `https://www.youtube.com/embed/${match[1]}` : url
 }
+
+// ── Fetch video via axios (sends auth token) ─────────────────────────────────
+async function fetchVideo() {
+    // Revoke previous blob URL if any
+    if (videoBlobUrl.value) {
+        URL.revokeObjectURL(videoBlobUrl.value)
+        videoBlobUrl.value = null
+    }
+
+    if (!lesson.value?.videoFile || !currentBlock.value || !currentTopic.value) return
+
+    videoLoading.value = true
+    try {
+        const url = `/courses/${courseId}/blocks/${currentBlock.value._id}/topics/${currentTopic.value._id}/lessons/${lessonId}/stream`
+        const response = await api.get(url, { responseType: 'blob' })
+        videoBlobUrl.value = URL.createObjectURL(response.data)
+    } catch (e) {
+        console.error('Failed to fetch video:', e)
+    } finally {
+        videoLoading.value = false
+    }
+}
+
+// Clean up blob URL on unmount
+onBeforeUnmount(() => {
+    if (videoBlobUrl.value) {
+        URL.revokeObjectURL(videoBlobUrl.value)
+    }
+})
 
 // ── Homework ──────────────────────────────────────────────────────────────────
 const homeworkText = ref('')
@@ -443,6 +516,9 @@ onMounted(async () => {
         const result = await courseStore.getCourseContent(courseId)
         course.value = result.data
         progress.value = result.progress || null
+
+        // Trigger video fetch now that course data is loaded
+        if (lesson.value?.videoFile) fetchVideo()
     } catch (e) {
         console.error('LessonViewer load error:', e)
     } finally {
