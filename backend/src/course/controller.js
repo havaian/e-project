@@ -41,7 +41,7 @@ const countLessons = (course) =>
  */
 exports.createCourse = async (req, res) => {
     try {
-        const { title, description, category, subcategory, price, currency, thumbnail } = req.body;
+        const { title, description, category, subcategory, price, currency, thumbnail, homeworkEnabled } = req.body;
 
         const course = await Course.create({
             provider: req.user.id,
@@ -817,7 +817,7 @@ exports.getCourseContent = async (req, res) => {
 
         if (!course) return res.status(404).json({ message: 'Course not found' });
 
-        const isProvider = course.provider._id.toString() === req.user.id;
+        const isProvider = course.provider._id.toString() === req.user.id.toString();
 
         if (!isProvider) {
             const enrollment = await Enrollment.findOne({
@@ -854,7 +854,7 @@ exports.initiateEnrollment = async (req, res) => {
         }
 
         // Prevent provider from enrolling in their own course
-        if (course.provider._id.toString() === clientId) {
+        if (course.provider._id.toString() === clientId.toString()) {
             return res.status(400).json({ message: 'You cannot enroll in your own course' });
         }
 
@@ -1178,7 +1178,7 @@ exports.streamLessonVideo = async (req, res) => {
         const course = await Course.findById(id);
         if (!course) return res.status(404).json({ message: 'Course not found' });
 
-        const isProvider = course.provider.toString() === userId;
+        const isProvider = course.provider.toString() === userId.toString();
 
         if (!isProvider) {
             const enrollment = await Enrollment.findOne({

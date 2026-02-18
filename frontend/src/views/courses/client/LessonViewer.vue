@@ -428,7 +428,7 @@ const courseStore = useCourseStore()
 const authStore = useAuthStore()
 
 const courseId = route.params.id
-const lessonId = route.params.lessonId
+const lessonId = computed(() => route.params.lessonId)
 
 const loading = ref(true)
 const completing = ref(false)
@@ -500,7 +500,7 @@ const currentBlock = computed(() => {
     if (!course.value) return null
     for (const block of course.value.blocks) {
         for (const topic of block.topics) {
-            if (topic.lessons.some(l => l._id === lessonId)) return block
+            if (topic.lessons.some(l => l._id === lessonId.value)) return block
         }
     }
     return null
@@ -510,7 +510,7 @@ const currentTopic = computed(() => {
     if (!course.value) return null
     for (const block of course.value.blocks) {
         for (const topic of block.topics) {
-            if (topic.lessons.some(l => l._id === lessonId)) return topic
+            if (topic.lessons.some(l => l._id === lessonId.value)) return topic
         }
     }
     return null
@@ -518,11 +518,11 @@ const currentTopic = computed(() => {
 
 const lesson = computed(() => {
     if (!currentTopic.value) return null
-    return currentTopic.value.lessons.find(l => l._id === lessonId) || null
+    return currentTopic.value.lessons.find(l => l._id === lessonId.value) || null
 })
 
 const isCompleted = computed(() =>
-    completedLessonIds.value.has(lessonId)
+    completedLessonIds.value.has(lessonId.value)
 )
 
 // ── Completed lessons Set (reactive — drives sidebar lock state) ─────────────
@@ -576,7 +576,7 @@ function isLessonComplete(id) {
 async function markComplete() {
     completing.value = true
     try {
-        const result = await courseStore.completeLesson(courseId, lessonId)
+        const result = await courseStore.completeLesson(courseId, lessonId.value)
         progress.value = result.progress
     } catch (e) {
         console.error('completeLesson error:', e)
@@ -607,7 +607,7 @@ async function fetchVideo() {
 
     videoLoading.value = true
     try {
-        const url = `/courses/${courseId}/blocks/${currentBlock.value._id}/topics/${currentTopic.value._id}/lessons/${lessonId}/stream`
+        const url = `/courses/${courseId}/blocks/${currentBlock.value._id}/topics/${currentTopic.value._id}/lessons/${lessonId.value}/stream`
         const response = await uploadApi.get(url, { responseType: 'blob' })
         videoBlobUrl.value = URL.createObjectURL(response.data)
     } catch (e) {
@@ -644,7 +644,7 @@ function removeHwFile(f) {
 async function submitHw() {
     hwSubmitting.value = true
     try {
-        await courseStore.submitHomework(courseId, lessonId, homeworkText.value, hwFiles.value)
+        await courseStore.submitHomework(courseId, lessonId.value, homeworkText.value, hwFiles.value)
         hwSubmitted.value = true
         homeworkText.value = ''
         hwFiles.value = []
@@ -780,6 +780,23 @@ onMounted(async () => {
         console.error('LessonViewer load error:', e)
     } finally {
         loading.value = false
+    }
+})
+
+// ── Watch for lesson change (same route, different params — Vue reuses component) ──
+watch(lessonId, (newId, oldId) => {
+    if (!newId || newId === oldId) return
+    // Reset per-lesson state
+    activeTab.value = 'Lesson'
+    homeworkText.value = ''
+    hwFiles.value = []
+    hwSubmitted.value = false
+    // Load new video if needed
+    if (lesson.value?.videoFile) {
+        fetchVideo()
+    } else if (videoBlobUrl.value) {
+        URL.revokeObjectURL(videoBlobUrl.value)
+        videoBlobUrl.value = null
     }
 })
 </script>
