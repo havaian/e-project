@@ -100,10 +100,9 @@
                     <!-- Lesson tab -->
                     <div v-if="activeTab === 'Lesson'" class="p-6 space-y-6">
 
-                        <!-- Video (protected) -->
+                        <!-- Video -->
                         <div v-if="lesson.videoFile || lesson.videoUrl"
-                            class="video-protected relative w-full aspect-video rounded-2xl overflow-hidden bg-black"
-                            @contextmenu.prevent @dragstart.prevent>
+                            class="w-full aspect-video rounded-2xl overflow-hidden bg-black">
                             <!-- Uploaded video (streamed via authenticated blob) -->
                             <div v-if="lesson.videoFile && videoLoading"
                                 class="w-full h-full flex items-center justify-center">
@@ -112,45 +111,12 @@
                                 </div>
                             </div>
                             <video v-else-if="lesson.videoFile && videoBlobUrl" :src="videoBlobUrl" controls
-                                controlsList="nodownload noplaybackrate" disablePictureInPicture
-                                oncontextmenu="return false;" class="w-full h-full"></video>
+                                class="w-full h-full"></video>
                             <!-- External URL -->
                             <iframe v-else-if="isYoutube(lesson.videoUrl)" :src="youtubeEmbed(lesson.videoUrl)"
                                 class="w-full h-full" allowfullscreen frameborder="0"></iframe>
-                            <video v-else :src="lesson.videoUrl" controls controlsList="nodownload noplaybackrate"
-                                disablePictureInPicture oncontextmenu="return false;" class="w-full h-full"></video>
-
-                            <!-- Watermark overlay -->
-                            <div class="watermark-overlay absolute inset-0 pointer-events-none z-10 overflow-hidden">
-                                <div
-                                    class="watermark-text absolute inset-0 flex items-center justify-center -rotate-[30deg]">
-                                    <div class="text-center whitespace-nowrap opacity-[0.08] select-none">
-                                        <p class="text-white text-2xl font-bold">{{ watermarkName }}</p>
-                                        <p class="text-white text-sm">{{ watermarkEmail }}</p>
-                                        <p class="text-white text-xs mt-1">{{ watermarkTimestamp }}</p>
-                                    </div>
-                                </div>
-                                <!-- Repeated watermarks for coverage -->
-                                <div class="absolute -top-10 -left-10 -rotate-[30deg] opacity-[0.05] select-none">
-                                    <p class="text-white text-lg font-bold whitespace-nowrap">{{ watermarkName }} &bull;
-                                        {{ watermarkEmail }}</p>
-                                </div>
-                                <div class="absolute -bottom-10 -right-10 -rotate-[30deg] opacity-[0.05] select-none">
-                                    <p class="text-white text-lg font-bold whitespace-nowrap">{{ watermarkName }} &bull;
-                                        {{ watermarkEmail }}</p>
-                                </div>
-                            </div>
+                            <video v-else :src="lesson.videoUrl" controls class="w-full h-full"></video>
                         </div>
-
-                        <!-- Screenshot / tab-switch deterrent overlay -->
-                        <Teleport to="body">
-                            <Transition name="blackout">
-                                <div v-if="tabHidden"
-                                    class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
-                                    <p class="text-gray-500 text-sm">Content hidden — return to this tab to continue</p>
-                                </div>
-                            </Transition>
-                        </Teleport>
 
                         <!-- Lesson text -->
                         <div v-if="lesson.text"
@@ -331,7 +297,6 @@ const { toast, uploadsUrl, modal } = useGlobals()
 const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
-const authStore = useAuthStore()
 
 const courseId = route.params.id
 const lessonId = route.params.lessonId
@@ -344,40 +309,6 @@ const progress = ref(null)
 // ── Video blob URL (auth-protected streaming) ────────────────────────────────
 const videoBlobUrl = ref(null)
 const videoLoading = ref(false)
-
-// ── Watermark (anti-piracy) ──────────────────────────────────────────────────
-const watermarkName = computed(() => {
-    const u = authStore.user
-    return u ? `${u.firstName || ''} ${u.lastName || ''}`.trim() : ''
-})
-const watermarkEmail = computed(() => authStore.user?.email || '')
-const watermarkTimestamp = computed(() => {
-    const now = new Date()
-    return now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-        + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-})
-
-// ── Tab-switch / screenshot deterrent ────────────────────────────────────────
-const tabHidden = ref(false)
-
-function handleVisibilityChange() {
-    tabHidden.value = document.hidden
-}
-
-// Block PrintScreen and common screenshot shortcuts
-function handleKeydown(e) {
-    // PrintScreen
-    if (e.key === 'PrintScreen') {
-        e.preventDefault()
-        tabHidden.value = true
-        setTimeout(() => { tabHidden.value = false }, 1500)
-    }
-    // Ctrl+Shift+S (Windows snipping), Cmd+Shift+3/4/5 (Mac screenshots)
-    if ((e.ctrlKey && e.shiftKey && e.key === 'S') ||
-        (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
-        e.preventDefault()
-    }
-}
 
 const tabs = ['Lesson', 'Materials', 'Homework']
 const activeTab = ref('Lesson')
@@ -497,13 +428,11 @@ async function fetchVideo() {
     }
 }
 
-// Clean up blob URL and event listeners on unmount
+// Clean up blob URL on unmount
 onBeforeUnmount(() => {
     if (videoBlobUrl.value) {
         URL.revokeObjectURL(videoBlobUrl.value)
     }
-    document.removeEventListener('visibilitychange', handleVisibilityChange)
-    document.removeEventListener('keydown', handleKeydown)
 })
 
 // ── Homework ──────────────────────────────────────────────────────────────────
@@ -582,10 +511,6 @@ async function submitQuiz() {
 
 // ── Load ──────────────────────────────────────────────────────────────────────
 onMounted(async () => {
-    // Register anti-screenshot / tab-switch listeners
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    document.addEventListener('keydown', handleKeydown)
-
     loading.value = true
     try {
         const result = await courseStore.getCourseContent(courseId)
@@ -601,23 +526,3 @@ onMounted(async () => {
     }
 })
 </script>
-
-<style scoped>
-/* ── Video protection ──────────────────────────────────────────────────── */
-.video-protected {
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-}
-
-/* ── Blackout transition (tab switch overlay) ──────────────────────────── */
-.blackout-enter-active,
-.blackout-leave-active {
-    transition: opacity 0.15s ease;
-}
-
-.blackout-enter-from,
-.blackout-leave-to {
-    opacity: 0;
-}
-</style>
