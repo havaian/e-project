@@ -19,14 +19,21 @@
                     <p class="text-xs text-gray-500 truncate">{{ course?.title }}</p>
                     <p class="text-sm font-semibold truncate">{{ lesson.title }}</p>
                 </div>
-                <!-- Completion button -->
-                <button v-if="!isCompleted" @click="markComplete" :disabled="completing"
-                    class="bg-sky-500 hover:bg-sky-600 disabled:bg-sky-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
-                    {{ completing ? 'Saving…' : 'Mark Complete' }}
-                </button>
-                <div v-else class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
-                    <CheckCircleIcon class="w-4 h-4" />
-                    Completed
+                <!-- Completion button (clients only, not provider preview) -->
+                <template v-if="!isProviderPreview">
+                    <button v-if="!isCompleted" @click="markComplete" :disabled="completing"
+                        class="bg-sky-500 hover:bg-sky-600 disabled:bg-sky-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                        {{ completing ? 'Saving…' : 'Mark Complete' }}
+                    </button>
+                    <div v-else class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+                        <CheckCircleIcon class="w-4 h-4" />
+                        Completed
+                    </div>
+                </template>
+                <div v-else
+                    class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold bg-amber-400/10 px-3 py-1.5 rounded-lg">
+                    <EyeIcon class="w-3.5 h-3.5" />
+                    Preview Mode
                 </div>
             </div>
 
@@ -66,18 +73,44 @@
                                 <!-- Topic quiz indicator -->
                                 <div v-if="topic.quiz?.questions?.length" class="px-5 pb-2">
                                     <div @click="openQuiz('topic', block, topic)"
-                                        class="flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer text-xs text-sky-400 hover:bg-white/5 transition-colors">
-                                        <QuestionMarkCircleIcon class="w-3.5 h-3.5 shrink-0" />
-                                        Topic Quiz
+                                        class="flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer text-xs transition-colors"
+                                        :class="getQuizBestResult(topic._id)?.passed
+                                            ? 'text-emerald-400 hover:bg-white/5'
+                                            : isQuizLocked('topic', block, topic)
+                                                ? 'text-gray-600 cursor-not-allowed'
+                                                : 'text-sky-400 hover:bg-white/5'">
+                                        <CheckCircleIcon v-if="getQuizBestResult(topic._id)?.passed"
+                                            class="w-3.5 h-3.5 shrink-0" />
+                                        <LockClosedIcon v-else-if="isQuizLocked('topic', block, topic)"
+                                            class="w-3.5 h-3.5 shrink-0" />
+                                        <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
+                                        <span class="truncate">Topic Quiz</span>
+                                        <span v-if="getQuizBestResult(topic._id)?.passed"
+                                            class="ml-auto text-[10px] opacity-70">
+                                            {{ getQuizBestResult(topic._id).score }}%
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             <!-- Block quiz indicator -->
                             <div v-if="block.quiz?.questions?.length" class="px-5 pb-3">
                                 <div @click="openQuiz('block', block, null)"
-                                    class="flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer text-xs text-violet-400 hover:bg-white/5 transition-colors">
-                                    <QuestionMarkCircleIcon class="w-3.5 h-3.5 shrink-0" />
-                                    Block Quiz
+                                    class="flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer text-xs transition-colors"
+                                    :class="getQuizBestResult(block._id)?.passed
+                                        ? 'text-emerald-400 hover:bg-white/5'
+                                        : isQuizLocked('block', block, null)
+                                            ? 'text-gray-600 cursor-not-allowed'
+                                            : 'text-violet-400 hover:bg-white/5'">
+                                    <CheckCircleIcon v-if="getQuizBestResult(block._id)?.passed"
+                                        class="w-3.5 h-3.5 shrink-0" />
+                                    <LockClosedIcon v-else-if="isQuizLocked('block', block, null)"
+                                        class="w-3.5 h-3.5 shrink-0" />
+                                    <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
+                                    <span class="truncate">Block Quiz</span>
+                                    <span v-if="getQuizBestResult(block._id)?.passed"
+                                        class="ml-auto text-[10px] opacity-70">
+                                        {{ getQuizBestResult(block._id).score }}%
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -120,24 +153,54 @@
                             <video v-else :src="lesson.videoUrl" controls controlsList="nodownload noplaybackrate"
                                 disablePictureInPicture oncontextmenu="return false;" class="w-full h-full"></video>
 
-                            <!-- Watermark overlay -->
-                            <div class="watermark-overlay absolute inset-0 pointer-events-none z-10 overflow-hidden">
-                                <div
-                                    class="watermark-text absolute inset-0 flex items-center justify-center -rotate-[30deg]">
-                                    <div class="text-center whitespace-nowrap opacity-[0.08] select-none">
+                            <!-- Watermark overlay (tiled for full coverage) -->
+                            <div
+                                class="watermark-overlay absolute inset-0 pointer-events-none z-10 overflow-hidden select-none">
+                                <!-- Center main watermark -->
+                                <div class="absolute inset-0 flex items-center justify-center -rotate-[30deg]">
+                                    <div class="text-center whitespace-nowrap opacity-[0.15]">
                                         <p class="text-white text-2xl font-bold">{{ watermarkName }}</p>
                                         <p class="text-white text-sm">{{ watermarkEmail }}</p>
                                         <p class="text-white text-xs mt-1">{{ watermarkTimestamp }}</p>
                                     </div>
                                 </div>
-                                <!-- Repeated watermarks for coverage -->
-                                <div class="absolute -top-10 -left-10 -rotate-[30deg] opacity-[0.05] select-none">
-                                    <p class="text-white text-lg font-bold whitespace-nowrap">{{ watermarkName }} &bull;
-                                        {{ watermarkEmail }}</p>
+                                <!-- Top-left -->
+                                <div class="absolute top-[10%] left-[5%] -rotate-[30deg] opacity-[0.1]">
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
+                                        &bull; {{
+                                        watermarkEmail }}</p>
+                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                 </div>
-                                <div class="absolute -bottom-10 -right-10 -rotate-[30deg] opacity-[0.05] select-none">
-                                    <p class="text-white text-lg font-bold whitespace-nowrap">{{ watermarkName }} &bull;
-                                        {{ watermarkEmail }}</p>
+                                <!-- Top-right -->
+                                <div class="absolute top-[8%] right-[5%] -rotate-[30deg] opacity-[0.1]">
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
+                                        &bull; {{
+                                        watermarkEmail }}</p>
+                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
+                                </div>
+                                <!-- Bottom-left -->
+                                <div class="absolute bottom-[12%] left-[8%] -rotate-[30deg] opacity-[0.1]">
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
+                                        &bull; {{
+                                        watermarkEmail }}</p>
+                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
+                                </div>
+                                <!-- Bottom-right -->
+                                <div class="absolute bottom-[10%] right-[3%] -rotate-[30deg] opacity-[0.1]">
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
+                                        &bull; {{
+                                        watermarkEmail }}</p>
+                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
+                                </div>
+                                <!-- Mid-left -->
+                                <div class="absolute top-[45%] left-[2%] -rotate-[30deg] opacity-[0.08]">
+                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}
+                                    </p>
+                                </div>
+                                <!-- Mid-right -->
+                                <div class="absolute top-[40%] right-[2%] -rotate-[30deg] opacity-[0.08]">
+                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -166,19 +229,38 @@
                     </div>
 
                     <!-- Materials tab -->
-                    <div v-else-if="activeTab === 'Materials'" class="p-6">
-                        <div v-if="lesson.materials?.length" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <a v-for="mat in lesson.materials" :key="mat._id" :href="mat.fileUrl" :download="mat.name"
-                                target="_blank"
-                                class="flex items-center gap-3 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 hover:border-sky-500/50 hover:bg-gray-800 transition-all group">
-                                <DocumentArrowDownIcon class="w-6 h-6 text-sky-400 shrink-0" />
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium truncate">{{ mat.name }}</p>
-                                    <p class="text-xs text-gray-500">{{ mat.fileType }}</p>
+                    <div v-else-if="activeTab === 'Materials'" class="p-6 space-y-6">
+                        <div v-if="lesson.materials?.length">
+                            <div v-for="mat in lesson.materials" :key="mat._id" class="mb-5">
+                                <!-- Inline PDF preview -->
+                                <div v-if="isPdf(mat.fileType)"
+                                    class="rounded-xl overflow-hidden border border-white/10 mb-2">
+                                    <object :data="$uploadsUrl(mat.fileUrl)" type="application/pdf"
+                                        class="w-full h-[70vh]">
+                                        <p class="p-4 text-sm text-gray-500">PDF preview unavailable.
+                                            <a :href="$uploadsUrl(mat.fileUrl)" target="_blank"
+                                                class="text-sky-400 hover:underline">Open in new tab</a>
+                                        </p>
+                                    </object>
                                 </div>
-                                <ArrowDownTrayIcon
-                                    class="w-4 h-4 text-gray-600 group-hover:text-sky-400 transition-colors ml-auto shrink-0" />
-                            </a>
+                                <!-- Inline image preview -->
+                                <div v-else-if="isImage(mat.fileType)"
+                                    class="rounded-xl overflow-hidden border border-white/10 mb-2">
+                                    <img :src="$uploadsUrl(mat.fileUrl)" :alt="mat.name"
+                                        class="w-full max-h-[60vh] object-contain bg-gray-900" />
+                                </div>
+                                <!-- Download link (all files including above) -->
+                                <a :href="$uploadsUrl(mat.fileUrl)" :download="mat.name" target="_blank"
+                                    class="flex items-center gap-3 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 hover:border-sky-500/50 hover:bg-gray-800 transition-all group">
+                                    <DocumentArrowDownIcon class="w-6 h-6 text-sky-400 shrink-0" />
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium truncate">{{ mat.name }}</p>
+                                        <p class="text-xs text-gray-500">{{ mat.fileType }}</p>
+                                    </div>
+                                    <ArrowDownTrayIcon
+                                        class="w-4 h-4 text-gray-600 group-hover:text-sky-400 transition-colors ml-auto shrink-0" />
+                                </a>
+                            </div>
                         </div>
                         <div v-else class="text-center py-16 text-gray-600 text-sm">
                             No materials for this lesson.
@@ -195,7 +277,13 @@
                         <div v-else class="text-sm text-gray-500 mb-6 italic">No assignment prompt for this lesson.
                         </div>
 
-                        <div class="space-y-4">
+                        <!-- Provider preview: read-only notice -->
+                        <div v-if="isProviderPreview" class="text-sm text-gray-500 italic">
+                            Students will see a submission form here.
+                        </div>
+
+                        <!-- Client: submission form -->
+                        <div v-else class="space-y-4">
                             <div>
                                 <label
                                     class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your
@@ -276,10 +364,16 @@
                                 :class="quizModal.result.passed ? 'text-emerald-400' : 'text-red-400'">
                                 {{ quizModal.result.passed ? '🎉 Passed!' : 'Not quite — keep studying!' }}
                             </p>
-                            <button @click="quizModal.open = false"
-                                class="mt-6 bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
-                                Done
-                            </button>
+                            <div class="flex items-center justify-center gap-3 mt-6">
+                                <button @click="quizModal.open = false"
+                                    class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
+                                    Done
+                                </button>
+                                <button @click="retakeQuiz"
+                                    class="border border-white/20 hover:border-white/40 text-gray-300 hover:text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
+                                    Retake
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Quiz questions -->
@@ -319,7 +413,7 @@ import { useRoute, useRouter } from 'vue-router'
 import {
     ArrowLeftIcon, CheckCircleIcon, PlayIcon, QuestionMarkCircleIcon,
     DocumentArrowDownIcon, ArrowDownTrayIcon, DocumentIcon, XMarkIcon,
-    LockClosedIcon
+    LockClosedIcon, EyeIcon
 } from '@heroicons/vue/24/outline'
 import api, { uploadApi } from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
@@ -379,8 +473,27 @@ function handleKeydown(e) {
     }
 }
 
-const tabs = ['Lesson', 'Materials', 'Homework']
+// ── Provider preview mode ────────────────────────────────────────────────────
+const isProviderPreview = computed(() => {
+    if (!course.value || !authStore.user) return false
+    return course.value.provider?._id === authStore.user._id
+        || course.value.provider === authStore.user._id
+})
+
+const tabs = computed(() => {
+    const t = ['Lesson', 'Materials']
+    if (course.value?.homeworkEnabled) t.push('Homework')
+    return t
+})
 const activeTab = ref('Lesson')
+
+// ── File type helpers (for material inline preview) ─────────────────────────
+function isPdf(mimeType) {
+    return mimeType === 'application/pdf'
+}
+function isImage(mimeType) {
+    return mimeType?.startsWith('image/')
+}
 
 // ── Computed lesson + parent references ──────────────────────────────────────
 const currentBlock = computed(() => {
@@ -409,8 +522,15 @@ const lesson = computed(() => {
 })
 
 const isCompleted = computed(() =>
-    progress.value?.completedLessons?.some(cl => cl.lessonId === lessonId || cl.lessonId?.toString() === lessonId)
+    completedLessonIds.value.has(lessonId)
 )
+
+// ── Completed lessons Set (reactive — drives sidebar lock state) ─────────────
+const completedLessonIds = computed(() => {
+    const cls = progress.value?.completedLessons
+    if (!cls) return new Set()
+    return new Set(cls.map(cl => cl.lessonId?.toString?.() || cl.lessonId))
+})
 
 // ── Ordered flat list of all lesson IDs (for locking logic) ──────────────────
 const allLessonIds = computed(() => {
@@ -428,13 +548,15 @@ const allLessonIds = computed(() => {
 
 // ── Lesson locking: a lesson is accessible only if it's the first one or the previous one is completed ──
 function isLessonLocked(id) {
+    // Provider preview — nothing locked
+    if (isProviderPreview.value) return false
     const ids = allLessonIds.value
     const idx = ids.indexOf(id)
     // First lesson in the entire course is never locked
     if (idx <= 0) return false
     // Locked if the previous lesson is NOT completed
     const prevId = ids[idx - 1]
-    return !isLessonComplete(prevId)
+    return !completedLessonIds.value.has(prevId)
 }
 
 // ── Lesson navigation ─────────────────────────────────────────────────────────
@@ -447,9 +569,7 @@ function navigateToLesson(block, topic, l) {
 }
 
 function isLessonComplete(id) {
-    return progress.value?.completedLessons?.some(cl =>
-        cl.lessonId === id || cl.lessonId?.toString() === id
-    )
+    return completedLessonIds.value.has(id)
 }
 
 // ── Mark complete ─────────────────────────────────────────────────────────────
@@ -547,17 +667,79 @@ const quizModal = reactive({
     result: null
 })
 
+// Map of quizId → best result { score, passed, correctCount, totalQuestions }
+const completedQuizMap = computed(() => {
+    const cq = progress.value?.completedQuizzes
+    if (!cq?.length) return new Map()
+    const map = new Map()
+    for (const q of cq) {
+        const id = q.quizId?.toString?.() || q.quizId
+        const existing = map.get(id)
+        // Keep the best score
+        if (!existing || q.score > existing.score) {
+            map.set(id, { score: q.score, passed: q.score >= 60 })
+        }
+    }
+    return map
+})
+
+function getQuizBestResult(quizId) {
+    return completedQuizMap.value.get(quizId?.toString?.() || quizId) || null
+}
+
+// Quiz is locked if not all lessons in its scope are completed
+function isQuizLocked(type, block, topic) {
+    // Provider preview — nothing locked
+    if (isProviderPreview.value) return false
+    if (type === 'topic' && topic) {
+        // All lessons in this topic must be completed
+        return topic.lessons.some(l => !completedLessonIds.value.has(l._id))
+    }
+    // Block quiz — all lessons in all topics of the block must be completed
+    return block.topics.some(t =>
+        t.lessons.some(l => !completedLessonIds.value.has(l._id))
+    )
+}
+
 function openQuiz(type, block, topic) {
+    // Check lock
+    if (isQuizLocked(type, block, topic)) {
+        const scope = type === 'block' ? 'block' : 'topic'
+        toast.error(`Complete all lessons in this ${scope} first`)
+        return
+    }
+
     const quiz = type === 'block' ? block.quiz : topic.quiz
     if (!quiz?.questions?.length) return
+
+    const quizId = type === 'block' ? block._id : topic._id
+    const pastResult = getQuizBestResult(quizId)
 
     quizModal.type = type
     quizModal.blockId = block._id
     quizModal.topicId = topic?._id || null
     quizModal.questions = quiz.questions
     quizModal.answers = quiz.questions.map(() => null)
-    quizModal.result = null
+    quizModal.submitting = false
+
+    // If already passed, show the past result; user can click "Retake" to try again
+    if (pastResult?.passed) {
+        quizModal.result = {
+            score: pastResult.score,
+            passed: true,
+            correctCount: Math.round((pastResult.score / 100) * quiz.questions.length),
+            totalQuestions: quiz.questions.length
+        }
+    } else {
+        quizModal.result = null
+    }
+
     quizModal.open = true
+}
+
+function retakeQuiz() {
+    quizModal.answers = quizModal.questions.map(() => null)
+    quizModal.result = null
 }
 
 async function submitQuiz() {

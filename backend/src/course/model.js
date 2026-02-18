@@ -66,6 +66,7 @@ const courseSchema = new Schema({
     price: { type: Number, required: true, min: 0, default: 0 },
     currency: { type: String, default: 'uzs' },
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft' },
+    homeworkEnabled: { type: Boolean, default: false },
     blocks: [blockSchema],
     // Ratings — submitted by enrolled clients
     ratings: [{

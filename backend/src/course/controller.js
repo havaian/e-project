@@ -160,7 +160,7 @@ exports.getCourseById = async (req, res) => {
  */
 exports.updateCourse = async (req, res) => {
     try {
-        const { title, description, category, subcategory, price, currency, thumbnail } = req.body;
+        const { title, description, category, subcategory, price, currency, thumbnail, homeworkEnabled } = req.body;
 
         const course = await Course.findOne({ _id: req.params.id, provider: req.user.id });
         if (!course) return res.status(404).json({ message: 'Course not found' });
@@ -172,6 +172,7 @@ exports.updateCourse = async (req, res) => {
         if (price !== undefined) course.price = price;
         if (currency !== undefined) course.currency = currency;
         if (thumbnail !== undefined) course.thumbnail = thumbnail;
+        if (homeworkEnabled !== undefined) course.homeworkEnabled = homeworkEnabled;
 
         await course.save();
         res.status(200).json({ success: true, data: course });

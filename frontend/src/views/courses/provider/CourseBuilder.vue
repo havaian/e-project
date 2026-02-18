@@ -12,7 +12,8 @@
             <div class="bg-white border-b border-gray-100">
                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center gap-5">
                     <div class="w-16 h-16 rounded-2xl bg-gray-100 overflow-hidden shrink-0">
-                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)" class="w-full h-full object-cover" />
+                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)"
+                            class="w-full h-full object-cover" />
                         <div v-else class="w-full h-full flex items-center justify-center">
                             <PhotoIcon class="w-8 h-8 text-gray-300" />
                         </div>
@@ -23,6 +24,10 @@
                             {{ [course.category, course.subcategory].filter(Boolean).join(' • ') || 'No category' }}
                         </p>
                     </div>
+                    <button @click="router.push(`/courses/${courseId}/learn`)"
+                        class="shrink-0 border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                        Preview
+                    </button>
                     <button @click="handleSave" :disabled="saving"
                         class="shrink-0 bg-sky-500 hover:bg-sky-600 disabled:bg-sky-300 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm">
                         {{ saving ? 'Saving…' : (course.status === 'published' ? 'SAVED' : 'SAVE') }}
@@ -164,6 +169,19 @@
                             <input v-model="settingsForm.subcategory" type="text"
                                 class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
+                    </div>
+                    <!-- Homework toggle -->
+                    <div class="flex items-center justify-between py-3 px-1 border border-gray-100 rounded-xl">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Enable Homework</p>
+                            <p class="text-xs text-gray-400 mt-0.5">Allow assignment prompts on individual lessons</p>
+                        </div>
+                        <button @click="settingsForm.homeworkEnabled = !settingsForm.homeworkEnabled"
+                            class="relative w-11 h-6 rounded-full transition-colors"
+                            :class="settingsForm.homeworkEnabled ? 'bg-sky-500' : 'bg-gray-200'">
+                            <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-all"
+                                :class="settingsForm.homeworkEnabled ? 'translate-x-5' : ''"></span>
+                        </button>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Price (UZS)</label>
@@ -464,7 +482,7 @@ const editingBlockId = ref(null)
 const editingBlockTitle = ref('')
 
 // Settings form
-const settingsForm = reactive({ title: '', description: '', category: '', subcategory: '', price: 0, thumbnail: '' })
+const settingsForm = reactive({ title: '', description: '', category: '', subcategory: '', price: 0, thumbnail: '', homeworkEnabled: false })
 
 // ── Lesson modal ────────────────────────────────────────────────────────────
 const lessonModal = reactive({
@@ -512,7 +530,8 @@ onMounted(async () => {
             category: course.value.category || '',
             subcategory: course.value.subcategory || '',
             price: course.value.price || 0,
-            thumbnail: course.value.thumbnail || ''
+            thumbnail: course.value.thumbnail || '',
+            homeworkEnabled: course.value.homeworkEnabled || false
         })
     } catch (e) {
         console.error('fetchCourseById error:', e)

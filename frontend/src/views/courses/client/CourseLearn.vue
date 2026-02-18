@@ -13,7 +13,8 @@
                 <!-- Course header -->
                 <div class="flex items-center gap-5 mb-8">
                     <div class="w-16 h-16 rounded-2xl bg-gray-200 overflow-hidden shrink-0">
-                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)" class="w-full h-full object-cover" />
+                        <img v-if="course.thumbnail" :src="$uploadsUrl(course.thumbnail)"
+                            class="w-full h-full object-cover" />
                         <div v-else class="w-full h-full flex items-center justify-center">
                             <BookOpenIcon class="w-7 h-7 text-gray-400" />
                         </div>
@@ -25,8 +26,8 @@
                     </div>
                 </div>
 
-                <!-- Progress bar -->
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+                <!-- Progress bar (clients only) -->
+                <div v-if="!isProviderPreview" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-semibold text-gray-700">Your Progress</span>
                         <span class="text-sm font-bold text-sky-500">{{ progress?.percentComplete || 0 }}%</span>
@@ -38,6 +39,24 @@
                     <p class="text-xs text-gray-400 mt-2">
                         {{ progress?.completedLessons?.length || 0 }} of {{ totalLessons }} lessons completed
                     </p>
+                </div>
+
+                <!-- Provider preview banner -->
+                <div v-if="isProviderPreview"
+                    class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between text-sm text-amber-700">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <strong>Preview Mode</strong> — you're viewing this as a student would see it.
+                    </div>
+                    <button @click="$router.push(`/courses/${courseId}/builder`)"
+                        class="text-xs font-semibold text-amber-600 hover:text-amber-800 underline underline-offset-2">
+                        Back to Builder
+                    </button>
                 </div>
 
                 <!-- Curriculum -->
@@ -112,8 +131,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- Rating card -->
-                <div
+                <!-- Rating card (clients only) -->
+                <div v-if="!isProviderPreview"
                     class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mt-6 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h3 class="text-base font-semibold text-gray-800 mb-1">Rate this course</h3>
                     <p class="text-xs text-gray-400 mb-4">Your feedback helps the instructor improve.</p>
@@ -159,6 +178,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import axios from '@/plugins/axios'
 import { useCourseStore } from '@/stores/course'
+import { useAuthStore } from '@/stores/auth'
 import { useGlobals } from '@/plugins/globals'
 
 const { toast, uploadsUrl, modal } = useGlobals()
@@ -167,10 +187,17 @@ const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
 
+const authStore = useAuthStore()
 const courseId = route.params.id
 const loading = ref(true)
 const course = ref(null)
 const progress = ref(null)
+
+const isProviderPreview = computed(() => {
+    if (!course.value || !authStore.user) return false
+    return course.value.provider?._id === authStore.user._id
+        || course.value.provider === authStore.user._id
+})
 
 const expanded = reactive({})
 
@@ -184,10 +211,10 @@ function isLessonComplete(id) {
     return progress.value?.completedLessons?.some(cl => cl.lessonId === id || cl.lessonId?.toString() === id)
 }
 
-const submittedRating  = ref(0)
-const hoverRating      = ref(0)
+const submittedRating = ref(0)
+const hoverRating = ref(0)
 const ratingSubmitting = ref(false)
-const courseAvgRating  = ref(null)
+const courseAvgRating = ref(null)
 const courseTotalRatings = ref(0)
 
 async function submitRating(value) {
@@ -195,8 +222,8 @@ async function submitRating(value) {
     ratingSubmitting.value = true
     try {
         const res = await axios.post(`/courses/${courseId}/rate`, { value })
-        submittedRating.value  = value
-        courseAvgRating.value  = res.data.data.averageRating
+        submittedRating.value = value
+        courseAvgRating.value = res.data.data.averageRating
         courseTotalRatings.value = res.data.data.totalRatings
     } catch (e) {
         toast.error(e?.response?.data?.message || 'Failed to submit rating')
