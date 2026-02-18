@@ -11,13 +11,16 @@
 
             <!-- Top bar -->
             <div class="bg-gray-900 border-b border-white/10 px-4 py-3 flex items-center gap-4 shrink-0">
-                <button @click="$router.push(`/courses/${courseId}/learn`)"
+                <button @click="$router.push(isProviderPreview ? `/courses/${courseId}/builder` : `/courses/${courseId}/learn`)"
                     class="text-gray-400 hover:text-white transition-colors">
                     <ArrowLeftIcon class="w-5 h-5" />
                 </button>
                 <div class="flex-1 min-w-0">
                     <p class="text-xs text-gray-500 truncate">{{ course?.title }}</p>
-                    <p class="text-sm font-semibold truncate">{{ lesson.title }}</p>
+                    <p v-if="activeQuiz" class="text-sm font-semibold truncate">
+                        {{ activeQuiz.type === 'block' ? 'Block' : 'Topic' }} Quiz
+                    </p>
+                    <p v-else class="text-sm font-semibold truncate">{{ lesson.title }}</p>
                 </div>
                 <!-- Completion button (clients only, not provider preview) -->
                 <template v-if="!isProviderPreview">
@@ -30,8 +33,7 @@
                         Completed
                     </div>
                 </template>
-                <div v-else
-                    class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold bg-amber-400/10 px-3 py-1.5 rounded-lg">
+                <div v-else class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold bg-amber-400/10 px-3 py-1.5 rounded-lg">
                     <EyeIcon class="w-3.5 h-3.5" />
                     Preview Mode
                 </div>
@@ -74,19 +76,20 @@
                                 <div v-if="topic.quiz?.questions?.length" class="px-5 pb-2">
                                     <div @click="openQuiz('topic', block, topic)"
                                         class="flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer text-xs transition-colors"
-                                        :class="getQuizBestResult(topic._id)?.passed
-                                            ? 'text-emerald-400 hover:bg-white/5'
-                                            : isQuizLocked('topic', block, topic)
-                                                ? 'text-gray-600 cursor-not-allowed'
-                                                : 'text-sky-400 hover:bg-white/5'">
+                                        :class="activeQuiz?.quizId === topic._id
+                                            ? 'bg-sky-500/20 text-sky-300'
+                                            : getQuizBestResult(topic._id)?.passed
+                                                ? 'text-emerald-400 hover:bg-white/5'
+                                                : isQuizLocked('topic', block, topic)
+                                                    ? 'text-gray-600 cursor-not-allowed'
+                                                    : 'text-sky-400 hover:bg-white/5'">
                                         <CheckCircleIcon v-if="getQuizBestResult(topic._id)?.passed"
                                             class="w-3.5 h-3.5 shrink-0" />
                                         <LockClosedIcon v-else-if="isQuizLocked('topic', block, topic)"
                                             class="w-3.5 h-3.5 shrink-0" />
                                         <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
                                         <span class="truncate">Topic Quiz</span>
-                                        <span v-if="getQuizBestResult(topic._id)?.passed"
-                                            class="ml-auto text-[10px] opacity-70">
+                                        <span v-if="getQuizBestResult(topic._id)?.passed" class="ml-auto text-[10px] opacity-70">
                                             {{ getQuizBestResult(topic._id).score }}%
                                         </span>
                                     </div>
@@ -96,19 +99,20 @@
                             <div v-if="block.quiz?.questions?.length" class="px-5 pb-3">
                                 <div @click="openQuiz('block', block, null)"
                                     class="flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer text-xs transition-colors"
-                                    :class="getQuizBestResult(block._id)?.passed
-                                        ? 'text-emerald-400 hover:bg-white/5'
-                                        : isQuizLocked('block', block, null)
-                                            ? 'text-gray-600 cursor-not-allowed'
-                                            : 'text-violet-400 hover:bg-white/5'">
+                                    :class="activeQuiz?.quizId === block._id
+                                        ? 'bg-sky-500/20 text-sky-300'
+                                        : getQuizBestResult(block._id)?.passed
+                                            ? 'text-emerald-400 hover:bg-white/5'
+                                            : isQuizLocked('block', block, null)
+                                                ? 'text-gray-600 cursor-not-allowed'
+                                                : 'text-violet-400 hover:bg-white/5'">
                                     <CheckCircleIcon v-if="getQuizBestResult(block._id)?.passed"
                                         class="w-3.5 h-3.5 shrink-0" />
                                     <LockClosedIcon v-else-if="isQuizLocked('block', block, null)"
                                         class="w-3.5 h-3.5 shrink-0" />
                                     <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
                                     <span class="truncate">Block Quiz</span>
-                                    <span v-if="getQuizBestResult(block._id)?.passed"
-                                        class="ml-auto text-[10px] opacity-70">
+                                    <span v-if="getQuizBestResult(block._id)?.passed" class="ml-auto text-[10px] opacity-70">
                                         {{ getQuizBestResult(block._id).score }}%
                                     </span>
                                 </div>
@@ -119,6 +123,79 @@
 
                 <!-- Main content -->
                 <div class="flex-1 overflow-y-auto">
+
+                    <!-- ── Inline Quiz View ──────────────────────────────────── -->
+                    <div v-if="activeQuiz" class="max-w-2xl mx-auto px-6 py-8">
+
+                        <div class="flex items-center gap-3 mb-6">
+                            <QuestionMarkCircleIcon class="w-6 h-6 text-sky-400 shrink-0" />
+                            <h2 class="text-xl font-bold">
+                                {{ activeQuiz.type === 'block' ? 'Block' : 'Topic' }} Quiz
+                            </h2>
+                            <span class="text-xs text-gray-500">{{ activeQuiz.questions.length }} questions</span>
+                        </div>
+
+                        <!-- Result screen -->
+                        <div v-if="activeQuiz.result"
+                            class="bg-gray-900 border border-white/10 rounded-2xl p-8 text-center">
+                            <div class="text-5xl font-black mb-2"
+                                :class="activeQuiz.result.passed ? 'text-emerald-400' : 'text-red-400'">
+                                {{ activeQuiz.result.score }}%
+                            </div>
+                            <p class="text-sm text-gray-400 mb-1">
+                                {{ activeQuiz.result.correctCount }} / {{ activeQuiz.result.totalQuestions }} correct
+                            </p>
+                            <p class="font-semibold text-lg"
+                                :class="activeQuiz.result.passed ? 'text-emerald-400' : 'text-red-400'">
+                                {{ activeQuiz.result.passed ? '🎉 Passed!' : 'Not quite — keep studying!' }}
+                            </p>
+                            <div class="flex items-center justify-center gap-3 mt-6">
+                                <button @click="activeQuiz = null"
+                                    class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
+                                    Back to Lesson
+                                </button>
+                                <button @click="retakeQuiz"
+                                    class="border border-white/20 hover:border-white/40 text-gray-300 hover:text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
+                                    Retake
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quiz questions -->
+                        <div v-else class="space-y-5">
+                            <div v-for="(q, qi) in activeQuiz.questions" :key="qi"
+                                class="bg-gray-900 border border-white/10 rounded-2xl p-5">
+                                <p class="text-sm font-semibold mb-4 text-gray-200">{{ qi + 1 }}. {{ q.question }}</p>
+                                <div class="space-y-2">
+                                    <label v-for="(opt, oi) in q.options" :key="oi"
+                                        class="flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all"
+                                        :class="activeQuiz.answers[qi] === oi
+                                            ? 'border-sky-500 bg-sky-500/10 text-white'
+                                            : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/30'">
+                                        <input type="radio" :name="`q${qi}`" :value="oi"
+                                            v-model="activeQuiz.answers[qi]"
+                                            class="w-4 h-4 shrink-0 accent-sky-500" />
+                                        <span class="text-sm">{{ opt }}</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-3 pt-2">
+                                <button @click="submitQuiz"
+                                    :disabled="activeQuiz.submitting || activeQuiz.answers.some(a => a === null)"
+                                    class="flex-1 bg-sky-500 hover:bg-sky-600 disabled:bg-sky-900 disabled:text-sky-700 text-white font-bold py-3 rounded-xl transition-colors text-sm">
+                                    {{ activeQuiz.submitting ? 'Submitting…' : 'Submit Answers' }}
+                                </button>
+                                <button @click="activeQuiz = null"
+                                    class="border border-white/20 hover:border-white/40 text-gray-300 hover:text-white font-bold py-2.5 px-6 rounded-xl transition-colors text-sm">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Lesson View (default) ─────────────────────────────── -->
+                    <template v-else>
 
                     <!-- Tab bar -->
                     <div class="flex gap-6 px-6 pt-5 border-b border-white/10 bg-gray-950">
@@ -136,26 +213,30 @@
                         <!-- Video (protected) -->
                         <div v-if="lesson.videoFile || lesson.videoUrl"
                             class="video-protected relative w-full aspect-video rounded-2xl overflow-hidden bg-black"
-                            @contextmenu.prevent @dragstart.prevent>
+                            @contextmenu.prevent
+                            @dragstart.prevent>
                             <!-- Uploaded video (streamed via authenticated blob) -->
-                            <div v-if="lesson.videoFile && videoLoading"
-                                class="w-full h-full flex items-center justify-center">
-                                <div
-                                    class="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin">
-                                </div>
+                            <div v-if="lesson.videoFile && videoLoading" class="w-full h-full flex items-center justify-center">
+                                <div class="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
                             </div>
-                            <video v-else-if="lesson.videoFile && videoBlobUrl" :src="videoBlobUrl" controls
-                                controlsList="nodownload noplaybackrate" disablePictureInPicture
-                                oncontextmenu="return false;" class="w-full h-full"></video>
+                            <video v-else-if="lesson.videoFile && videoBlobUrl"
+                                :src="videoBlobUrl"
+                                controls
+                                controlsList="nodownload noplaybackrate"
+                                disablePictureInPicture
+                                oncontextmenu="return false;"
+                                class="w-full h-full"></video>
                             <!-- External URL -->
                             <iframe v-else-if="isYoutube(lesson.videoUrl)" :src="youtubeEmbed(lesson.videoUrl)"
                                 class="w-full h-full" allowfullscreen frameborder="0"></iframe>
-                            <video v-else :src="lesson.videoUrl" controls controlsList="nodownload noplaybackrate"
-                                disablePictureInPicture oncontextmenu="return false;" class="w-full h-full"></video>
+                            <video v-else :src="lesson.videoUrl" controls
+                                controlsList="nodownload noplaybackrate"
+                                disablePictureInPicture
+                                oncontextmenu="return false;"
+                                class="w-full h-full"></video>
 
                             <!-- Watermark overlay (tiled for full coverage) -->
-                            <div
-                                class="watermark-overlay absolute inset-0 pointer-events-none z-10 overflow-hidden select-none">
+                            <div class="watermark-overlay absolute inset-0 pointer-events-none z-10 overflow-hidden select-none">
                                 <!-- Center main watermark -->
                                 <div class="absolute inset-0 flex items-center justify-center -rotate-[30deg]">
                                     <div class="text-center whitespace-nowrap opacity-[0.15]">
@@ -166,41 +247,31 @@
                                 </div>
                                 <!-- Top-left -->
                                 <div class="absolute top-[10%] left-[5%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
-                                        &bull; {{
-                                        watermarkEmail }}</p>
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
                                     <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                 </div>
                                 <!-- Top-right -->
                                 <div class="absolute top-[8%] right-[5%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
-                                        &bull; {{
-                                        watermarkEmail }}</p>
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
                                     <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                 </div>
                                 <!-- Bottom-left -->
                                 <div class="absolute bottom-[12%] left-[8%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
-                                        &bull; {{
-                                        watermarkEmail }}</p>
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
                                     <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                 </div>
                                 <!-- Bottom-right -->
                                 <div class="absolute bottom-[10%] right-[3%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }}
-                                        &bull; {{
-                                        watermarkEmail }}</p>
+                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
                                     <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                 </div>
                                 <!-- Mid-left -->
                                 <div class="absolute top-[45%] left-[2%] -rotate-[30deg] opacity-[0.08]">
-                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}
-                                    </p>
+                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}</p>
                                 </div>
                                 <!-- Mid-right -->
                                 <div class="absolute top-[40%] right-[2%] -rotate-[30deg] opacity-[0.08]">
-                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}
-                                    </p>
+                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}</p>
                                 </div>
                             </div>
                         </div>
@@ -208,8 +279,7 @@
                         <!-- Screenshot / tab-switch deterrent overlay -->
                         <Teleport to="body">
                             <Transition name="blackout">
-                                <div v-if="tabHidden"
-                                    class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
+                                <div v-if="tabHidden" class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
                                     <p class="text-gray-500 text-sm">Content hidden — return to this tab to continue</p>
                                 </div>
                             </Transition>
@@ -233,21 +303,17 @@
                         <div v-if="lesson.materials?.length">
                             <div v-for="mat in lesson.materials" :key="mat._id" class="mb-5">
                                 <!-- Inline PDF preview -->
-                                <div v-if="isPdf(mat.fileType)"
-                                    class="rounded-xl overflow-hidden border border-white/10 mb-2">
+                                <div v-if="isPdf(mat.fileType)" class="rounded-xl overflow-hidden border border-white/10 mb-2">
                                     <object :data="$uploadsUrl(mat.fileUrl)" type="application/pdf"
                                         class="w-full h-[70vh]">
                                         <p class="p-4 text-sm text-gray-500">PDF preview unavailable.
-                                            <a :href="$uploadsUrl(mat.fileUrl)" target="_blank"
-                                                class="text-sky-400 hover:underline">Open in new tab</a>
+                                            <a :href="$uploadsUrl(mat.fileUrl)" target="_blank" class="text-sky-400 hover:underline">Open in new tab</a>
                                         </p>
                                     </object>
                                 </div>
                                 <!-- Inline image preview -->
-                                <div v-else-if="isImage(mat.fileType)"
-                                    class="rounded-xl overflow-hidden border border-white/10 mb-2">
-                                    <img :src="$uploadsUrl(mat.fileUrl)" :alt="mat.name"
-                                        class="w-full max-h-[60vh] object-contain bg-gray-900" />
+                                <div v-else-if="isImage(mat.fileType)" class="rounded-xl overflow-hidden border border-white/10 mb-2">
+                                    <img :src="$uploadsUrl(mat.fileUrl)" :alt="mat.name" class="w-full max-h-[60vh] object-contain bg-gray-900" />
                                 </div>
                                 <!-- Download link (all files including above) -->
                                 <a :href="$uploadsUrl(mat.fileUrl)" :download="mat.name" target="_blank"
@@ -328,6 +394,8 @@
                         </div>
                     </div>
 
+                    </template>
+
                 </div>
             </div>
         </template>
@@ -336,73 +404,6 @@
         <div v-else class="flex-1 flex items-center justify-center text-gray-500 text-sm">
             Lesson not found or you don't have access.
         </div>
-
-        <!-- ── Quiz Modal ──────────────────────────────────────────────── -->
-        <Teleport to="body">
-            <div v-if="quizModal.open"
-                class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                <div
-                    class="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-5">
-                            <h2 class="text-xl font-bold">{{ quizModal.type === 'block' ? 'Block' : 'Topic' }} Quiz</h2>
-                            <button @click="quizModal.open = false" class="text-gray-500 hover:text-white">
-                                <XMarkIcon class="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        <!-- Result screen -->
-                        <div v-if="quizModal.result" class="text-center py-6">
-                            <div class="text-5xl font-black mb-2"
-                                :class="quizModal.result.passed ? 'text-emerald-400' : 'text-red-400'">
-                                {{ quizModal.result.score }}%
-                            </div>
-                            <p class="text-sm text-gray-400 mb-1">
-                                {{ quizModal.result.correctCount }} / {{ quizModal.result.totalQuestions }} correct
-                            </p>
-                            <p class="font-semibold text-lg"
-                                :class="quizModal.result.passed ? 'text-emerald-400' : 'text-red-400'">
-                                {{ quizModal.result.passed ? '🎉 Passed!' : 'Not quite — keep studying!' }}
-                            </p>
-                            <div class="flex items-center justify-center gap-3 mt-6">
-                                <button @click="quizModal.open = false"
-                                    class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
-                                    Done
-                                </button>
-                                <button @click="retakeQuiz"
-                                    class="border border-white/20 hover:border-white/40 text-gray-300 hover:text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
-                                    Retake
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Quiz questions -->
-                        <div v-else class="space-y-5">
-                            <div v-for="(q, qi) in quizModal.questions" :key="qi">
-                                <p class="text-sm font-semibold mb-3 text-gray-200">{{ qi + 1 }}. {{ q.question }}</p>
-                                <div class="space-y-2">
-                                    <label v-for="(opt, oi) in q.options" :key="oi"
-                                        class="flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all"
-                                        :class="quizModal.answers[qi] === oi
-                                            ? 'border-sky-500 bg-sky-500/10 text-white'
-                                            : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/30'">
-                                        <input type="radio" :name="`q${qi}`" :value="oi" v-model="quizModal.answers[qi]"
-                                            class=" w-4 h-4 shrink-0 accent-sky-500" />
-                                        <span class="text-sm">{{ opt }}</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <button @click="submitQuiz"
-                                :disabled="quizModal.submitting || quizModal.answers.some(a => a === null)"
-                                class="w-full bg-sky-500 hover:bg-sky-600 disabled:bg-sky-900 disabled:text-sky-700 text-white font-bold py-3 rounded-xl transition-colors text-sm">
-                                {{ quizModal.submitting ? 'Submitting…' : 'Submit Answers' }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Teleport>
 
     </div>
 </template>
@@ -565,6 +566,7 @@ function navigateToLesson(block, topic, l) {
         toast.error('Complete the previous lesson first')
         return
     }
+    activeQuiz.value = null
     router.push(`/courses/${courseId}/lesson/${l._id}`)
 }
 
@@ -656,18 +658,9 @@ async function submitHw() {
 }
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────
-const quizModal = reactive({
-    open: false,
-    type: 'block',
-    blockId: null,
-    topicId: null,
-    questions: [],
-    answers: [],
-    submitting: false,
-    result: null
-})
+const activeQuiz = ref(null) // { type, quizId, blockId, topicId, questions, answers, submitting, result }
 
-// Map of quizId → best result { score, passed, correctCount, totalQuestions }
+// Map of quizId → best result { score, passed }
 const completedQuizMap = computed(() => {
     const cq = progress.value?.completedQuizzes
     if (!cq?.length) return new Map()
@@ -715,50 +708,56 @@ function openQuiz(type, block, topic) {
     const quizId = type === 'block' ? block._id : topic._id
     const pastResult = getQuizBestResult(quizId)
 
-    quizModal.type = type
-    quizModal.blockId = block._id
-    quizModal.topicId = topic?._id || null
-    quizModal.questions = quiz.questions
-    quizModal.answers = quiz.questions.map(() => null)
-    quizModal.submitting = false
+    const state = {
+        type,
+        quizId,
+        blockId: block._id,
+        topicId: topic?._id || null,
+        questions: quiz.questions,
+        answers: quiz.questions.map(() => null),
+        submitting: false,
+        result: null
+    }
 
     // If already passed, show the past result; user can click "Retake" to try again
     if (pastResult?.passed) {
-        quizModal.result = {
+        state.result = {
             score: pastResult.score,
             passed: true,
             correctCount: Math.round((pastResult.score / 100) * quiz.questions.length),
             totalQuestions: quiz.questions.length
         }
-    } else {
-        quizModal.result = null
     }
 
-    quizModal.open = true
+    activeQuiz.value = state
 }
 
 function retakeQuiz() {
-    quizModal.answers = quizModal.questions.map(() => null)
-    quizModal.result = null
+    if (!activeQuiz.value) return
+    activeQuiz.value = {
+        ...activeQuiz.value,
+        answers: activeQuiz.value.questions.map(() => null),
+        result: null
+    }
 }
 
 async function submitQuiz() {
-    quizModal.submitting = true
+    if (!activeQuiz.value) return
+    activeQuiz.value = { ...activeQuiz.value, submitting: true }
     try {
         const result = await courseStore.submitQuizAttempt(
             courseId,
-            quizModal.blockId,
-            quizModal.answers,
-            quizModal.topicId
+            activeQuiz.value.blockId,
+            activeQuiz.value.answers,
+            activeQuiz.value.topicId
         )
-        quizModal.result = result
+        activeQuiz.value = { ...activeQuiz.value, result, submitting: false }
         // Refresh progress
         const content = await courseStore.getCourseContent(courseId)
         progress.value = content.progress
     } catch (e) {
         toast.error(e?.response?.data?.message || 'Failed to submit quiz')
-    } finally {
-        quizModal.submitting = false
+        activeQuiz.value = { ...activeQuiz.value, submitting: false }
     }
 }
 
@@ -788,6 +787,7 @@ watch(lessonId, (newId, oldId) => {
     if (!newId || newId === oldId) return
     // Reset per-lesson state
     activeTab.value = 'Lesson'
+    activeQuiz.value = null
     homeworkText.value = ''
     hwFiles.value = []
     hwSubmitted.value = false
@@ -814,7 +814,6 @@ watch(lessonId, (newId, oldId) => {
 .blackout-leave-active {
     transition: opacity 0.15s ease;
 }
-
 .blackout-enter-from,
 .blackout-leave-to {
     opacity: 0;

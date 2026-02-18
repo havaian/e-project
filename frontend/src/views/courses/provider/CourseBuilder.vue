@@ -24,7 +24,7 @@
                             {{ [course.category, course.subcategory].filter(Boolean).join(' • ') || 'No category' }}
                         </p>
                     </div>
-                    <button @click="router.push(`/courses/${courseId}/learn`)"
+                    <button v-if="firstLessonId" @click="router.push(`/courses/${courseId}/lesson/${firstLessonId}`)"
                         class="shrink-0 border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
                         Preview
                     </button>
@@ -483,6 +483,15 @@ const editingBlockTitle = ref('')
 
 // Settings form
 const settingsForm = reactive({ title: '', description: '', category: '', subcategory: '', price: 0, thumbnail: '', homeworkEnabled: false })
+const firstLessonId = computed(() => {
+    if (!course.value?.blocks?.length) return null
+    for (const block of course.value.blocks) {
+        for (const topic of block.topics) {
+            if (topic.lessons?.length) return topic.lessons[0]._id
+        }
+    }
+    return null
+})
 
 // ── Lesson modal ────────────────────────────────────────────────────────────
 const lessonModal = reactive({
