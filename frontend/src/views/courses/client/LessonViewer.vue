@@ -11,7 +11,8 @@
 
             <!-- Top bar -->
             <div class="bg-gray-900 border-b border-white/10 px-4 py-3 flex items-center gap-4 shrink-0">
-                <button @click="$router.push(isProviderPreview ? `/courses/${courseId}/builder` : `/courses/${courseId}/learn`)"
+                <button
+                    @click="$router.push(isProviderPreview ? `/courses/${courseId}/builder` : `/courses/${courseId}/learn`)"
                     class="text-gray-400 hover:text-white transition-colors">
                     <ArrowLeftIcon class="w-5 h-5" />
                 </button>
@@ -33,7 +34,8 @@
                         Completed
                     </div>
                 </template>
-                <div v-else class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold bg-amber-400/10 px-3 py-1.5 rounded-lg">
+                <div v-else
+                    class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold bg-amber-400/10 px-3 py-1.5 rounded-lg">
                     <EyeIcon class="w-3.5 h-3.5" />
                     Preview Mode
                 </div>
@@ -89,7 +91,8 @@
                                             class="w-3.5 h-3.5 shrink-0" />
                                         <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
                                         <span class="truncate">Topic Quiz</span>
-                                        <span v-if="getQuizBestResult(topic._id)?.passed" class="ml-auto text-[10px] opacity-70">
+                                        <span v-if="getQuizBestResult(topic._id)?.passed"
+                                            class="ml-auto text-[10px] opacity-70">
                                             {{ getQuizBestResult(topic._id).score }}%
                                         </span>
                                     </div>
@@ -112,7 +115,8 @@
                                         class="w-3.5 h-3.5 shrink-0" />
                                     <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
                                     <span class="truncate">Block Quiz</span>
-                                    <span v-if="getQuizBestResult(block._id)?.passed" class="ml-auto text-[10px] opacity-70">
+                                    <span v-if="getQuizBestResult(block._id)?.passed"
+                                        class="ml-auto text-[10px] opacity-70">
                                         {{ getQuizBestResult(block._id).score }}%
                                     </span>
                                 </div>
@@ -122,7 +126,7 @@
                 </div>
 
                 <!-- Main content -->
-                <div class="flex-1 overflow-y-auto">
+                <div class="flex-1 overflow-y-auto bg-gray-950">
 
                     <!-- ── Inline Quiz View ──────────────────────────────────── -->
                     <div v-if="activeQuiz" class="max-w-2xl mx-auto px-6 py-8">
@@ -173,8 +177,7 @@
                                             ? 'border-sky-500 bg-sky-500/10 text-white'
                                             : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/30'">
                                         <input type="radio" :name="`q${qi}`" :value="oi"
-                                            v-model="activeQuiz.answers[qi]"
-                                            class="w-4 h-4 shrink-0 accent-sky-500" />
+                                            v-model="activeQuiz.answers[qi]" class="w-4 h-4 shrink-0 accent-sky-500" />
                                         <span class="text-sm">{{ opt }}</span>
                                     </label>
                                 </div>
@@ -197,202 +200,212 @@
                     <!-- ── Lesson View (default) ─────────────────────────────── -->
                     <template v-else>
 
-                    <!-- Tab bar -->
-                    <div class="flex gap-6 px-6 pt-5 border-b border-white/10 bg-gray-950">
-                        <button v-for="tab in tabs" :key="tab" @click="activeTab = tab"
-                            class="pb-3 text-sm font-semibold border-b-2 transition-colors" :class="activeTab === tab
-                                ? 'border-sky-500 text-sky-400'
-                                : 'border-transparent text-gray-500 hover:text-gray-300'">
-                            {{ tab }}
-                        </button>
-                    </div>
-
-                    <!-- Lesson tab -->
-                    <div v-if="activeTab === 'Lesson'" class="p-6 space-y-6">
-
-                        <!-- Video (protected) -->
-                        <div v-if="lesson.videoFile || lesson.videoUrl"
-                            class="video-protected relative w-full aspect-video rounded-2xl overflow-hidden bg-black"
-                            @contextmenu.prevent
-                            @dragstart.prevent>
-                            <!-- Uploaded video (streamed via authenticated blob) -->
-                            <div v-if="lesson.videoFile && videoLoading" class="w-full h-full flex items-center justify-center">
-                                <div class="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                            <video v-else-if="lesson.videoFile && videoBlobUrl"
-                                :src="videoBlobUrl"
-                                controls
-                                controlsList="nodownload noplaybackrate"
-                                disablePictureInPicture
-                                oncontextmenu="return false;"
-                                class="w-full h-full"></video>
-                            <!-- External URL -->
-                            <iframe v-else-if="isYoutube(lesson.videoUrl)" :src="youtubeEmbed(lesson.videoUrl)"
-                                class="w-full h-full" allowfullscreen frameborder="0"></iframe>
-                            <video v-else :src="lesson.videoUrl" controls
-                                controlsList="nodownload noplaybackrate"
-                                disablePictureInPicture
-                                oncontextmenu="return false;"
-                                class="w-full h-full"></video>
-
-                            <!-- Watermark overlay (tiled for full coverage) -->
-                            <div class="watermark-overlay absolute inset-0 pointer-events-none z-10 overflow-hidden select-none">
-                                <!-- Center main watermark -->
-                                <div class="absolute inset-0 flex items-center justify-center -rotate-[30deg]">
-                                    <div class="text-center whitespace-nowrap opacity-[0.15]">
-                                        <p class="text-white text-2xl font-bold">{{ watermarkName }}</p>
-                                        <p class="text-white text-sm">{{ watermarkEmail }}</p>
-                                        <p class="text-white text-xs mt-1">{{ watermarkTimestamp }}</p>
-                                    </div>
-                                </div>
-                                <!-- Top-left -->
-                                <div class="absolute top-[10%] left-[5%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
-                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
-                                </div>
-                                <!-- Top-right -->
-                                <div class="absolute top-[8%] right-[5%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
-                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
-                                </div>
-                                <!-- Bottom-left -->
-                                <div class="absolute bottom-[12%] left-[8%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
-                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
-                                </div>
-                                <!-- Bottom-right -->
-                                <div class="absolute bottom-[10%] right-[3%] -rotate-[30deg] opacity-[0.1]">
-                                    <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName }} &bull; {{ watermarkEmail }}</p>
-                                    <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
-                                </div>
-                                <!-- Mid-left -->
-                                <div class="absolute top-[45%] left-[2%] -rotate-[30deg] opacity-[0.08]">
-                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}</p>
-                                </div>
-                                <!-- Mid-right -->
-                                <div class="absolute top-[40%] right-[2%] -rotate-[30deg] opacity-[0.08]">
-                                    <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Screenshot / tab-switch deterrent overlay -->
-                        <Teleport to="body">
-                            <Transition name="blackout">
-                                <div v-if="tabHidden" class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
-                                    <p class="text-gray-500 text-sm">Content hidden — return to this tab to continue</p>
-                                </div>
-                            </Transition>
-                        </Teleport>
-
-                        <!-- Lesson text -->
-                        <div v-if="lesson.text"
-                            class="prose prose-invert max-w-none text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
-                            {{ lesson.text }}
-                        </div>
-
-                        <!-- No content state -->
-                        <div v-if="!lesson.videoFile && !lesson.videoUrl && !lesson.text"
-                            class="text-center py-16 text-gray-600">
-                            <p>No content for this lesson yet.</p>
-                        </div>
-                    </div>
-
-                    <!-- Materials tab -->
-                    <div v-else-if="activeTab === 'Materials'" class="p-6 space-y-6">
-                        <div v-if="lesson.materials?.length">
-                            <div v-for="mat in lesson.materials" :key="mat._id" class="mb-5">
-                                <!-- Inline PDF preview -->
-                                <div v-if="isPdf(mat.fileType)" class="rounded-xl overflow-hidden border border-white/10 mb-2">
-                                    <object :data="$uploadsUrl(mat.fileUrl)" type="application/pdf"
-                                        class="w-full h-[70vh]">
-                                        <p class="p-4 text-sm text-gray-500">PDF preview unavailable.
-                                            <a :href="$uploadsUrl(mat.fileUrl)" target="_blank" class="text-sky-400 hover:underline">Open in new tab</a>
-                                        </p>
-                                    </object>
-                                </div>
-                                <!-- Inline image preview -->
-                                <div v-else-if="isImage(mat.fileType)" class="rounded-xl overflow-hidden border border-white/10 mb-2">
-                                    <img :src="$uploadsUrl(mat.fileUrl)" :alt="mat.name" class="w-full max-h-[60vh] object-contain bg-gray-900" />
-                                </div>
-                                <!-- Download link (all files including above) -->
-                                <a :href="$uploadsUrl(mat.fileUrl)" :download="mat.name" target="_blank"
-                                    class="flex items-center gap-3 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 hover:border-sky-500/50 hover:bg-gray-800 transition-all group">
-                                    <DocumentArrowDownIcon class="w-6 h-6 text-sky-400 shrink-0" />
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-medium truncate">{{ mat.name }}</p>
-                                        <p class="text-xs text-gray-500">{{ mat.fileType }}</p>
-                                    </div>
-                                    <ArrowDownTrayIcon
-                                        class="w-4 h-4 text-gray-600 group-hover:text-sky-400 transition-colors ml-auto shrink-0" />
-                                </a>
-                            </div>
-                        </div>
-                        <div v-else class="text-center py-16 text-gray-600 text-sm">
-                            No materials for this lesson.
-                        </div>
-                    </div>
-
-                    <!-- Homework tab -->
-                    <div v-else-if="activeTab === 'Homework'" class="p-6">
-                        <div v-if="lesson.assignmentPrompt"
-                            class="bg-gray-900 border border-white/10 rounded-xl p-5 mb-6">
-                            <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">Assignment</p>
-                            <p class="text-sm text-gray-300 whitespace-pre-wrap">{{ lesson.assignmentPrompt }}</p>
-                        </div>
-                        <div v-else class="text-sm text-gray-500 mb-6 italic">No assignment prompt for this lesson.
-                        </div>
-
-                        <!-- Provider preview: read-only notice -->
-                        <div v-if="isProviderPreview" class="text-sm text-gray-500 italic">
-                            Students will see a submission form here.
-                        </div>
-
-                        <!-- Client: submission form -->
-                        <div v-else class="space-y-4">
-                            <div>
-                                <label
-                                    class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your
-                                    Answer</label>
-                                <textarea v-model="homeworkText" rows="6" placeholder="Write your answer here…"
-                                    class="input resize-none"></textarea>
-                            </div>
-
-                            <div>
-                                <label
-                                    class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Attachments
-                                    (optional)</label>
-                                <input ref="hwFileInput" type="file" multiple class="hidden" @change="handleHwFiles" />
-                                <div class="space-y-1 mb-2">
-                                    <div v-for="f in hwFiles" :key="f.name"
-                                        class="flex items-center gap-2 text-xs text-gray-400 bg-gray-900 rounded-lg px-3 py-1.5">
-                                        <DocumentIcon class="w-3.5 h-3.5 shrink-0" />
-                                        <span class="truncate">{{ f.name }}</span>
-                                        <button @click="removeHwFile(f)"
-                                            class="ml-auto text-red-400 hover:text-red-300">
-                                            <XMarkIcon class="w-3.5 h-3.5" />
-                                        </button>
-                                    </div>
-                                </div>
-                                <button @click="$refs.hwFileInput.click()"
-                                    class="border border-dashed border-white/20 rounded-xl py-2.5 w-full text-xs text-gray-500 hover:border-sky-500/50 hover:text-sky-400 transition-colors">
-                                    + Attach files
-                                </button>
-                            </div>
-
-                            <button @click="submitHw"
-                                :disabled="hwSubmitting || (!homeworkText.trim() && !hwFiles.length)"
-                                class="w-full bg-sky-500 hover:bg-sky-600 disabled:bg-sky-900 disabled:text-sky-700 text-white font-bold py-3 rounded-xl transition-colors text-sm">
-                                {{ hwSubmitting ? 'Submitting…' : 'Submit Assignment' }}
+                        <!-- Tab bar -->
+                        <div class="flex gap-6 px-6 pt-5 border-b border-white/10 bg-gray-950">
+                            <button v-for="tab in tabs" :key="tab" @click="activeTab = tab"
+                                class="pb-3 text-sm font-semibold border-b-2 transition-colors" :class="activeTab === tab
+                                    ? 'border-sky-500 text-sky-400'
+                                    : 'border-transparent text-gray-500 hover:text-gray-300'">
+                                {{ tab }}
                             </button>
+                        </div>
 
-                            <div v-if="hwSubmitted"
-                                class="flex items-center gap-2 text-emerald-400 text-sm font-medium">
-                                <CheckCircleIcon class="w-4 h-4" />
-                                Submitted! Your instructor will review it shortly.
+                        <!-- Lesson tab -->
+                        <div v-if="activeTab === 'Lesson'" class="p-6 space-y-6">
+
+                            <!-- Video (protected) -->
+                            <div v-if="lesson.videoFile || lesson.videoUrl"
+                                class="video-protected relative w-full aspect-video rounded-2xl overflow-hidden bg-black"
+                                @contextmenu.prevent @dragstart.prevent>
+                                <!-- Uploaded video (streamed via authenticated blob) -->
+                                <div v-if="lesson.videoFile && videoLoading"
+                                    class="w-full h-full flex items-center justify-center">
+                                    <div
+                                        class="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin">
+                                    </div>
+                                </div>
+                                <video v-else-if="lesson.videoFile && videoBlobUrl" :src="videoBlobUrl" controls
+                                    controlsList="nodownload noplaybackrate" disablePictureInPicture
+                                    oncontextmenu="return false;" class="w-full h-full"></video>
+                                <!-- External URL -->
+                                <iframe v-else-if="isYoutube(lesson.videoUrl)" :src="youtubeEmbed(lesson.videoUrl)"
+                                    class="w-full h-full" allowfullscreen frameborder="0"></iframe>
+                                <video v-else :src="lesson.videoUrl" controls controlsList="nodownload noplaybackrate"
+                                    disablePictureInPicture oncontextmenu="return false;" class="w-full h-full"></video>
+
+                                <!-- Watermark overlay (tiled for full coverage) -->
+                                <div
+                                    class="watermark-overlay absolute inset-0 pointer-events-none z-10 overflow-hidden select-none">
+                                    <!-- Center main watermark -->
+                                    <div class="absolute inset-0 flex items-center justify-center -rotate-[30deg]">
+                                        <div class="text-center whitespace-nowrap opacity-[0.15]">
+                                            <p class="text-white text-2xl font-bold">{{ watermarkName }}</p>
+                                            <p class="text-white text-sm">{{ watermarkEmail }}</p>
+                                            <p class="text-white text-xs mt-1">{{ watermarkTimestamp }}</p>
+                                        </div>
+                                    </div>
+                                    <!-- Top-left -->
+                                    <div class="absolute top-[10%] left-[5%] -rotate-[30deg] opacity-[0.1]">
+                                        <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
+                                            }} &bull; {{ watermarkEmail }}</p>
+                                        <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
+                                    </div>
+                                    <!-- Top-right -->
+                                    <div class="absolute top-[8%] right-[5%] -rotate-[30deg] opacity-[0.1]">
+                                        <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
+                                            }} &bull; {{ watermarkEmail }}</p>
+                                        <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
+                                    </div>
+                                    <!-- Bottom-left -->
+                                    <div class="absolute bottom-[12%] left-[8%] -rotate-[30deg] opacity-[0.1]">
+                                        <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
+                                            }} &bull; {{ watermarkEmail }}</p>
+                                        <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
+                                    </div>
+                                    <!-- Bottom-right -->
+                                    <div class="absolute bottom-[10%] right-[3%] -rotate-[30deg] opacity-[0.1]">
+                                        <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
+                                            }} &bull; {{ watermarkEmail }}</p>
+                                        <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
+                                    </div>
+                                    <!-- Mid-left -->
+                                    <div class="absolute top-[45%] left-[2%] -rotate-[30deg] opacity-[0.08]">
+                                        <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail
+                                            }}</p>
+                                    </div>
+                                    <!-- Mid-right -->
+                                    <div class="absolute top-[40%] right-[2%] -rotate-[30deg] opacity-[0.08]">
+                                        <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail
+                                            }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Screenshot / tab-switch deterrent overlay -->
+                            <Teleport to="body">
+                                <Transition name="blackout">
+                                    <div v-if="tabHidden"
+                                        class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
+                                        <p class="text-gray-500 text-sm">Content hidden — return to this tab to continue
+                                        </p>
+                                    </div>
+                                </Transition>
+                            </Teleport>
+
+                            <!-- Lesson text -->
+                            <div v-if="lesson.text"
+                                class="prose prose-invert max-w-none text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+                                {{ lesson.text }}
+                            </div>
+
+                            <!-- No content state -->
+                            <div v-if="!lesson.videoFile && !lesson.videoUrl && !lesson.text"
+                                class="text-center py-16 text-gray-600">
+                                <p>No content for this lesson yet.</p>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Materials tab -->
+                        <div v-else-if="activeTab === 'Materials'" class="p-6 space-y-6">
+                            <div v-if="lesson.materials?.length">
+                                <div v-for="mat in lesson.materials" :key="mat._id" class="mb-5">
+                                    <!-- Inline PDF preview -->
+                                    <div v-if="isPdf(mat.fileType)"
+                                        class="rounded-xl overflow-hidden border border-white/10 mb-2">
+                                        <object :data="$uploadsUrl(mat.fileUrl)" type="application/pdf"
+                                            class="w-full h-[70vh]">
+                                            <p class="p-4 text-sm text-gray-500">PDF preview unavailable.
+                                                <a :href="$uploadsUrl(mat.fileUrl)" target="_blank"
+                                                    class="text-sky-400 hover:underline">Open in new tab</a>
+                                            </p>
+                                        </object>
+                                    </div>
+                                    <!-- Inline image preview -->
+                                    <div v-else-if="isImage(mat.fileType)"
+                                        class="rounded-xl overflow-hidden border border-white/10 mb-2">
+                                        <img :src="$uploadsUrl(mat.fileUrl)" :alt="mat.name"
+                                            class="w-full max-h-[60vh] object-contain bg-gray-900" />
+                                    </div>
+                                    <!-- Download link (all files including above) -->
+                                    <a :href="$uploadsUrl(mat.fileUrl)" :download="mat.name" target="_blank"
+                                        class="flex items-center gap-3 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 hover:border-sky-500/50 hover:bg-gray-800 transition-all group">
+                                        <DocumentArrowDownIcon class="w-6 h-6 text-sky-400 shrink-0" />
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-medium truncate">{{ mat.name }}</p>
+                                            <p class="text-xs text-gray-500">{{ mat.fileType }}</p>
+                                        </div>
+                                        <ArrowDownTrayIcon
+                                            class="w-4 h-4 text-gray-600 group-hover:text-sky-400 transition-colors ml-auto shrink-0" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div v-else class="text-center py-16 text-gray-600 text-sm">
+                                No materials for this lesson.
+                            </div>
+                        </div>
+
+                        <!-- Homework tab -->
+                        <div v-else-if="activeTab === 'Homework'" class="p-6">
+                            <div v-if="lesson.assignmentPrompt"
+                                class="bg-gray-900 border border-white/10 rounded-xl p-5 mb-6">
+                                <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">Assignment
+                                </p>
+                                <p class="text-sm text-gray-300 whitespace-pre-wrap">{{ lesson.assignmentPrompt }}</p>
+                            </div>
+                            <div v-else class="text-sm text-gray-500 mb-6 italic">No assignment prompt for this lesson.
+                            </div>
+
+                            <!-- Provider preview: read-only notice -->
+                            <div v-if="isProviderPreview" class="text-sm text-gray-500 italic">
+                                Students will see a submission form here.
+                            </div>
+
+                            <!-- Client: submission form -->
+                            <div v-else class="space-y-4">
+                                <div>
+                                    <label
+                                        class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your
+                                        Answer</label>
+                                    <textarea v-model="homeworkText" rows="6" placeholder="Write your answer here…"
+                                        class="input resize-none"></textarea>
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Attachments
+                                        (optional)</label>
+                                    <input ref="hwFileInput" type="file" multiple class="hidden"
+                                        @change="handleHwFiles" />
+                                    <div class="space-y-1 mb-2">
+                                        <div v-for="f in hwFiles" :key="f.name"
+                                            class="flex items-center gap-2 text-xs text-gray-400 bg-gray-900 rounded-lg px-3 py-1.5">
+                                            <DocumentIcon class="w-3.5 h-3.5 shrink-0" />
+                                            <span class="truncate">{{ f.name }}</span>
+                                            <button @click="removeHwFile(f)"
+                                                class="ml-auto text-red-400 hover:text-red-300">
+                                                <XMarkIcon class="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button @click="$refs.hwFileInput.click()"
+                                        class="border border-dashed border-white/20 rounded-xl py-2.5 w-full text-xs text-gray-500 hover:border-sky-500/50 hover:text-sky-400 transition-colors">
+                                        + Attach files
+                                    </button>
+                                </div>
+
+                                <button @click="submitHw"
+                                    :disabled="hwSubmitting || (!homeworkText.trim() && !hwFiles.length)"
+                                    class="w-full bg-sky-500 hover:bg-sky-600 disabled:bg-sky-900 disabled:text-sky-700 text-white font-bold py-3 rounded-xl transition-colors text-sm">
+                                    {{ hwSubmitting ? 'Submitting…' : 'Submit Assignment' }}
+                                </button>
+
+                                <div v-if="hwSubmitted"
+                                    class="flex items-center gap-2 text-emerald-400 text-sm font-medium">
+                                    <CheckCircleIcon class="w-4 h-4" />
+                                    Submitted! Your instructor will review it shortly.
+                                </div>
+                            </div>
+                        </div>
 
                     </template>
 
@@ -814,6 +827,7 @@ watch(lessonId, (newId, oldId) => {
 .blackout-leave-active {
     transition: opacity 0.15s ease;
 }
+
 .blackout-enter-from,
 .blackout-leave-to {
     opacity: 0;
