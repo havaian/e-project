@@ -784,16 +784,6 @@ async function saveFinalQuiz() {
     }
 }
 
-const firstLessonId = computed(() => {
-    if (!course.value?.blocks?.length) return null
-    for (const block of course.value.blocks) {
-        for (const topic of block.topics) {
-            if (topic.lessons?.length) return topic.lessons[0]._id
-        }
-    }
-    return null
-})
-
 // ── Lesson modal ────────────────────────────────────────────────────────────
 const lessonModal = reactive({
     open: false,
