@@ -452,6 +452,24 @@ exports.saveTopicQuiz = async (req, res) => {
     }
 };
 
+/**
+ * PUT /api/courses/:id/final-quiz
+ * Body: { questions: [{ question, options, correctAnswer, explanation }] }
+ */
+exports.saveFinalQuiz = async (req, res) => {
+    try {
+        const course = await Course.findOne({ _id: req.params.id, provider: req.user.id });
+        if (!course) return res.status(404).json({ message: 'Course not found' });
+
+        course.finalQuiz = { questions: req.body.questions || [] };
+        await course.save();
+        res.status(200).json({ success: true, data: course.finalQuiz });
+    } catch (error) {
+        console.error('saveFinalQuiz error:', error);
+        res.status(500).json({ message: 'Failed to save final quiz' });
+    }
+};
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  PROVIDER — Lesson management
@@ -903,8 +921,8 @@ exports.initiateEnrollment = async (req, res) => {
             success_url: `${process.env.FRONTEND_URL}/courses/payment/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.FRONTEND_URL}/courses/${courseId}`,
             metadata: {
-                courseId:   courseId.toString(),
-                clientId:   clientId.toString(),
+                courseId: courseId.toString(),
+                clientId: clientId.toString(),
                 providerId: course.provider._id.toString()
             }
         });
@@ -1161,6 +1179,85 @@ exports.submitQuizAttempt = async (req, res) => {
     }
 };
 
+/**
+ * POST /api/courses/:id/final-quiz/attempt
+ * Body: { answers: [selectedOptionIndex, ...] }
+ * Final quiz can only be taken when ALL lessons are marked complete.
+ */
+exports.submitFinalQuizAttempt = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { answers } = req.body;
+        const clientId = req.user.id;
+
+        const enrollment = await Enrollment.findOne({
+            course: id,
+            client: clientId,
+            'payment.status': { $in: ['succeeded', 'free'] }
+        });
+        if (!enrollment) return res.status(403).json({ message: 'Not enrolled in this course' });
+
+        const course = await Course.findById(id);
+        if (!course) return res.status(404).json({ message: 'Course not found' });
+
+        if (!course.finalQuiz?.questions?.length) {
+            return res.status(404).json({ message: 'Final quiz not found' });
+        }
+
+        // Enforce: all lessons must be completed
+        let totalLessons = 0;
+        course.blocks.forEach(b => b.topics.forEach(t => { totalLessons += t.lessons.length; }));
+        const completedCount = enrollment.progress?.completedLessons?.length || 0;
+        if (completedCount < totalLessons) {
+            return res.status(400).json({
+                message: `Complete all lessons first (${completedCount}/${totalLessons} done)`
+            });
+        }
+
+        const quiz = course.finalQuiz;
+        if (!Array.isArray(answers) || answers.length !== quiz.questions.length) {
+            return res.status(400).json({ message: 'Answer count must match question count' });
+        }
+
+        const gradedAnswers = answers.map((selectedOption, i) => ({
+            questionIndex: i,
+            selectedOption,
+            isCorrect: selectedOption === quiz.questions[i].correctAnswer
+        }));
+
+        const correctCount = gradedAnswers.filter(a => a.isCorrect).length;
+        const score = Math.round((correctCount / quiz.questions.length) * 100);
+        const passed = score >= 60;
+
+        await QuizAttempt.create({
+            course: id,
+            enrollment: enrollment._id,
+            client: clientId,
+            quizId: course._id,
+            quizType: 'final',
+            answers: gradedAnswers,
+            score,
+            passed
+        });
+
+        // Update enrollment progress
+        enrollment.progress.completedQuizzes.push({
+            quizId: course._id,
+            quizType: 'final',
+            score,
+            completedAt: new Date()
+        });
+        await enrollment.save();
+
+        res.status(200).json({
+            success: true,
+            data: { score, passed, correctCount, totalQuestions: quiz.questions.length }
+        });
+    } catch (error) {
+        console.error('submitFinalQuizAttempt error:', error);
+        res.status(500).json({ message: 'Failed to submit final quiz' });
+    }
+};
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  SHARED — Video streaming (provider preview + enrolled client playback)
@@ -1360,8 +1457,8 @@ exports.uploadLessonThumbnail = async (req, res) => {
             return res.status(404).json({ message: 'Course not found' });
         }
 
-        const block  = course.blocks.id(blockId);
-        const topic  = block?.topics.id(topicId);
+        const block = course.blocks.id(blockId);
+        const topic = block?.topics.id(topicId);
         const lesson = topic?.lessons.id(lessonId);
         if (!lesson) {
             removeFile(`/uploads/course-materials/${req.file.filename}`);

@@ -1,6 +1,6 @@
 <!-- frontend/src/views/courses/client/LessonViewer.vue -->
 <template>
-    <div class="min-h-screen bg-gray-950 text-white flex flex-col">
+    <div class="fixed inset-0 bg-gray-950 text-white flex flex-col z-40">
 
         <!-- Loading -->
         <div v-if="loading" class="flex-1 flex items-center justify-center">
@@ -83,11 +83,11 @@
                                             : getQuizBestResult(topic._id)?.passed
                                                 ? 'text-emerald-400 hover:bg-white/5'
                                                 : isQuizLocked('topic', block, topic)
-                                                    ? 'text-gray-600 cursor-not-allowed'
+                                                    ? 'text-amber-400/70 hover:bg-white/5'
                                                     : 'text-sky-400 hover:bg-white/5'">
                                         <CheckCircleIcon v-if="getQuizBestResult(topic._id)?.passed"
                                             class="w-3.5 h-3.5 shrink-0" />
-                                        <LockClosedIcon v-else-if="isQuizLocked('topic', block, topic)"
+                                        <ExclamationTriangleIcon v-else-if="isQuizLocked('topic', block, topic)"
                                             class="w-3.5 h-3.5 shrink-0" />
                                         <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
                                         <span class="truncate">Topic Quiz</span>
@@ -107,11 +107,11 @@
                                         : getQuizBestResult(block._id)?.passed
                                             ? 'text-emerald-400 hover:bg-white/5'
                                             : isQuizLocked('block', block, null)
-                                                ? 'text-gray-600 cursor-not-allowed'
+                                                ? 'text-amber-400/70 hover:bg-white/5'
                                                 : 'text-violet-400 hover:bg-white/5'">
                                     <CheckCircleIcon v-if="getQuizBestResult(block._id)?.passed"
                                         class="w-3.5 h-3.5 shrink-0" />
-                                    <LockClosedIcon v-else-if="isQuizLocked('block', block, null)"
+                                    <ExclamationTriangleIcon v-else-if="isQuizLocked('block', block, null)"
                                         class="w-3.5 h-3.5 shrink-0" />
                                     <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
                                     <span class="truncate">Block Quiz</span>
@@ -427,7 +427,7 @@ import { useRoute, useRouter } from 'vue-router'
 import {
     ArrowLeftIcon, CheckCircleIcon, PlayIcon, QuestionMarkCircleIcon,
     DocumentArrowDownIcon, ArrowDownTrayIcon, DocumentIcon, XMarkIcon,
-    LockClosedIcon, EyeIcon
+    LockClosedIcon, EyeIcon, ExclamationTriangleIcon
 } from '@heroicons/vue/24/outline'
 import api, { uploadApi } from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
@@ -707,12 +707,14 @@ function isQuizLocked(type, block, topic) {
     )
 }
 
-function openQuiz(type, block, topic) {
-    // Check lock
+async function openQuiz(type, block, topic) {
+    // Soft lock — ask for confirmation if lessons incomplete
     if (isQuizLocked(type, block, topic)) {
         const scope = type === 'block' ? 'block' : 'topic'
-        toast.error(`Complete all lessons in this ${scope} first`)
-        return
+        const proceed = await modal.confirm(
+            `You haven't completed all lessons in this ${scope} yet. Take the quiz anyway?`
+        )
+        if (!proceed) return
     }
 
     const quiz = type === 'block' ? block.quiz : topic.quiz

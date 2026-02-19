@@ -68,6 +68,7 @@ const courseSchema = new Schema({
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft' },
     homeworkEnabled: { type: Boolean, default: false },
     blocks: [blockSchema],
+    finalQuiz: quizSchema,
     // Ratings — submitted by enrolled clients
     ratings: [{
         client: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -105,7 +106,7 @@ const enrollmentSchema = new Schema({
         // quizId = _id of the block or topic that owns the quiz
         completedQuizzes: [{
             quizId: { type: Schema.Types.ObjectId, required: true },
-            quizType: { type: String, enum: ['block', 'topic'] },
+            quizType: { type: String, enum: ['block', 'topic', 'final'] },
             score: { type: Number },
             completedAt: { type: Date, default: Date.now }
         }],
@@ -157,7 +158,7 @@ const quizAttemptSchema = new Schema({
     client: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     // quizId = _id of the block (block quiz) or topic (topic quiz)
     quizId: { type: Schema.Types.ObjectId, required: true },
-    quizType: { type: String, enum: ['block', 'topic'], required: true },
+    quizType: { type: String, enum: ['block', 'topic', 'final'], required: true },
     answers: [{
         questionIndex: { type: Number },
         selectedOption: { type: Number },

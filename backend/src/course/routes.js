@@ -138,6 +138,14 @@ router.delete('/:id/blocks/:blockId',
 router.put('/:id/blocks/:blockId/quiz',
     authenticateUser, authorizeRoles(['provider']), ctrl.saveBlockQuiz);
 
+/**
+ * @route PUT /api/courses/:id/final-quiz
+ * @desc Save (create/replace) course-level final quiz
+ * @access Private (provider)
+ */
+router.put('/:id/final-quiz',
+    authenticateUser, authorizeRoles(['provider']), ctrl.saveFinalQuiz);
+
 // ── Topics ────────────────────────────────────────────────────────────────
 
 router.post('/:id/blocks/:blockId/topics',
@@ -255,6 +263,13 @@ router.post('/:id/lessons/:lessonId/homework',
 router.post('/:id/blocks/:blockId/quiz/attempt',
     authenticateUser, authorizeRoles(['client']), ctrl.submitQuizAttempt);
 
+/**
+ * @route POST /api/courses/:id/final-quiz/attempt
+ * @desc Submit a final quiz attempt (body: { answers[] })
+ * @access Private (client)
+ */
+router.post('/:id/final-quiz/attempt',
+    authenticateUser, authorizeRoles(['client']), ctrl.submitFinalQuizAttempt);
 
 // ─── Shared (provider + enrolled client) ─────────────────────────────────────
 

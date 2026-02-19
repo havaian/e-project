@@ -24,7 +24,8 @@
                             {{ [course.category, course.subcategory].filter(Boolean).join(' • ') || 'No category' }}
                         </p>
                     </div>
-                    <button v-if="firstLessonId" @click="router.push(`/courses/${courseId}/lesson/${firstLessonId}`)"
+                    <button v-if="firstLessonId"
+                        @click="router.push(`/courses/${courseId}/lesson/${firstLessonId}`)"
                         class="shrink-0 border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
                         Preview
                     </button>
@@ -68,10 +69,22 @@
                                 class="font-semibold text-gray-900">
                                 Block {{ bi + 1 }}: {{ block.title }}
                             </span>
-                            <input v-else v-model="editingBlockTitle" @blur="saveBlockTitle(block)"
-                                @keyup.enter="saveBlockTitle(block)"
-                                class="input font-semibold text-gray-900 bg-transparent border-b border-sky-400 focus:outline-none flex-1"
-                                autofocus />
+                            <template v-else>
+                                <input v-model="editingBlockTitle"
+                                    @keyup.enter="saveBlockTitle(block)"
+                                    class="input font-semibold text-gray-900 bg-transparent border-b border-sky-400 focus:outline-none flex-1"
+                                    autofocus />
+                                <button @click="saveBlockTitle(block)"
+                                    class="ml-1 text-sky-500 hover:text-sky-700 transition-colors"
+                                    title="Save title">
+                                    <CheckIcon class="w-5 h-5" />
+                                </button>
+                                <button @click="editingBlockId = null"
+                                    class="text-gray-400 hover:text-gray-600 transition-colors"
+                                    title="Cancel">
+                                    <XMarkIcon class="w-4 h-4" />
+                                </button>
+                            </template>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             <button @click="openQuizModal('block', block, null)"
@@ -144,6 +157,27 @@
                     class="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl text-sm text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-colors font-medium">
                     + Add New Block
                 </button>
+
+                <!-- ── Final Quiz section ────────────────────────────────── -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mt-4">
+                    <div class="flex items-center justify-between px-5 py-4">
+                        <div class="flex items-center gap-3">
+                            <AcademicCapIcon class="w-5 h-5 text-violet-500" />
+                            <div>
+                                <p class="font-semibold text-gray-900">Final Exam</p>
+                                <p class="text-xs text-gray-400">
+                                    {{ course?.finalQuiz?.questions?.length
+                                        ? course.finalQuiz.questions.length + ' questions'
+                                        : 'No questions yet' }}
+                                </p>
+                            </div>
+                        </div>
+                        <button @click="openFinalQuizModal"
+                            class="text-sm font-semibold text-violet-500 hover:text-violet-700 px-3 py-1.5 rounded-lg hover:bg-violet-50 transition-colors">
+                            {{ course?.finalQuiz?.questions?.length ? 'EDIT QUIZ' : 'ADD QUIZ' }}
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Settings tab -->
@@ -225,11 +259,118 @@
             </div>
 
             <!-- Grading tab -->
-            <div v-else-if="activeTab === 'grading'" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="text-sm text-gray-500">
-                    For full grading functionality, visit the
-                    <router-link to="/courses/homework" class="text-sky-500 hover:underline font-medium">Grading
-                        Center</router-link>.
+            <div v-else-if="activeTab === 'grading'" class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Filter row -->
+                <div class="flex items-center gap-3 mb-5">
+                    <button v-for="f in ['all', 'pending', 'graded', 'revision_requested']" :key="f"
+                        @click="gradingFilter = f"
+                        class="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors capitalize"
+                        :class="gradingFilter === f
+                            ? 'bg-sky-100 text-sky-600'
+                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'">
+                        {{ f === 'revision_requested' ? 'Revision' : f }}
+                    </button>
+                </div>
+
+                <!-- Loading -->
+                <div v-if="gradingLoading" class="flex justify-center py-12">
+                    <div class="w-6 h-6 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+
+                <!-- Empty -->
+                <div v-else-if="!gradingSubmissions.length" class="text-center py-12 text-gray-400 text-sm">
+                    No homework submissions yet for this course.
+                </div>
+
+                <!-- Submission list -->
+                <div v-else class="space-y-2">
+                    <div v-for="sub in gradingSubmissions" :key="sub._id"
+                        class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                        <!-- Summary row -->
+                        <button @click="toggleSubmission(sub)"
+                            class="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-gray-50 transition-colors">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 overflow-hidden shrink-0">
+                                <img v-if="sub.client?.profilePicture" :src="$uploadsUrl(sub.client.profilePicture)"
+                                    class="w-full h-full object-cover" />
+                                <div v-else class="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">
+                                    {{ sub.client?.firstName?.[0] }}{{ sub.client?.lastName?.[0] }}
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{ sub.client?.firstName }} {{ sub.client?.lastName }}
+                                </p>
+                                <p class="text-xs text-gray-400 truncate">{{ sub.lessonTitle }}</p>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full shrink-0"
+                                :class="{
+                                    'bg-amber-100 text-amber-700': sub.status === 'pending',
+                                    'bg-emerald-100 text-emerald-700': sub.status === 'graded',
+                                    'bg-red-100 text-red-700': sub.status === 'revision_requested'
+                                }">
+                                {{ sub.status === 'revision_requested' ? 'Revision' : sub.status }}
+                            </span>
+                            <span v-if="sub.grade !== undefined && sub.grade !== null" class="text-sm font-bold text-gray-900">
+                                {{ sub.grade }}%
+                            </span>
+                            <ChevronRightIcon class="w-4 h-4 text-gray-300 shrink-0 transition-transform"
+                                :class="{ 'rotate-90': expandedSubmission === sub._id }" />
+                        </button>
+
+                        <!-- Expanded detail + grading form -->
+                        <div v-if="expandedSubmission === sub._id"
+                            class="border-t border-gray-100 px-5 py-4 space-y-4 bg-gray-50">
+                            <!-- Submission text -->
+                            <div v-if="sub.submissionText">
+                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Submission</p>
+                                <p class="text-sm text-gray-700 whitespace-pre-wrap bg-white rounded-lg border border-gray-100 p-3">{{ sub.submissionText }}</p>
+                            </div>
+
+                            <!-- Attachments -->
+                            <div v-if="sub.attachments?.length">
+                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Attachments</p>
+                                <div class="space-y-1">
+                                    <a v-for="att in sub.attachments" :key="att.fileUrl"
+                                        :href="$uploadsUrl(att.fileUrl)" target="_blank"
+                                        class="flex items-center gap-2 text-sm text-sky-500 hover:underline">
+                                        <DocumentIcon class="w-3.5 h-3.5" />
+                                        {{ att.name }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Date -->
+                            <p class="text-xs text-gray-400">
+                                Submitted {{ new Date(sub.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}
+                            </p>
+
+                            <!-- Grade form -->
+                            <div class="border-t border-gray-200 pt-4 space-y-3">
+                                <div class="flex items-center gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Grade (0-100)</label>
+                                        <input v-model.number="gradingInline.grade" type="number" min="0" max="100"
+                                            class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Feedback</label>
+                                    <textarea v-model="gradingInline.feedback" rows="3" placeholder="Write feedback for the student…"
+                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"></textarea>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button @click="saveGrade(sub, 'graded')" :disabled="gradingInline.saving"
+                                        class="bg-sky-500 hover:bg-sky-600 disabled:bg-sky-300 text-white font-bold py-2 px-5 rounded-lg transition-colors text-sm">
+                                        {{ gradingInline.saving ? 'Saving…' : 'Save Grade' }}
+                                    </button>
+                                    <button @click="saveGrade(sub, 'revision_requested')" :disabled="gradingInline.saving"
+                                        class="border border-red-200 text-red-500 hover:bg-red-50 font-semibold py-2 px-5 rounded-lg transition-colors text-sm">
+                                        Request Revision
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </template>
@@ -358,8 +499,8 @@
                                 placeholder="Detailed content for this lesson..." class="input resize-none"></textarea>
                         </div>
 
-                        <!-- Assignment prompt -->
-                        <div class="mt-4">
+                        <!-- Assignment prompt (only when homework enabled) -->
+                        <div v-if="course?.homeworkEnabled" class="mt-4">
                             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Post-Lesson
                                 Assignment
                                 Prompt</p>
@@ -441,15 +582,68 @@
             </div>
         </Teleport>
 
+        <!-- ── Final Quiz Edit Modal ────────────────────────────────────── -->
+        <Teleport to="body">
+            <div v-if="finalQuizModal.open"
+                class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-5">
+                            <h2 class="text-xl font-bold text-gray-900">Final Exam</h2>
+                            <button @click="finalQuizModal.open = false" class="text-gray-400 hover:text-gray-600">
+                                <XMarkIcon class="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <!-- Questions -->
+                        <div v-for="(q, qi) in finalQuizModal.questions" :key="qi"
+                            class="mb-5 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="flex items-start justify-between mb-3">
+                                <p class="text-sm font-bold text-gray-700">Question {{ qi + 1 }}</p>
+                                <button @click="removeFinalQuizQuestion(qi)"
+                                    class="text-red-400 hover:text-red-600 text-xs font-medium">Remove</button>
+                            </div>
+                            <input v-model="q.question" placeholder="Question text…"
+                                class="input w-full mb-3 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                            <div v-for="(opt, oi) in q.options" :key="oi" class="flex items-center gap-2 mb-2">
+                                <input type="radio" :name="`fq_correct_${qi}`" :value="oi"
+                                    v-model="q.correctAnswer"
+                                    class="w-4 h-4 accent-sky-500 shrink-0" />
+                                <input v-model="q.options[oi]" :placeholder="`Option ${oi + 1}`"
+                                    class="input flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                                <button v-if="q.options.length > 2" @click="removeFinalQuizOption(qi, oi)"
+                                    class="text-red-300 hover:text-red-500">
+                                    <XMarkIcon class="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                            <button @click="addFinalQuizOption(qi)"
+                                class="text-xs text-sky-500 hover:text-sky-700 font-medium mt-1">+ Add option</button>
+                        </div>
+
+                        <button @click="addFinalQuizQuestion"
+                            class="w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-colors font-medium mb-4">
+                            + Add Question
+                        </button>
+
+                        <button @click="saveFinalQuiz" :disabled="savingFinalQuiz"
+                            class="w-full bg-violet-500 hover:bg-violet-600 disabled:bg-violet-300 text-white font-bold py-3 rounded-xl transition-colors text-sm">
+                            {{ savingFinalQuiz ? 'Saving…' : 'Save Final Quiz' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
+
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
     XMarkIcon, ChevronDownIcon, PencilSquareIcon, PlayIcon,
-    PhotoIcon, FilmIcon, DocumentIcon, PlusIcon, ExclamationTriangleIcon
+    PhotoIcon, FilmIcon, DocumentIcon, PlusIcon, ExclamationTriangleIcon,
+    CheckIcon, AcademicCapIcon, ChevronRightIcon
 } from '@heroicons/vue/24/outline'
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
@@ -483,6 +677,113 @@ const editingBlockTitle = ref('')
 
 // Settings form
 const settingsForm = reactive({ title: '', description: '', category: '', subcategory: '', price: 0, thumbnail: '', homeworkEnabled: false })
+
+const firstLessonId = computed(() => {
+    if (!course.value?.blocks?.length) return null
+    for (const block of course.value.blocks) {
+        for (const topic of block.topics) {
+            if (topic.lessons?.length) return topic.lessons[0]._id
+        }
+    }
+    return null
+})
+
+// ── Grading tab ──────────────────────────────────────────────────────────────
+const gradingLoading = ref(false)
+const gradingSubmissions = ref([])
+const expandedSubmission = ref(null)
+const gradingInline = reactive({ grade: null, feedback: '', saving: false })
+const gradingFilter = ref('all')
+
+async function loadGrading() {
+    gradingLoading.value = true
+    try {
+        const params = { courseId }
+        if (gradingFilter.value !== 'all') params.status = gradingFilter.value
+        gradingSubmissions.value = await courseStore.fetchHomework(params)
+    } catch (e) {
+        console.error('loadGrading error:', e)
+    } finally {
+        gradingLoading.value = false
+    }
+}
+
+function toggleSubmission(sub) {
+    if (expandedSubmission.value === sub._id) {
+        expandedSubmission.value = null
+        return
+    }
+    expandedSubmission.value = sub._id
+    gradingInline.grade = sub.grade ?? null
+    gradingInline.feedback = sub.feedback ?? ''
+}
+
+async function saveGrade(sub, status = 'graded') {
+    gradingInline.saving = true
+    try {
+        const updated = await courseStore.gradeSubmission(sub._id, {
+            grade: gradingInline.grade,
+            feedback: gradingInline.feedback,
+            status
+        })
+        const idx = gradingSubmissions.value.findIndex(s => s._id === sub._id)
+        if (idx !== -1) gradingSubmissions.value[idx] = { ...gradingSubmissions.value[idx], ...updated }
+        toast.success('Grade saved')
+    } catch (e) {
+        toast.error(e?.response?.data?.message || 'Failed to save grade')
+    } finally {
+        gradingInline.saving = false
+    }
+}
+
+// ── Final Quiz ───────────────────────────────────────────────────────────────
+const finalQuizModal = reactive({
+    open: false,
+    questions: []
+})
+const savingFinalQuiz = ref(false)
+
+function openFinalQuizModal() {
+    finalQuizModal.questions = course.value?.finalQuiz?.questions?.length
+        ? JSON.parse(JSON.stringify(course.value.finalQuiz.questions))
+        : []
+    finalQuizModal.open = true
+}
+
+function addFinalQuizQuestion() {
+    finalQuizModal.questions.push({ question: '', options: ['', ''], correctAnswer: 0, explanation: '' })
+}
+
+function removeFinalQuizQuestion(idx) {
+    finalQuizModal.questions.splice(idx, 1)
+}
+
+function addFinalQuizOption(qi) {
+    finalQuizModal.questions[qi].options.push('')
+}
+
+function removeFinalQuizOption(qi, oi) {
+    const q = finalQuizModal.questions[qi]
+    q.options.splice(oi, 1)
+    if (q.correctAnswer >= q.options.length) q.correctAnswer = 0
+}
+
+async function saveFinalQuiz() {
+    savingFinalQuiz.value = true
+    try {
+        await courseStore.saveFinalQuiz(courseId, finalQuizModal.questions)
+        // Refresh course data
+        const updated = await courseStore.getCourseById(courseId)
+        course.value = updated
+        finalQuizModal.open = false
+        toast.success('Final quiz saved')
+    } catch (e) {
+        toast.error(e?.response?.data?.message || 'Failed to save final quiz')
+    } finally {
+        savingFinalQuiz.value = false
+    }
+}
+
 const firstLessonId = computed(() => {
     if (!course.value?.blocks?.length) return null
     for (const block of course.value.blocks) {
@@ -542,12 +843,19 @@ onMounted(async () => {
             thumbnail: course.value.thumbnail || '',
             homeworkEnabled: course.value.homeworkEnabled || false
         })
+        settingsForm.homeworkEnabled = course.value.homeworkEnabled || false
     } catch (e) {
         console.error('fetchCourseById error:', e)
     } finally {
         loading.value = false
     }
 })
+
+watch(activeTab, (tab) => {
+    if (tab === 'grading' && !gradingSubmissions.value.length) loadGrading()
+})
+
+watch(gradingFilter, () => loadGrading())
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function toggleBlock(id) {
@@ -566,7 +874,8 @@ async function handleSave() {
     try {
         const updated = await courseStore.updateCourse(courseId, {
             title: course.value.title,
-            description: course.value.description
+            description: course.value.description,
+            homeworkEnabled: settingsForm.homeworkEnabled
         })
         refresh(updated)
         toast.success('Course saved')

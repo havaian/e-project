@@ -92,6 +92,11 @@ export const useCourseStore = defineStore('course', () => {
         return res.data.data
     }
 
+    async function saveFinalQuiz(courseId, questions) {
+        const res = await axios.put(`/courses/${courseId}/final-quiz`, { questions })
+        return res.data.data
+    }
+
     // ─── Lessons ──────────────────────────────────────────────────────────────
 
     async function addLesson(courseId, blockId, topicId, title) {
@@ -226,6 +231,11 @@ export const useCourseStore = defineStore('course', () => {
         return res.data.data  // { score, passed, correctCount, totalQuestions, answers }
     }
 
+    async function submitFinalQuizAttempt(courseId, answers) {
+        const res = await axios.post(`/courses/${courseId}/final-quiz/attempt`, { answers })
+        return res.data.data
+    }
+
     // ─── Upload thumbnail helpers ──────────────────────────────────────────
 
     async function uploadCourseThumbnail(courseId, file) {
@@ -265,6 +275,7 @@ export const useCourseStore = defineStore('course', () => {
         fetchMyLearning, getCourseContent,
         initiateEnrollment, confirmEnrollment,
         completeLesson, submitHomework, submitQuizAttempt,
-        uploadCourseThumbnail, uploadBlockThumbnail, uploadLessonThumbnail
+        uploadCourseThumbnail, uploadBlockThumbnail, uploadLessonThumbnail,
+        saveFinalQuiz, submitFinalQuizAttempt
     }
 })
