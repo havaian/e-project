@@ -328,7 +328,7 @@
                                 <label for="locale" class="label">{{ $t('editProfile.interfaceLanguageHint') }}</label>
                                 <select id="locale" v-model="formData.locale" class="input max-w-xs">
                                     <option v-for="loc in availableLocales" :key="loc.code" :value="loc.code">
-                                        {{ loc.flag }} {{ loc.name }}
+                                        <!-- {{ loc.flag }} --> {{ loc.name }}
                                     </option>
                                 </select>
                             </div>

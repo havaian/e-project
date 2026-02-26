@@ -13,7 +13,7 @@
         </button>
 
         <div v-if="isOpen"
-            class="absolute right-0 mt-1.5 w-44 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 border border-gray-100 py-1 z-50">
+            class="absolute right-0 mt-1.5 w-44 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 border border-gray-100 z-50">
             <button v-for="locale in locales" :key="locale.code" @click="switchLocale(locale.code)"
                 class="w-full flex items-center space-x-3 px-4 py-2.5 text-sm transition-colors duration-150" :class="locale.code === currentLocaleCode
                     ? 'bg-sky-50 text-sky-700 font-medium'
