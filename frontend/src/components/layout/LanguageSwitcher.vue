@@ -4,7 +4,7 @@
         <button @click.stop="toggleDropdown"
             class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors duration-200"
             :title="$t('nav.changeLanguage')">
-            <span class="text-base leading-none">{{ currentLocaleFlag }}</span>
+            <!-- <span class="text-base leading-none">{{ currentLocaleFlag }}</span> -->
             <span class="uppercase text-xs font-semibold">{{ currentLocaleCode }}</span>
             <ChevronDownIcon :class="[
                 'h-3.5 w-3.5 text-gray-400 transition-transform duration-100',
@@ -18,7 +18,7 @@
                 class="w-full flex items-center space-x-3 px-4 py-2.5 text-sm transition-colors duration-150" :class="locale.code === currentLocaleCode
                     ? 'bg-sky-50 text-sky-700 font-medium'
                     : 'text-gray-700 hover:bg-gray-50'">
-                <span class="text-base leading-none">{{ locale.flag }}</span>
+                <!-- <span class="text-base leading-none">{{ locale.flag }}</span> -->
                 <span>{{ locale.name }}</span>
                 <CheckIcon v-if="locale.code === currentLocaleCode" class="w-4 h-4 ml-auto text-sky-500" />
             </button>
