@@ -4,10 +4,9 @@
         <div class="bg-gradient-to-r from-sky-600 to-cyan-600 text-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <div class="text-center">
-                    <h1 class="text-5xl font-bold mb-6">About {{ companyName }}</h1>
+                    <h1 class="text-5xl font-bold mb-6">{{ $t('about.heroTitle', { company: companyName }) }}</h1>
                     <p class="text-xl text-sky-100 max-w-3xl mx-auto leading-relaxed">
-                        Transforming education through innovative online consultation services that connect students,
-                        educators, and professionals in a secure environment.
+                        {{ $t('about.heroDescription') }}
                     </p>
                 </div>
             </div>
@@ -18,23 +17,18 @@
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <div>
-                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Our mission</h2>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">{{ $t('about.missionTitle') }}</h2>
                         <p class="text-gray-700 text-lg leading-relaxed mb-6">
-                            To democratize access to quality support and professional consultation services
-                            by leveraging cutting-edge technology while maintaining the highest standards of privacy,
-                            security, and compliance.
+                            {{ $t('about.missionText1') }}
                         </p>
                         <p class="text-gray-700 leading-relaxed">
-                            We believe every student deserves access to personalized support that helps them achieve
-                            their full potential, regardless of geographic location or institutional resources.
+                            {{ $t('about.missionText2') }}
                         </p>
                     </div>
                     <div class="bg-gradient-to-br from-sky-50 to-cyan-50 rounded-2xl p-8">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Our vision</h3>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('about.visionTitle') }}</h3>
                         <p class="text-gray-700 leading-relaxed">
-                            To become the leading platform for consultation services, fostering a global
-                            community where learning has no boundaries and every challenge can be addressed
-                            through expert guidance and collaborative support.
+                            {{ $t('about.visionText') }}
                         </p>
                     </div>
                 </div>
@@ -45,7 +39,7 @@
         <div class="bg-white py-20">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Our story</h2>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">{{ $t('about.storyTitle') }}</h2>
                     <div class="w-24 h-1 bg-gradient-to-r from-sky-500 to-cyan-500 mx-auto"></div>
                 </div>
 
@@ -54,10 +48,9 @@
                         <div class="bg-sky-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <span class="text-2xl font-bold text-sky-600">2020</span>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-3">The beginning</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ $t('about.story2020Title') }}</h3>
                         <p class="text-gray-600">
-                            Founded with a vision to bridge the gap between students and expert support
-                            during the global shift to remote learning.
+                            {{ $t('about.story2020Text') }}
                         </p>
                     </div>
 
@@ -66,10 +59,9 @@
                             class="bg-emerald-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <span class="text-2xl font-bold text-emerald-600">2022</span>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Growth & innovation</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ $t('about.story2022Title') }}</h3>
                         <p class="text-gray-600">
-                            Expanded our platform capabilities serving over 10,000
-                            students across 200+ institutions.
+                            {{ $t('about.story2022Text') }}
                         </p>
                     </div>
 
@@ -77,10 +69,9 @@
                         <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <span class="text-2xl font-bold text-purple-600">2025</span>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Leading the future</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ $t('about.story2025Title') }}</h3>
                         <p class="text-gray-600">
-                            Continuing to innovate with AI-powered matching, advanced analytics, and expanded
-                            global reach to serve the evolving needs of modern education.
+                            {{ $t('about.story2025Text') }}
                         </p>
                     </div>
                 </div>
@@ -91,9 +82,9 @@
         <div class="py-20 bg-gradient-to-br from-gray-50 to-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Our core values</h2>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">{{ $t('about.valuesTitle') }}</h2>
                     <p class="text-gray-600 max-w-2xl mx-auto">
-                        These principles guide every decision we make and every feature we build.
+                        {{ $t('about.valuesSubtitle') }}
                     </p>
                 </div>
 
@@ -102,9 +93,9 @@
                         <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <ShieldCheckIcon class="w-8 h-8 text-blue-600" />
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Privacy & security</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('about.valuePrivacy') }}</h3>
                         <p class="text-gray-600 text-sm">
-                            We prioritize the protection of student data and maintain the highest security standards.
+                            {{ $t('about.valuePrivacyDesc') }}
                         </p>
                     </div>
 
@@ -112,10 +103,9 @@
                         <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <BookOpenIcon class="w-8 h-8 text-green-600" />
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Educational excellence</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('about.valueExcellence') }}</h3>
                         <p class="text-gray-600 text-sm">
-                            We connect students with verified, qualified professionals who are passionate about
-                            education.
+                            {{ $t('about.valueExcellenceDesc') }}
                         </p>
                     </div>
 
@@ -123,9 +113,9 @@
                         <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <BoltIcon class="w-8 h-8 text-purple-600" />
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Innovation</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('about.valueInnovation') }}</h3>
                         <p class="text-gray-600 text-sm">
-                            We continuously evolve our platform to meet the changing needs of modern education.
+                            {{ $t('about.valueInnovationDesc') }}
                         </p>
                     </div>
 
@@ -133,9 +123,9 @@
                         <div class="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                             <UsersIcon class="w-8 h-8 text-orange-600" />
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Accessibility</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('about.valueAccessibility') }}</h3>
                         <p class="text-gray-600 text-sm">
-                            We ensure our platform is accessible to all users, regardless of ability or circumstance.
+                            {{ $t('about.valueAccessibilityDesc') }}
                         </p>
                     </div>
                 </div>
@@ -146,9 +136,9 @@
         <div class="py-20 bg-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Meet our leadership team</h2>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">{{ $t('about.teamTitle') }}</h2>
                     <p class="text-gray-600 max-w-2xl mx-auto">
-                        Passionate educators and technologists dedicated to transforming support services.
+                        {{ $t('about.teamSubtitle') }}
                     </p>
                 </div>
 
@@ -159,10 +149,9 @@
                             <span class="text-3xl font-bold text-white">CEO</span>
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Dr. Sarah Chen</h3>
-                        <p class="text-sky-600 font-medium mb-3">Chief executive officer</p>
+                        <p class="text-sky-600 font-medium mb-3">{{ $t('about.roleCEO') }}</p>
                         <p class="text-gray-600 text-sm">
-                            Former education administrator with 15+ years of experience in technology
-                            and student support services.
+                            {{ $t('about.bioCEO') }}
                         </p>
                     </div>
 
@@ -172,10 +161,9 @@
                             <span class="text-3xl font-bold text-white">CTO</span>
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Michael Rodriguez</h3>
-                        <p class="text-emerald-600 font-medium mb-3">Chief technology officer</p>
+                        <p class="text-emerald-600 font-medium mb-3">{{ $t('about.roleCTO') }}</p>
                         <p class="text-gray-600 text-sm">
-                            Technology leader with expertise in secure platform development and compliance
-                            standards.
+                            {{ $t('about.bioCTO') }}
                         </p>
                     </div>
 
@@ -185,10 +173,9 @@
                             <span class="text-3xl font-bold text-white">CPO</span>
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Dr. Emily Johnson</h3>
-                        <p class="text-purple-600 font-medium mb-3">Chief product officer</p>
+                        <p class="text-purple-600 font-medium mb-3">{{ $t('about.roleCPO') }}</p>
                         <p class="text-gray-600 text-sm">
-                            Product strategist focused on user experience and outcomes, with a background
-                            in learning sciences and UX design.
+                            {{ $t('about.bioCPO') }}
                         </p>
                     </div>
                 </div>
@@ -199,28 +186,28 @@
         <div class="py-20 bg-gradient-to-r from-sky-600 to-cyan-600 text-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold mb-4">Our impact</h2>
+                    <h2 class="text-3xl font-bold mb-4">{{ $t('about.impactTitle') }}</h2>
                     <p class="text-sky-100 max-w-2xl mx-auto">
-                        Making a difference in education, one consultation at a time.
+                        {{ $t('about.impactSubtitle') }}
                     </p>
                 </div>
 
                 <div class="grid md:grid-cols-4 gap-8 text-center">
                     <div>
                         <div class="text-4xl font-bold mb-2">50,000+</div>
-                        <div class="text-sky-200">students served</div>
+                        <div class="text-sky-200">{{ $t('about.statStudents') }}</div>
                     </div>
                     <div>
                         <div class="text-4xl font-bold mb-2">500+</div>
-                        <div class="text-sky-200">verified providers</div>
+                        <div class="text-sky-200">{{ $t('about.statProviders') }}</div>
                     </div>
                     <div>
                         <div class="text-4xl font-bold mb-2">300+</div>
-                        <div class="text-sky-200">partner institutions</div>
+                        <div class="text-sky-200">{{ $t('about.statInstitutions') }}</div>
                     </div>
                     <div>
                         <div class="text-4xl font-bold mb-2">98%</div>
-                        <div class="text-sky-200">satisfaction rate</div>
+                        <div class="text-sky-200">{{ $t('about.statSatisfaction') }}</div>
                     </div>
                 </div>
             </div>
@@ -230,9 +217,9 @@
         <div class="py-20 bg-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Certifications & compliance</h2>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">{{ $t('about.certificationsTitle') }}</h2>
                     <p class="text-gray-600 max-w-2xl mx-auto">
-                        We maintain the highest standards of security, privacy, and compliance.
+                        {{ $t('about.certificationsSubtitle') }}
                     </p>
                 </div>
             </div>
@@ -241,17 +228,16 @@
         <!-- Contact CTA -->
         <div class="py-20 bg-gradient-to-br from-gray-50 to-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready to join our mission?</h2>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">{{ $t('about.ctaTitle') }}</h2>
                 <p class="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
-                    Whether you're an educator looking to make a difference or a student seeking support,
-                    we invite you to be part of our growing community.
+                    {{ $t('about.ctaDescription') }}
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <router-link to="/register" class="btn-primary px-8 py-3">
-                        Get started today
+                        {{ $t('about.ctaGetStarted') }}
                     </router-link>
                     <router-link to="/contact" class="btn-secondary px-8 py-3">
-                        Contact us
+                        {{ $t('about.ctaContact') }}
                     </router-link>
                 </div>
             </div>
@@ -261,15 +247,19 @@
 
 <script setup>
 import { ShieldCheckIcon, BookOpenIcon, BoltIcon, UsersIcon } from "@heroicons/vue/24/outline";
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 // Environment variables
 const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 
 // Meta tags
 import { useHead } from '@unhead/vue'
 useHead({
-    title: `About us | ${companyName}`,
+    title: `${t('about.metaTitle')} | ${companyName}`,
     meta: [
-        { name: 'description', content: `Learn about ${companyName}\'s mission to transform education through innovative online consultation services.` }
+        { name: 'description', content: t('about.metaDescription', { company: companyName }) }
     ]
 })
 </script>

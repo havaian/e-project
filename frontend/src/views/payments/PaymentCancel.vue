@@ -1,3 +1,4 @@
+<!-- frontend/src/views/payments/PaymentCancel.vue -->
 <template>
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full text-center">
@@ -6,19 +7,19 @@
             </div>
 
             <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
-                Payment cancelled
+                {{ $t('paymentCancel.title') }}
             </h2>
             <p class="mt-2 text-sm text-gray-600">
-                Your payment was not completed. No charges were made to your account.
+                {{ $t('paymentCancel.description') }}
             </p>
 
             <div class="mt-8 space-y-4">
                 <router-link :to="{ name: 'client-appointments' }" class="btn-primary w-full justify-center">
-                    Return to appointments
+                    {{ $t('paymentCancel.returnToAppointments') }}
                 </router-link>
 
                 <router-link to="/" class="btn-secondary w-full justify-center">
-                    Go home
+                    {{ $t('paymentCancel.goHome') }}
                 </router-link>
             </div>
         </div>

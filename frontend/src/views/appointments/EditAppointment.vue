@@ -8,8 +8,8 @@
                         <ArrowLeftIcon class="w-5 h-5" />
                     </router-link>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Reschedule Appointment</h1>
-                        <p class="text-gray-600">Change your appointment date and time</p>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ $t('reschedule.title') }}</h1>
+                        <p class="text-gray-600">{{ $t('reschedule.subtitle') }}</p>
                     </div>
                 </div>
             </div>
@@ -24,13 +24,13 @@
                 <div class="flex items-center space-x-3">
                     <ExclamationTriangleIcon class="w-6 h-6 text-red-500" />
                     <div>
-                        <h3 class="text-lg font-medium text-red-900">Unable to Load Appointment</h3>
+                        <h3 class="text-lg font-medium text-red-900">{{ $t('reschedule.unableToLoad') }}</h3>
                         <p class="text-red-700 mt-1">{{ error }}</p>
                     </div>
                 </div>
                 <div class="mt-4">
                     <router-link to="/appointments/me" class="btn-primary">
-                        Back to appointments
+                        {{ $t('reschedule.backToAppointments') }}
                     </router-link>
                 </div>
             </div>
@@ -40,28 +40,26 @@
                 <div class="flex items-start space-x-3">
                     <ExclamationTriangleIcon class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" />
                     <div>
-                        <h3 class="text-lg font-medium text-yellow-900">Cannot Reschedule</h3>
+                        <h3 class="text-lg font-medium text-yellow-900">{{ $t('reschedule.cannotReschedule') }}</h3>
                         <div class="text-yellow-700 mt-2 space-y-2">
                             <p v-if="appointment?.rescheduleCount >= 1">
-                                This appointment has already been rescheduled once. Only one reschedule is allowed per
-                                appointment.
+                                {{ $t('reschedule.alreadyRescheduled') }}
                             </p>
                             <p v-else-if="isWithin12Hours">
-                                Cannot reschedule appointments less than 12 hours before the scheduled time.
+                                {{ $t('reschedule.within12Hours') }}
                             </p>
                             <p v-else-if="appointment?.status !== 'scheduled'">
-                                Only scheduled appointments can be rescheduled. Current status: {{ appointment?.status
-                                }}
+                                {{ $t('reschedule.onlyScheduled', { status: appointment?.status }) }}
                             </p>
                             <p v-else>
-                                This appointment cannot be rescheduled at this time.
+                                {{ $t('reschedule.cannotRescheduleGeneric') }}
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="mt-4">
                     <router-link to="/appointments/me" class="btn-primary">
-                        Back to appointments
+                        {{ $t('reschedule.backToAppointments') }}
                     </router-link>
                 </div>
             </div>
@@ -70,22 +68,23 @@
             <form v-else @submit.prevent="rescheduleAppointment" class="space-y-6">
                 <!-- Current Appointment Info -->
                 <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                    <h3 class="text-lg font-medium text-blue-900 mb-4">Current Appointment</h3>
+                    <h3 class="text-lg font-medium text-blue-900 mb-4">{{ $t('reschedule.currentAppointment') }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                            <span class="text-blue-700 font-medium">Current Date & time:</span>
+                            <span class="text-blue-700 font-medium">{{ $t('reschedule.currentDateTime') }}:</span>
                             <p class="text-blue-900">{{ formatDateTime(appointment.dateTime) }}</p>
                         </div>
                         <div>
-                            <span class="text-blue-700 font-medium">Type:</span>
-                            <p class="text-blue-900 capitalize">{{ appointment.type || 'Video session' }}</p>
+                            <span class="text-blue-700 font-medium">{{ $t('reschedule.type') }}:</span>
+                            <p class="text-blue-900 capitalize">{{ appointment.type ||
+                                $t('clientAppointments.videoSession') }}</p>
                         </div>
                         <div>
-                            <span class="text-blue-700 font-medium">Provider:</span>
+                            <span class="text-blue-700 font-medium">{{ $t('appointmentDetail.provider') }}:</span>
                             <p class="text-blue-900">{{ getProviderName(appointment.provider) }}</p>
                         </div>
                         <div>
-                            <span class="text-blue-700 font-medium">Status:</span>
+                            <span class="text-blue-700 font-medium">{{ $t('reschedule.status') }}:</span>
                             <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
                                 :class="getStatusClass(appointment.status)">
                                 {{ appointment.status }}
@@ -99,12 +98,12 @@
                     <div class="flex items-start space-x-3">
                         <InformationCircleIcon class="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
                         <div class="text-amber-800">
-                            <h4 class="font-medium">Important Reschedule Information</h4>
+                            <h4 class="font-medium">{{ $t('reschedule.noticeTitle') }}</h4>
                             <ul class="mt-2 text-sm space-y-1">
-                                <li>• You can only reschedule once per appointment</li>
-                                <li>• Reschedule requests require provider approval</li>
-                                <li>• Must be done at least 12 hours before appointment time</li>
-                                <li>• Provider will be notified of your request</li>
+                                <li>• {{ $t('reschedule.notice1') }}</li>
+                                <li>• {{ $t('reschedule.notice2') }}</li>
+                                <li>• {{ $t('reschedule.notice3') }}</li>
+                                <li>• {{ $t('reschedule.notice4') }}</li>
                             </ul>
                         </div>
                     </div>
@@ -112,13 +111,13 @@
 
                 <!-- New Date and Time Selection -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-6">Select New Date & time</h2>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">{{ $t('reschedule.selectNewDateTime') }}</h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Date -->
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
-                                New Date <span class="text-red-500">*</span>
+                                {{ $t('reschedule.newDate') }} <span class="text-red-500">*</span>
                             </label>
                             <input id="date" v-model="formData.date" type="date" :min="minDate" :max="maxDate" required
                                 @change="loadAvailableTimeSlots"
@@ -128,19 +127,19 @@
                         <!-- Time -->
                         <div>
                             <label for="time" class="block text-sm font-medium text-gray-700 mb-2">
-                                New Time <span class="text-red-500">*</span>
+                                {{ $t('reschedule.newTime') }} <span class="text-red-500">*</span>
                             </label>
                             <select id="time" v-model="formData.time" required
                                 :disabled="!formData.date || availableTimeSlots.length === 0"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1 disabled:bg-gray-100">
-                                <option value="">Select time</option>
+                                <option value="">{{ $t('booking.selectTime') }}</option>
                                 <option v-for="slot in availableTimeSlots" :key="slot.value" :value="slot.value">
                                     {{ slot.label }}
                                 </option>
                             </select>
                             <p v-if="formData.date && availableTimeSlots.length === 0"
                                 class="text-sm text-amber-600 mt-2">
-                                No available time slots for selected date
+                                {{ $t('booking.noTimeSlotsForDate') }}
                             </p>
                         </div>
                     </div>
@@ -148,11 +147,10 @@
                     <!-- Reason for Reschedule -->
                     <div class="mt-6">
                         <label for="reason" class="block text-sm font-medium text-gray-700 mb-2">
-                            Reason for Reschedule (Optional)
+                            {{ $t('reschedule.reason') }}
                         </label>
                         <textarea id="reason" v-model="formData.reason" rows="3"
-                            placeholder="Please explain why you need to reschedule this appointment..."
-                            class="input"></textarea>
+                            :placeholder="$t('reschedule.reasonPlaceholder')" class="input"></textarea>
                     </div>
                 </div>
 
@@ -160,13 +158,13 @@
                 <div class="flex items-center justify-between pt-6 border-t border-gray-200">
                     <router-link to="/appointments/me"
                         class="px-6 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                        Cancel
+                        {{ $t('common.cancel') }}
                     </router-link>
 
                     <button type="submit" :disabled="saving || !formData.date || !formData.time"
                         class="px-6 py-2 text-sm text-white bg-brand-1 rounded-lg hover:bg-brand-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
-                        <span v-if="saving">Sending Request...</span>
-                        <span v-else>Send Reschedule Request</span>
+                        <span v-if="saving">{{ $t('reschedule.sendingRequest') }}</span>
+                        <span v-else>{{ $t('reschedule.sendRequest') }}</span>
                         <ArrowRightIcon v-if="!saving" class="w-4 h-4" />
                     </button>
                 </div>
@@ -179,6 +177,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { format, parseISO, addDays, isFuture, isWithinInterval, subHours } from 'date-fns'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 import {
     ArrowLeftIcon,
@@ -187,6 +186,7 @@ import {
     InformationCircleIcon
 } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -247,7 +247,7 @@ const loadAppointment = async () => {
         appointment.value = response.data.appointment
     } catch (err) {
         console.error('Error loading appointment:', err)
-        error.value = err.response?.data?.message || 'Failed to load appointment'
+        error.value = err.response?.data?.message || t('reschedule.loadFailed')
     } finally {
         loading.value = false
     }
@@ -288,11 +288,11 @@ const rescheduleAppointment = async () => {
         // Show success and redirect
         router.push({
             path: '/appointments/me',
-            query: { message: 'Reschedule request sent successfully. Waiting for provider confirmation.' }
+            query: { message: t('reschedule.success') }
         })
     } catch (err) {
         console.error('Error rescheduling appointment:', err)
-        error.value = err.response?.data?.message || 'Failed to reschedule appointment'
+        error.value = err.response?.data?.message || t('reschedule.failed')
     } finally {
         saving.value = false
     }
@@ -304,8 +304,8 @@ const formatDateTime = (dateTime) => {
 }
 
 const getProviderName = (provider) => {
-    if (!provider) return 'Unknown Provider'
-    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || 'Provider'
+    if (!provider) return t('booking.unknownProvider')
+    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || t('appointmentDetail.provider')
 }
 
 const getStatusClass = (status) => {

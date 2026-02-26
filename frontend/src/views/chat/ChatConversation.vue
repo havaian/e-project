@@ -15,11 +15,13 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import api from '@/plugins/axios'
 import { io } from 'socket.io-client'
 import ChatWindow from '@/components/chat/ChatWindow.vue'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
@@ -66,10 +68,10 @@ const recipient = computed(() => {
 })
 
 const recipientName = computed(() => {
-    if (!recipient.value) return 'Loading...'
+    if (!recipient.value) return t('common.loading')
     const first = recipient.value.firstName || ''
     const last = recipient.value.lastName || ''
-    return `${first} ${last}`.trim() || 'User'
+    return `${first} ${last}`.trim() || t('chatPage.user')
 })
 
 const recipientAvatar = computed(() => {
@@ -81,18 +83,18 @@ const recipientAvatar = computed(() => {
 
 const recipientStatus = computed(() => {
     if (recipientOnlineStatus.value.isOnline) {
-        return 'Online'
+        return t('chatPage.online')
     } else if (recipientOnlineStatus.value.lastSeen) {
         const lastSeenDate = new Date(recipientOnlineStatus.value.lastSeen)
         const now = new Date()
         const diffMinutes = Math.floor((now - lastSeenDate) / (1000 * 60))
 
-        if (diffMinutes < 1) return 'Last seen just now'
-        if (diffMinutes < 60) return `Last seen ${diffMinutes}m ago`
-        if (diffMinutes < 1440) return `Last seen ${Math.floor(diffMinutes / 60)}h ago`
-        return `Last seen ${Math.floor(diffMinutes / 1440)}d ago`
+        if (diffMinutes < 1) return t('chatPage.lastSeenJustNow')
+        if (diffMinutes < 60) return t('chatPage.lastSeenMinutes', { minutes: diffMinutes })
+        if (diffMinutes < 1440) return t('chatPage.lastSeenHours', { hours: Math.floor(diffMinutes / 60) })
+        return t('chatPage.lastSeenDays', { days: Math.floor(diffMinutes / 1440) })
     }
-    return 'Offline'
+    return t('chatPage.offline')
 })
 
 // API Functions
@@ -239,7 +241,7 @@ function handleMessageSubmit(messageText) {
 
     if (!socket.value?.connected) {
         console.error('Socket not connected')
-        toast.error('Connection lost. Please refresh the page.')
+        toast.error(t('chatPage.connectionLost'))
         return
     }
 
@@ -262,13 +264,13 @@ function handleMessageSubmit(messageText) {
             if (response && response.success) {
             } else {
                 console.error('Failed to send message:', response)
-                toast.error('Failed to send message. Please try again.')
+                toast.error(t('chatPage.sendFailed'))
             }
         })
 
     } catch (error) {
         console.error('Error sending message:', error)
-        toast.error('Error sending message. Please try again.')
+        toast.error(t('chatPage.sendError'))
     } finally {
         sending.value = false
     }

@@ -35,35 +35,36 @@
             </div>
 
             <div class="pt-2">
-              <p class="text-sm text-gray-400">Available</p>
-              <p class="text-white font-medium">24/7 support</p>
+              <p class="text-sm text-gray-400">{{ $t('footer.available') }}</p>
+              <p class="text-white font-medium">{{ $t('footer.support247') }}</p>
             </div>
           </div>
         </div>
 
         <!-- Quick Links -->
         <div class="col-span-1">
-          <h3 class="text-lg font-semibold mb-4 text-white">Quick links</h3>
+          <h3 class="text-lg font-semibold mb-4 text-white">{{ $t('footer.quickLinks') }}</h3>
           <ul class="space-y-3">
             <li>
-              <router-link to="/providers" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Find providers
+              <router-link v-if="isConsultationsEnabled" to="/providers"
+                class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
+                {{ $t('footer.findProviders') }}
               </router-link>
             </li>
             <li>
               <a :href="blogUrl" target="_blank" rel="noopener noreferrer"
                 class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Blog
+                {{ $t('footer.blog') }}
               </a>
             </li>
             <li>
               <router-link to="/about" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                About us
+                {{ $t('footer.aboutUs') }}
               </router-link>
             </li>
             <li>
               <router-link to="/contact" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Contact
+                {{ $t('footer.contact') }}
               </router-link>
             </li>
           </ul>
@@ -71,27 +72,27 @@
 
         <!-- Support -->
         <div class="col-span-1">
-          <h3 class="text-lg font-semibold mb-4 text-white">Support</h3>
+          <h3 class="text-lg font-semibold mb-4 text-white">{{ $t('footer.support') }}</h3>
           <ul class="space-y-3">
             <li>
               <router-link to="/help" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Help center
+                {{ $t('footer.helpCenter') }}
               </router-link>
             </li>
             <li>
               <router-link to="/faq" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                FAQ
+                {{ $t('footer.faq') }}
               </router-link>
             </li>
             <li>
               <a :href="`mailto:${supportEmail}`"
                 class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Contact support
+                {{ $t('footer.contactSupport') }}
               </a>
             </li>
             <li>
               <router-link to="/accessibility" class="text-gray-400 hover:text-sky-500 transition-colors duration-200">
-                Accessibility
+                {{ $t('footer.accessibility') }}
               </router-link>
             </li>
           </ul>
@@ -102,15 +103,15 @@
       <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
         <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
           <p class="text-gray-400 text-sm">
-            © {{ new Date().getFullYear() }} {{ companyName }}. All rights reserved.
+            © {{ new Date().getFullYear() }} {{ companyName }}. {{ $t('footer.allRightsReserved') }}
           </p>
           <div class="flex space-x-6">
             <router-link to="/privacy" class="text-gray-400 hover:text-sky-500 text-sm transition-colors duration-200">
-              Privacy policy
+              {{ $t('footer.privacyPolicy') }}
             </router-link>
             <router-link to="/public-offer"
               class="text-gray-400 hover:text-sky-500 text-sm transition-colors duration-200">
-              Public offer
+              {{ $t('footer.publicOffer') }}
             </router-link>
           </div>
         </div>
@@ -119,7 +120,7 @@
         <div class="flex items-center space-x-4 mt-4 md:mt-0">
           <div class="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
             <CheckBadgeIcon class="w-4 h-4 text-success" />
-            <span class="text-xs text-gray-300">SSL secured</span>
+            <span class="text-xs text-gray-300">{{ $t('footer.sslSecured') }}</span>
           </div>
           <div class="flex items-center space-x-2 bg-gray-800 rounded-lg px-3 py-2">
             <ShieldCheckIcon class="w-4 h-4 text-sky-500" />
@@ -132,6 +133,9 @@
 
 <script setup>
 import { PhoneIcon, EnvelopeIcon, CheckBadgeIcon, ShieldCheckIcon } from "@heroicons/vue/24/outline";
+import { useModules } from '@/composables/useModules'
+
+const { isConsultationsEnabled } = useModules()
 // Import environment variables
 const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 const appTitle1 = import.meta.env.VITE_APP_TITLE_1

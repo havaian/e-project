@@ -88,6 +88,20 @@ router.get('/me/availability',
 );
 
 /**
+ * @route GET /api/users/me/preferences
+ * @desc Get current user's preferences
+ * @access Private
+ */
+router.get('/me/preferences', authenticateUser, userController.getUserPreferences);
+
+/**
+ * @route PATCH /api/users/me/preferences
+ * @desc Update current user's preferences
+ * @access Private
+ */
+router.patch('/me/preferences', authenticateUser, userController.updateUserPreferences);
+
+/**
  * @route POST /api/users/change-password
  * @desc Change user password
  * @access Private

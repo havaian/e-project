@@ -18,11 +18,11 @@
             <!-- Sort options -->
             <select :value="sortBy" @change="$emit('sort-change', $event.target.value)"
                 class="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
-                <option value="dateTime">Date</option>
-                <option value="status">Status</option>
-                <option value="provider" v-if="userRole === 'client'">Provider</option>
-                <option value="client" v-if="userRole === 'provider'">Client</option>
-                <option value="type">Type</option>
+                <option value="dateTime">{{ $t('calendar.sortByDate') }}</option>
+                <option value="status">{{ $t('calendar.sortByStatus') }}</option>
+                <option value="provider" v-if="userRole === 'client'">{{ $t('calendar.sortByProvider') }}</option>
+                <option value="client" v-if="userRole === 'provider'">{{ $t('calendar.sortByClient') }}</option>
+                <option value="type">{{ $t('calendar.sortByType') }}</option>
             </select>
 
             <!-- Sort Direction -->
@@ -80,7 +80,7 @@
                         </button>
                     </template>
 
-                    <template v-if="userRole === 'client'">
+<template v-if="userRole === 'client'">
                         <div class="border-t border-gray-100 my-1"></div>
                         <button @click="handleQuickAction('book')"
                             class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -93,9 +93,9 @@
                             Favorite Providers
                         </button>
                     </template>
-                </div>
-            </div>
-        </div> -->
+</div>
+</div>
+</div> -->
     </div>
 </template>
 
@@ -117,6 +117,9 @@ import {
     HeartIcon
 } from '@heroicons/vue/24/outline'
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Props
 const props = defineProps({
@@ -170,12 +173,12 @@ const showActionsMenu = ref(false)
 const viewOptions = [
     {
         key: 'calendar',
-        label: 'Calendar',
+        label: t('calendar.calendarView'),
         icon: CalendarDaysIcon
     },
     {
         key: 'list',
-        label: 'List',
+        label: t('calendar.listView'),
         icon: Bars3Icon
     }
 ]

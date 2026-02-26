@@ -1096,6 +1096,70 @@ exports.getProviderAvailability = async (req, res) => {
     }
 };
 
+// Get user preferences
+exports.getUserPreferences = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('preferences');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            preferences: user.preferences || { language: 'en' }
+        });
+    } catch (error) {
+        console.error('Error fetching user preferences:', error);
+        res.status(500).json({ success: false, message: 'An error occurred while fetching preferences' });
+    }
+};
+
+// Update user preferences
+exports.updateUserPreferences = async (req, res) => {
+    try {
+        const { preferences } = req.body;
+
+        if (!preferences || typeof preferences !== 'object') {
+            return res.status(400).json({ success: false, message: 'Preferences object is required' });
+        }
+
+        // Validate language if provided
+        const validLanguages = ['en', 'ru', 'uz'];
+        if (preferences.language && !validLanguages.includes(preferences.language)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid language. Must be one of: ${validLanguages.join(', ')}`
+            });
+        }
+
+        // Build update object — only update fields that were provided
+        const updateFields = {};
+        if (preferences.language) {
+            updateFields['preferences.language'] = preferences.language;
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Preferences updated successfully',
+            preferences: user.preferences
+        });
+    } catch (error) {
+        console.error('Error updating user preferences:', error);
+        res.status(500).json({ success: false, message: 'An error occurred while updating preferences' });
+    }
+};
+
 // Helper functions
 const getDayName = (dayOfWeek) => {
     const dayNames = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

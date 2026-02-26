@@ -65,6 +65,12 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = response.data.user
       token.value = response.data.token
 
+      // Sync locale from user preferences
+      if (user.preferences?.language) {
+          const { changeLocale } = await import('@/utils/i18n')
+          changeLocale(user.preferences.language)
+      }
+
       localStorage.setItem('user', JSON.stringify(user.value))
       localStorage.setItem('token', token.value)
       axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`

@@ -29,7 +29,7 @@
                 <!-- Progress bar (clients only) -->
                 <div v-if="!isProviderPreview" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-semibold text-gray-700">Your Progress</span>
+                        <span class="text-sm font-semibold text-gray-700">{{ $t('courseLearn.yourProgress') }}</span>
                         <span class="text-sm font-bold text-sky-500">{{ progress?.percentComplete || 0 }}%</span>
                     </div>
                     <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -37,7 +37,9 @@
                             :style="{ width: (progress?.percentComplete || 0) + '%' }"></div>
                     </div>
                     <p class="text-xs text-gray-400 mt-2">
-                        {{ progress?.completedLessons?.length || 0 }} of {{ totalLessons }} lessons completed
+                        {{ $t('courseLearn.lessonsCompleted', {
+                            completed: progress?.completedLessons?.length || 0,
+                        total: totalLessons }) }}
                     </p>
                 </div>
 
@@ -51,11 +53,12 @@
                                 d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.007-9.963-7.178z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <strong>Preview Mode</strong> — you're viewing this as a student would see it.
+                        <span><strong>{{ $t('courseLearn.previewMode') }}</strong> — {{
+                            $t('courseLearn.previewModeDesc') }}</span>
                     </div>
                     <button @click="$router.push(`/courses/${courseId}/builder`)"
                         class="text-xs font-semibold text-amber-600 hover:text-amber-800 underline underline-offset-2">
-                        Back to Builder
+                        {{ $t('courseLearn.backToBuilder') }}
                     </button>
                 </div>
 
@@ -68,10 +71,13 @@
                             class="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
                             @click="toggleBlock(block._id)">
                             <div>
-                                <span class="font-semibold text-gray-900">Block {{ bi + 1 }}: {{ block.title }}</span>
+                                <span class="font-semibold text-gray-900">{{ $t('courseDetail.blockLabel', {
+                                    number: bi
+                                    + 1, title: block.title }) }}</span>
                                 <span class="ml-2 text-xs text-gray-400">
-                                    {{ blockLessonCount(block) }} lessons
-                                    <template v-if="block.quiz?.questions?.length"> · block quiz</template>
+                                    {{ $t('courseDetail.lessonsCount', { count: blockLessonCount(block) }) }}
+                                    <template v-if="block.quiz?.questions?.length"> · {{ $t('courseDetail.blockQuiz')
+                                        }}</template>
                                 </span>
                             </div>
                             <ChevronDownIcon class="w-4 h-4 text-gray-400 transition-transform"
@@ -108,9 +114,9 @@
                                             class="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
                                             <QuestionMarkCircleIcon class="w-3.5 h-3.5 text-violet-500" />
                                         </div>
-                                        <span class="text-sm text-violet-600 font-medium">Topic Quiz · {{
-                                            topic.quiz.questions.length }}
-                                            questions</span>
+                                        <span class="text-sm text-violet-600 font-medium">{{
+                                            $t('courseDetail.topicQuiz', { count:
+                                            topic.quiz.questions.length }) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -123,9 +129,9 @@
                                         class="w-6 h-6 rounded-full bg-sky-100 flex items-center justify-center shrink-0">
                                         <QuestionMarkCircleIcon class="w-3.5 h-3.5 text-sky-500" />
                                     </div>
-                                    <span class="text-sm text-sky-600 font-medium">Block Quiz · {{
-                                        block.quiz.questions.length }}
-                                        questions</span>
+                                    <span class="text-sm text-sky-600 font-medium">{{ $t('courseLearn.blockQuizLabel', {
+                                        count:
+                                        block.quiz.questions.length }) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -134,8 +140,8 @@
                 <!-- Rating card (clients only) -->
                 <div v-if="!isProviderPreview"
                     class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mt-6 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h3 class="text-base font-semibold text-gray-800 mb-1">Rate this course</h3>
-                    <p class="text-xs text-gray-400 mb-4">Your feedback helps the instructor improve.</p>
+                    <h3 class="text-base font-semibold text-gray-800 mb-1">{{ $t('courseLearn.rateCourse') }}</h3>
+                    <p class="text-xs text-gray-400 mb-4">{{ $t('courseLearn.rateHelps') }}</p>
 
                     <div class="flex items-center gap-2">
                         <button v-for="star in 5" :key="star" @click="hoverRating = 0; submitRating(star)"
@@ -149,22 +155,22 @@
                                     d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                             </svg>
                         </button>
-                        <span v-if="ratingSubmitting" class="text-xs text-gray-400 ml-2">Saving…</span>
+                        <span v-if="ratingSubmitting" class="text-xs text-gray-400 ml-2">{{ $t('courseLearn.saving')
+                            }}</span>
                         <span v-else-if="submittedRating" class="text-xs text-emerald-500 ml-2 font-semibold">
-                            Thanks for your rating!
+                            {{ $t('courseLearn.thanksForRating') }}
                         </span>
                     </div>
 
                     <p v-if="courseAvgRating" class="text-xs text-gray-400 mt-3">
-                        Course average: <span class="font-semibold text-gray-600">{{ courseAvgRating }} / 5</span>
-                        ({{ courseTotalRatings }} {{ courseTotalRatings === 1 ? 'rating' : 'ratings' }})
+                        {{ $t('courseLearn.courseAverage', { avg: courseAvgRating, total: courseTotalRatings }) }}
                     </p>
                 </div>
             </div>
         </template>
 
         <div v-else class="flex items-center justify-center py-32 text-gray-400 text-sm">
-            Course not found or you don't have access.
+            {{ $t('courseLearn.notFound') }}
         </div>
     </div>
 </template>
@@ -179,8 +185,10 @@ import {
 import axios from '@/plugins/axios'
 import { useCourseStore } from '@/stores/course'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
@@ -226,7 +234,7 @@ async function submitRating(value) {
         courseAvgRating.value = res.data.data.averageRating
         courseTotalRatings.value = res.data.data.totalRatings
     } catch (e) {
-        toast.error(e?.response?.data?.message || 'Failed to submit rating')
+        toast.error(e?.response?.data?.message || t('courseLearn.ratingFailed'))
     } finally {
         ratingSubmitting.value = false
     }

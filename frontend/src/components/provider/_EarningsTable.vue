@@ -8,8 +8,8 @@
         <!-- No Data State -->
         <div v-else-if="!tableData || tableData.length === 0" class="text-center py-12">
             <DocumentChartBarIcon class="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No earnings data</h3>
-            <p class="text-gray-500">Start completing appointments to see detailed earnings here.</p>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('earnings.noTableData') }}</h3>
+            <p class="text-gray-500">{{ $t('earnings.noTableDataDescription') }}</p>
         </div>
 
         <!-- Table -->
@@ -19,25 +19,25 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Period
+                                {{ $t('earnings.period') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Appointments
+                                {{ $t('earnings.appointments') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Total earnings
+                                {{ $t('earnings.totalEarnings') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Platform fee
+                                {{ $t('earnings.platformFee') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Net earnings
+                                {{ $t('earnings.netEarnings') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Completion rate
+                                {{ $t('earnings.completionRate') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Growth
+                                {{ $t('earnings.growth') }}
                             </th>
                         </tr>
                     </thead>
@@ -62,7 +62,7 @@
                                         {{ row.totalAppointments }}
                                     </div>
                                     <div class="text-xs text-gray-500">
-                                        {{ row.completedAppointments }} completed
+                                        {{ row.completedAppointments }} {{ $t('earnings.completed') }}
                                     </div>
                                 </div>
                             </td>
@@ -107,7 +107,8 @@
                             <!-- Growth -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div v-if="row.growthPercentage !== null" class="flex items-center space-x-1">
-                                    <ArrowTrendingUpIcon v-if="row.growthPercentage >= 0" class="w-4 h-4 text-green-500" />
+                                    <ArrowTrendingUpIcon v-if="row.growthPercentage >= 0"
+                                        class="w-4 h-4 text-green-500" />
                                     <ArrowTrendingDownIcon v-else class="w-4 h-4 text-red-500" />
                                     <span class="text-sm font-medium"
                                         :class="row.growthPercentage >= 0 ? 'text-green-600' : 'text-red-600'">
@@ -115,7 +116,7 @@
                                     </span>
                                 </div>
                                 <div v-else class="text-sm text-gray-400">
-                                    N/A
+                                    {{ $t('earnings.notAvailable') }}
                                 </div>
                             </td>
                         </tr>
@@ -127,19 +128,19 @@
             <div v-if="tableData.length > 0" class="bg-gray-50 px-6 py-4 border-t border-gray-200">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                        <span class="text-gray-600">Total periods:</span>
+                        <span class="text-gray-600">{{ $t('earnings.totalPeriods') }}</span>
                         <span class="font-medium text-gray-900 ml-2">{{ tableData.length }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-600">Total appointments:</span>
+                        <span class="text-gray-600">{{ $t('earnings.totalAppointments') }}</span>
                         <span class="font-medium text-gray-900 ml-2">{{ totalAppointments }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-600">Total earnings:</span>
+                        <span class="text-gray-600">{{ $t('earnings.totalEarnings') }}:</span>
                         <span class="font-medium text-gray-900 ml-2">{{ formatCurrency(totalEarnings) }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-600">Average per period:</span>
+                        <span class="text-gray-600">{{ $t('earnings.averagePerPeriod') }}</span>
                         <span class="font-medium text-gray-900 ml-2">{{ formatCurrency(averageEarnings) }}</span>
                     </div>
                 </div>
@@ -149,8 +150,7 @@
             <div v-if="tableData.length >= 10"
                 class="bg-white px-6 py-3 border-t border-gray-200 flex items-center justify-between">
                 <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium">{{ Math.min(tableData.length, 10) }}</span> of
-                    <span class="font-medium">{{ tableData.length }}</span> periods
+                    {{ $t('earnings.showing', { shown: Math.min(tableData.length, 10), total: tableData.length }) }}
                 </div>
                 <div class="text-sm text-gray-500">
                     <!-- Could add pagination controls here if needed -->
@@ -163,6 +163,9 @@
 <script setup>
 import { DocumentChartBarIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
     data: {
@@ -215,7 +218,7 @@ const getPeriodLabel = (item) => {
         const date = new Date(item.year, item.month - 1)
         return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     } else if (props.period === 'weekly') {
-        return `Week ${item.week}`
+        return `${t('earnings.week')} ${item.week}`
     } else {
         const date = new Date(item.year, item.month - 1, item.day)
         return date.toLocaleDateString('en-US', {

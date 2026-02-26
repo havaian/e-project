@@ -25,79 +25,80 @@
 
         <!-- Congratulations Header -->
         <div>
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Congratulations! 🎉</h2>
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">{{ $t('onboarding.congratulations') }}</h2>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Your provider profile is now complete and ready to accept appointments from clients.
+                {{ $t('onboarding.profileCompleteDesc') }}
             </p>
         </div>
 
         <!-- Achievement Stats -->
         <div class="bg-gradient-to-r from-sky-50 to-emerald-50 rounded-2xl p-8 border border-sky-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-6">What you've accomplished</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-6">{{ $t('onboarding.whatAccomplished') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="text-center">
                     <div class="w-16 h-16 bg-sky-500 rounded-full flex items-center justify-center mx-auto mb-3">
                         <BookOpenIcon class="w-8 h-8 text-white" />
                     </div>
-                    <h4 class="font-semibold text-gray-900">Profile created</h4>
-                    <p class="text-sm text-gray-600 mt-1">Complete professional profile with credentials</p>
+                    <h4 class="font-semibold text-gray-900">{{ $t('onboarding.profileCreated') }}</h4>
+                    <p class="text-sm text-gray-600 mt-1">{{ $t('onboarding.profileCreatedDesc') }}</p>
                 </div>
 
                 <div class="text-center">
                     <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3">
                         <ClockIcon class="w-8 h-8 text-white" />
                     </div>
-                    <h4 class="font-semibold text-gray-900">Schedule set</h4>
-                    <p class="text-sm text-gray-600 mt-1">Availability configured for client bookings</p>
+                    <h4 class="font-semibold text-gray-900">{{ $t('onboarding.scheduleSet') }}</h4>
+                    <p class="text-sm text-gray-600 mt-1">{{ $t('onboarding.scheduleSetDesc') }}</p>
                 </div>
 
                 <div class="text-center">
                     <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
                         <CurrencyDollarIcon class="w-8 h-8 text-white" />
                     </div>
-                    <h4 class="font-semibold text-gray-900">Pricing set</h4>
-                    <p class="text-sm text-gray-600 mt-1">Session fees configured and ready</p>
+                    <h4 class="font-semibold text-gray-900">{{ $t('onboarding.pricingSet') }}</h4>
+                    <p class="text-sm text-gray-600 mt-1">{{ $t('onboarding.pricingSetDesc') }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Quick Stats -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Your profile summary</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('onboarding.profileSummary') }}</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
                     <div class="text-2xl font-bold text-sky-600">{{ specializations.length }}</div>
-                    <div class="text-sm text-gray-600">{{ specializations.length === 1 ? 'Specialization' :
-                        'Specializations' }}</div>
+                    <div class="text-sm text-gray-600">{{ specializations.length === 1 ? $t('onboarding.specialization')
+                        : $t('onboarding.specializations') }}</div>
                 </div>
                 <div>
                     <div class="text-2xl font-bold text-emerald-600">{{ availableDays }}</div>
-                    <div class="text-sm text-gray-600">{{ availableDays === 1 ? 'Day' : 'Days' }} Available</div>
+                    <div class="text-sm text-gray-600">{{ availableDays === 1 ? $t('onboarding.dayAvailable') :
+                        $t('onboarding.daysAvailable') }}</div>
                 </div>
                 <div>
-                    <div class="text-2xl font-bold text-purple-600">{{ sessionDuration }}min</div>
-                    <div class="text-sm text-gray-600">Session length</div>
+                    <div class="text-2xl font-bold text-purple-600">{{ sessionDuration }}{{ $t('onboarding.minutes') }}
+                    </div>
+                    <div class="text-sm text-gray-600">{{ $t('onboarding.sessionLength') }}</div>
                 </div>
                 <div>
                     <div class="text-2xl font-bold text-orange-600">{{ languages.length }}</div>
-                    <div class="text-sm text-gray-600">{{ languages.length === 1 ? 'Language' : 'Languages' }}</div>
+                    <div class="text-sm text-gray-600">{{ languages.length === 1 ? $t('onboarding.language') :
+                        $t('onboarding.languages') }}</div>
                 </div>
             </div>
         </div>
 
         <!-- Next Steps -->
         <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
-            <h3 class="text-lg font-semibold text-blue-900 mb-4">What happens next?</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-4">{{ $t('onboarding.whatHappensNext') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                 <div class="flex items-start space-x-3">
                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                         <span class="text-white font-semibold text-sm">1</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Profile review</h4>
-                        <p class="text-sm text-blue-700 mt-1">
-                            Your profile will be reviewed by our team within 24 hours to ensure quality standards.
-                        </p>
+                        <h4 class="font-medium text-blue-900">{{ $t('onboarding.profileReview') }}</h4>
+                        <p class="text-sm text-blue-700 mt-1">{{ $t('onboarding.profileReviewDesc') }}</p>
                     </div>
                 </div>
 
@@ -106,10 +107,8 @@
                         <span class="text-white font-semibold text-sm">2</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Go live</h4>
-                        <p class="text-sm text-blue-700 mt-1">
-                            Once approved, your profile will be visible to clients and you can start receiving bookings.
-                        </p>
+                        <h4 class="font-medium text-blue-900">{{ $t('onboarding.goLive') }}</h4>
+                        <p class="text-sm text-blue-700 mt-1">{{ $t('onboarding.goLiveDesc') }}</p>
                     </div>
                 </div>
 
@@ -118,10 +117,8 @@
                         <span class="text-white font-semibold text-sm">3</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Start earning</h4>
-                        <p class="text-sm text-blue-700 mt-1">
-                            Begin accepting appointments and building your client base on our platform.
-                        </p>
+                        <h4 class="font-medium text-blue-900">{{ $t('onboarding.startEarning') }}</h4>
+                        <p class="text-sm text-blue-700 mt-1">{{ $t('onboarding.startEarningDesc') }}</p>
                     </div>
                 </div>
 
@@ -130,10 +127,8 @@
                         <span class="text-white font-semibold text-sm">4</span>
                     </div>
                     <div>
-                        <h4 class="font-medium text-blue-900">Ongoing support</h4>
-                        <p class="text-sm text-blue-700 mt-1">
-                            Our team is here to help you succeed with training resources and support.
-                        </p>
+                        <h4 class="font-medium text-blue-900">{{ $t('onboarding.ongoingSupport') }}</h4>
+                        <p class="text-sm text-blue-700 mt-1">{{ $t('onboarding.ongoingSupportDesc') }}</p>
                     </div>
                 </div>
             </div>
@@ -141,14 +136,14 @@
 
         <!-- Support Information -->
         <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Need help getting started?</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('onboarding.needHelp') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a :href="`mailto:${supportEmail}`"
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <EnvelopeIcon class="w-6 h-6 text-sky-500" />
                     <div class="text-left">
-                        <div class="font-medium text-gray-900">Email support</div>
-                        <div class="text-sm text-gray-600">Get help via email</div>
+                        <div class="font-medium text-gray-900">{{ $t('onboarding.emailSupport') }}</div>
+                        <div class="text-sm text-gray-600">{{ $t('onboarding.getHelpViaEmail') }}</div>
                     </div>
                 </a>
 
@@ -156,7 +151,7 @@
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <PhoneIcon class="w-6 h-6 text-sky-500" />
                     <div class="text-left">
-                        <div class="font-medium text-gray-900">Phone support</div>
+                        <div class="font-medium text-gray-900">{{ $t('onboarding.phoneSupport') }}</div>
                         <div class="text-sm text-gray-600">{{ supportPhone }}</div>
                     </div>
                 </a>
@@ -165,8 +160,8 @@
                     class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-colors">
                     <QuestionMarkCircleIcon class="w-6 h-6 text-sky-500" />
                     <div class="text-left">
-                        <div class="font-medium text-gray-900">Help center</div>
-                        <div class="text-sm text-gray-600">Browse FAQs & guides</div>
+                        <div class="font-medium text-gray-900">{{ $t('onboarding.helpCenter') }}</div>
+                        <div class="text-sm text-gray-600">{{ $t('onboarding.browseFaqs') }}</div>
                     </div>
                 </a>
             </div>
@@ -176,10 +171,10 @@
         <div class="pt-4">
             <button @click="$emit('finish')" class="btn-element-primary text-lg px-12 py-4">
                 <ArrowTrendingUpIcon class="w-5 h-5 mr-2" />
-                Go to my dashboard
+                {{ $t('onboarding.goToDashboard') }}
             </button>
             <p class="text-sm text-gray-500 mt-3">
-                You can always update your profile settings later from your dashboard
+                {{ $t('onboarding.updateLater') }}
             </p>
         </div>
     </div>

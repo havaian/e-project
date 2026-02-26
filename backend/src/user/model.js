@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { min } = require('date-fns/min');
 
 // Time slot schema for new availability system
 const timeSlotSchema = new mongoose.Schema({
@@ -139,6 +140,8 @@ const userSchema = new mongoose.Schema({
     }],
     sessionFee: {
         type: Number,
+        min: [10000, 'Session fee must be at least 10,000 UZS'],
+        max: [999999999, 'Session fee cannot exceed 999,999,999 UZS']
     },
 
     // Provider Analytics Fields
@@ -200,6 +203,15 @@ const userSchema = new mongoose.Schema({
     },
     termsAcceptedAt: {
         type: Date
+    },
+
+    // User preferences
+    preferences: {
+        language: {
+            type: String,
+            enum: ['en', 'ru', 'uz'],
+            default: 'en'
+        }
     },
 
     // Common fields

@@ -24,3 +24,18 @@ export const getBusinessModel = () => {
 export const shouldShowOrganizationFeatures = () => {
   return true // B2B features always available
 }
+
+// Check if consultations module is enabled (defaults to true)
+export const isConsultationsEnabled = () => {
+  return import.meta.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false'
+}
+
+// Check if courses module is enabled (defaults to true)
+export const isCoursesEnabled = () => {
+  return import.meta.env.VITE_MODULE_COURSES_ENABLED !== 'false'
+}
+
+// Check if chat is available (at least one core module must be on)
+export const isChatEnabled = () => {
+  return isConsultationsEnabled() || isCoursesEnabled()
+}

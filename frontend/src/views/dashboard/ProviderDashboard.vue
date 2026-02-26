@@ -1,3 +1,4 @@
+<!-- frontend/src/views/dashboard/ProviderDashboard.vue -->
 <template>
     <div class="min-h-screen bg-gray-50">
         <!-- Header -->
@@ -7,22 +8,22 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">
-                                Welcome back, {{ authStore.user?.firstName }}!
+                                {{ $t('providerDashboard.welcome', { name: authStore.user?.firstName }) }}
                             </h1>
                             <p class="mt-1 text-sm text-gray-600">
                                 {{ currentDate }} • {{ dashboardSummary?.upcomingAppointments?.length || 0 }}
-                                appointments today
+                                {{ $t('providerDashboard.appointmentsToday') }}
                             </p>
                         </div>
 
                         <div class="flex items-center space-x-4">
                             <router-link to="/profile/me" class="btn-secondary">
                                 <UserIcon class="w-5 h-5 mr-2" />
-                                View profile
+                                {{ $t('providerDashboard.viewProfile') }}
                             </router-link>
                             <router-link to="/appointments/me" class="btn-primary">
                                 <CalendarDaysIcon class="w-5 h-5 mr-2" />
-                                View all appointments
+                                {{ $t('providerDashboard.viewAllAppointments') }}
                             </router-link>
                         </div>
                     </div>
@@ -41,7 +42,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.todayAppointments }}</p>
-                            <p class="text-sm text-gray-600">Today's sessions</p>
+                            <p class="text-sm text-gray-600">{{ $t('providerDashboard.todaySessions') }}</p>
                         </div>
                     </div>
                 </div>
@@ -54,7 +55,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(stats.monthlyEarnings) }}</p>
-                            <p class="text-sm text-gray-600">This month</p>
+                            <p class="text-sm text-gray-600">{{ $t('providerDashboard.thisMonth') }}</p>
                         </div>
                     </div>
                 </div>
@@ -67,7 +68,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.totalClients }}</p>
-                            <p class="text-sm text-gray-600">Total clients</p>
+                            <p class="text-sm text-gray-600">{{ $t('providerDashboard.totalClients') }}</p>
                         </div>
                     </div>
                 </div>
@@ -80,7 +81,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.pendingConfirmations }}</p>
-                            <p class="text-sm text-gray-600">Pending</p>
+                            <p class="text-sm text-gray-600">{{ $t('providerDashboard.pending') }}</p>
                         </div>
                     </div>
                 </div>
@@ -96,17 +97,18 @@
                             <div class="flex items-center">
                                 <ExclamationCircleIcon class="w-6 h-6 text-orange-600 mr-3" />
                                 <div>
-                                    <h3 class="text-lg font-medium text-orange-900">Urgent: confirmations required</h3>
+                                    <h3 class="text-lg font-medium text-orange-900">{{
+                                        $t('providerDashboard.urgentConfirmations') }}</h3>
                                     <p class="text-sm text-orange-700 mt-1">
-                                        You have {{ dashboardSummary.pendingConfirmations.length }} appointment{{
-                                            dashboardSummary.pendingConfirmations.length > 1 ? 's' : '' }} waiting for your
-                                        confirmation.
+                                        {{ $t('providerDashboard.pendingCount', {
+                                            count:
+                                        dashboardSummary.pendingConfirmations.length }) }}
                                     </p>
                                 </div>
                             </div>
                             <router-link to="/appointments/me"
                                 class="px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors">
-                                Review now
+                                {{ $t('providerDashboard.reviewNow') }}
                             </router-link>
                         </div>
                     </div>
@@ -115,7 +117,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
-                                <h2 class="text-lg font-semibold text-gray-900">Today's schedule</h2>
+                                <h2 class="text-lg font-semibold text-gray-900">{{ $t('providerDashboard.todaySchedule')
+                                    }}</h2>
                                 <span class="text-sm text-gray-500">{{ currentDate }}</span>
                             </div>
                         </div>
@@ -156,7 +159,7 @@
                                             <p class="text-sm text-gray-600">
                                                 {{ formatTime(appointment.dateTime) }}
                                                 <span class="mx-2">•</span>
-                                                {{ appointment.type || 'Video session' }}
+                                                {{ appointment.type || $t('providerDashboard.videoSession') }}
                                             </p>
                                             <p v-if="appointment.shortDescription" class="text-xs text-gray-500 mt-1">
                                                 {{ appointment.shortDescription }}
@@ -169,7 +172,7 @@
                                         <button v-if="isWithinJoinWindow(appointment.dateTime)"
                                             @click="joinSession(appointment._id)" class="btn-primary px-3 py-1 text-xs">
                                             <VideoCameraIcon class="w-4 h-4 mr-1" />
-                                            Start
+                                            {{ $t('providerDashboard.start') }}
                                         </button>
 
                                         <!-- Time until appointment -->
@@ -190,10 +193,11 @@
                             <!-- Empty State -->
                             <div v-else class="text-center py-8">
                                 <CalendarDaysIcon class="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                <h3 class="text-lg font-medium text-gray-900 mb-2">No appointments today</h3>
-                                <p class="text-gray-600 mb-4">Enjoy your free time or update your availability</p>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">{{
+                                    $t('providerDashboard.noAppointmentsToday') }}</h3>
+                                <p class="text-gray-600 mb-4">{{ $t('providerDashboard.noAppointmentsTodayHint') }}</p>
                                 <router-link to="/profile/me" class="btn-secondary px-4 py-2">
-                                    Update availability
+                                    {{ $t('providerDashboard.updateAvailability') }}
                                 </router-link>
                             </div>
                         </div>
@@ -202,7 +206,8 @@
                     <!-- Recent activity -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
-                            <h2 class="text-lg font-semibold text-gray-900">Recent activity</h2>
+                            <h2 class="text-lg font-semibold text-gray-900">{{ $t('providerDashboard.recentActivity') }}
+                            </h2>
                         </div>
 
                         <div class="p-6">
@@ -226,7 +231,7 @@
 
                             <div v-else class="text-center py-6">
                                 <ClockIcon class="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                <p class="text-gray-500 text-sm">No recent activity</p>
+                                <p class="text-gray-500 text-sm">{{ $t('providerDashboard.noActivity') }}</p>
                             </div>
                         </div>
                     </div>
@@ -235,10 +240,11 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
-                                <h2 class="text-lg font-semibold text-gray-900">This week's overview</h2>
+                                <h2 class="text-lg font-semibold text-gray-900">{{ $t('providerDashboard.weekOverview')
+                                    }}</h2>
                                 <router-link to="/appointments/me"
                                     class="text-sm text-brand-1 hover:text-brand-1/80 font-medium">
-                                    View calendar
+                                    {{ $t('providerDashboard.viewCalendar') }}
                                 </router-link>
                             </div>
                         </div>
@@ -254,33 +260,36 @@
                 <div class="space-y-6">
                     <!-- Earnings summary -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Earnings overview</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('providerDashboard.earningsOverview')
+                            }}</h3>
 
                         <div class="space-y-4">
                             <div class="p-4 bg-green-50 rounded-lg">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium text-green-800">This month</span>
+                                    <span class="text-sm font-medium text-green-800">{{
+                                        $t('providerDashboard.thisMonth') }}</span>
                                     <span class="text-lg font-bold text-green-900">{{ formatCurrency(earnings.thisMonth)
                                         }}</span>
                                 </div>
                                 <div class="mt-1 text-xs text-green-600">
-                                    {{ earnings.thisMonthGrowth > 0 ? '+' : '' }}{{ earnings.thisMonthGrowth }}% from
-                                    last month
+                                    {{ earnings.thisMonthGrowth > 0 ? '+' : '' }}{{ earnings.thisMonthGrowth }}% {{
+                                        $t('providerDashboard.fromLastMonth') }}
                                 </div>
                             </div>
 
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">Last month</span>
+                                    <span class="text-sm text-gray-600">{{ $t('providerDashboard.lastMonth') }}</span>
                                     <span class="font-medium text-gray-900">{{ formatCurrency(earnings.lastMonth)
                                         }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">Total earned</span>
+                                    <span class="text-sm text-gray-600">{{ $t('providerDashboard.totalEarned') }}</span>
                                     <span class="font-medium text-gray-900">{{ formatCurrency(earnings.total) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">Average per session</span>
+                                    <span class="text-sm text-gray-600">{{ $t('providerDashboard.avgPerSession')
+                                        }}</span>
                                     <span class="font-medium text-gray-900">{{
                                         formatCurrency(earnings.averagePerSession) }}</span>
                                 </div>
@@ -289,18 +298,19 @@
 
                         <router-link to="/profile/me/dashboard"
                             class="block text-center text-brand-1 hover:text-brand-1/80 text-sm font-medium mt-4">
-                            View detailed analytics
+                            {{ $t('providerDashboard.viewAnalytics') }}
                         </router-link>
                     </div>
 
                     <!-- Performance Metrics -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('providerDashboard.performance') }}
+                        </h3>
 
                         <div class="space-y-4">
                             <!-- Rating -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Average rating</span>
+                                <span class="text-sm text-gray-600">{{ $t('providerDashboard.avgRating') }}</span>
                                 <div class="flex items-center space-x-1">
                                     <div class="flex items-center">
                                         <StarIcon v-for="i in 5" :key="i"
@@ -314,19 +324,19 @@
 
                             <!-- Response time -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Avg response time</span>
+                                <span class="text-sm text-gray-600">{{ $t('providerDashboard.avgResponse') }}</span>
                                 <span class="text-sm font-medium text-gray-900">{{ performance.responseTime }}</span>
                             </div>
 
                             <!-- Completion rate -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Completion rate</span>
+                                <span class="text-sm text-gray-600">{{ $t('providerDashboard.completionRate') }}</span>
                                 <span class="text-sm font-medium text-gray-900">{{ performance.completionRate }}%</span>
                             </div>
 
                             <!-- Profile views -->
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Profile views</span>
+                                <span class="text-sm text-gray-600">{{ $t('providerDashboard.profileViews') }}</span>
                                 <span class="text-sm font-medium text-gray-900">{{ performance.profileViews }}</span>
                             </div>
                         </div>
@@ -452,25 +462,25 @@ const loadRecentActivity = () => {
             id: 1,
             type: 'appointment_completed',
             message: 'Completed session with John Smith',
-            createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000) // 1 hour ago
+            createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000)
         },
         {
             id: 2,
             type: 'appointment_booked',
             message: 'New appointment booked by Sarah Johnson',
-            createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000) // 3 hours ago
+            createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000)
         },
         {
             id: 3,
             type: 'message_received',
             message: 'New message from Michael Brown',
-            createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000) // 6 hours ago
+            createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000)
         },
         {
             id: 4,
             type: 'payment_received',
             message: 'Payment received for session with Emma Davis',
-            createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000) // 12 hours ago
+            createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000)
         }
     ]
 }
@@ -512,7 +522,7 @@ const getTimeUntilAppointment = (dateTime) => {
 
     if (minutesUntil < 60) {
         return `in ${minutesUntil} min`
-    } else if (minutesUntil < 1440) { // 24 hours
+    } else if (minutesUntil < 1440) {
         const hours = Math.floor(minutesUntil / 60)
         return `in ${hours}h`
     } else {

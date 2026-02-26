@@ -5,8 +5,8 @@
 
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Grading Center</h1>
-                <p class="mt-1 text-gray-500">Evaluate student submissions and provide constructive feedback.</p>
+                <h1 class="text-3xl font-bold text-gray-900">{{ $t('gradingCenter.title') }}</h1>
+                <p class="mt-1 text-gray-500">{{ $t('gradingCenter.subtitle') }}</p>
             </div>
 
             <!-- Loading -->
@@ -34,15 +34,15 @@
                         <!-- Table header -->
                         <div
                             class="grid grid-cols-12 px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-50">
-                            <div class="col-span-4">Learner</div>
-                            <div class="col-span-4">Activity</div>
-                            <div class="col-span-2">Status</div>
-                            <div class="col-span-2 text-right">View</div>
+                            <div class="col-span-4">{{ $t('gradingCenter.learner') }}</div>
+                            <div class="col-span-4">{{ $t('gradingCenter.activity') }}</div>
+                            <div class="col-span-2">{{ $t('gradingCenter.status') }}</div>
+                            <div class="col-span-2 text-right">{{ $t('gradingCenter.view') }}</div>
                         </div>
 
                         <!-- Rows -->
                         <div v-if="!submissions.length" class="px-5 py-12 text-center text-gray-400 text-sm">
-                            No submissions {{ activeFilter !== 'all' ? `with status "${activeFilter}"` : '' }}
+                            {{ $t('gradingCenter.noSubmissions') }}
                         </div>
 
                         <div v-for="sub in submissions" :key="sub._id"
@@ -61,7 +61,8 @@
 
                             <!-- Activity -->
                             <div class="col-span-4">
-                                <p class="text-sm font-medium text-gray-800">{{ sub.lessonTitle || 'Assignment' }}</p>
+                                <p class="text-sm font-medium text-gray-800">{{ sub.lessonTitle ||
+                                    $t('gradingCenter.assignment') }}</p>
                                 <p class="text-xs text-gray-400 uppercase tracking-wide mt-0.5">{{ sub.courseTitle }}
                                 </p>
                             </div>
@@ -73,7 +74,8 @@
                                     'border-emerald-300 text-emerald-600 bg-emerald-50': sub.status === 'graded',
                                     'border-orange-300 text-orange-600 bg-orange-50': sub.status === 'revision_requested'
                                 }">
-                                    {{ sub.status.replace('_', ' ').toUpperCase() }}
+                                    {{ sub.status === 'pending' ? $t('gradingCenter.pending') : sub.status === 'graded'
+                                        ? $t('gradingCenter.graded') : $t('gradingCenter.revisionRequested') }}
                                 </span>
                             </div>
 
@@ -93,8 +95,8 @@
                                 class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <CheckIcon class="w-7 h-7 text-white/80" />
                             </div>
-                            <p class="font-semibold text-base mb-1">Select a task to grade</p>
-                            <p class="text-sm text-gray-400">Active learners waiting for your feedback.</p>
+                            <p class="font-semibold text-base mb-1">{{ $t('gradingCenter.selectTask') }}</p>
+                            <p class="text-sm text-gray-400">{{ $t('gradingCenter.activeLearners') }}</p>
                         </div>
 
                         <!-- Grading panel -->
@@ -107,7 +109,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900">{{ selectedSub.client?.firstName
-                                            }} {{ selectedSub.client?.lastName }}</p>
+                                        }} {{ selectedSub.client?.lastName }}</p>
                                         <p class="text-xs text-gray-400">{{ formatDate(selectedSub.submittedAt) }}</p>
                                     </div>
                                 </div>
@@ -119,15 +121,15 @@
                             <!-- Submission content -->
                             <div class="px-5 py-4 space-y-4">
                                 <div v-if="selectedSub.submissionText">
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                                        Submission</p>
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{{
+                                        $t('gradingCenter.submission') }}</p>
                                     <p class="text-sm text-gray-700 bg-gray-50 rounded-xl p-3 whitespace-pre-wrap">{{
                                         selectedSub.submissionText }}</p>
                                 </div>
 
                                 <div v-if="selectedSub.attachments?.length">
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                                        Attachments</p>
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{{
+                                        $t('gradingCenter.attachments') }}</p>
                                     <div class="space-y-1">
                                         <a v-for="att in selectedSub.attachments" :key="att.fileUrl" :href="att.fileUrl"
                                             target="_blank"
@@ -140,29 +142,29 @@
 
                                 <!-- Grade form -->
                                 <div>
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Grade
-                                        (0–100)</p>
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{{
+                                        $t('gradingCenter.gradeLabel') }}</p>
                                     <input v-model.number="gradeForm.grade" type="number" min="0" max="100"
-                                        placeholder="e.g. 85"
+                                        :placeholder="$t('gradingCenter.gradePlaceholder')"
                                         class="input w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                                 </div>
 
                                 <div>
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                                        Feedback</p>
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{{
+                                        $t('gradingCenter.feedback') }}</p>
                                     <textarea v-model="gradeForm.feedback" rows="4"
-                                        placeholder="Constructive feedback for the learner..."
+                                        :placeholder="$t('gradingCenter.feedbackPlaceholder')"
                                         class="input resize-none"></textarea>
                                 </div>
 
                                 <div class="flex gap-2">
                                     <button @click="submitGrade('graded')" :disabled="grading"
                                         class="flex-1 bg-sky-500 hover:bg-sky-600 disabled:bg-sky-300 text-white font-semibold py-2.5 rounded-xl transition-colors text-xs">
-                                        {{ grading ? 'Saving…' : 'Submit Grade' }}
+                                        {{ grading ? $t('courseBuilder.saving') : $t('gradingCenter.submitGrade') }}
                                     </button>
                                     <button @click="submitGrade('revision_requested')" :disabled="grading"
                                         class="flex-1 border border-orange-300 text-orange-600 hover:bg-orange-50 font-semibold py-2.5 rounded-xl transition-colors text-xs">
-                                        Request Revision
+                                        {{ $t('gradingCenter.requestRevision') }}
                                     </button>
                                 </div>
                             </div>
@@ -176,11 +178,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { CheckIcon, ChevronRightIcon, DocumentIcon } from '@heroicons/vue/24/outline'
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const courseStore = useCourseStore()
@@ -193,12 +197,12 @@ const activeFilter = ref('all')
 
 const gradeForm = reactive({ grade: null, feedback: '' })
 
-const filters = [
-    { label: 'All', value: 'all' },
-    { label: 'Pending', value: 'pending' },
-    { label: 'Graded', value: 'graded' },
-    { label: 'Revision Requested', value: 'revision_requested' }
-]
+const filters = computed(() => [
+    { label: t('gradingCenter.all'), value: 'all' },
+    { label: t('gradingCenter.pending'), value: 'pending' },
+    { label: t('gradingCenter.graded'), value: 'graded' },
+    { label: t('gradingCenter.revisionRequested'), value: 'revision_requested' }
+])
 
 function formatDate(dateStr) {
     if (!dateStr) return ''
@@ -216,7 +220,6 @@ async function loadSubmissions() {
     try {
         const params = activeFilter.value !== 'all' ? { status: activeFilter.value } : {}
         submissions.value = await courseStore.fetchHomework(params)
-        // Deselect if current selection is no longer in list
         if (selectedSub.value && !submissions.value.find(s => s._id === selectedSub.value._id)) {
             selectedSub.value = null
         }
@@ -229,7 +232,7 @@ async function loadSubmissions() {
 
 async function submitGrade(status) {
     if (gradeForm.grade === null && status === 'graded') {
-        toast.error('Please enter a grade before submitting.')
+        toast.error(t('gradingCenter.gradeRequired'))
         return
     }
     grading.value = true
@@ -239,12 +242,11 @@ async function submitGrade(status) {
             feedback: gradeForm.feedback,
             status
         })
-        // Update in list
         const idx = submissions.value.findIndex(s => s._id === updated._id)
         if (idx !== -1) submissions.value[idx] = { ...submissions.value[idx], ...updated }
         selectedSub.value = { ...selectedSub.value, ...updated }
     } catch (e) {
-        toast.error(e?.response?.data?.message || 'Failed to save grade')
+        toast.error(e?.response?.data?.message || t('gradingCenter.gradeFailed'))
     } finally {
         grading.value = false
     }

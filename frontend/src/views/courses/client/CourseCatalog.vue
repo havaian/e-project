@@ -5,24 +5,24 @@
 
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Find Courses</h1>
-                <p class="mt-1 text-gray-500">Expand your skills with expert-led programs.</p>
+                <h1 class="text-3xl font-bold text-gray-900">{{ $t('courseCatalog.title') }}</h1>
+                <p class="mt-1 text-gray-500">{{ $t('courseCatalog.subtitle') }}</p>
             </div>
 
             <!-- Search + filter -->
             <div class="flex flex-col sm:flex-row gap-3 mb-8">
                 <div class="relative flex-1">
                     <MagnifyingGlassIcon class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input v-model="searchInput" type="text" placeholder="Search courses…"
+                    <input v-model="searchInput" type="text" :placeholder="$t('courseCatalog.searchPlaceholder')"
                         class="input w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white"
                         @keyup.enter="doSearch" />
                 </div>
-                <input v-model="categoryInput" type="text" placeholder="Category…"
+                <input v-model="categoryInput" type="text" :placeholder="$t('courseCatalog.categoryPlaceholder')"
                     class="input sm:w-48 border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white"
                     @keyup.enter="doSearch" />
                 <button @click="doSearch"
                     class="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
-                    Search
+                    {{ $t('courseCatalog.search') }}
                 </button>
             </div>
 
@@ -34,8 +34,8 @@
             <!-- Empty -->
             <div v-else-if="!courses.length" class="text-center py-24 text-gray-400">
                 <AcademicCapIcon class="w-12 h-12 mx-auto mb-3 opacity-40" />
-                <p class="font-medium">No courses found</p>
-                <p class="text-sm mt-1">Try a different search or category.</p>
+                <p class="font-medium">{{ $t('courseCatalog.noCourses') }}</p>
+                <p class="text-sm mt-1">{{ $t('courseCatalog.noCoursesHint') }}</p>
             </div>
 
             <!-- Grid -->
@@ -55,14 +55,16 @@
                     <!-- Body -->
                     <div class="p-5 flex flex-col flex-1">
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                            {{ [course.category, course.subcategory].filter(Boolean).join(' • ') || 'General' }}
+                            {{ [course.category, course.subcategory].filter(Boolean).join(' • ') ||
+                                $t('courseCatalog.general') }}
                         </p>
                         <h3 class="font-bold text-gray-900 text-base mb-3 line-clamp-2 flex-1">{{ course.title }}</h3>
 
                         <!-- Provider -->
                         <div class="flex items-center gap-2 mb-3">
                             <div class="w-6 h-6 rounded-full bg-sky-100 overflow-hidden">
-                                <img v-if="course.provider?.profilePicture" :src="$uploadsUrl(course.provider?.profilePicture)"
+                                <img v-if="course.provider?.profilePicture"
+                                    :src="$uploadsUrl(course.provider?.profilePicture)"
                                     class="w-full h-full object-cover" />
                                 <div v-else
                                     class="w-full h-full flex items-center justify-center text-sky-600 text-xs font-bold">
@@ -78,7 +80,7 @@
                             <div class="flex items-center gap-3 text-sm text-gray-500">
                                 <span class="flex items-center gap-1">
                                     <BookmarkIcon class="w-4 h-4" />
-                                    {{ lessonCount(course) }} lessons
+                                    {{ $t('courseCatalog.lessonsCount', { count: lessonCount(course) }) }}
                                 </span>
                                 <span v-if="avgRating(course)" class="flex items-center gap-1">
                                     <StarIcon class="w-4 h-4 text-amber-400 fill-amber-400" />
@@ -86,7 +88,7 @@
                                 </span>
                             </div>
                             <span class="text-sm font-bold text-gray-900">
-                                {{ course.price === 0 ? 'Free' : course.price.toLocaleString() + ' UZS' }}
+                                {{ course.price === 0 ? $t('courseCatalog.free') : course.price.toLocaleString() + 'UZS' }}
                             </span>
                         </div>
                     </div>

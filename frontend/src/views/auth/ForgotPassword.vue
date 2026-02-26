@@ -8,20 +8,20 @@
                         <KeyIcon class="h-8 w-8 text-brand-1" />
                     </div>
                     <h2 class="text-3xl font-extrabold text-gray-900">
-                        Forgot your password?
+                        {{ $t('authPages.forgotTitle') }}
                     </h2>
                     <p class="mt-3 text-gray-600">
-                        No worries! Enter your email address and we'll send you a link to reset your password.
+                        {{ $t('authPages.forgotDescription') }}
                     </p>
                 </div>
 
                 <form class="form-container" @submit.prevent="handleSubmit">
                     <div class="form-group">
-                        <label for="email" class="label">Email address</label>
+                        <label for="email" class="label">{{ $t('auth.email') }}</label>
                         <div class="input-group">
                             <input id="email" v-model="email" name="email" type="email" required class="input"
                                 :class="email && !isValidEmail ? 'error' : email && isValidEmail ? 'success' : ''"
-                                placeholder="Enter your email address" />
+                                :placeholder="$t('authPages.emailPlaceholder')" />
                             <div class="input-icon" v-if="email">
                                 <CheckIcon v-if="isValidEmail" class="h-5 w-5 text-green-500" />
                                 <XMarkIcon v-else class="h-5 w-5 text-red-500" />
@@ -29,7 +29,7 @@
                         </div>
                         <div v-if="email && !isValidEmail" class="error-message">
                             <ExclamationCircleIcon />
-                            Please enter a valid email address
+                            {{ $t('authPages.invalidEmail') }}
                         </div>
                     </div>
 
@@ -44,11 +44,11 @@
                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                     </path>
                                 </svg>
-                                Sending reset link...
+                                {{ $t('authPages.sendingResetLink') }}
                             </span>
                             <span v-else class="flex items-center justify-center">
                                 <EnvelopeIcon class="h-5 w-5 mr-2" />
-                                Send Reset Link
+                                {{ $t('authPages.sendResetLink') }}
                             </span>
                         </button>
                     </div>
@@ -65,7 +65,7 @@
                 <div class="text-center mt-6">
                     <router-link to="/login"
                         class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:from-brand-1 hover:to-brand-2 transition-buttery">
-                        ← Back to login
+                        ← {{ $t('authPages.backToLogin') }}
                     </router-link>
                 </div>
             </div>
@@ -77,25 +77,25 @@
                 </div>
 
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-3">
-                    Check your email
+                    {{ $t('authPages.checkEmail') }}
                 </h2>
                 <p class="text-gray-600 mb-6">
-                    We've sent password reset instructions to <strong>{{ email }}</strong>
+                    {{ $t('authPages.resetInstructionsSent', { email: email }) }}
                 </p>
 
                 <div class="bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-2xl p-4 mb-6">
                     <div class="flex items-start">
                         <InformationCircleIcon class="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
                         <div class="text-sm text-blue-700">
-                            <p class="font-medium">Didn't receive the email?</p>
-                            <p class="mt-1">Check your spam folder or try sending another reset link.</p>
+                            <p class="font-medium">{{ $t('authPages.didntReceive') }}</p>
+                            <p class="mt-1">{{ $t('authPages.checkSpam') }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-3">
                     <router-link to="/login" class="btn-primary w-full inline-block text-center">
-                        Return to login
+                        {{ $t('authPages.returnToLogin') }}
                     </router-link>
                 </div>
             </div>
@@ -106,7 +106,10 @@
 <script setup>
 import { KeyIcon, CheckIcon, XMarkIcon, ExclamationCircleIcon, EnvelopeIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
+
+const { t } = useI18n()
 
 const email = ref('')
 const loading = ref(false)
@@ -127,7 +130,7 @@ async function handleSubmit() {
         await axios.post('/users/forgot-password', { email: email.value })
         success.value = true
     } catch (err) {
-        error.value = err.response?.data?.message || 'Failed to process request'
+        error.value = err.response?.data?.message || t('authPages.requestFailed')
     } finally {
         loading.value = false
     }

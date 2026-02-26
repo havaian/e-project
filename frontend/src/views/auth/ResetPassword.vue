@@ -4,10 +4,10 @@
             class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10">
             <div>
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Reset your password
+                    {{ $t('authPages.resetTitle') }}
                 </h2>
                 <p class="mt-2 text-center text-sm text-gray-600">
-                    Please enter your new password.
+                    {{ $t('authPages.resetDescription') }}
                 </p>
             </div>
 
@@ -18,7 +18,7 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
-                            password reset successful! You can now login with your new password.
+                            {{ $t('authPages.resetSuccess') }}
                         </p>
                     </div>
                 </div>
@@ -26,11 +26,11 @@
 
             <form v-if="!success" class="form-container" @submit.prevent="handleSubmit">
                 <div class="form-group">
-                    <label for="password" class="label">New password</label>
+                    <label for="password" class="label">{{ $t('authPages.newPassword') }}</label>
                     <div class="input-group">
                         <input id="password" v-model="password" name="password"
                             :type="showPassword ? 'text' : 'password'" required class="input"
-                            placeholder="Enter new password" @input="validatePassword" />
+                            :placeholder="$t('authPages.newPasswordPlaceholder')" @input="validatePassword" />
                         <button type="button" @click="togglePassword" class="input-icon"
                             :class="showPassword ? 'active' : ''">
                             <!-- Eye with diagonal stroke (password hidden) -->
@@ -42,41 +42,41 @@
 
                     <!-- password requirements -->
                     <div class="mt-3 text-sm">
-                        <p class="text-gray-600 mb-2">Password must contain:</p>
+                        <p class="text-gray-600 mb-2">{{ $t('authPages.passwordMustContain') }}</p>
                         <div class="space-y-1">
                             <div class="flex items-center gap-2">
                                 <CheckCircleIcon class="h-4 w-4"
                                     :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                 <span :class="passwordValidation.minLength ? 'text-green-600' : 'text-gray-500'">
-                                    At least 8 characters
+                                    {{ $t('authPages.pwdMinLength') }}
                                 </span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <CheckCircleIcon class="h-4 w-4"
                                     :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                 <span :class="passwordValidation.hasUppercase ? 'text-green-600' : 'text-gray-500'">
-                                    One uppercase letter
+                                    {{ $t('authPages.pwdUppercase') }}
                                 </span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <CheckCircleIcon class="h-4 w-4"
                                     :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                 <span :class="passwordValidation.hasLowercase ? 'text-green-600' : 'text-gray-500'">
-                                    One lowercase letter
+                                    {{ $t('authPages.pwdLowercase') }}
                                 </span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <CheckCircleIcon class="h-4 w-4"
                                     :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                 <span :class="passwordValidation.hasNumber ? 'text-green-600' : 'text-gray-500'">
-                                    One number
+                                    {{ $t('authPages.pwdNumber') }}
                                 </span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <CheckCircleIcon class="h-4 w-4"
                                     :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                 <span :class="passwordValidation.hasSpecialChar ? 'text-green-600' : 'text-gray-500'">
-                                    One special character (!@#$%^&*)
+                                    {{ $t('authPages.pwdSpecialChar') }}
                                 </span>
                             </div>
                         </div>
@@ -84,11 +84,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="confirmPassword" class="label">Confirm password</label>
+                    <label for="confirmPassword" class="label">{{ $t('auth.confirmPassword') }}</label>
                     <div class="input-group">
                         <input id="confirmPassword" v-model="confirmPassword" name="confirmPassword"
                             :type="showConfirmPassword ? 'text' : 'password'" required class="input"
-                            placeholder="Confirm new password" />
+                            :placeholder="$t('authPages.confirmPasswordPlaceholder')" />
                         <button type="button" @click="toggleConfirmPassword" class="input-icon"
                             :class="showConfirmPassword ? 'active' : ''">
                             <!-- Eye with diagonal stroke (password hidden) -->
@@ -104,7 +104,7 @@
                             <CheckCircleIcon v-if="passwordsMatch" class="h-4 w-4 text-green-500" />
                             <XCircleIcon v-else class="h-4 w-4 text-red-500" />
                             <span :class="passwordsMatch ? 'text-green-600' : 'text-red-600'">
-                                {{ passwordsMatch ? 'Passwords match' : 'Passwords do not match' }}
+                                {{ passwordsMatch ? $t('authPages.passwordsMatch') : $t('authPages.passwordsNoMatch') }}
                             </span>
                         </div>
                     </div>
@@ -121,12 +121,12 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                 </path>
                             </svg>
-                            Resetting...
+                            {{ $t('authPages.resetting') }}
                         </span>
-                        <span v-else>Reset password</span>
+                        <span v-else>{{ $t('auth.resetPassword') }}</span>
                     </button>
                     <p v-if="!isValid && (password || confirmPassword)" class="mt-2 text-sm text-red-600 text-center">
-                        Please ensure your password meets all requirements and passwords match
+                        {{ $t('authPages.resetRequirementsNotMet') }}
                     </p>
                 </div>
 
@@ -142,7 +142,7 @@
             <div class="text-sm text-center">
                 <router-link to="/login"
                     class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:text-indigo-500">
-                    Back to login
+                    {{ $t('authPages.backToLogin') }}
                 </router-link>
             </div>
         </div>
@@ -153,8 +153,10 @@
 import { CheckCircleIcon, EyeIcon, EyeSlashIcon, ExclamationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -214,7 +216,7 @@ const toggleConfirmPassword = () => {
 async function handleSubmit() {
     try {
         if (!isValid.value) {
-            error.value = 'Please ensure your password meets all requirements and passwords match'
+            error.value = t('authPages.resetRequirementsNotMet')
             return
         }
 
@@ -232,7 +234,7 @@ async function handleSubmit() {
             router.push('/login')
         }, 3000)
     } catch (err) {
-        error.value = err.response?.data?.message || 'Failed to reset password'
+        error.value = err.response?.data?.message || t('authPages.resetFailed')
         success.value = false
     } finally {
         loading.value = false

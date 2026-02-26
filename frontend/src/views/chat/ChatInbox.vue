@@ -5,8 +5,8 @@
             <div class="p-6 border-b border-gray-200/50 bg-gradient-to-r from-brand-1/5 to-brand-2/5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Messages</h1>
-                        <p class="text-gray-600 mt-1">Stay connected with your appointments</p>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ $t('chatPage.messages') }}</h1>
+                        <p class="text-gray-600 mt-1">{{ $t('chatPage.stayConnected') }}</p>
                     </div>
                 </div>
             </div>
@@ -17,7 +17,7 @@
                     <div
                         class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-1 border-t-transparent">
                     </div>
-                    <p class="mt-4 text-gray-600">Loading your conversations...</p>
+                    <p class="mt-4 text-gray-600">{{ $t('chatPage.loadingConversations') }}</p>
                 </div>
 
                 <template v-else>
@@ -25,8 +25,8 @@
                         <div class="mx-auto h-16 w-16 text-gray-400 mb-4">
                             <ChatBubbleLeftRightIcon class="w-16 h-16" />
                         </div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">No conversations yet</h3>
-                        <p class="text-gray-500">Start chatting by booking an appointment or responding to messages</p>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('chatPage.noConversations') }}</h3>
+                        <p class="text-gray-500">{{ $t('chatPage.noConversationsDesc') }}</p>
                     </div>
 
                     <router-link v-for="conversation in conversations" :key="conversation._id"
@@ -65,7 +65,7 @@
                                 <div class="flex items-center justify-between">
                                     <p class="text-sm text-gray-600 truncate flex-1 mr-4"
                                         :class="conversation.unreadCount > 0 ? 'font-medium' : ''">
-                                        {{ conversation.lastMessage?.text || 'No messages yet' }}
+                                        {{ conversation.lastMessage?.text || $t('chatPage.noMessagesYet') }}
                                     </p>
 
                                     <!-- Message status Icon -->
@@ -73,11 +73,11 @@
                                         class="flex-shrink-0 relative">
                                         <!-- Double check for read messages, single for sent -->
                                         <div v-if="conversation.lastMessage.isRead" class="flex items-center"
-                                            title="Read">
+                                            :title="$t('chatPage.read')">
                                             <CheckIcon class="w-4 h-4 text-gray-400" />
                                             <CheckIcon class="w-4 h-4 text-gray-400 -ml-2.5" />
                                         </div>
-                                        <CheckIcon v-else class="w-4 h-4 text-gray-400" title="Sent" />
+                                        <CheckIcon v-else class="w-4 h-4 text-gray-400" :title="$t('chatPage.sent')" />
                                     </div>
                                 </div>
 
@@ -85,8 +85,9 @@
                                 <div class="mt-2">
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
                                         :class="getOtherParticipant(conversation).role === 'provider' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
-                                        {{ getOtherParticipant(conversation).role === 'provider' ? 'Healthcare provider'
-                                            : 'Client' }}
+                                        {{ getOtherParticipant(conversation).role === 'provider' ?
+                                            $t('chatPage.healthcareProvider')
+                                        : $t('chatPage.clientRole') }}
                                     </span>
                                 </div>
                             </div>
@@ -107,9 +108,11 @@
 import { ChatBubbleLeftRightIcon, CheckIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import { format, isToday, isYesterday, formatDistanceToNow } from 'date-fns'
 import axios from '@/plugins/axios'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 const conversations = ref([])
 const loading = ref(true)
@@ -119,7 +122,7 @@ function getOtherParticipant(conversation) {
 }
 
 function formatParticipantName(participant) {
-    if (!participant) return 'Unknown'
+    if (!participant) return t('chatPage.unknown')
     return participant.role === 'provider' ?
         `Dr. ${participant.firstName} ${participant.lastName}` :
         `${participant.firstName} ${participant.lastName}`
@@ -133,7 +136,7 @@ function formatTime(timestamp) {
     if (isToday(date)) {
         return format(date, 'h:mm a')
     } else if (isYesterday(date)) {
-        return 'Yesterday'
+        return t('chatPage.yesterday')
     } else {
         // Show relative time for older messages
         return formatDistanceToNow(date, { addSuffix: false })

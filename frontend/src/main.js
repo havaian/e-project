@@ -7,11 +7,13 @@ import router from './router'
 import './assets/main.css'
 import { useAuthStore } from '@/stores/auth'
 import globalsPlugin from '@/plugins/globals'
+import i18n from '@/utils/i18n'
 
 const app = createApp(App)
 const head = createHead() 
 
 app.use(createPinia())
+app.use(i18n)
 app.use(globalsPlugin)
 app.use(router)
 app.use(head)

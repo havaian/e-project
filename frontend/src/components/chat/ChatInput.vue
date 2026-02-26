@@ -2,7 +2,7 @@
     <form @submit.prevent="handleSubmit" class="flex space-x-3">
         <div class="flex-1 input-group">
             <input v-model="message" @input="handleInput" @keydown="handleKeydown" type="text" class="input pr-12"
-                placeholder="Type your message..." :disabled="disabled"
+                :placeholder="$t('chat.typeMessage')" :disabled="disabled"
                 :class="disabled ? 'opacity-50 cursor-not-allowed' : ''" />
             <button v-if="message.trim()" type="button" @click="clearMessage"
                 class="input-icon text-gray-400 hover:text-gray-600">

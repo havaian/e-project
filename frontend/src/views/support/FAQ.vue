@@ -1,11 +1,12 @@
+<!-- frontend/src/views/support/FAQ.vue -->
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
     <!-- Header -->
     <div class="bg-gradient-to-r from-sky-600 to-cyan-600 text-white">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="text-center">
-          <h1 class="text-4xl font-bold mb-4">Frequently asked questions</h1>
-          <p class="text-xl text-sky-100">Quick answers to the most common questions</p>
+          <h1 class="text-4xl font-bold mb-4">{{ $t('faq.title') }}</h1>
+          <p class="text-xl text-sky-100">{{ $t('faq.subtitle') }}</p>
         </div>
       </div>
     </div>
@@ -14,7 +15,7 @@
       <!-- Search -->
       <div class="mb-12">
         <div class="relative">
-          <input v-model="searchQuery" type="text" placeholder="Search FAQs..."
+          <input v-model="searchQuery" type="text" :placeholder="$t('faq.searchPlaceholder')"
             class="w-full px-6 py-4 text-gray-900 bg-white rounded-lg shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" />
           <MagnifyingGlassIcon class="absolute right-4 top-4 w-6 h-6 text-gray-400" />
         </div>
@@ -23,13 +24,13 @@
       <!-- Categories -->
       <div class="mb-12">
         <div class="flex flex-wrap gap-3 justify-center">
-          <button v-for="category in categories" :key="category" @click="activeCategory = category" :class="[
+          <button v-for="category in categories" :key="category.key" @click="activeCategory = category.key" :class="[
             'px-6 py-3 rounded-full font-medium transition-colors duration-200',
-            activeCategory === category
+            activeCategory === category.key
               ? 'bg-sky-600 text-white'
               : 'bg-white text-gray-700 hover:bg-sky-50 shadow-md'
           ]">
-            {{ category }}
+            {{ category.label }}
           </button>
         </div>
       </div>
@@ -56,28 +57,18 @@
       <!-- No Results -->
       <div v-if="filteredFAQs.length === 0" class="text-center py-12">
         <QuestionMarkCircleIcon class="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">No FAQs found</h3>
-        <p class="text-gray-600 mb-4">
-          We couldn't find any FAQs matching your search or category.
-        </p>
-        <router-link to="/contact" class="btn-primary">
-          Contact support
-        </router-link>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('faq.noResults') }}</h3>
+        <p class="text-gray-600 mb-4">{{ $t('faq.noResultsHint') }}</p>
+        <router-link to="/contact" class="btn-primary">{{ $t('faq.contactSupport') }}</router-link>
       </div>
 
       <!-- Contact section -->
       <div class="mt-16 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl p-8 text-center">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Still have questions?</h2>
-        <p class="text-gray-600 mb-6">
-          Can't find the answer you're looking for? Our support team is here to help.
-        </p>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('faq.stillHaveQuestions') }}</h2>
+        <p class="text-gray-600 mb-6">{{ $t('faq.stillHaveQuestionsHint') }}</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <router-link to="/contact" class="btn-primary px-6 py-3">
-            Contact support
-          </router-link>
-          <router-link to="/help" class="btn-secondary px-6 py-3">
-            Visit help center
-          </router-link>
+          <router-link to="/contact" class="btn-primary px-6 py-3">{{ $t('faq.contactSupport') }}</router-link>
+          <router-link to="/help" class="btn-secondary px-6 py-3">{{ $t('faq.visitHelpCenter') }}</router-link>
         </div>
       </div>
     </div>
@@ -86,8 +77,10 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { MagnifyingGlassIcon, ChevronDownIcon, QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
+const { t } = useI18n()
 const companyName = import.meta.env.VITE_APP_COMPANY_NAME
 
 // State
@@ -95,10 +88,18 @@ const searchQuery = ref('')
 const activeCategory = ref('All')
 const openFAQs = ref([])
 
-// Categories
-const categories = ['All', 'Getting started', 'Consultations', 'Billing', 'Technical', 'Privacy', 'Providers']
+// Categories - translated
+const categories = computed(() => [
+  { key: 'All', label: t('faq.catAll') },
+  { key: 'Getting started', label: t('faq.catGettingStarted') },
+  { key: 'Consultations', label: t('faq.catConsultations') },
+  { key: 'Billing', label: t('faq.catBilling') },
+  { key: 'Technical', label: t('faq.catTechnical') },
+  { key: 'Privacy', label: t('faq.catPrivacy') },
+  { key: 'Providers', label: t('faq.catProviders') }
+])
 
-// FAQ Data
+// FAQ Data — content stays as structured data; for full content i18n, use a CMS or separate content locale files
 const faqs = reactive([
   // Getting started
   {
@@ -145,7 +146,6 @@ const faqs = reactive([
       </ul>
     `
   },
-
   // Consultations
   {
     id: 4,
@@ -210,7 +210,6 @@ const faqs = reactive([
       <p class="mt-3">The session length is clearly displayed when booking, and you can discuss extending the session with your provider if needed.</p>
     `
   },
-
   // Billing
   {
     id: 8,
@@ -258,7 +257,6 @@ const faqs = reactive([
       <p class="mt-3">Refunds are processed within 5-7 business days to your original payment method.</p>
     `
   },
-
   // Technical
   {
     id: 11,
@@ -289,7 +287,7 @@ const faqs = reactive([
         <li>Try joining from a different browser or device</li>
         <li>Contact our technical support team immediately</li>
       </ol>
-      <p class="mt-3">Our support team is available 24/7 at <strong>${import.meta.env.VITE_SUPPORT_PHONE}</strong> or through our live chat feature.</p>
+      <p class="mt-3">Our support team is available 24/7 through our live chat feature.</p>
     `
   },
   {
@@ -307,7 +305,6 @@ const faqs = reactive([
       <p class="mt-3">We also offer native mobile apps for iOS and Android for an even better experience.</p>
     `
   },
-
   // Privacy
   {
     id: 14,
@@ -338,7 +335,6 @@ const faqs = reactive([
       <p class="mt-3">We never share your information with third parties without your explicit consent or legal requirement.</p>
     `
   },
-
   // Providers
   {
     id: 16,
@@ -396,12 +392,10 @@ const faqs = reactive([
 const filteredFAQs = computed(() => {
   let filtered = faqs
 
-  // Filter by category
   if (activeCategory.value !== 'All') {
     filtered = filtered.filter(faq => faq.category === activeCategory.value)
   }
 
-  // Filter by search query
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase()
     filtered = filtered.filter(faq =>

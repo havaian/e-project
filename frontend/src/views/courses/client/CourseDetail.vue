@@ -14,7 +14,8 @@
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <!-- Breadcrumb -->
                     <div class="flex items-center gap-2 text-xs text-gray-400 mb-4">
-                        <router-link to="/courses" class="hover:text-white transition-colors">Courses</router-link>
+                        <router-link to="/courses" class="hover:text-white transition-colors">{{
+                            $t('courseDetail.breadcrumbCourses') }}</router-link>
                         <span>/</span>
                         <span v-if="course.category" class="text-gray-300">{{ course.category }}</span>
                     </div>
@@ -36,9 +37,12 @@
                             </div>
                             <span class="text-gray-500">({{ course.ratings?.length || 0 }})</span>
                         </div>
-                        <!-- Students -->
-                        <span class="text-gray-400">{{ totalLessons }} lessons</span>
-                        <span class="text-gray-400">{{ course.blocks?.length || 0 }} blocks</span>
+                        <!-- Stats -->
+                        <span class="text-gray-400">{{ $t('courseDetail.lessonsCount', { count: totalLessons })
+                            }}</span>
+                        <span class="text-gray-400">{{ $t('courseDetail.blocksCount', {
+                            count: course.blocks?.length ||
+                            0 }) }}</span>
                         <!-- Category -->
                         <span v-if="course.subcategory" class="text-gray-400">{{ course.subcategory }}</span>
                     </div>
@@ -55,8 +59,8 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium">{{ course.provider?.firstName }} {{ course.provider?.lastName
-                                }}</p>
-                            <p class="text-xs text-gray-500">Instructor</p>
+                            }}</p>
+                            <p class="text-xs text-gray-500">{{ $t('courseDetail.instructor') }}</p>
                         </div>
                     </div>
                 </div>
@@ -71,7 +75,8 @@
 
                         <!-- What you'll learn -->
                         <div v-if="course.blocks?.length" class="bg-white rounded-2xl border border-gray-100 p-6">
-                            <h2 class="text-lg font-bold text-gray-900 mb-4">What you'll learn</h2>
+                            <h2 class="text-lg font-bold text-gray-900 mb-4">{{ $t('courseDetail.whatYoullLearn') }}
+                            </h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div v-for="topic in allTopics.slice(0, 8)" :key="topic._id"
                                     class="flex items-start gap-3">
@@ -84,10 +89,11 @@
                         <!-- Course content / curriculum -->
                         <div>
                             <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-lg font-bold text-gray-900">Course Content</h2>
+                                <h2 class="text-lg font-bold text-gray-900">{{ $t('courseDetail.courseContent') }}</h2>
                                 <p class="text-xs text-gray-400">
-                                    {{ course.blocks?.length || 0 }} blocks · {{ allTopics.length }} topics · {{
-                                    totalLessons }} lessons
+                                    {{ $t('courseDetail.contentSummary', {
+                                        blocks: course.blocks?.length || 0, topics:
+                                            allTopics.length, lessons: totalLessons }) }}
                                 </p>
                             </div>
 
@@ -102,12 +108,15 @@
                                             <ChevronDownIcon class="w-4 h-4 text-gray-400 transition-transform shrink-0"
                                                 :class="{ '-rotate-90': !expanded[block._id] }" />
                                             <div>
-                                                <span class="font-semibold text-gray-900 text-sm">Block {{ bi + 1 }}: {{
-                                                    block.title }}</span>
+                                                <span class="font-semibold text-gray-900 text-sm">{{
+                                                    $t('courseDetail.blockLabel', { number: bi + 1, title: block.title
+                                                    }) }}</span>
                                                 <span class="block text-xs text-gray-400 mt-0.5">
-                                                    {{ blockLessonCount(block) }} lessons
-                                                    <template v-if="block.quiz?.questions?.length"> · block
-                                                        quiz</template>
+                                                    {{ $t('courseDetail.lessonsCount', {
+                                                        count: blockLessonCount(block)
+                                                    }) }}
+                                                    <template v-if="block.quiz?.questions?.length"> · {{
+                                                        $t('courseDetail.blockQuiz') }}</template>
                                                 </span>
                                             </div>
                                         </div>
@@ -131,7 +140,8 @@
                                             <div v-if="topic.quiz?.questions?.length"
                                                 class="flex items-center gap-2 mt-2 text-xs text-sky-500 font-medium">
                                                 <QuestionMarkCircleIcon class="w-3.5 h-3.5" />
-                                                Topic Quiz · {{ topic.quiz.questions.length }} questions
+                                                {{ $t('courseDetail.topicQuiz', { count: topic.quiz.questions.length })
+                                                }}
                                             </div>
                                         </div>
                                     </div>
@@ -145,17 +155,19 @@
                                     <AcademicCapIcon class="w-4 h-4 text-violet-500" />
                                 </div>
                                 <div>
-                                    <p class="font-semibold text-gray-900 text-sm">Final Exam</p>
-                                    <p class="text-xs text-gray-400">{{ course.finalQuiz.questions.length }} questions ·
-                                        complete all lessons to
-                                        unlock</p>
+                                    <p class="font-semibold text-gray-900 text-sm">{{ $t('courseDetail.finalExam') }}
+                                    </p>
+                                    <p class="text-xs text-gray-400">{{ $t('courseDetail.finalExamDesc', {
+                                        count:
+                                        course.finalQuiz.questions.length
+                                        }) }}</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Instructor info -->
                         <div class="bg-white rounded-2xl border border-gray-100 p-6">
-                            <h2 class="text-lg font-bold text-gray-900 mb-4">Instructor</h2>
+                            <h2 class="text-lg font-bold text-gray-900 mb-4">{{ $t('courseDetail.instructor') }}</h2>
                             <div class="flex items-start gap-4">
                                 <div class="w-16 h-16 rounded-full bg-gray-100 overflow-hidden shrink-0">
                                     <img v-if="course.provider?.profilePicture"
@@ -191,14 +203,15 @@
                                 <div class="p-5 space-y-4">
                                     <!-- Price -->
                                     <p class="text-3xl font-extrabold text-gray-900">
-                                        {{ course.price === 0 ? 'Free' : course.price.toLocaleString() + ' UZS' }}
+                                        {{ course.price === 0 ? $t('courseDetail.free') : course.price.toLocaleString()
+                                        + ' UZS' }}
                                     </p>
 
                                     <!-- Already enrolled -->
                                     <div v-if="isEnrolled">
                                         <button @click="$router.push(`/courses/${course._id}/learn`)"
                                             class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl transition-colors text-sm">
-                                            Continue Learning →
+                                            {{ $t('courseDetail.continueLearning') }} →
                                         </button>
                                     </div>
 
@@ -206,22 +219,22 @@
                                     <div v-else-if="!authStore.isAuthenticated">
                                         <button @click="$router.push('/login')"
                                             class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 rounded-xl transition-colors text-sm">
-                                            Sign in to Enroll
+                                            {{ $t('courseDetail.signInToEnroll') }}
                                         </button>
                                     </div>
 
                                     <!-- Provider viewing -->
                                     <div v-else-if="authStore.isProvider">
-                                        <p class="text-xs text-gray-500 text-center">Provider accounts cannot enroll in
-                                            courses.</p>
+                                        <p class="text-xs text-gray-500 text-center">{{
+                                            $t('courseDetail.providerCannotEnroll') }}</p>
                                     </div>
 
                                     <!-- Enroll button -->
                                     <div v-else>
                                         <button @click="handleEnroll" :disabled="enrolling"
                                             class="w-full bg-sky-500 hover:bg-sky-600 disabled:bg-sky-300 text-white font-bold py-3.5 rounded-xl transition-colors text-sm">
-                                            {{ enrolling ? 'Processing…' : (course.price === 0 ? 'Enroll for Free' :
-                                            'Enroll Now') }}
+                                            {{ enrolling ? $t('courseDetail.processing') : (course.price === 0 ?
+                                                $t('courseDetail.enrollFree') : $t('courseDetail.enrollNow')) }}
                                         </button>
                                     </div>
 
@@ -229,21 +242,30 @@
                                     <div class="border-t border-gray-100 pt-4 space-y-3">
                                         <div class="flex items-center gap-3 text-sm">
                                             <BookmarkIcon class="w-4 h-4 text-gray-400 shrink-0" />
-                                            <span class="text-gray-600">{{ totalLessons }} lessons</span>
+                                            <span class="text-gray-600">{{ $t('courseDetail.lessonsCount', {
+                                                count:
+                                                totalLessons })
+                                                }}</span>
                                         </div>
                                         <div class="flex items-center gap-3 text-sm">
                                             <CubeIcon class="w-4 h-4 text-gray-400 shrink-0" />
-                                            <span class="text-gray-600">{{ course.blocks?.length || 0 }} blocks</span>
+                                            <span class="text-gray-600">{{ $t('courseDetail.blocksCount', {
+                                                count:
+                                                course.blocks?.length ||
+                                                0 }) }}</span>
                                         </div>
                                         <div v-if="course.finalQuiz?.questions?.length"
                                             class="flex items-center gap-3 text-sm">
                                             <AcademicCapIcon class="w-4 h-4 text-gray-400 shrink-0" />
-                                            <span class="text-gray-600">Final exam included</span>
+                                            <span class="text-gray-600">{{ $t('courseDetail.finalExamIncluded')
+                                                }}</span>
                                         </div>
                                         <div v-if="avgRating" class="flex items-center gap-3 text-sm">
                                             <StarIcon class="w-4 h-4 text-amber-400 fill-amber-400 shrink-0" />
-                                            <span class="text-gray-600">{{ avgRating }} rating ({{
-                                                course.ratings?.length }} reviews)</span>
+                                            <span class="text-gray-600">{{ $t('courseDetail.ratingInfo', {
+                                                rating:
+                                                avgRating, count:
+                                                course.ratings?.length }) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -258,8 +280,10 @@
 
         <!-- Not found -->
         <div v-else class="flex flex-col items-center justify-center py-32 text-gray-400 text-sm">
-            <p>Course not found or no longer available.</p>
-            <router-link to="/courses" class="text-sky-500 hover:underline mt-2 text-sm">Browse courses</router-link>
+            <p>{{ $t('courseDetail.notFound') }}</p>
+            <router-link to="/courses" class="text-sky-500 hover:underline mt-2 text-sm">{{
+                $t('courseDetail.browseCourses')
+                }}</router-link>
         </div>
 
     </div>
@@ -276,7 +300,9 @@ import {
 import { useAuthStore } from '@/stores/auth'
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
@@ -325,7 +351,7 @@ async function handleEnroll() {
             window.location.href = result.checkoutUrl
         }
     } catch (e) {
-        toast.error(e?.response?.data?.message || 'Enrollment failed. Please try again.')
+        toast.error(e?.response?.data?.message || t('courseDetail.enrollmentFailed'))
     } finally {
         enrolling.value = false
     }

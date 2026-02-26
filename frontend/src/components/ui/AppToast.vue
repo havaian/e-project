@@ -22,7 +22,8 @@
 
                 <!-- Dismiss -->
                 <button @click="toastStore.dismiss(toast.id)"
-                    class="ml-1 opacity-50 hover:opacity-100 transition-opacity shrink-0" aria-label="Dismiss">
+                    class="ml-1 opacity-50 hover:opacity-100 transition-opacity shrink-0"
+                    :aria-label="$t('common.close')">
                     <XMarkIcon class="w-4 h-4" />
                 </button>
             </div>

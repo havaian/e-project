@@ -2,13 +2,13 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Set your availability</h2>
-            <p class="mt-2 text-gray-600">Choose when you're available to meet with clients</p>
+            <h2 class="text-3xl font-bold text-gray-900">{{ $t('onboarding.setAvailability') }}</h2>
+            <p class="mt-2 text-gray-600">{{ $t('onboarding.chooseWhenAvailable') }}</p>
         </div>
 
         <!-- Weekly Schedule -->
         <div class="space-y-4">
-            <h3 class="text-lg font-semibold text-gray-900">Weekly schedule</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('onboarding.weeklySchedule') }}</h3>
 
             <!-- Debug info -->
             <div v-if="!modelValue.availability || modelValue.availability.length === 0"
@@ -36,7 +36,7 @@
                         <!-- Time Selection -->
                         <div v-if="day.isAvailable" class="flex items-center space-x-4">
                             <div class="flex items-center space-x-2">
-                                <label class="text-sm text-gray-600">From:</label>
+                                <label class="text-sm text-gray-600">{{ $t('onboarding.from') }}</label>
                                 <select :value="getFirstTimeSlot(day)?.startTime || '09:00'"
                                     @change="updateTimeSlot(day, 'start', $event.target.value)"
                                     class="text-sm border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500">
@@ -47,7 +47,7 @@
                             </div>
 
                             <div class="flex items-center space-x-2">
-                                <label class="text-sm text-gray-600">To:</label>
+                                <label class="text-sm text-gray-600">{{ $t('onboarding.to') }}</label>
                                 <select :value="getFirstTimeSlot(day)?.endTime || '17:00'"
                                     @change="updateTimeSlot(day, 'end', $event.target.value)"
                                     class="text-sm border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500">
@@ -61,7 +61,7 @@
                         </div>
 
                         <div v-else class="text-sm text-gray-400">
-                            Not available
+                            {{ $t('onboarding.notAvailable') }}
                         </div>
                     </div>
                 </div>
@@ -70,24 +70,24 @@
 
         <!-- Quick Setup Options -->
         <div class="space-y-4">
-            <h3 class="text-lg font-semibold text-gray-900">Quick setup</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('onboarding.quickSetup') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button @click="setPreset('business')"
                     class="p-4 border border-gray-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-colors text-left">
-                    <div class="font-medium text-gray-900">Business Hours</div>
-                    <div class="text-sm text-gray-600 mt-1">Mon-Fri, 9:00 AM - 5:00 PM</div>
+                    <div class="font-medium text-gray-900">{{ $t('onboarding.businessHours') }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ $t('onboarding.businessHoursDesc') }}</div>
                 </button>
 
                 <button @click="setPreset('flexible')"
                     class="p-4 border border-gray-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-colors text-left">
-                    <div class="font-medium text-gray-900">Flexible hours</div>
-                    <div class="text-sm text-gray-600 mt-1">Mon-Sat, 8:00 AM - 8:00 PM</div>
+                    <div class="font-medium text-gray-900">{{ $t('onboarding.flexibleHours') }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ $t('onboarding.flexibleHoursDesc') }}</div>
                 </button>
 
                 <button @click="setPreset('weekend')"
                     class="p-4 border border-gray-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-colors text-left">
-                    <div class="font-medium text-gray-900">Weekends only</div>
-                    <div class="text-sm text-gray-600 mt-1">Sat-Sun, 10:00 AM - 6:00 PM</div>
+                    <div class="font-medium text-gray-900">{{ $t('onboarding.weekendsOnly') }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ $t('onboarding.weekendsOnlyDesc') }}</div>
                 </button>
             </div>
         </div>
@@ -97,10 +97,9 @@
             <div class="flex items-start space-x-3">
                 <ClockIcon class="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-gray-900">Time zone</p>
+                    <p class="font-medium text-gray-900">{{ $t('onboarding.timeZone') }}</p>
                     <p class="text-gray-600 mt-1">
-                        All times are in your local time zone ({{ currentTimeZone }}).
-                        Clients will see appointment times converted to their local time zone.
+                        {{ $t('onboarding.timeZoneDesc', { timezone: currentTimeZone }) }}
                     </p>
                 </div>
             </div>
@@ -111,11 +110,12 @@
             <div class="flex items-start space-x-3">
                 <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-green-900">Availability summary</p>
+                    <p class="font-medium text-green-900">{{ $t('onboarding.availabilitySummary') }}</p>
                     <p class="text-green-700 mt-1">
-                        You're available {{ availableDaysCount }} {{ availableDaysCount === 1 ? 'day' : 'days' }} per
-                        week,
-                        totaling {{ totalHoursPerWeek }} hours of potential appointment time.
+                        {{ $t('onboarding.availableDaysSummary', {
+                            days: availableDaysCount, daysLabel:
+                                availableDaysCount === 1 ? $t('onboarding.day') : $t('onboarding.days'), hours:
+                        totalHoursPerWeek }) }}
                     </p>
                 </div>
             </div>
@@ -126,10 +126,9 @@
             <div class="flex items-start space-x-3">
                 <InformationCircleIcon class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-blue-900">Flexibility is key</p>
+                    <p class="font-medium text-blue-900">{{ $t('onboarding.flexibilityKey') }}</p>
                     <p class="text-blue-700 mt-1">
-                        You can always update your availability later. Consider starting with more hours
-                        and adjusting based on demand. Clients can book appointments during your available hours.
+                        {{ $t('onboarding.flexibilityDesc') }}
                     </p>
                 </div>
             </div>
@@ -140,6 +139,9 @@
 <script setup>
 import { ClockIcon, CheckCircleIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const emit = defineEmits(['update:modelValue', 'validate'])
 const props = defineProps({
@@ -242,8 +244,8 @@ const totalHoursPerWeek = computed(() => {
 
 // Methods
 const getDayName = (dayOfWeek) => {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    return days[dayOfWeek - 1]
+    const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    return t(`onboarding.${dayKeys[dayOfWeek - 1]}`)
 }
 
 const formatTime = (time) => {
@@ -312,19 +314,17 @@ const setPreset = (preset) => {
 }
 
 const validateForm = () => {
-    // At least one day must be available
     const hasAvailableDays = props.modelValue.availability.some(day =>
         day.isAvailable && day.timeSlots && day.timeSlots.length > 0
     )
 
-    // All available days must have valid time ranges
     const hasValidTimes = props.modelValue.availability
         .filter(day => day.isAvailable && day.timeSlots && day.timeSlots.length > 0)
         .every(day => {
             return day.timeSlots.every(slot => {
                 const startMinutes = timeToMinutes(slot.startTime)
                 const endMinutes = timeToMinutes(slot.endTime)
-                return endMinutes > startMinutes + 30 // At least 30 minutes
+                return endMinutes > startMinutes + 30
             })
         })
 
@@ -338,16 +338,13 @@ onMounted(() => {
     console.log('modelValue.availability:', props.modelValue.availability)
     console.log('availability length:', props.modelValue.availability?.length)
 
-    // Ensure availability array exists and has 7 days
     if (!props.modelValue.availability || props.modelValue.availability.length === 0) {
         console.warn('Availability array is empty or undefined, initializing...')
-        // This shouldn't happen if ProviderOnboarding is set up correctly
         return
     }
 
     props.modelValue.availability.forEach(day => {
         ensureTimeSlotsArray(day)
-        // If day is available but has no timeSlots, add default
         if (day.isAvailable && day.timeSlots.length === 0) {
             day.timeSlots.push({ startTime: '09:00', endTime: '17:00' })
         }

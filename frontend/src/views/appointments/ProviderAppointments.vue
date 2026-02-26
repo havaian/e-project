@@ -6,9 +6,9 @@
                 <div class="py-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">My appointments</h1>
+                            <h1 class="text-2xl font-bold text-gray-900">{{ $t('nav.myAppointments') }}</h1>
                             <p class="mt-1 text-sm text-gray-600">
-                                Manage your client appointments and sessions
+                                {{ $t('providerAppointments.manageAppointments') }}
                             </p>
                         </div>
 
@@ -35,13 +35,12 @@
                         <ExclamationCircleIcon class="w-5 h-5 text-orange-600 mr-3" />
                         <div class="flex-1">
                             <p class="text-sm font-medium text-orange-800">
-                                You have {{ pendingCount }} appointment{{ pendingCount > 1 ? 's' : '' }} pending
-                                confirmation
+                                {{ $t('providerAppointments.pendingAlert', { count: pendingCount }) }}
                             </p>
                         </div>
                         <button @click="activeTab = 'pending'"
                             class="text-sm text-orange-600 hover:text-orange-800 font-medium">
-                            Review now
+                            {{ $t('providerAppointments.reviewNow') }}
                         </button>
                     </div>
                 </div>
@@ -49,7 +48,7 @@
 
             <!-- Calendar View -->
             <div v-if="currentView === 'calendar'" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <AppointmentCalendar ref="appointmentCalendar" user-role="provider" title="My appointments"
+                <AppointmentCalendar ref="appointmentCalendar" user-role="provider" :title="$t('nav.myAppointments')"
                     :calendar-view-mode="calendarViewMode" @appointment-updated="handleAppointmentUpdate" />
             </div>
 
@@ -78,26 +77,28 @@
                     <div class="p-6 border-b border-gray-200">
                         <div class="flex flex-col sm:flex-row gap-4">
                             <div class="flex-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{
+                                    $t('providerAppointments.filterDate') }}</label>
                                 <input v-model="filters.date" @change="fetchAppointments" type="date"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
                             </div>
 
                             <div class="flex-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{
+                                    $t('providerAppointments.filterStatus') }}</label>
                                 <select v-model="filters.status" @change="fetchAppointments"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1">
-                                    <option value="">All Statuses</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="canceled">Cancelled</option>
+                                    <option value="">{{ $t('providerAppointments.allStatuses') }}</option>
+                                    <option value="scheduled">{{ $t('appointments.statusScheduled') }}</option>
+                                    <option value="completed">{{ $t('appointments.statusCompleted') }}</option>
+                                    <option value="canceled">{{ $t('appointments.statusCanceled') }}</option>
                                 </select>
                             </div>
 
                             <div class="flex items-end">
                                 <button @click="resetFilters"
                                     class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                    Reset
+                                    {{ $t('providerAppointments.reset') }}
                                 </button>
                             </div>
                         </div>
@@ -162,13 +163,16 @@
                                             </div>
                                             <div class="flex items-center space-x-1">
                                                 <VideoCameraIcon class="w-4 h-4" />
-                                                <span class="capitalize">{{ appointment.type || 'Video session'
+                                                <span class="capitalize">{{ appointment.type ||
+                                                    $t('clientAppointments.videoSession')
                                                     }}</span>
                                             </div>
                                             <div v-if="appointment.client?.dateOfBirth"
                                                 class="flex items-center space-x-1">
                                                 <UserIcon class="w-4 h-4" />
-                                                <span>Age {{ calculateAge(appointment.client.dateOfBirth) }}</span>
+                                                <span>{{ $t('providerAppointments.age', {
+                                                    age:
+                                                    calculateAge(appointment.client.dateOfBirth) }) }}</span>
                                             </div>
                                         </div>
 
@@ -186,7 +190,7 @@
                                         v-if="isWithinJoinWindow(appointment.dateTime) && appointment.status === 'scheduled'"
                                         @click="joinSession(appointment._id)" class="btn-primary px-4 py-2 text-sm">
                                         <VideoCameraIcon class="w-4 h-4 mr-2" />
-                                        Start session
+                                        {{ $t('providerAppointments.startSession') }}
                                     </button>
 
                                     <!-- Future appointment actions -->
@@ -194,11 +198,11 @@
                                         v-else-if="isAppointmentInFuture(appointment.dateTime) && appointment.status === 'scheduled'">
                                         <button @click="rescheduleAppointment(appointment._id)"
                                             class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
-                                            Reschedule
+                                            {{ $t('clientAppointments.reschedule') }}
                                         </button>
                                         <button @click="cancelAppointment(appointment._id)"
                                             class="px-3 py-2 text-sm text-red-700 bg-red-100 rounded-lg hover:bg-red-200 transition-colors">
-                                            Cancel
+                                            {{ $t('common.cancel') }}
                                         </button>
                                     </template>
 
@@ -207,7 +211,7 @@
                                         <button @click="addSessionResults(appointment._id)"
                                             class="px-3 py-2 text-sm text-green-700 bg-green-100 rounded-lg hover:bg-green-200 transition-colors">
                                             <DocumentTextIcon class="w-4 h-4 mr-2" />
-                                            Results
+                                            {{ $t('providerAppointments.results') }}
                                         </button>
                                     </template>
 
@@ -215,7 +219,7 @@
                                     <router-link :to="`/appointments/${appointment._id}`"
                                         class="px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                                         <EyeIcon class="w-4 h-4 mr-2" />
-                                        details
+                                        {{ $t('providerAppointments.details') }}
                                     </router-link>
                                 </div>
                             </div>
@@ -225,12 +229,14 @@
                     <!-- Empty State -->
                     <div v-else class="p-12 text-center">
                         <CalendarDaysIcon class="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">No appointments found</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('appointments.noAppointmentsFound') }}
+                        </h3>
                         <p class="text-gray-600 mb-6">
-                            {{ filters.status || filters.date ? 'Try adjusting your filters' : 'Clients will book appointments with you based on your availability' }}
+                            {{ filters.status || filters.date ? $t('providerAppointments.adjustFilters') :
+                                $t('providerAppointments.clientsWillBook') }}
                         </p>
                         <router-link to="/profile/me" class="btn-primary px-6 py-3">
-                            Update availability
+                            {{ $t('providerAppointments.updateAvailability') }}
                         </router-link>
                     </div>
 
@@ -239,9 +245,11 @@
                         class="px-6 py-4 border-t border-gray-200 bg-gray-50">
                         <div class="flex items-center justify-between">
                             <div class="text-sm text-gray-700">
-                                Showing {{ (currentPage - 1) * 10 + 1 }} to {{ Math.min(currentPage * 10,
-                                totalAppointments) }}
-                                of {{ totalAppointments }} appointments
+                                {{ $t('providerAppointments.showing', {
+                                    from: (currentPage - 1) * 10 + 1,
+                                    to: Math.min(currentPage * 10, totalAppointments),
+                                    total: totalAppointments
+                                }) }}
                             </div>
 
                             <div class="flex items-center space-x-2">
@@ -288,6 +296,7 @@ import {
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import { format, parseISO, differenceInYears, isWithinInterval, subMinutes, addMinutes, isFuture } from 'date-fns'
 import axios from '@/plugins/axios'
 import PendingConfirmations from '@/components/appointments/PendingConfirmations.vue'
@@ -295,6 +304,7 @@ import AppointmentCalendar from '@/components/calendar/AppointmentCalendar.vue'
 import CalendarControls from '@/components/calendar/CalendarControls.vue'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const router = useRouter()
@@ -322,11 +332,11 @@ const filters = reactive({
 })
 
 // Tab configuration
-const tabs = [
-    { key: 'scheduled', label: 'Scheduled' },
-    { key: 'completed', label: 'Completed' },
-    { key: 'pending', label: 'Pending Confirmation' }
-]
+const tabs = computed(() => [
+    { key: 'scheduled', label: t('appointments.statusScheduled') },
+    { key: 'completed', label: t('appointments.statusCompleted') },
+    { key: 'pending', label: t('appointments.pendingConfirmations') }
+])
 
 // Computed
 const visiblePages = computed(() => {
@@ -431,8 +441,8 @@ const calculateAge = (dateOfBirth) => {
 }
 
 const getClientName = (client) => {
-    if (!client) return 'Unknown Client'
-    return `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Client'
+    if (!client) return t('providerAppointments.unknownClient')
+    return `${client.firstName || ''} ${client.lastName || ''}`.trim() || t('appointmentDetail.client')
 }
 
 const isWithinJoinWindow = (dateTime) => {
@@ -475,7 +485,7 @@ const rescheduleAppointment = (appointmentId) => {
 }
 
 const cancelAppointment = async (appointmentId) => {
-    if (!(await modal.confirm('Are you sure you want to cancel this appointment?'))) return
+    if (!(await modal.confirm(t('appointmentDetail.confirmCancel')))) return
 
     try {
         await axios.patch(`/appointments/${appointmentId}`, {
@@ -487,10 +497,8 @@ const cancelAppointment = async (appointmentId) => {
         if (currentView.value === 'calendar' && appointmentCalendar.value) {
             appointmentCalendar.value.refreshCalendar()
         }
-        // TODO: Show success notification
     } catch (error) {
         console.error('Error canceling appointment:', error)
-        // TODO: Show error notification
     }
 }
 
@@ -551,7 +559,6 @@ const handleAppointmentUpdate = (updateInfo) => {
         fetchAppointments()
     }
     fetchPendingCount()
-    // TODO: Show update notification
 }
 
 // Watch for tab changes

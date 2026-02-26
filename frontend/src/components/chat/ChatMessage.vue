@@ -28,11 +28,11 @@
 
                 <!-- Read status (only for sent messages) -->
                 <div v-if="isCurrentUser" class="ml-2 relative">
-                    <div v-if="message.isRead" class="flex items-center" title="Read">
+                    <div v-if="message.isRead" class="flex items-center" :title="$t('chat.read')">
                         <CheckIcon class="w-4 h-4 text-white/70" />
                         <CheckIcon class="w-4 h-4 text-white/70 -ml-2.5" />
                     </div>
-                    <CheckIcon v-else class="w-4 h-4 text-white/70" title="Sent" />
+                    <CheckIcon v-else class="w-4 h-4 text-white/70" :title="$t('chat.sent')" />
                 </div>
             </div>
         </div>
@@ -50,7 +50,10 @@
 <script setup>
 import { CheckIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
+
+const { t } = useI18n()
 
 const props = defineProps({
     message: {
@@ -80,14 +83,14 @@ const senderAvatar = computed(() => {
 })
 
 const senderName = computed(() => {
-    if (!props.message.sender) return 'Unknown User'
+    if (!props.message.sender) return t('chat.unknownUser')
     const first = props.message.sender.firstName || ''
     const last = props.message.sender.lastName || ''
     return `${first} ${last}`.trim() || 'User'
 })
 
 const formatSenderLabel = () => {
-    if (!props.message.sender) return 'Unknown'
+    if (!props.message.sender) return t('common.unknown')
     const name = senderName.value
     return props.message.sender.role === 'provider' ? `Dr. ${name}` : name
 }

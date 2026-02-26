@@ -1,9 +1,10 @@
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Pending confirmations</h1>
+            <h1 class="text-2xl font-bold text-gray-900">{{ $t('appointments.pendingConfirmations') }}</h1>
             <div class="text-sm text-gray-500">
-                {{ pendingCount }} appointment{{ pendingCount !== 1 ? 's' : '' }} awaiting confirmation
+                {{ pendingCount }} {{ pendingCount !== 1 ? $t('appointments.pendingConfirmations').toLowerCase() :
+                    $t('appointments.pendingConfirmations').toLowerCase() }}
             </div>
         </div>
 
@@ -11,7 +12,7 @@
         <div v-if="loading" class="text-center py-8">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent">
             </div>
-            <p class="mt-2 text-gray-600">Loading pending confirmations...</p>
+            <p class="mt-2 text-gray-600">{{ $t('appointments.loadingPending') }}</p>
         </div>
 
         <!-- Empty State -->
@@ -19,8 +20,8 @@
             <div class="mx-auto h-12 w-12 text-gray-400">
                 <CheckCircleIcon />
             </div>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">No pending confirmations</h3>
-            <p class="mt-1 text-sm text-gray-500">All appointments have been processed.</p>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('appointments.noPending') }}</h3>
+            <p class="mt-1 text-sm text-gray-500">{{ $t('appointments.allProcessed') }}</p>
         </div>
 
         <!-- Appointments List -->
@@ -39,7 +40,7 @@
                                 <div v-else class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                                     <span class="text-sm font-medium text-gray-700">
                                         {{ appointment.client.firstName.charAt(0) }}{{
-                                        appointment.client.lastName.charAt(0) }}
+                                            appointment.client.lastName.charAt(0) }}
                                     </span>
                                 </div>
                             </div>
@@ -48,7 +49,8 @@
                                     {{ appointment.client.firstName }} {{ appointment.client.lastName }}
                                 </h3>
                                 <p class="text-sm text-gray-500">
-                                    Age: {{ calculateAge(appointment.client.dateOfBirth) }} years
+                                    {{ $t('appointments.age') }}: {{ calculateAge(appointment.client.dateOfBirth) }} {{
+                                    $t('appointments.years') }}
                                 </p>
                             </div>
                         </div>
@@ -60,7 +62,8 @@
                                 {{ getUrgencyText(appointment.timeRemaining) }}
                             </span>
                             <span class="text-xs text-gray-500 mt-1">
-                                {{ formatTimeRemaining(appointment.timeRemaining) }} left
+                                {{ $t('appointments.timeLeft', { time: formatTimeRemaining(appointment.timeRemaining) })
+                                }}
                             </span>
                         </div>
                     </div>
@@ -68,42 +71,43 @@
                     <!-- Appointment details -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <div>
-                            <p class="text-sm text-gray-500">Appointment date & time</p>
+                            <p class="text-sm text-gray-500">{{ $t('appointments.appointmentDateTime') }}</p>
                             <p class="text-gray-900 font-medium">{{ formatDateTime(appointment.dateTime) }}</p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Duration</p>
-                            <p class="text-gray-900">{{ appointment.duration || 30 }} minutes</p>
+                            <p class="text-sm text-gray-500">{{ $t('appointments.duration') }}</p>
+                            <p class="text-gray-900">{{ appointment.duration || 30 }} {{ $t('appointments.minutes') }}
+                            </p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Session type</p>
+                            <p class="text-sm text-gray-500">{{ $t('appointments.sessionType') }}</p>
                             <p class="text-gray-900">
                                 {{ appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1) }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Payment status</p>
+                            <p class="text-sm text-gray-500">{{ $t('appointments.paymentStatus') }}</p>
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Paid
+                                {{ $t('appointments.paid') }}
                             </span>
                         </div>
                     </div>
 
                     <!-- Short description -->
                     <div class="mb-6">
-                        <p class="text-sm text-gray-500 mb-2">Short description</p>
+                        <p class="text-sm text-gray-500 mb-2">{{ $t('appointments.shortDescription') }}</p>
                         <p class="text-gray-900 bg-gray-50 p-3 rounded-md">{{ appointment.shortDescription }}</p>
                     </div>
 
                     <!-- Client Contact Info -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-md">
                         <div v-if="appointment.client.email">
-                            <p class="text-sm text-gray-500">Email</p>
+                            <p class="text-sm text-gray-500">{{ $t('appointments.email') }}</p>
                             <p class="text-gray-900">{{ appointment.client.email }}</p>
                         </div>
                         <div v-if="appointment.client.phone">
-                            <p class="text-sm text-gray-500">Phone</p>
+                            <p class="text-sm text-gray-500">{{ $t('appointments.phone') }}</p>
                             <p class="text-gray-900">{{ appointment.client.phone }}</p>
                         </div>
                     </div>
@@ -117,9 +121,9 @@
                                 <div
                                     class="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-red-700 border-t-transparent rounded-full">
                                 </div>
-                                Processing...
+                                {{ $t('appointments.processing') }}
                             </span>
-                            <span v-else>Reject</span>
+                            <span v-else>{{ $t('appointments.reject') }}</span>
                         </button>
 
                         <button @click="confirmAppointment(appointment)"
@@ -129,9 +133,9 @@
                                 <div
                                     class="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full">
                                 </div>
-                                Confirming...
+                                {{ $t('appointments.confirming') }}
                             </span>
-                            <span v-else>Confirm appointment</span>
+                            <span v-else>{{ $t('appointments.confirmAppointment') }}</span>
                         </button>
                     </div>
                 </div>
@@ -156,16 +160,16 @@
                         <XMarkIcon class="h-6 w-6 text-red-600" />
                     </div>
                     <div class="mt-5 text-center">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject appointment</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">{{ $t('appointments.rejectConfirmTitle')
+                            }}</h3>
                         <div class="mt-2">
                             <p class="text-sm text-gray-500">
-                                Are you sure you want to reject this appointment? This action cannot be undone and the
-                                client will be notified.
+                                {{ $t('appointments.rejectConfirmBody') }}
                             </p>
                         </div>
                         <div class="mt-4">
-                            <textarea v-model="rejectionReason" placeholder="Optional: Provide a short descriptionrejection"
-                                class="input"
+                            <textarea v-model="rejectionReason"
+                                :placeholder="$t('appointments.rejectReasonPlaceholder')" class="input"
                                 rows="3"></textarea>
                         </div>
                     </div>
@@ -173,12 +177,12 @@
                 <div class="flex justify-end space-x-3 mt-5">
                     <button @click="closeRejectModal"
                         class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
-                        Cancel
+                        {{ $t('common.cancel') }}
                     </button>
                     <button @click="rejectAppointment" :disabled="processingRejection"
                         class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">
-                        <span v-if="processingRejection">Rejecting...</span>
-                        <span v-else>Reject appointment</span>
+                        <span v-if="processingRejection">{{ $t('appointments.rejecting') }}</span>
+                        <span v-else>{{ $t('appointments.rejectAppointment') }}</span>
                     </button>
                 </div>
             </div>
@@ -189,11 +193,13 @@
 <script setup>
 import { CheckCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { format, parseISO, differenceInYears } from 'date-fns'
 import axios from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 const authStore = useAuthStore()
 
@@ -221,7 +227,7 @@ const calculateAge = (dateOfBirth) => {
 }
 
 const formatTimeRemaining = (timeRemaining) => {
-    if (!timeRemaining) return 'Unknown'
+    if (!timeRemaining) return '?'
     const { hours, minutes } = timeRemaining
     if (hours > 0) {
         return `${hours}h ${minutes}m`
@@ -230,13 +236,13 @@ const formatTimeRemaining = (timeRemaining) => {
 }
 
 const getUrgencyText = (timeRemaining) => {
-    if (!timeRemaining) return 'Unknown'
+    if (!timeRemaining) return '?'
     const totalMinutes = timeRemaining.hours * 60 + timeRemaining.minutes
 
-    if (totalMinutes <= 60) return 'URGENT'
-    if (totalMinutes <= 180) return 'HIGH'
-    if (totalMinutes <= 360) return 'MEDIUM'
-    return 'LOW'
+    if (totalMinutes <= 60) return t('appointments.urgentLabel')
+    if (totalMinutes <= 180) return t('appointments.highLabel')
+    if (totalMinutes <= 360) return t('appointments.mediumLabel')
+    return t('appointments.lowLabel')
 }
 
 const getUrgencyBorderClass = (timeRemaining) => {
@@ -274,14 +280,14 @@ async function fetchPendingConfirmations() {
     } catch (error) {
         console.error('Error fetching pending confirmations:', error)
         // Show user-friendly error message
-        toast.error('Failed to load pending confirmations. Please refresh the page.')
+        toast.error(t('appointments.loadFailed'))
     } finally {
         loading.value = false
     }
 }
 
 async function confirmAppointment(appointment) {
-    if (!(await modal.confirm(`Confirm appointment with ${appointment.client.firstName} ${appointment.client.lastName}?`))) {
+    if (!(await modal.confirm(t('appointments.confirmQuestion', { name: `${appointment.client.firstName} ${appointment.client.lastName}` })))) {
         return
     }
 
@@ -294,18 +300,18 @@ async function confirmAppointment(appointment) {
         appointments.value = appointments.value.filter(app => app._id !== appointment._id)
 
         // Show success message
-        toast.error('Appointment confirmed successfully! The client has been notified.')
+        toast.error(t('appointments.confirmSuccess'))
 
     } catch (error) {
         console.error('Error confirming appointment:', error)
 
         // Handle specific error cases
         if (error.response?.status === 400 && error.response.data?.message?.includes('deadline')) {
-            toast.error('This appointment confirmation has expired and has been automatically canceled.')
+            toast.error(t('appointments.confirmExpired'))
             // Remove from list since it's been canceled
             appointments.value = appointments.value.filter(app => app._id !== appointment._id)
         } else {
-            toast.error('Failed to confirm appointment. Please try again.')
+            toast.error(t('appointments.confirmFailed'))
         }
     } finally {
         processingAppointments.value.delete(appointment._id)
@@ -340,11 +346,11 @@ async function rejectAppointment() {
         appointments.value = appointments.value.filter(app => app._id !== selectedAppointment.value._id)
 
         closeRejectModal()
-        toast.error('Appointment rejected successfully. The client has been notified and refunded.')
+        toast.error(t('appointments.rejectSuccess'))
 
     } catch (error) {
         console.error('Error rejecting appointment:', error)
-        toast.error('Failed to reject appointment. Please try again.')
+        toast.error(t('appointments.rejectFailed'))
     } finally {
         processingRejection.value = false
     }

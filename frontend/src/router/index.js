@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { isConsultationsEnabled, isCoursesEnabled, isChatEnabled } from '@/utils/modules'
 import { useAuthStore } from '@/stores/auth'
 import Home from '@/views/Home.vue'
+import i18n from '@/utils/i18n'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -94,69 +96,102 @@ const router = createRouter({
       }
     },
 
-    // Unified Appointments route (role-based component loading)
-    {
-      path: '/appointments/me',
-      name: 'my-appointments',
-      component: () => import('@/views/shared/UnifiedAppointments.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
+    // ── Consultation routes (conditional) ────────────────────────────────
+    ...(isConsultationsEnabled() ? [
+      // Unified Appointments route (role-based component loading)
+      {
+        path: '/appointments/me',
+        name: 'my-appointments',
+        component: () => import('@/views/shared/UnifiedAppointments.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
 
-    // Provider routes
-    {
-      path: '/providers',
-      name: 'provider-list',
-      component: () => import('@/views/providers/ProviderList.vue')
-    },
-    {
-      path: '/providers/:id',
-      name: 'provider-profile-view',
-      component: () => import('@/views/providers/ProviderPublicProfile.vue')
-    },
+      // Provider routes
+      {
+        path: '/providers',
+        name: 'provider-list',
+        component: () => import('@/views/providers/ProviderList.vue')
+      },
+      {
+        path: '/providers/:id',
+        name: 'provider-profile-view',
+        component: () => import('@/views/providers/ProviderPublicProfile.vue')
+      },
 
-    // Client routes
-    {
-      path: '/clients/:id',
-      name: 'client-profile-view',
-      component: () => import('@/views/clients/ClientPublicProfile.vue')
-    },
+      // Client routes
+      {
+        path: '/clients/:id',
+        name: 'client-profile-view',
+        component: () => import('@/views/clients/ClientPublicProfile.vue')
+      },
 
-    // Appointment routes
-    {
-      path: '/appointments/book/:providerId',
-      name: 'book-appointment',
-      component: () => import('@/views/appointments/BookAppointment.vue'),
-      meta: {
-        requiresAuth: true,
-        requiresClient: true
-      }
-    },
-    {
-      path: '/appointments/:id',
-      name: 'appointment-details',
-      component: () => import('@/views/appointments/AppointmentDetails.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/appointments/:id/edit',
-      name: 'appointment-edit',
-      component: () => import('@/views/appointments/EditAppointment.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/appointments/:id/reschedule',
-      name: 'appointment-reschedule',
-      component: () => import('@/views/appointments/RescheduleAppointment.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
+      // Appointment routes
+      {
+        path: '/appointments/book/:providerId',
+        name: 'book-appointment',
+        component: () => import('@/views/appointments/BookAppointment.vue'),
+        meta: {
+          requiresAuth: true,
+          requiresClient: true
+        }
+      },
+      {
+        path: '/appointments/:id',
+        name: 'appointment-details',
+        component: () => import('@/views/appointments/AppointmentDetails.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/appointments/:id/edit',
+        name: 'appointment-edit',
+        component: () => import('@/views/appointments/EditAppointment.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/appointments/:id/reschedule',
+        name: 'appointment-reschedule',
+        component: () => import('@/views/appointments/RescheduleAppointment.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+
+      // Payment routes (consultation)
+      {
+        path: '/payment/success',
+        name: 'payment-success',
+        component: () => import('@/views/payments/PaymentSuccess.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/payment/cancel',
+        name: 'payment-cancel',
+        component: () => import('@/views/payments/PaymentCancel.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+
+      // Session routes
+      {
+        path: '/session/:appointmentId',
+        name: 'session-room',
+        component: () => import('@/views/sessions/SessionRoom.vue'),
+        meta: {
+          requiresAuth: true,
+          hideNavBar: true,
+          hideFooter: true
+        }
+      },
+    ] : []),
 
     // Payment routes
     {
@@ -176,31 +211,33 @@ const router = createRouter({
       }
     },
 
-    // Chat routes
-    {
-      path: '/chat',
-      name: 'chat-inbox',
-      component: () => import('@/views/chat/ChatInbox.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/chat/:id',
-      name: 'chat-conversation',
-      component: () => import('@/views/chat/ChatConversation.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/chat/new/:userId',
-      name: 'chat-new',
-      component: () => import('@/views/chat/ChatConversation.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
+    // ── Chat routes (conditional — requires at least one core module) ────
+    ...(isChatEnabled() ? [
+      {
+        path: '/chat',
+        name: 'chat-inbox',
+        component: () => import('@/views/chat/ChatInbox.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/chat/:id',
+        name: 'chat-conversation',
+        component: () => import('@/views/chat/ChatConversation.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/chat/new/:userId',
+        name: 'chat-new',
+        component: () => import('@/views/chat/ChatConversation.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+    ] : []),
 
     // Session routes
     {
@@ -255,67 +292,69 @@ const router = createRouter({
       component: () => import('@/views/company/About.vue')
     },
 
-    // ── Course routes
-    {
-      path: '/courses',
-      name: 'course-catalog',
-      component: () => import('@/views/courses/client/CourseCatalog.vue')
-      // public — no auth required
-    },
-    {
-      path: '/courses/dashboard',
-      name: 'course-dashboard',
-      component: () => import('@/views/courses/provider/CourseDashboard.vue'),
-      meta: { requiresAuth: true, requiresProvider: true }
-    },
-    {
-      path: '/courses/my',
-      name: 'course-portfolio',
-      component: () => import('@/views/courses/provider/CoursePortfolio.vue'),
-      meta: { requiresAuth: true, requiresProvider: true }
-    },
-    {
-      path: '/courses/homework',
-      name: 'grading-center',
-      component: () => import('@/views/courses/provider/GradingCenter.vue'),
-      meta: { requiresAuth: true, requiresProvider: true }
-    },
-    {
-      path: '/courses/my-learning',
-      name: 'my-learning',
-      component: () => import('@/views/courses/client/MyLearning.vue'),
-      meta: { requiresAuth: true, requiresClient: true }
-    },
-    {
-      path: '/courses/payment/success',
-      name: 'course-payment-success',
-      component: () => import('@/views/courses/CoursePaymentSuccess.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/courses/:id/builder',
-      name: 'course-builder',
-      component: () => import('@/views/courses/provider/CourseBuilder.vue'),
-      meta: { requiresAuth: true, requiresProvider: true }
-    },
-    {
-      path: '/courses/:id/learn',
-      name: 'course-learn',
-      component: () => import('@/views/courses/client/CourseLearn.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/courses/:id/lesson/:lessonId',
-      name: 'lesson-viewer',
-      component: () => import('@/views/courses/client/LessonViewer.vue'),
-      meta: { requiresAuth: true, hideNavBar: true, hideFooter: true }
-    },
-    {
-      path: '/courses/:id',
-      name: 'course-detail',
-      component: () => import('@/views/courses/client/CourseDetail.vue')
-      // public — handles auth check internally for enroll button
-    },
+    // ── Course routes (conditional) ──────────────────────────────────────
+    ...(isCoursesEnabled() ? [
+      {
+        path: '/courses',
+        name: 'course-catalog',
+        component: () => import('@/views/courses/client/CourseCatalog.vue')
+        // public — no auth required
+      },
+      {
+        path: '/courses/dashboard',
+        name: 'course-dashboard',
+        component: () => import('@/views/courses/provider/CourseDashboard.vue'),
+        meta: { requiresAuth: true, requiresProvider: true }
+      },
+      {
+        path: '/courses/my',
+        name: 'course-portfolio',
+        component: () => import('@/views/courses/provider/CoursePortfolio.vue'),
+        meta: { requiresAuth: true, requiresProvider: true }
+      },
+      {
+        path: '/courses/homework',
+        name: 'grading-center',
+        component: () => import('@/views/courses/provider/GradingCenter.vue'),
+        meta: { requiresAuth: true, requiresProvider: true }
+      },
+      {
+        path: '/courses/my-learning',
+        name: 'my-learning',
+        component: () => import('@/views/courses/client/MyLearning.vue'),
+        meta: { requiresAuth: true, requiresClient: true }
+      },
+      {
+        path: '/courses/payment/success',
+        name: 'course-payment-success',
+        component: () => import('@/views/courses/CoursePaymentSuccess.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/courses/:id/builder',
+        name: 'course-builder',
+        component: () => import('@/views/courses/provider/CourseBuilder.vue'),
+        meta: { requiresAuth: true, requiresProvider: true }
+      },
+      {
+        path: '/courses/:id/learn',
+        name: 'course-learn',
+        component: () => import('@/views/courses/client/CourseLearn.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/courses/:id/lesson/:lessonId',
+        name: 'lesson-viewer',
+        component: () => import('@/views/courses/client/LessonViewer.vue'),
+        meta: { requiresAuth: true, hideNavBar: true, hideFooter: true }
+      },
+      {
+        path: '/courses/:id',
+        name: 'course-detail',
+        component: () => import('@/views/courses/client/CourseDetail.vue')
+        // public — handles auth check internally for enroll button
+      },
+    ] : []),
 
     // Error routes
     {
@@ -328,6 +367,13 @@ const router = createRouter({
 
 // Enhanced navigation guards with role-based routing logic
 router.beforeEach(async (to, from, next) => {
+  // Wait for i18n to be ready
+  try {
+    await i18n.global.$waitForI18n?.()
+  } catch (error) {
+    console.warn('i18n not ready, continuing anyway:', error)
+  }
+
   const authStore = useAuthStore()
 
   // Basic authentication check
@@ -394,6 +440,20 @@ router.beforeEach(async (to, from, next) => {
 // Much more selective user data refresh
 router.afterEach((to, from) => {
   const authStore = useAuthStore()
+
+  // Page title: use env var as base, append route-specific i18n title if available
+  const baseTitle = import.meta.env.VITE_APP_PAGE_TITLE || import.meta.env.VITE_APP_TITLE
+  if (to.meta?.titleKey) {
+    try {
+      const routeTitle = i18n.global.t(to.meta.titleKey)
+      if (routeTitle && routeTitle !== to.meta.titleKey) {
+        document.title = `${routeTitle} | ${baseTitle}`
+      }
+    } catch (error) {
+      // Fallback to base title
+      document.title = baseTitle
+    }
+  }
 
   // Only refresh user data when navigating to critical pages and it's actually needed
   if (authStore.isAuthenticated) {

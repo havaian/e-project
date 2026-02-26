@@ -19,7 +19,7 @@
                 <div class="flex-1 min-w-0">
                     <p class="text-xs text-gray-500 truncate">{{ course?.title }}</p>
                     <p v-if="activeQuiz" class="text-sm font-semibold truncate">
-                        {{ activeQuiz.type === 'block' ? 'Block' : 'Topic' }} Quiz
+                        {{ activeQuiz.type === 'block' ? $t('lessonViewer.blockQuiz') : $t('lessonViewer.topicQuiz') }}
                     </p>
                     <p v-else class="text-sm font-semibold truncate">{{ lesson.title }}</p>
                 </div>
@@ -27,17 +27,17 @@
                 <template v-if="!isProviderPreview">
                     <button v-if="!isCompleted" @click="markComplete" :disabled="completing"
                         class="bg-sky-500 hover:bg-sky-600 disabled:bg-sky-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
-                        {{ completing ? 'Saving…' : 'Mark Complete' }}
+                        {{ completing ? $t('lessonViewer.saving') : $t('lessonViewer.markComplete') }}
                     </button>
                     <div v-else class="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
                         <CheckCircleIcon class="w-4 h-4" />
-                        Completed
+                        {{ $t('lessonViewer.completed') }}
                     </div>
                 </template>
                 <div v-else
                     class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold bg-amber-400/10 px-3 py-1.5 rounded-lg">
                     <EyeIcon class="w-3.5 h-3.5" />
-                    Preview Mode
+                    {{ $t('courseLearn.previewMode') }}
                 </div>
             </div>
 
@@ -47,13 +47,16 @@
                 <div
                     class="hidden lg:flex lg:w-72 shrink-0 flex-col bg-gray-900 border-r border-white/10 overflow-y-auto">
                     <div class="p-4 border-b border-white/10">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Course Content</p>
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">{{
+                            $t('lessonViewer.courseContent')
+                            }}</p>
                     </div>
                     <div class="flex-1">
                         <div v-for="(block, bi) in course?.blocks" :key="block._id">
                             <div class="px-4 py-2.5 bg-white/5">
-                                <p class="text-xs font-bold text-gray-300 uppercase tracking-wide">Block {{ bi + 1 }}:
-                                    {{ block.title }}</p>
+                                <p class="text-xs font-bold text-gray-300 uppercase tracking-wide">{{
+                                    $t('courseDetail.blockLabel',
+                                    { number: bi + 1, title: block.title }) }}</p>
                             </div>
                             <div v-for="topic in block.topics" :key="topic._id">
                                 <div class="px-5 py-2">
@@ -90,7 +93,7 @@
                                         <ExclamationTriangleIcon v-else-if="isQuizLocked('topic', block, topic)"
                                             class="w-3.5 h-3.5 shrink-0" />
                                         <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
-                                        <span class="truncate">Topic Quiz</span>
+                                        <span class="truncate">{{ $t('lessonViewer.topicQuiz') }}</span>
                                         <span v-if="getQuizBestResult(topic._id)?.passed"
                                             class="ml-auto text-[10px] opacity-70">
                                             {{ getQuizBestResult(topic._id).score }}%
@@ -114,7 +117,7 @@
                                     <ExclamationTriangleIcon v-else-if="isQuizLocked('block', block, null)"
                                         class="w-3.5 h-3.5 shrink-0" />
                                     <QuestionMarkCircleIcon v-else class="w-3.5 h-3.5 shrink-0" />
-                                    <span class="truncate">Block Quiz</span>
+                                    <span class="truncate">{{ $t('lessonViewer.blockQuiz') }}</span>
                                     <span v-if="getQuizBestResult(block._id)?.passed"
                                         class="ml-auto text-[10px] opacity-70">
                                         {{ getQuizBestResult(block._id).score }}%
@@ -134,9 +137,12 @@
                         <div class="flex items-center gap-3 mb-6">
                             <QuestionMarkCircleIcon class="w-6 h-6 text-sky-400 shrink-0" />
                             <h2 class="text-xl font-bold">
-                                {{ activeQuiz.type === 'block' ? 'Block' : 'Topic' }} Quiz
+                                {{ activeQuiz.type === 'block' ? $t('lessonViewer.blockQuiz') :
+                                $t('lessonViewer.topicQuiz') }}
                             </h2>
-                            <span class="text-xs text-gray-500">{{ activeQuiz.questions.length }} questions</span>
+                            <span class="text-xs text-gray-500">{{ $t('lessonViewer.questionsCount', {
+                                count:
+                                activeQuiz.questions.length }) }}</span>
                         </div>
 
                         <!-- Result screen -->
@@ -147,20 +153,23 @@
                                 {{ activeQuiz.result.score }}%
                             </div>
                             <p class="text-sm text-gray-400 mb-1">
-                                {{ activeQuiz.result.correctCount }} / {{ activeQuiz.result.totalQuestions }} correct
+                                {{ $t('lessonViewer.correctCount', {
+                                    correct: activeQuiz.result.correctCount, total:
+                                activeQuiz.result.totalQuestions }) }}
                             </p>
                             <p class="font-semibold text-lg"
                                 :class="activeQuiz.result.passed ? 'text-emerald-400' : 'text-red-400'">
-                                {{ activeQuiz.result.passed ? '🎉 Passed!' : 'Not quite — keep studying!' }}
+                                {{ activeQuiz.result.passed ? $t('lessonViewer.passed') : $t('lessonViewer.notPassed')
+                                }}
                             </p>
                             <div class="flex items-center justify-center gap-3 mt-6">
                                 <button @click="activeQuiz = null"
                                     class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
-                                    Back to Lesson
+                                    {{ $t('lessonViewer.backToLesson') }}
                                 </button>
                                 <button @click="retakeQuiz"
                                     class="border border-white/20 hover:border-white/40 text-gray-300 hover:text-white font-bold py-2.5 px-8 rounded-xl transition-colors text-sm">
-                                    Retake
+                                    {{ $t('lessonViewer.retake') }}
                                 </button>
                             </div>
                         </div>
@@ -187,11 +196,12 @@
                                 <button @click="submitQuiz"
                                     :disabled="activeQuiz.submitting || activeQuiz.answers.some(a => a === null)"
                                     class="flex-1 bg-sky-500 hover:bg-sky-600 disabled:bg-sky-900 disabled:text-sky-700 text-white font-bold py-3 rounded-xl transition-colors text-sm">
-                                    {{ activeQuiz.submitting ? 'Submitting…' : 'Submit Answers' }}
+                                    {{ activeQuiz.submitting ? $t('lessonViewer.submitting') :
+                                    $t('lessonViewer.submitAnswers') }}
                                 </button>
                                 <button @click="activeQuiz = null"
                                     class="border border-white/20 hover:border-white/40 text-gray-300 hover:text-white font-bold py-2.5 px-6 rounded-xl transition-colors text-sm">
-                                    Cancel
+                                    {{ $t('common.cancel') }}
                                 </button>
                             </div>
                         </div>
@@ -202,11 +212,11 @@
 
                         <!-- Tab bar -->
                         <div class="flex gap-6 px-6 pt-5 border-b border-white/10 bg-gray-950">
-                            <button v-for="tab in tabs" :key="tab" @click="activeTab = tab"
-                                class="pb-3 text-sm font-semibold border-b-2 transition-colors" :class="activeTab === tab
+                            <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
+                                class="pb-3 text-sm font-semibold border-b-2 transition-colors" :class="activeTab === tab.key
                                     ? 'border-sky-500 text-sky-400'
                                     : 'border-transparent text-gray-500 hover:text-gray-300'">
-                                {{ tab }}
+                                {{ tab.label }}
                             </button>
                         </div>
 
@@ -247,36 +257,36 @@
                                     <!-- Top-left -->
                                     <div class="absolute top-[10%] left-[5%] -rotate-[30deg] opacity-[0.1]">
                                         <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
-                                            }} &bull; {{ watermarkEmail }}</p>
+                                        }} &bull; {{ watermarkEmail }}</p>
                                         <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                     </div>
                                     <!-- Top-right -->
                                     <div class="absolute top-[8%] right-[5%] -rotate-[30deg] opacity-[0.1]">
                                         <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
-                                            }} &bull; {{ watermarkEmail }}</p>
+                                        }} &bull; {{ watermarkEmail }}</p>
                                         <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                     </div>
                                     <!-- Bottom-left -->
                                     <div class="absolute bottom-[12%] left-[8%] -rotate-[30deg] opacity-[0.1]">
                                         <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
-                                            }} &bull; {{ watermarkEmail }}</p>
+                                        }} &bull; {{ watermarkEmail }}</p>
                                         <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                     </div>
                                     <!-- Bottom-right -->
                                     <div class="absolute bottom-[10%] right-[3%] -rotate-[30deg] opacity-[0.1]">
                                         <p class="text-white text-base font-semibold whitespace-nowrap">{{ watermarkName
-                                            }} &bull; {{ watermarkEmail }}</p>
+                                        }} &bull; {{ watermarkEmail }}</p>
                                         <p class="text-white text-[10px]">{{ watermarkTimestamp }}</p>
                                     </div>
                                     <!-- Mid-left -->
                                     <div class="absolute top-[45%] left-[2%] -rotate-[30deg] opacity-[0.08]">
                                         <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail
-                                            }}</p>
+                                        }}</p>
                                     </div>
                                     <!-- Mid-right -->
                                     <div class="absolute top-[40%] right-[2%] -rotate-[30deg] opacity-[0.08]">
                                         <p class="text-white text-sm font-semibold whitespace-nowrap">{{ watermarkEmail
-                                            }}</p>
+                                        }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -286,8 +296,7 @@
                                 <Transition name="blackout">
                                     <div v-if="tabHidden"
                                         class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
-                                        <p class="text-gray-500 text-sm">Content hidden — return to this tab to continue
-                                        </p>
+                                        <p class="text-gray-500 text-sm">{{ $t('lessonViewer.contentHidden') }}</p>
                                     </div>
                                 </Transition>
                             </Teleport>
@@ -301,7 +310,7 @@
                             <!-- No content state -->
                             <div v-if="!lesson.videoFile && !lesson.videoUrl && !lesson.text"
                                 class="text-center py-16 text-gray-600">
-                                <p>No content for this lesson yet.</p>
+                                <p>{{ $t('lessonViewer.noContent') }}</p>
                             </div>
                         </div>
 
@@ -314,9 +323,10 @@
                                         class="rounded-xl overflow-hidden border border-white/10 mb-2">
                                         <object :data="$uploadsUrl(mat.fileUrl)" type="application/pdf"
                                             class="w-full h-[70vh]">
-                                            <p class="p-4 text-sm text-gray-500">PDF preview unavailable.
+                                            <p class="p-4 text-sm text-gray-500">{{ $t('lessonViewer.pdfUnavailable') }}
                                                 <a :href="$uploadsUrl(mat.fileUrl)" target="_blank"
-                                                    class="text-sky-400 hover:underline">Open in new tab</a>
+                                                    class="text-sky-400 hover:underline">{{
+                                                    $t('lessonViewer.openNewTab') }}</a>
                                             </p>
                                         </object>
                                     </div>
@@ -340,7 +350,7 @@
                                 </div>
                             </div>
                             <div v-else class="text-center py-16 text-gray-600 text-sm">
-                                No materials for this lesson.
+                                {{ $t('lessonViewer.noMaterials') }}
                             </div>
                         </div>
 
@@ -348,32 +358,33 @@
                         <div v-else-if="activeTab === 'Homework'" class="p-6">
                             <div v-if="lesson.assignmentPrompt"
                                 class="bg-gray-900 border border-white/10 rounded-xl p-5 mb-6">
-                                <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">Assignment
-                                </p>
+                                <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">{{
+                                    $t('lessonViewer.assignment') }}</p>
                                 <p class="text-sm text-gray-300 whitespace-pre-wrap">{{ lesson.assignmentPrompt }}</p>
                             </div>
-                            <div v-else class="text-sm text-gray-500 mb-6 italic">No assignment prompt for this lesson.
+                            <div v-else class="text-sm text-gray-500 mb-6 italic">{{ $t('lessonViewer.noAssignment') }}
                             </div>
 
                             <!-- Provider preview: read-only notice -->
                             <div v-if="isProviderPreview" class="text-sm text-gray-500 italic">
-                                Students will see a submission form here.
+                                {{ $t('lessonViewer.studentsWillSeeForm') }}
                             </div>
 
                             <!-- Client: submission form -->
                             <div v-else class="space-y-4">
                                 <div>
                                     <label
-                                        class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your
-                                        Answer</label>
-                                    <textarea v-model="homeworkText" rows="6" placeholder="Write your answer here…"
+                                        class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{{
+                                        $t('lessonViewer.yourAnswer') }}</label>
+                                    <textarea v-model="homeworkText" rows="6"
+                                        :placeholder="$t('lessonViewer.answerPlaceholder')"
                                         class="input resize-none"></textarea>
                                 </div>
 
                                 <div>
                                     <label
-                                        class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Attachments
-                                        (optional)</label>
+                                        class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{{
+                                        $t('lessonViewer.attachments') }}</label>
                                     <input ref="hwFileInput" type="file" multiple class="hidden"
                                         @change="handleHwFiles" />
                                     <div class="space-y-1 mb-2">
@@ -389,20 +400,21 @@
                                     </div>
                                     <button @click="$refs.hwFileInput.click()"
                                         class="border border-dashed border-white/20 rounded-xl py-2.5 w-full text-xs text-gray-500 hover:border-sky-500/50 hover:text-sky-400 transition-colors">
-                                        + Attach files
+                                        + {{ $t('lessonViewer.attachFiles') }}
                                     </button>
                                 </div>
 
                                 <button @click="submitHw"
                                     :disabled="hwSubmitting || (!homeworkText.trim() && !hwFiles.length)"
                                     class="w-full bg-sky-500 hover:bg-sky-600 disabled:bg-sky-900 disabled:text-sky-700 text-white font-bold py-3 rounded-xl transition-colors text-sm">
-                                    {{ hwSubmitting ? 'Submitting…' : 'Submit Assignment' }}
+                                    {{ hwSubmitting ? $t('lessonViewer.submitting') :
+                                        $t('lessonViewer.submitAssignment') }}
                                 </button>
 
                                 <div v-if="hwSubmitted"
                                     class="flex items-center gap-2 text-emerald-400 text-sm font-medium">
                                     <CheckCircleIcon class="w-4 h-4" />
-                                    Submitted! Your instructor will review it shortly.
+                                    {{ $t('lessonViewer.hwSubmitted') }}
                                 </div>
                             </div>
                         </div>
@@ -415,7 +427,7 @@
 
         <!-- Error -->
         <div v-else class="flex-1 flex items-center justify-center text-gray-500 text-sm">
-            Lesson not found or you don't have access.
+            {{ $t('lessonViewer.notFound') }}
         </div>
 
     </div>
@@ -432,8 +444,10 @@ import {
 import api, { uploadApi } from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
 import { useCourseStore } from '@/stores/course'
+import { useI18n } from 'vue-i18n'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
@@ -495,9 +509,12 @@ const isProviderPreview = computed(() => {
 })
 
 const tabs = computed(() => {
-    const t = ['Lesson', 'Materials']
-    if (course.value?.homeworkEnabled) t.push('Homework')
-    return t
+    const list = [
+        { key: 'Lesson', label: t('lessonViewer.tabLesson') },
+        { key: 'Materials', label: t('lessonViewer.tabMaterials') }
+    ]
+    if (course.value?.homeworkEnabled) list.push({ key: 'Homework', label: t('lessonViewer.tabHomework') })
+    return list
 })
 const activeTab = ref('Lesson')
 
@@ -562,13 +579,10 @@ const allLessonIds = computed(() => {
 
 // ── Lesson locking: a lesson is accessible only if it's the first one or the previous one is completed ──
 function isLessonLocked(id) {
-    // Provider preview — nothing locked
     if (isProviderPreview.value) return false
     const ids = allLessonIds.value
     const idx = ids.indexOf(id)
-    // First lesson in the entire course is never locked
     if (idx <= 0) return false
-    // Locked if the previous lesson is NOT completed
     const prevId = ids[idx - 1]
     return !completedLessonIds.value.has(prevId)
 }
@@ -576,7 +590,7 @@ function isLessonLocked(id) {
 // ── Lesson navigation ─────────────────────────────────────────────────────────
 function navigateToLesson(block, topic, l) {
     if (isLessonLocked(l._id)) {
-        toast.error('Complete the previous lesson first')
+        toast.error(t('lessonViewer.completePreviousFirst'))
         return
     }
     activeQuiz.value = null
@@ -612,7 +626,6 @@ function youtubeEmbed(url) {
 
 // ── Fetch video via axios (sends auth token) ─────────────────────────────────
 async function fetchVideo() {
-    // Revoke previous blob URL if any
     if (videoBlobUrl.value) {
         URL.revokeObjectURL(videoBlobUrl.value)
         videoBlobUrl.value = null
@@ -632,7 +645,6 @@ async function fetchVideo() {
     }
 }
 
-// Clean up blob URL and event listeners on unmount
 onBeforeUnmount(() => {
     if (videoBlobUrl.value) {
         URL.revokeObjectURL(videoBlobUrl.value)
@@ -664,16 +676,15 @@ async function submitHw() {
         homeworkText.value = ''
         hwFiles.value = []
     } catch (e) {
-        toast.error(e?.response?.data?.message || 'Failed to submit assignment')
+        toast.error(e?.response?.data?.message || t('lessonViewer.hwFailed'))
     } finally {
         hwSubmitting.value = false
     }
 }
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────
-const activeQuiz = ref(null) // { type, quizId, blockId, topicId, questions, answers, submitting, result }
+const activeQuiz = ref(null)
 
-// Map of quizId → best result { score, passed }
 const completedQuizMap = computed(() => {
     const cq = progress.value?.completedQuizzes
     if (!cq?.length) return new Map()
@@ -681,7 +692,6 @@ const completedQuizMap = computed(() => {
     for (const q of cq) {
         const id = q.quizId?.toString?.() || q.quizId
         const existing = map.get(id)
-        // Keep the best score
         if (!existing || q.score > existing.score) {
             map.set(id, { score: q.score, passed: q.score >= 60 })
         }
@@ -693,26 +703,21 @@ function getQuizBestResult(quizId) {
     return completedQuizMap.value.get(quizId?.toString?.() || quizId) || null
 }
 
-// Quiz is locked if not all lessons in its scope are completed
 function isQuizLocked(type, block, topic) {
-    // Provider preview — nothing locked
     if (isProviderPreview.value) return false
     if (type === 'topic' && topic) {
-        // All lessons in this topic must be completed
         return topic.lessons.some(l => !completedLessonIds.value.has(l._id))
     }
-    // Block quiz — all lessons in all topics of the block must be completed
     return block.topics.some(t =>
         t.lessons.some(l => !completedLessonIds.value.has(l._id))
     )
 }
 
 async function openQuiz(type, block, topic) {
-    // Soft lock — ask for confirmation if lessons incomplete
     if (isQuizLocked(type, block, topic)) {
-        const scope = type === 'block' ? 'block' : 'topic'
+        const scope = type === 'block' ? t('lessonViewer.block') : t('lessonViewer.topic')
         const proceed = await modal.confirm(
-            `You haven't completed all lessons in this ${scope} yet. Take the quiz anyway?`
+            t('lessonViewer.quizLockConfirm', { scope })
         )
         if (!proceed) return
     }
@@ -734,7 +739,6 @@ async function openQuiz(type, block, topic) {
         result: null
     }
 
-    // If already passed, show the past result; user can click "Retake" to try again
     if (pastResult?.passed) {
         state.result = {
             score: pastResult.score,
@@ -767,18 +771,16 @@ async function submitQuiz() {
             activeQuiz.value.topicId
         )
         activeQuiz.value = { ...activeQuiz.value, result, submitting: false }
-        // Refresh progress
         const content = await courseStore.getCourseContent(courseId)
         progress.value = content.progress
     } catch (e) {
-        toast.error(e?.response?.data?.message || 'Failed to submit quiz')
+        toast.error(e?.response?.data?.message || t('lessonViewer.quizFailed'))
         activeQuiz.value = { ...activeQuiz.value, submitting: false }
     }
 }
 
 // ── Load ──────────────────────────────────────────────────────────────────────
 onMounted(async () => {
-    // Register anti-screenshot / tab-switch listeners
     document.addEventListener('visibilitychange', handleVisibilityChange)
     document.addEventListener('keydown', handleKeydown)
 
@@ -788,7 +790,6 @@ onMounted(async () => {
         course.value = result.data
         progress.value = result.progress || null
 
-        // Trigger video fetch now that course data is loaded
         if (lesson.value?.videoFile) fetchVideo()
     } catch (e) {
         console.error('LessonViewer load error:', e)
@@ -797,16 +798,13 @@ onMounted(async () => {
     }
 })
 
-// ── Watch for lesson change (same route, different params — Vue reuses component) ──
 watch(lessonId, (newId, oldId) => {
     if (!newId || newId === oldId) return
-    // Reset per-lesson state
     activeTab.value = 'Lesson'
     activeQuiz.value = null
     homeworkText.value = ''
     hwFiles.value = []
     hwSubmitted.value = false
-    // Load new video if needed
     if (lesson.value?.videoFile) {
         fetchVideo()
     } else if (videoBlobUrl.value) {

@@ -7,7 +7,7 @@
                 <div class="flex items-center space-x-2">
                     <button @click="goToToday"
                         class="px-3 py-1 text-sm bg-brand-1 text-white rounded-lg hover:bg-brand-1/90 transition-colors">
-                        Today
+                        {{ $t('appointments.today') }}
                     </button>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                     <div v-if="selectedDate && selectedDateAppointments.length > 0"
                         class="border-t border-gray-200 p-4">
                         <h3 class="text-sm font-medium text-gray-900 mb-3">
-                            Appointments for {{ formatSelectedDate(selectedDate) }}
+                            {{ $t('calendar.appointmentsFor', { date: formatSelectedDate(selectedDate) }) }}
                         </h3>
                         <div class="space-y-2">
                             <div v-for="appointment in selectedDateAppointments" :key="appointment._id"
@@ -44,12 +44,12 @@
                                 <div class="flex space-x-1">
                                     <button @click="viewAppointment(appointment._id)"
                                         class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
-                                        View
+                                        {{ $t('common.view') }}
                                     </button>
                                     <button v-if="canEditAppointment(appointment)"
                                         @click="editAppointment(appointment._id)"
                                         class="px-2 py-1 text-xs text-green-700 bg-green-100 rounded hover:bg-green-200">
-                                        Edit
+                                        {{ $t('common.edit') }}
                                     </button>
                                 </div>
                             </div>
@@ -64,7 +64,7 @@
             <div class="divide-y divide-gray-200">
                 <div v-if="appointments.length === 0" class="p-8 text-center">
                     <CalendarDaysIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <p class="text-gray-500">No appointments found</p>
+                    <p class="text-gray-500">{{ $t('appointments.noAppointmentsFound') }}</p>
                 </div>
                 <div v-for="appointment in appointments" :key="appointment._id"
                     class="p-4 hover:bg-gray-50 transition-colors">
@@ -83,11 +83,11 @@
                         <div class="flex space-x-2">
                             <button @click="viewAppointment(appointment._id)"
                                 class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
-                                View
+                                {{ $t('common.view') }}
                             </button>
                             <button v-if="canEditAppointment(appointment)" @click="editAppointment(appointment._id)"
                                 class="px-3 py-2 text-sm text-green-700 bg-green-100 rounded hover:bg-green-200">
-                                Edit
+                                {{ $t('common.edit') }}
                             </button>
                         </div>
                     </div>
@@ -99,23 +99,23 @@
         <div class="mt-4 flex flex-wrap gap-4 text-sm">
             <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-blue-500 rounded"></div>
-                <span class="text-gray-600">Scheduled</span>
+                <span class="text-gray-600">{{ $t('calendar.scheduled') }}</span>
             </div>
             <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-green-500 rounded"></div>
-                <span class="text-gray-600">Completed</span>
+                <span class="text-gray-600">{{ $t('calendar.completed') }}</span>
             </div>
             <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-red-500 rounded"></div>
-                <span class="text-gray-600">Cancelled</span>
+                <span class="text-gray-600">{{ $t('calendar.cancelled') }}</span>
             </div>
             <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-yellow-500 rounded"></div>
-                <span class="text-gray-600">Pending</span>
+                <span class="text-gray-600">{{ $t('calendar.pending') }}</span>
             </div>
             <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-purple-500 rounded"></div>
-                <span class="text-gray-600">Needs confirmation</span>
+                <span class="text-gray-600">{{ $t('calendar.needsConfirmation') }}</span>
             </div>
         </div>
     </div>
@@ -123,11 +123,14 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { format, parseISO, isFuture, isSameDay } from 'date-fns'
 import { CalendarDaysIcon } from '@heroicons/vue/24/outline'
 import axios from '@/plugins/axios'
 import ReusableCalendar from './ReusableCalendar.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
     userRole: {
@@ -137,7 +140,7 @@ const props = defineProps({
     },
     title: {
         type: String,
-        default: 'Appointments'
+        default: null
     }
 })
 
@@ -151,6 +154,9 @@ const currentView = ref('calendar')
 const selectedDate = ref(null)
 const appointments = ref([])
 const calendarRef = ref(null)
+
+// Use prop title or fall back to i18n
+const title = computed(() => props.title || t('calendar.title'))
 
 // Computed properties
 const calendarEvents = computed(() => {
@@ -226,14 +232,14 @@ const getStatusColor = (status) => {
 
 const getClientName = (appointment) => {
     const client = appointment.client
-    if (!client) return 'Unknown Client'
-    return `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Client'
+    if (!client) return t('common.unknown') + ' ' + t('calendar.sortByClient')
+    return `${client.firstName || ''} ${client.lastName || ''}`.trim() || t('calendar.sortByClient')
 }
 
 const getProviderName = (appointment) => {
     const provider = appointment.provider
-    if (!provider) return 'Unknown Provider'
-    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || 'Provider'
+    if (!provider) return t('common.unknown') + ' ' + t('calendar.sortByProvider')
+    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || t('calendar.sortByProvider')
 }
 
 const formatDateTime = (dateTime) => {

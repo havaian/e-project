@@ -9,8 +9,8 @@
         <div v-else-if="!chartData || chartData.length === 0"
             class="flex flex-col items-center justify-center h-80 text-gray-500">
             <ChartBarIcon class="w-16 h-16 mb-4" />
-            <h3 class="text-lg font-medium mb-2">No earnings data available</h3>
-            <p class="text-sm">Complete some appointments to see your earnings here.</p>
+            <h3 class="text-lg font-medium mb-2">{{ $t('earnings.noData') }}</h3>
+            <p class="text-sm">{{ $t('earnings.noDataDescription') }}</p>
         </div>
 
         <!-- Chart -->
@@ -21,21 +21,19 @@
         <!-- Summary Stats -->
         <div v-if="chartData && chartData.length > 0" class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-gray-50 rounded-lg p-4 text-center">
-                <p class="text-sm text-gray-600">Total earnings</p>
+                <p class="text-sm text-gray-600">{{ $t('earnings.totalEarnings') }}</p>
                 <p class="text-lg font-bold text-gray-900">{{ formatCurrency(totalEarnings) }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4 text-center">
-                <p class="text-sm text-gray-600">Average per {{ period === 'monthly' ? 'Month' : period === 'weekly' ?
-                    'Week' : 'Day' }}</p>
+                <p class="text-sm text-gray-600">{{ $t('earnings.averagePer', { period: periodLabel }) }}</p>
                 <p class="text-lg font-bold text-gray-900">{{ formatCurrency(averageEarnings) }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4 text-center">
-                <p class="text-sm text-gray-600">Best {{ period === 'monthly' ? 'Month' : period === 'weekly' ? 'Week' :
-                    'Day' }}</p>
+                <p class="text-sm text-gray-600">{{ $t('earnings.best', { period: periodLabel }) }}</p>
                 <p class="text-lg font-bold text-gray-900">{{ formatCurrency(maxEarnings) }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4 text-center">
-                <p class="text-sm text-gray-600">Growth trend</p>
+                <p class="text-sm text-gray-600">{{ $t('earnings.growthTrend') }}</p>
                 <div class="flex items-center justify-center space-x-1">
                     <ArrowTrendingUpIcon v-if="growthTrend >= 0" class="w-4 h-4 text-green-500" />
                     <ArrowTrendingDownIcon v-else class="w-4 h-4 text-red-500" />
@@ -51,7 +49,10 @@
 <script setup>
 import { ChartBarIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon } from "@heroicons/vue/24/outline";
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { LineChart } from 'recharts'
+
+const { t } = useI18n()
 
 const props = defineProps({
     data: {
@@ -66,6 +67,13 @@ const props = defineProps({
         type: Boolean,
         default: false
     }
+})
+
+// Period label for summary stats
+const periodLabel = computed(() => {
+    if (props.period === 'monthly') return t('earnings.month')
+    if (props.period === 'weekly') return t('earnings.week')
+    return t('earnings.day')
 })
 
 // Process data for chart
@@ -112,10 +120,10 @@ const chartOptions = computed(() => ({
             intersect: false,
             callbacks: {
                 label: function (context) {
-                    if (context.dataset.label === 'Total earnings') {
-                        return `Total: ${formatCurrency(context.parsed.y)}`
-                    } else if (context.dataset.label === 'Net earnings') {
-                        return `Net: ${formatCurrency(context.parsed.y)}`
+                    if (context.dataset.label === t('earnings.totalEarnings')) {
+                        return `${t('earnings.total')}: ${formatCurrency(context.parsed.y)}`
+                    } else if (context.dataset.label === t('earnings.netEarnings')) {
+                        return `${t('earnings.net')}: ${formatCurrency(context.parsed.y)}`
                     }
                     return context.dataset.label + ': ' + context.parsed.y
                 }

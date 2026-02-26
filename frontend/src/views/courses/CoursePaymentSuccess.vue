@@ -8,7 +8,7 @@
                 <div
                     class="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto mb-4">
                 </div>
-                <p class="text-gray-500 text-sm">Confirming your enrollment…</p>
+                <p class="text-gray-500 text-sm">{{ $t('coursePayment.confirming') }}</p>
             </div>
 
             <!-- Success -->
@@ -16,19 +16,19 @@
                 <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5">
                     <CheckCircleIcon class="w-8 h-8 text-emerald-500" />
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">You're Enrolled!</h1>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ $t('coursePayment.enrolled') }}</h1>
                 <p class="text-gray-500 text-sm mb-1">
-                    Successfully enrolled in
+                    {{ $t('coursePayment.successfullyEnrolled') }}
                 </p>
                 <p class="font-semibold text-gray-800 mb-6">{{ enrollment.course?.title }}</p>
 
                 <button @click="$router.push(`/courses/${enrollment.course?._id}/learn`)"
                     class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl transition-colors text-sm mb-3">
-                    Start Learning →
+                    {{ $t('coursePayment.startLearning') }} →
                 </button>
                 <button @click="$router.push('/courses/my-learning')"
                     class="w-full border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold py-3 rounded-xl transition-colors text-sm">
-                    My Learning
+                    {{ $t('myLearning.title') }}
                 </button>
             </template>
 
@@ -37,13 +37,13 @@
                 <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-5">
                     <ExclamationTriangleIcon class="w-8 h-8 text-amber-500" />
                 </div>
-                <h1 class="text-xl font-bold text-gray-900 mb-2">Payment Not Confirmed</h1>
+                <h1 class="text-xl font-bold text-gray-900 mb-2">{{ $t('coursePayment.notConfirmed') }}</h1>
                 <p class="text-gray-500 text-sm mb-6">
-                    We couldn't confirm your payment. If you were charged, please contact support.
+                    {{ $t('coursePayment.notConfirmedDesc') }}
                 </p>
                 <button @click="$router.push('/courses')"
                     class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl transition-colors text-sm">
-                    Back to Courses
+                    {{ $t('coursePayment.backToCourses') }}
                 </button>
             </template>
 

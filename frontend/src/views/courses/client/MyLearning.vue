@@ -5,8 +5,8 @@
 
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">My Learning</h1>
-                <p class="mt-1 text-gray-500">Pick up where you left off on your transformation path.</p>
+                <h1 class="text-3xl font-bold text-gray-900">{{ $t('myLearning.title') }}</h1>
+                <p class="mt-1 text-gray-500">{{ $t('myLearning.subtitle') }}</p>
             </div>
 
             <!-- Loading -->
@@ -31,7 +31,7 @@
                         <div v-if="enrollment.status === 'completed'"
                             class="absolute top-3 left-3 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
                             <CheckCircleIcon class="w-3.5 h-3.5" />
-                            Completed
+                            {{ $t('myLearning.completed') }}
                         </div>
                     </div>
 
@@ -39,7 +39,7 @@
                     <div class="p-5 flex flex-col flex-1">
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
                             {{ [enrollment.course?.category, enrollment.course?.subcategory].filter(Boolean).join(' • ')
-                            || 'Course' }}
+                                || $t('myLearning.course') }}
                         </p>
                         <h3 class="font-bold text-gray-900 text-base mb-4 line-clamp-2 flex-1">
                             {{ enrollment.course?.title }}
@@ -49,9 +49,11 @@
                         <div class="mb-4">
                             <div class="flex items-center justify-between mb-1.5">
                                 <span class="text-xs font-semibold text-sky-500">
-                                    {{ enrollment.progress?.percentComplete || 0 }}% COMPLETED
+                                    {{ $t('myLearning.percentCompleted', {
+                                        percent: enrollment.progress?.percentComplete
+                                    || 0 }) }}
                                 </span>
-                                <span class="text-xs text-gray-400">TARGET: 100%</span>
+                                <span class="text-xs text-gray-400">{{ $t('myLearning.target') }}: 100%</span>
                             </div>
                             <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                 <div class="h-full bg-sky-500 rounded-full transition-all duration-500"
@@ -61,7 +63,8 @@
 
                         <button @click="$router.push(`/courses/${enrollment.course?._id}/learn`)"
                             class="w-full bg-gray-900 hover:bg-gray-700 text-white font-bold py-3 rounded-xl transition-colors text-sm tracking-wide flex items-center justify-center gap-2">
-                            {{ enrollment.status === 'completed' ? 'REVIEW' : 'CONTINUE' }}
+                            {{ enrollment.status === 'completed' ? $t('myLearning.review') : $t('myLearning.continue')
+                            }}
                             <ArrowRightIcon class="w-4 h-4" />
                         </button>
                     </div>
@@ -73,7 +76,7 @@
                     <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                         <PlusCircleIcon class="w-8 h-8 text-gray-400" />
                     </div>
-                    <p class="text-sm font-semibold text-gray-500">Explore More</p>
+                    <p class="text-sm font-semibold text-gray-500">{{ $t('myLearning.exploreMore') }}</p>
                 </div>
 
             </div>
@@ -81,11 +84,11 @@
             <!-- Empty state (no enrollments) -->
             <div v-if="!loading && !enrollments.length" class="col-span-full text-center py-16">
                 <AcademicCapIcon class="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <h3 class="font-semibold text-gray-600 mb-1">No courses yet</h3>
-                <p class="text-sm text-gray-400 mb-5">Browse the catalog and enroll in your first course.</p>
+                <h3 class="font-semibold text-gray-600 mb-1">{{ $t('myLearning.noCourses') }}</h3>
+                <p class="text-sm text-gray-400 mb-5">{{ $t('myLearning.noCoursesHint') }}</p>
                 <button @click="$router.push('/courses')"
                     class="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
-                    Find Courses
+                    {{ $t('myLearning.findCourses') }}
                 </button>
             </div>
 

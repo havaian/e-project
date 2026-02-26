@@ -6,13 +6,13 @@
             <!-- Header -->
             <div class="flex items-start justify-between mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Your Portfolio</h1>
-                    <p class="mt-1 text-gray-500">Create and manage your professional curriculum.</p>
+                    <h1 class="text-3xl font-bold text-gray-900">{{ $t('coursePortfolio.title') }}</h1>
+                    <p class="mt-1 text-gray-500">{{ $t('coursePortfolio.subtitle') }}</p>
                 </div>
                 <button @click="showNewModal = true"
                     class="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2.5 rounded-2xl transition-colors shadow-lg shadow-sky-500/20">
                     <PlusIcon class="w-4 h-4" />
-                    New Course
+                    {{ $t('coursePortfolio.newCourse') }}
                 </button>
             </div>
 
@@ -26,11 +26,11 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <BookOpenIcon class="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 class="text-lg font-semibold text-gray-700 mb-1">No courses yet</h3>
-                <p class="text-gray-400 text-sm mb-6">Create your first course to get started.</p>
+                <h3 class="text-lg font-semibold text-gray-700 mb-1">{{ $t('coursePortfolio.noCourses') }}</h3>
+                <p class="text-gray-400 text-sm mb-6">{{ $t('coursePortfolio.noCoursesHint') }}</p>
                 <button @click="showNewModal = true"
                     class="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors">
-                    <PlusIcon class="w-4 h-4" /> New Course
+                    <PlusIcon class="w-4 h-4" /> {{ $t('coursePortfolio.newCourse') }}
                 </button>
             </div>
 
@@ -51,7 +51,8 @@
                             'bg-amber-100 text-amber-700': course.status === 'draft',
                             'bg-gray-200 text-gray-600': course.status === 'archived'
                         }">
-                            {{ course.status.toUpperCase() }}
+                            {{ course.status === 'published' ? $t('coursePortfolio.published') : course.status ===
+                                'draft' ? $t('coursePortfolio.draft') : $t('coursePortfolio.archived') }}
                         </span>
                     </div>
 
@@ -59,13 +60,14 @@
                     <div class="p-5 flex flex-col flex-1">
                         <h3 class="font-bold text-gray-900 text-base mb-1 line-clamp-2">{{ course.title }}</h3>
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-                            {{ [course.category, course.subcategory].filter(Boolean).join(' • ') || 'Uncategorized' }}
+                            {{ [course.category, course.subcategory].filter(Boolean).join(' • ') ||
+                                $t('coursePortfolio.uncategorized') }}
                         </p>
 
                         <div class="flex items-center gap-4 text-sm text-gray-600 mb-5">
                             <span class="flex items-center gap-1.5">
                                 <AcademicCapIcon class="w-4 h-4 text-sky-500" />
-                                {{ course.studentCount || 0 }} Students
+                                {{ $t('coursePortfolio.studentsCount', { count: course.studentCount || 0 }) }}
                             </span>
                             <span v-if="avgRating(course)" class="flex items-center gap-1.5">
                                 <StarIcon class="w-4 h-4 text-amber-400 fill-amber-400" />
@@ -76,11 +78,11 @@
                         <div class="flex gap-2 mt-auto">
                             <button @click="$router.push(`/courses/${course._id}/builder`)"
                                 class="flex-1 bg-gray-900 hover:bg-gray-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors tracking-wide">
-                                MANAGE
+                                {{ $t('coursePortfolio.manage') }}
                             </button>
                             <button @click="$router.push(`/courses/${course._id}`)"
                                 class="flex-1 border border-gray-200 hover:border-gray-300 text-gray-700 text-xs font-bold py-2.5 px-4 rounded-xl transition-colors tracking-wide">
-                                PREVIEW
+                                {{ $t('courseBuilder.preview') }}
                             </button>
                         </div>
                     </div>
@@ -94,7 +96,7 @@
                 class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
                     <div class="flex items-center justify-between mb-5">
-                        <h2 class="text-xl font-bold text-gray-900">New Course</h2>
+                        <h2 class="text-xl font-bold text-gray-900">{{ $t('coursePortfolio.newCourse') }}</h2>
                         <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
                             <XMarkIcon class="w-5 h-5" />
                         </button>
@@ -102,25 +104,31 @@
 
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Title <span
-                                    class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{
+                                $t('coursePortfolio.titleLabel') }} <span class="text-red-500">*</span></label>
                             <input v-model="newCourse.title" type="text"
-                                placeholder="e.g. Modern React & TypeScript Mastery"
+                                :placeholder="$t('coursePortfolio.titlePlaceholder')"
                                 class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
-                            <input v-model="newCourse.category" type="text" placeholder="e.g. Web Programming"
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{
+                                $t('courseBuilder.category') }}</label>
+                            <input v-model="newCourse.category" type="text"
+                                :placeholder="$t('coursePortfolio.categoryPlaceholder')"
                                 class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Subcategory</label>
-                            <input v-model="newCourse.subcategory" type="text" placeholder="e.g. Development"
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{
+                                $t('courseBuilder.subcategory') }}</label>
+                            <input v-model="newCourse.subcategory" type="text"
+                                :placeholder="$t('coursePortfolio.subcategoryPlaceholder')"
                                 class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Price (UZS)</label>
-                            <input v-model.number="newCourse.price" type="number" min="0" placeholder="0 for free"
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{
+                                $t('courseBuilder.priceLabel') }}</label>
+                            <input v-model.number="newCourse.price" type="number" min="0"
+                                :placeholder="$t('coursePortfolio.pricePlaceholder')"
                                 class="input w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" />
                         </div>
                     </div>
@@ -128,12 +136,12 @@
                     <div class="flex gap-3 mt-6">
                         <button @click="closeModal"
                             class="flex-1 border border-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-sm">
-                            Cancel
+                            {{ $t('common.cancel') }}
                         </button>
                         <button @click="handleCreate" :disabled="!newCourse.title.trim() || creating"
                             class="flex-1 bg-sky-500 hover:bg-sky-600 disabled:bg-sky-300 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm">
-                            <span v-if="creating">Creating…</span>
-                            <span v-else>Create & Open Builder</span>
+                            <span v-if="creating">{{ $t('coursePortfolio.creating') }}</span>
+                            <span v-else>{{ $t('coursePortfolio.createAndOpen') }}</span>
                         </button>
                     </div>
                 </div>
@@ -145,10 +153,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { PlusIcon, BookOpenIcon, AcademicCapIcon, StarIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const router = useRouter()
@@ -193,11 +203,11 @@ async function handleCreate() {
             subcategory: newCourse.value.subcategory.trim(),
             price: newCourse.value.price || 0
         })
-        toast.success('Course created!')
+        toast.success(t('coursePortfolio.courseCreated'))
         router.push(`/courses/${created._id}/builder`)
     } catch (e) {
         console.error('createCourse error:', e)
-        toast.error(e?.response?.data?.message || 'Failed to create course')
+        toast.error(e?.response?.data?.message || t('coursePortfolio.createFailed'))
     } finally {
         creating.value = false
     }

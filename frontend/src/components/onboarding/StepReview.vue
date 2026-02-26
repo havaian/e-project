@@ -2,8 +2,8 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Review Your profile</h2>
-            <p class="mt-2 text-gray-600">Please review all information before completing your setup</p>
+            <h2 class="text-3xl font-bold text-gray-900">{{ $t('onboarding.reviewProfile') }}</h2>
+            <p class="mt-2 text-gray-600">{{ $t('onboarding.reviewDesc') }}</p>
         </div>
 
         <!-- Profile Summary Cards -->
@@ -12,37 +12,37 @@
             <!-- Education & Certifications -->
             <div class="bg-white rounded-xl border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Education & Certifications</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ $t('onboarding.educationCerts') }}</h3>
                     <button @click="$emit('editStep', 1)" class="text-sky-600 hover:text-sky-700 text-sm font-medium">
-                        Edit
+                        {{ $t('onboarding.edit') }}
                     </button>
                 </div>
 
                 <div class="space-y-4">
                     <div>
-                        <h4 class="text-sm font-medium text-gray-900 mb-2">Education</h4>
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">{{ $t('onboarding.education') }}</h4>
                         <div v-if="validEducation.length > 0" class="space-y-2">
                             <div v-for="edu in validEducation" :key="`${edu.degree}-${edu.institution}`"
                                 class="text-sm text-gray-600">
                                 {{ edu.degree }} - {{ edu.institution }} ({{ edu.year }})
                             </div>
                         </div>
-                        <p v-else class="text-sm text-gray-500">No education information</p>
+                        <p v-else class="text-sm text-gray-500">{{ $t('onboarding.noEducation') }}</p>
                     </div>
 
                     <div>
-                        <h4 class="text-sm font-medium text-gray-900 mb-2">Certifications</h4>
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">{{ $t('onboarding.certifications') }}</h4>
                         <div v-if="validCertifications.length > 0" class="space-y-2">
                             <div v-for="cert in validCertifications" :key="`${cert.name}-${cert.issuer}`"
                                 class="text-sm text-gray-600">
                                 {{ cert.name }} - {{ cert.issuer }} ({{ cert.year }})
                             </div>
                         </div>
-                        <p v-else class="text-sm text-gray-500">No certifications</p>
+                        <p v-else class="text-sm text-gray-500">{{ $t('onboarding.noCertifications') }}</p>
                     </div>
 
                     <div>
-                        <h4 class="text-sm font-medium text-gray-900 mb-2">Languages</h4>
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">{{ $t('onboarding.languages') }}</h4>
                         <div class="flex flex-wrap gap-2">
                             <span v-for="lang in validLanguages" :key="lang"
                                 class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
@@ -56,9 +56,9 @@
             <!-- Availability -->
             <div class="bg-white rounded-xl border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Availability</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ $t('calendar.providerAvailability') }}</h3>
                     <button @click="$emit('editStep', 2)" class="text-sky-600 hover:text-sky-700 text-sm font-medium">
-                        Edit
+                        {{ $t('onboarding.edit') }}
                     </button>
                 </div>
 
@@ -74,14 +74,15 @@
                         </div>
                     </div>
                     <div v-if="availableDays.length === 0" class="text-sm text-gray-500">
-                        No availability set
+                        {{ $t('onboarding.noAvailability') }}
                     </div>
                 </div>
 
                 <div class="mt-4 pt-4 border-t border-gray-200">
                     <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-600">Total weekly hours:</span>
-                        <span class="font-medium text-gray-900">{{ totalWeeklyHours.toFixed(1) }} hours</span>
+                        <span class="text-gray-600">{{ $t('onboarding.totalWeeklyHours') }}</span>
+                        <span class="font-medium text-gray-900">{{ totalWeeklyHours.toFixed(1) }} {{
+                            $t('onboarding.hours') }}</span>
                     </div>
                 </div>
             </div>
@@ -89,31 +90,33 @@
             <!-- Session settings -->
             <div class="bg-white rounded-xl border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Session settings</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ $t('onboarding.sessionSettings') }}</h3>
                     <button @click="$emit('editStep', 3)" class="text-sky-600 hover:text-sky-700 text-sm font-medium">
-                        Edit
+                        {{ $t('onboarding.edit') }}
                     </button>
                 </div>
 
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Session duration</span>
-                        <span class="font-medium text-gray-900">{{ modelValue.sessionDuration }} minutes</span>
+                        <span class="text-sm text-gray-600">{{ $t('onboarding.sessionDuration') }}</span>
+                        <span class="font-medium text-gray-900">{{ modelValue.sessionDuration }} {{
+                            $t('onboarding.minutes') }}</span>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Session fee</span>
+                        <span class="text-sm text-gray-600">{{ $t('onboarding.sessionFee') }}</span>
                         <span class="font-medium text-gray-900">{{ formatCurrency(modelValue.sessionFee) }}</span>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">You receive (after 10% platform fee)</span>
+                        <span class="text-sm text-gray-600">{{ $t('onboarding.youReceiveAfterFee') }}</span>
                         <span class="font-medium text-green-600">{{ formatCurrency(netEarnings) }}</span>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Potential hourly earnings</span>
-                        <span class="font-medium text-blue-600">{{ formatCurrency(hourlyEarnings) }}/hour</span>
+                        <span class="text-sm text-gray-600">{{ $t('onboarding.potentialHourly') }}</span>
+                        <span class="font-medium text-blue-600">{{ formatCurrency(hourlyEarnings) }}/{{
+                            $t('onboarding.hours') }}</span>
                     </div>
                 </div>
             </div>
@@ -121,15 +124,15 @@
             <!-- Profile Information -->
             <div class="bg-white rounded-xl border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Profile Information</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ $t('onboarding.profileInfo') }}</h3>
                     <button @click="$emit('editStep', 4)" class="text-sky-600 hover:text-sky-700 text-sm font-medium">
-                        Edit
+                        {{ $t('onboarding.edit') }}
                     </button>
                 </div>
 
                 <div class="space-y-4">
                     <div>
-                        <h4 class="text-sm font-medium text-gray-900 mb-2">Specializations</h4>
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">{{ $t('onboarding.specializations') }}</h4>
                         <div class="flex flex-wrap gap-2">
                             <span v-for="spec in validSpecializations" :key="spec"
                                 class="px-2 py-1 bg-sky-100 text-sky-800 text-xs rounded-full">
@@ -139,18 +142,19 @@
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Years of experience</span>
-                        <span class="font-medium text-gray-900">{{ modelValue.experience }} {{ modelValue.experience ===
-                            1 ? 'year' : 'years' }}</span>
+                        <span class="text-sm text-gray-600">{{ $t('onboarding.experience') }}</span>
+                        <span class="font-medium text-gray-900">{{ $t('onboarding.yearsExperience', {
+                            count:
+                            modelValue.experience }) }}</span>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">License number</span>
+                        <span class="text-sm text-gray-600">{{ $t('onboarding.licenseNumber') }}</span>
                         <span class="font-medium text-gray-900">{{ modelValue.licenseNumber }}</span>
                     </div>
 
                     <div>
-                        <h4 class="text-sm font-medium text-gray-900 mb-2">Professional Bio</h4>
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">{{ $t('onboarding.bio') }}</h4>
                         <p class="text-sm text-gray-600 leading-relaxed">{{ modelValue.bio }}</p>
                     </div>
                 </div>
@@ -164,9 +168,10 @@
                     <CheckCircleIcon class="w-6 h-6 text-white" />
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-green-900">Profile {{ completionPercentage }}% Complete</h3>
-                    <p class="text-green-700">All required information has been provided. Your profile is ready to go
-                        live!</p>
+                    <h3 class="text-lg font-semibold text-green-900">{{ $t('onboarding.profileCompletion', {
+                        percent:
+                        completionPercentage }) }}</h3>
+                    <p class="text-green-700">{{ $t('onboarding.profileReadyToGoLive') }}</p>
                 </div>
             </div>
         </div>
@@ -178,12 +183,13 @@
                     class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded mt-1"
                     @change="validateForm" />
                 <label for="terms-agreement" class="text-sm text-gray-700">
-                    I confirm that all information provided is accurate and I have accepted
-                    <a href="/terms" target="_blank" class="text-sky-600 hover:text-sky-700 underline">Public Offer</a>
+                    {{ $t('onboarding.termsConfirmation') }}
+                    <a href="/terms" target="_blank" class="text-sky-600 hover:text-sky-700 underline">{{
+                        $t('onboarding.publicOffer') }}</a>
                     and
-                    <a href="/privacy" target="_blank" class="text-sky-600 hover:text-sky-700 underline">Privacy
-                        Policy</a>.
-                    I understand that providing false information may result in account suspension.
+                    <a href="/privacy" target="_blank" class="text-sky-600 hover:text-sky-700 underline">{{
+                        $t('onboarding.privacyPolicy') }}</a>.
+                    {{ $t('onboarding.falseInfoWarning') }}
                 </label>
             </div>
         </div>
@@ -193,7 +199,7 @@
             <div class="flex items-start space-x-3">
                 <ExclamationCircleIcon class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-red-900">Please address the following issues:</p>
+                    <p class="font-medium text-red-900">{{ $t('onboarding.addressIssues') }}</p>
                     <ul class="text-red-700 mt-1 list-disc list-inside">
                         <li v-for="error in validationErrors" :key="error">{{ error }}</li>
                     </ul>
@@ -206,10 +212,9 @@
             <div class="flex items-start space-x-3">
                 <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-green-900">Ready to complete setup!</p>
+                    <p class="font-medium text-green-900">{{ $t('onboarding.readyToComplete') }}</p>
                     <p class="text-green-700 mt-1">
-                        Your profile is complete and ready to be published. Click "Complete setup" to finish the
-                        onboarding process.
+                        {{ $t('onboarding.readyToCompleteDesc') }}
                     </p>
                 </div>
             </div>
@@ -220,6 +225,9 @@
 <script setup>
 import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const emit = defineEmits(['update:modelValue', 'validate', 'editStep'])
 const props = defineProps({
@@ -284,7 +292,6 @@ const completionPercentage = computed(() => {
     let completed = 0
     const total = 10
 
-    // Check completeness of each section
     if (validEducation.value.length > 0) completed++
     if (validCertifications.value.length > 0) completed++
     if (validLanguages.value.length > 0) completed++
@@ -301,41 +308,15 @@ const completionPercentage = computed(() => {
 const validationErrors = computed(() => {
     const errors = []
 
-    if (validEducation.value.length === 0) {
-        errors.push('At least one education entry is required')
-    }
-
-    if (validCertifications.value.length === 0) {
-        errors.push('At least one certification is required')
-    }
-
-    if (validLanguages.value.length === 0) {
-        errors.push('At least one language must be selected')
-    }
-
-    if (availableDays.value.length === 0) {
-        errors.push('At least one day of availability must be set')
-    }
-
-    if (!props.modelValue.sessionDuration || !props.modelValue.sessionFee) {
-        errors.push('Session duration and fee must be set')
-    }
-
-    if (validSpecializations.value.length === 0) {
-        errors.push('At least one specialization must be selected')
-    }
-
-    if (!props.modelValue.licenseNumber) {
-        errors.push('Professional license number is required')
-    }
-
-    if (!props.modelValue.bio || props.modelValue.bio.length < 50) {
-        errors.push('Professional bio must be at least 50 characters')
-    }
-
-    if (!termsAccepted.value) {
-        errors.push('You must accept the terms and conditions')
-    }
+    if (validEducation.value.length === 0) errors.push(t('onboarding.validationEducation'))
+    if (validCertifications.value.length === 0) errors.push(t('onboarding.validationCertification'))
+    if (validLanguages.value.length === 0) errors.push(t('onboarding.validationLanguage'))
+    if (availableDays.value.length === 0) errors.push(t('onboarding.validationAvailability'))
+    if (!props.modelValue.sessionDuration || !props.modelValue.sessionFee) errors.push(t('onboarding.validationSession'))
+    if (validSpecializations.value.length === 0) errors.push(t('onboarding.validationSpecialization'))
+    if (!props.modelValue.licenseNumber) errors.push(t('onboarding.validationLicense'))
+    if (!props.modelValue.bio || props.modelValue.bio.length < 50) errors.push(t('onboarding.validationBio'))
+    if (!termsAccepted.value) errors.push(t('onboarding.validationTerms'))
 
     return errors
 })
@@ -346,8 +327,8 @@ const isValid = computed(() => {
 
 // Methods
 const getDayName = (dayOfWeek) => {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    return days[dayOfWeek - 1]
+    const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    return t(`onboarding.${dayKeys[dayOfWeek - 1]}`)
 }
 
 const formatTime = (time) => {

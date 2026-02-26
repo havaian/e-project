@@ -1,8 +1,11 @@
+<!-- frontend/src/views/Home.vue -->
 <template>
   <div>
     <!-- Show dashboard for logged in users -->
-    <ClientDashboard v-if="authStore.isAuthenticated && authStore.isClient" />
-    <ProviderDashboard v-else-if="authStore.isAuthenticated && authStore.isProvider" />
+    <template v-if="authStore.isAuthenticated">
+      <ClientDashboard v-if="authStore.isClient" />
+      <ProviderDashboard v-else-if="authStore.isProvider" />
+    </template>
 
     <!-- Show landing page for guests -->
     <div v-else class="min-h-screen">
@@ -12,23 +15,22 @@
           <div class="lg:grid lg:grid-cols-12 lg:gap-8">
             <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 academic-heading">
-                Professional
+                {{ $t('home.heroTitle1') }}
                 <span class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">
-                  Online
+                  {{ $t('home.heroTitle2') }}
                 </span>
                 <br />
-                Consultation
+                {{ $t('home.heroTitle3') }}
               </h1>
               <p class="mt-6 text-lg sm:text-xl text-gray-600 scholarly-text max-w-3xl">
-                Connect with qualified professionals for expert consultation through secure video sessions. Get the
-                guidance you need, when you need it.
+                {{ $t('home.heroDescription') }}
               </p>
               <div class="mt-10 flex flex-col sm:flex-row gap-4 sm:justify-center lg:justify-start">
                 <router-link to="/providers" class="btn-element-primary">
-                  Find a professional
+                  {{ $t('home.findProfessional') }}
                 </router-link>
                 <router-link to="/register" class="btn-element-secondary">
-                  Join as provider
+                  {{ $t('home.joinAsProvider') }}
                 </router-link>
               </div>
             </div>
@@ -46,7 +48,6 @@
                   class="absolute top-8 left-20 w-72 h-72 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000">
                 </div>
 
-                <!-- Main Image/Graphic -->
                 <div class="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
                   <div class="text-center">
                     <div
@@ -57,8 +58,8 @@
                         </path>
                       </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Secure video sessions</h3>
-                    <p class="text-gray-600">Professional consultations from the comfort of your home</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $t('home.secureVideoSessions') }}</h3>
+                    <p class="text-gray-600">{{ $t('home.secureVideoDesc') }}</p>
                   </div>
                 </div>
               </div>
@@ -71,16 +72,11 @@
       <div class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 academic-heading">
-              Why choose our platform?
-            </h2>
-            <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto scholarly-text">
-              We provide a secure, convenient, and professional environment for online consultations
-            </p>
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 academic-heading">{{ $t('home.whyChoose') }}</h2>
+            <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto scholarly-text">{{ $t('home.whyChooseDesc') }}</p>
           </div>
 
           <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Feature 1 -->
             <div class="text-center card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
               <div
                 class="bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -90,12 +86,10 @@
                   </path>
                 </svg>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Secure & private</h4>
-              <p class="text-gray-600">End-to-end encrypted sessions ensuring your privacy and confidentiality are
-                protected.</p>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">{{ $t('home.featureSecure') }}</h4>
+              <p class="text-gray-600">{{ $t('home.featureSecureDesc') }}</p>
             </div>
 
-            <!-- Feature 2 -->
             <div class="text-center card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
               <div
                 class="bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -104,11 +98,10 @@
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Flexible scheduling</h4>
-              <p class="text-gray-600">Book appointments that fit your schedule with real-time availability updates.</p>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">{{ $t('home.featureFlexible') }}</h4>
+              <p class="text-gray-600">{{ $t('home.featureFlexibleDesc') }}</p>
             </div>
 
-            <!-- Feature 3 -->
             <div class="text-center card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
               <div
                 class="bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -118,8 +111,8 @@
                   </path>
                 </svg>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Qualified professionals</h4>
-              <p class="text-gray-600">Access to verified experts across various specializations and fields.</p>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">{{ $t('home.featureQualified') }}</h4>
+              <p class="text-gray-600">{{ $t('home.featureQualifiedDesc') }}</p>
             </div>
           </div>
         </div>
@@ -129,12 +122,8 @@
       <div class="py-20 element-gradient">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 academic-heading">
-              How it works
-            </h2>
-            <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto scholarly-text">
-              Get professional consultation in three simple steps
-            </p>
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 academic-heading">{{ $t('home.howItWorks') }}</h2>
+            <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto scholarly-text">{{ $t('home.howItWorksDesc') }}</p>
           </div>
 
           <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -143,9 +132,8 @@
                 class="bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <span class="text-white font-bold text-xl">1</span>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Choose a professional</h4>
-              <p class="text-gray-600">Browse our network of qualified professionals and select the right specialist for
-                your needs.</p>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">{{ $t('home.step1Title') }}</h4>
+              <p class="text-gray-600">{{ $t('home.step1Desc') }}</p>
             </div>
 
             <div class="text-center">
@@ -153,9 +141,8 @@
                 class="bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <span class="text-white font-bold text-xl">2</span>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Schedule session</h4>
-              <p class="text-gray-600">Book your appointment at a convenient time that works for both you and your
-                chosen professional.</p>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">{{ $t('home.step2Title') }}</h4>
+              <p class="text-gray-600">{{ $t('home.step2Desc') }}</p>
             </div>
 
             <div class="text-center">
@@ -163,9 +150,8 @@
                 class="bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <span class="text-white font-bold text-xl">3</span>
               </div>
-              <h4 class="text-xl font-bold text-gray-800 mb-4">Get expert guidance</h4>
-              <p class="text-gray-600">Join your secure video session and receive professional consultation from the
-                comfort of your location.</p>
+              <h4 class="text-xl font-bold text-gray-800 mb-4">{{ $t('home.step3Title') }}</h4>
+              <p class="text-gray-600">{{ $t('home.step3Desc') }}</p>
             </div>
           </div>
         </div>
@@ -174,21 +160,16 @@
       <!-- Call to action section -->
       <div class="py-20 bg-gradient-to-r from-gray-900 to-gray-800">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Ready to get professional guidance?
-          </h2>
-          <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join thousands of clients who have already discovered the convenience and quality of online professional
-            consultation.
-          </p>
+          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">{{ $t('home.ctaTitle') }}</h2>
+          <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">{{ $t('home.ctaDescription') }}</p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <router-link to="/register?role=client"
               class="bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold py-3 px-8 rounded-2xl hover:from-emerald-500 hover:to-sky-500 transition-all duration-300 shadow-lg">
-              Get started as client
+              {{ $t('home.ctaClient') }}
             </router-link>
             <router-link to="/register?role=provider"
               class="bg-white/10 backdrop-blur-sm text-white font-semibold py-3 px-8 rounded-2xl hover:bg-white/20 transition-all duration-300 border border-white/20">
-              Join as professional
+              {{ $t('home.ctaProvider') }}
             </router-link>
           </div>
         </div>
@@ -200,19 +181,19 @@
           <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div class="text-3xl font-bold text-gray-900">500+</div>
-              <div class="text-sm text-gray-600 mt-1">Active professionals</div>
+              <div class="text-sm text-gray-600 mt-1">{{ $t('home.statProfessionals') }}</div>
             </div>
             <div>
               <div class="text-3xl font-bold text-gray-900">10k+</div>
-              <div class="text-sm text-gray-600 mt-1">Successful sessions</div>
+              <div class="text-sm text-gray-600 mt-1">{{ $t('home.statSessions') }}</div>
             </div>
             <div>
               <div class="text-3xl font-bold text-gray-900">98%</div>
-              <div class="text-sm text-gray-600 mt-1">Client satisfaction</div>
+              <div class="text-sm text-gray-600 mt-1">{{ $t('home.statSatisfaction') }}</div>
             </div>
             <div>
               <div class="text-3xl font-bold text-gray-900">24/7</div>
-              <div class="text-sm text-gray-600 mt-1">Support available</div>
+              <div class="text-sm text-gray-600 mt-1">{{ $t('home.statSupport') }}</div>
             </div>
           </div>
         </div>
@@ -225,6 +206,9 @@
 import { useAuthStore } from '@/stores/auth'
 import ClientDashboard from '@/views/dashboard/ClientDashboard.vue'
 import ProviderDashboard from '@/views/dashboard/ProviderDashboard.vue'
+import { useModules } from '@/composables/useModules'
+
+const { isConsultationsEnabled, isCoursesEnabled } = useModules()
 
 const authStore = useAuthStore()
 </script>

@@ -1,20 +1,21 @@
+<!-- frontend/src/views/providers/ProviderList.vue -->
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="space-y-8">
       <!-- Header -->
       <div class="text-center">
-        <h1 class="text-3xl font-bold text-gray-900">Find healthcare providers</h1>
-        <p class="mt-3 text-gray-600">Discover qualified professionals for your healthcare needs</p>
+        <h1 class="text-3xl font-bold text-gray-900">{{ $t('providerList.title') }}</h1>
+        <p class="mt-3 text-gray-600">{{ $t('providerList.subtitle') }}</p>
       </div>
 
       <!-- Enhanced Search and filters -->
       <div class="card-element p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="form-group">
-            <label for="search" class="label">Search by name</label>
+            <label for="search" class="label">{{ $t('providerList.searchByName') }}</label>
             <div class="input-group">
               <input id="search" v-model="filters.name" type="text" class="input pr-12"
-                placeholder="Search providers..." @input="handleSearchInput" />
+                :placeholder="$t('providerList.searchPlaceholder')" @input="handleSearchInput" />
               <div class="input-icon">
                 <MagnifyingGlassIcon class="w-4 h-4 text-gray-400" />
               </div>
@@ -22,9 +23,9 @@
           </div>
 
           <div class="form-group">
-            <label for="specializations" class="label">Specialization</label>
+            <label for="specializations" class="label">{{ $t('providerList.specialization') }}</label>
             <select id="specializations" v-model="filters.specializations" class="input" @change="handleFilterChange">
-              <option value="">All specializations</option>
+              <option value="">{{ $t('providerList.allSpecializations') }}</option>
               <option v-for="spec in specializations" :key="spec" :value="spec">
                 {{ spec }}
               </option>
@@ -33,73 +34,68 @@
 
           <!-- Price range Filter -->
           <div class="form-group">
-            <label class="label">Price range (UZS)</label>
+            <label class="label">{{ $t('providerList.priceRange') }}</label>
             <div class="grid grid-cols-2 gap-2">
-              <input v-model="filters.minPrice" type="number" class="input text-sm" placeholder="Min price"
-                @input="handleSearchInput" />
-              <input v-model="filters.maxPrice" type="number" class="input text-sm" placeholder="Max price"
-                @input="handleSearchInput" />
+              <input v-model="filters.minPrice" type="number" class="input text-sm"
+                :placeholder="$t('providerList.minPrice')" @input="handleSearchInput" />
+              <input v-model="filters.maxPrice" type="number" class="input text-sm"
+                :placeholder="$t('providerList.maxPrice')" @input="handleSearchInput" />
             </div>
           </div>
         </div>
 
         <!-- Sort Controls -->
         <div class="mt-6 pt-6 border-t border-gray-200">
-          <label class="label mb-3 block">Sort options</label>
+          <label class="label mb-3 block">{{ $t('providerList.sortOptions') }}</label>
           <div class="flex flex-wrap gap-4">
-            <!-- Experience Sort -->
             <button @click="toggleSort('experience')" :class="[
               'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
               sorts.experience
                 ? 'bg-brand-1 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             ]">
-              Experience
+              {{ $t('providerList.experience') }}
               <ChevronUpIcon v-if="sorts.experience === 'asc'" class="w-4 h-4 ml-1" />
               <ChevronDownIcon v-else-if="sorts.experience === 'desc'" class="w-4 h-4 ml-1" />
             </button>
 
-            <!-- Price Sort -->
             <button @click="toggleSort('price')" :class="[
               'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
               sorts.price
                 ? 'bg-brand-1 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             ]">
-              Price
+              {{ $t('providerList.price') }}
               <ChevronUpIcon v-if="sorts.price === 'asc'" class="w-4 h-4 ml-1" />
               <ChevronDownIcon v-else-if="sorts.price === 'desc'" class="w-4 h-4 ml-1" />
             </button>
 
-            <!-- Rating Sort -->
             <button @click="toggleSort('rating')" :class="[
               'flex items-center px-3 py-1 rounded-md text-sm font-medium transition-colors',
               sorts.rating
                 ? 'bg-brand-1 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             ]">
-              Rating
+              {{ $t('providerList.rating') }}
               <ChevronUpIcon v-if="sorts.rating === 'asc'" class="w-4 h-4 ml-1" />
               <ChevronDownIcon v-else-if="sorts.rating === 'desc'" class="w-4 h-4 ml-1" />
             </button>
 
-            <!-- Clear Sorts Button -->
             <button v-if="hasActiveSorts" @click="clearSorts"
               class="flex items-center px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors">
               <XMarkIcon class="w-3 h-3" />
-              Clear Sorts
+              {{ $t('providerList.clearSorts') }}
             </button>
           </div>
         </div>
 
         <!-- Filter Summary -->
         <div v-if="hasActiveFilters || hasActiveSorts" class="mt-4 flex items-center space-x-2">
-          <span class="text-sm text-gray-500">Active filters & sorts:</span>
+          <span class="text-sm text-gray-500">{{ $t('providerList.activeFilters') }}</span>
           <div class="flex flex-wrap gap-2">
-            <!-- Filter Tags -->
             <span v-if="filters.name"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              name: {{ filters.name }}
+              {{ $t('providerList.nameLabel') }}: {{ filters.name }}
               <button @click="clearNameFilter" class="ml-1 text-blue-800 hover:text-blue-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
@@ -113,30 +109,29 @@
             </span>
             <span v-if="filters.minPrice || filters.maxPrice"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              Price: {{ getPriceRangeText() }}
+              {{ $t('providerList.price') }}: {{ getPriceRangeText() }}
               <button @click="clearPriceFilter" class="ml-1 text-blue-800 hover:text-blue-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
 
-            <!-- Sort Tags -->
             <span v-if="sorts.experience"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Experience {{ sorts.experience === 'asc' ? '↑' : '↓' }}
+              {{ $t('providerList.experience') }} {{ sorts.experience === 'asc' ? '↑' : '↓' }}
               <button @click="clearExperienceSort" class="ml-1 text-green-800 hover:text-green-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="sorts.price"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Price {{ sorts.price === 'asc' ? '↑' : '↓' }}
+              {{ $t('providerList.price') }} {{ sorts.price === 'asc' ? '↑' : '↓' }}
               <button @click="clearPriceSort" class="ml-1 text-green-800 hover:text-green-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
             </span>
             <span v-if="sorts.rating"
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Rating {{ sorts.rating === 'asc' ? '↑' : '↓' }}
+              {{ $t('providerList.rating') }} {{ sorts.rating === 'asc' ? '↑' : '↓' }}
               <button @click="clearRatingSort" class="ml-1 text-green-800 hover:text-green-900">
                 <XMarkIcon class="w-3 h-3" />
               </button>
@@ -150,7 +145,7 @@
         <div v-if="loading" class="text-center py-12">
           <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-1 border-t-transparent">
           </div>
-          <p class="mt-4 text-gray-600">Finding the best providers for you...</p>
+          <p class="mt-4 text-gray-600">{{ $t('providerList.finding') }}</p>
         </div>
 
         <template v-else>
@@ -158,10 +153,10 @@
             <div class="mx-auto h-16 w-16 text-gray-400 mb-4">
               <DocumentIcon class="w-16 h-16" />
             </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No providers found</h3>
-            <p class="text-gray-500">Try adjusting your search criteria or browse all providers</p>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('providerList.noProviders') }}</h3>
+            <p class="text-gray-500">{{ $t('providerList.noProvidersHint') }}</p>
             <button @click="clearAll" class="mt-4 btn-secondary">
-              Clear All Filters & Sorts
+              {{ $t('providerList.clearAll') }}
             </button>
           </div>
 
@@ -170,7 +165,7 @@
             <div class="flex items-center justify-between">
               <p class="text-gray-600">
                 <span class="font-medium text-gray-900">{{ providers.length }}</span>
-                {{ providers.length === 1 ? 'provider' : 'providers' }} found
+                {{ $t('providerList.providersFound', { count: providers.length }) }}
               </p>
               <div class="flex items-center space-x-4">
                 <span class="text-sm text-gray-500">
@@ -202,7 +197,7 @@
                         </span>
                         <span v-if="provider.specializations.length > 2"
                           class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                          +{{ provider.specializations.length - 2 }} more
+                          +{{ provider.specializations.length - 2 }} {{ $t('providerList.more') }}
                         </span>
                       </div>
                     </div>
@@ -215,7 +210,8 @@
                         <CheckIcon class="w-3 h-3 text-brand-1" />
                       </div>
                       <span class="text-gray-600">
-                        <span class="font-medium text-gray-900">{{ provider.experience }}</span> years experience
+                        <span class="font-medium text-gray-900">{{ provider.experience }}</span> {{
+                          $t('providerList.yearsExperience') }}
                       </span>
                     </div>
 
@@ -224,8 +220,8 @@
                         <CurrencyDollarIcon class="w-3 h-3 text-brand-1" />
                       </div>
                       <span class="text-gray-600">
-                        <span class="font-medium text-gray-900">{{ formatCurrency(provider.sessionFee) }}</span> UZS per
-                        session
+                        <span class="font-medium text-gray-900">{{ formatCurrency(provider.sessionFee) }}</span> {{
+                          $t('providerList.perSession') }}
                       </span>
                     </div>
 
@@ -234,15 +230,14 @@
                         <LanguageIcon class="w-3 h-3 text-brand-1" />
                       </div>
                       <span class="text-gray-600">
-                        {{ provider.languages?.join(', ') || 'Not specified' }}
+                        {{ provider.languages?.join(', ') || $t('providerList.notSpecified') }}
                       </span>
                     </div>
                   </div>
 
-                  <!-- UPDATED: Real Rating/Reviews instead of placeholder -->
+                  <!-- Rating/Reviews -->
                   <div class="flex items-center mb-4">
                     <div class="flex items-center">
-                      <!-- Show stars based on actual rating -->
                       <div class="flex">
                         <template v-for="n in 5" :key="n">
                           <StarIcon class="w-4 h-4" :class="{
@@ -251,15 +246,13 @@
                           }" />
                         </template>
                       </div>
-                      <!-- Show actual rating and review count -->
                       <span class="ml-2 text-sm text-gray-600">
                         <template v-if="provider.reviewStats?.totalReviews > 0">
                           {{ provider.reviewStats.averageRating.toFixed(1) }}
-                          ({{ provider.reviewStats.totalReviews }} {{ provider.reviewStats.totalReviews === 1 ? 'review'
-                            : 'reviews' }})
+                          ({{ $t('providerList.reviewCount', { count: provider.reviewStats.totalReviews }) }})
                         </template>
                         <template v-else>
-                          <span class="text-gray-400">No reviews yet</span>
+                          <span class="text-gray-400">{{ $t('providerList.noReviews') }}</span>
                         </template>
                       </span>
                     </div>
@@ -269,7 +262,7 @@
                   <router-link :to="{ name: 'provider-profile-view', params: { id: provider._id } }"
                     class="btn-primary w-full justify-center group-hover:shadow-lg transition-buttery">
                     <EyeIcon class="w-4 h-4 mr-2" />
-                    View profile & book
+                    {{ $t('providerList.viewProfileBook') }}
                   </router-link>
                 </div>
               </div>
@@ -305,9 +298,11 @@
 <script setup>
 import { MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, XMarkIcon, DocumentIcon, CheckIcon, CurrencyDollarIcon, LanguageIcon, StarIcon, EyeIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, onMounted, computed, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const router = useRouter()
 
 const specializations = ref([])
@@ -318,7 +313,6 @@ async function fetchSpecializations() {
     specializations.value = response.data.specializations.map(s => s.name)
   } catch (error) {
     console.error('Error fetching specializations:', error)
-    // Set some defaults in case API call fails
     specializations.value = []
   }
 }
@@ -328,7 +322,6 @@ const loading = ref(false)
 const currentPage = ref(1)
 const totalPages = ref(1)
 
-// Separate filters and sorts
 const filters = reactive({
   name: '',
   specializations: '',
@@ -337,14 +330,13 @@ const filters = reactive({
 })
 
 const sorts = reactive({
-  experience: null, // 'asc', 'desc', or null
+  experience: null,
   price: null,
   rating: null
 })
 
-// Debouncing setup
 let searchTimeout = null
-const DEBOUNCE_DELAY = 1000 // 1000ms delay
+const DEBOUNCE_DELAY = 1000
 
 const hasActiveFilters = computed(() => {
   return filters.name || filters.specializations || filters.minPrice || filters.maxPrice
@@ -362,43 +354,37 @@ const getPriceRangeText = () => {
   if (filters.minPrice && filters.maxPrice) {
     return `${formatCurrency(filters.minPrice)} - ${formatCurrency(filters.maxPrice)} UZS`
   } else if (filters.minPrice) {
-    return `From ${formatCurrency(filters.minPrice)} UZS`
+    return `${t('providerList.from')} ${formatCurrency(filters.minPrice)} UZS`
   } else if (filters.maxPrice) {
-    return `Up to ${formatCurrency(filters.maxPrice)} UZS`
+    return `${t('providerList.upTo')} ${formatCurrency(filters.maxPrice)} UZS`
   }
   return ''
 }
 
 const getActiveSortsText = () => {
   const activeSorts = []
-  if (sorts.experience) activeSorts.push(`Experience ${sorts.experience === 'asc' ? '↑' : '↓'}`)
-  if (sorts.price) activeSorts.push(`Price ${sorts.price === 'asc' ? '↑' : '↓'}`)
-  if (sorts.rating) activeSorts.push(`Rating ${sorts.rating === 'asc' ? '↑' : '↓'}`)
+  if (sorts.experience) activeSorts.push(`${t('providerList.experience')} ${sorts.experience === 'asc' ? '↑' : '↓'}`)
+  if (sorts.price) activeSorts.push(`${t('providerList.price')} ${sorts.price === 'asc' ? '↑' : '↓'}`)
+  if (sorts.rating) activeSorts.push(`${t('providerList.rating')} ${sorts.rating === 'asc' ? '↑' : '↓'}`)
 
-  return activeSorts.length > 0 ? `Sorted by: ${activeSorts.join(', ')}` : 'No sorting applied'
+  return activeSorts.length > 0 ? `${t('providerList.sortedBy')}: ${activeSorts.join(', ')}` : t('providerList.noSorting')
 }
 
-// Debounced search input handler
 const handleSearchInput = () => {
-  // Clear any existing timeout
   if (searchTimeout) {
     clearTimeout(searchTimeout)
   }
-
-  // Set a new timeout to trigger search after user stops typing
   searchTimeout = setTimeout(() => {
     currentPage.value = 1
     fetchProviders()
   }, DEBOUNCE_DELAY)
 }
 
-// Immediate handler for non-text inputs (dropdowns, etc.)
 const handleFilterChange = () => {
   currentPage.value = 1
   fetchProviders()
 }
 
-// Individual clear methods for better UX
 const clearNameFilter = () => {
   filters.name = ''
   handleFilterChange()
@@ -432,16 +418,13 @@ const clearRatingSort = () => {
 
 const toggleSort = (field) => {
   if (!sorts[field]) {
-    // First click: ascending
     sorts[field] = 'asc'
   } else if (sorts[field] === 'asc') {
-    // Second click: descending
     sorts[field] = 'desc'
   } else {
-    // Third click: clear
     sorts[field] = null
   }
-  handleFilterChange() // Use immediate handler for sorts
+  handleFilterChange()
 }
 
 const clearSorts = () => {
@@ -452,22 +435,16 @@ const clearSorts = () => {
 }
 
 const clearAll = () => {
-  // Clear any pending search timeout
   if (searchTimeout) {
     clearTimeout(searchTimeout)
   }
-
-  // Clear filters
   filters.name = ''
   filters.specializations = ''
   filters.minPrice = ''
   filters.maxPrice = ''
-
-  // Clear sorts
   sorts.experience = null
   sorts.price = null
   sorts.rating = null
-
   handleFilterChange()
 }
 
@@ -481,7 +458,6 @@ async function fetchProviders() {
       ...sorts
     }
 
-    // Clean up empty parameters
     Object.keys(params).forEach(key => {
       if (params[key] === '' || params[key] === null || params[key] === undefined) {
         delete params[key]
@@ -503,7 +479,6 @@ function handlePageChange(page) {
   fetchProviders()
 }
 
-// Cleanup timeout on component unmount
 onUnmounted(() => {
   if (searchTimeout) {
     clearTimeout(searchTimeout)

@@ -13,7 +13,7 @@
                         <span class="text-xl font-bold">
                             {{ appTitle1 }}<span
                                 class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">{{
-                                appTitle2 }}</span><span class="text-success">{{ appTitle3 }}</span>
+                                    appTitle2 }}</span><span class="text-success">{{ appTitle3 }}</span>
                         </span>
                     </router-link>
 
@@ -22,46 +22,46 @@
                         <router-link to="/"
                             class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                             :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path === '/' }">
-                            Home
+                            {{ $t('nav.home') }}
                         </router-link>
-                        <router-link to="/providers"
+                        <router-link v-if="isConsultationsEnabled" to="/providers"
                             class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                             :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path === '/providers' }">
-                            Find providers
+                            {{ $t('nav.findProviders') }}
                         </router-link>
                         <template v-if="authStore.isAuthenticated">
-                            <router-link v-if="authStore.isClient" to="/appointments/me"
+                            <router-link v-if="authStore.isClient && isConsultationsEnabled" to="/appointments/me"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                                 :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/me') }">
-                                My appointments
+                                {{ $t('nav.myAppointments') }}
                             </router-link>
-                            <router-link v-if="authStore.isProvider" to="/appointments/me"
+                            <router-link v-if="authStore.isProvider && isConsultationsEnabled" to="/appointments/me"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                                 :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.includes('/appointments/me') }">
-                                My Schedule
+                                {{ $t('nav.mySchedule') }}
                             </router-link>
-                            <router-link v-if="authStore.isProvider" to="/courses/my"
+                            <router-link v-if="authStore.isProvider && isCoursesEnabled" to="/courses/my"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                                 :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.startsWith('/courses') }">
-                                Courses
+                                {{ $t('nav.courses') }}
                             </router-link>
-                            <router-link v-if="authStore.isClient" to="/courses"
+                            <router-link v-if="authStore.isClient && isCoursesEnabled" to="/courses"
                                 class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                                 :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path.startsWith('/courses') }">
-                                Courses
+                                {{ $t('nav.courses') }}
                             </router-link>
                         </template>
-                        <router-link to="/chat"
+                        <router-link v-if="isChatEnabled" to="/chat"
                             class="text-gray-700 hover:text-sky-500 px-3 py-2 text-sm font-medium transition-colors duration-200"
                             :class="{ 'text-sky-500 border-b-2 border-sky-500': $route.path === '/chat' }">
-                            Messages
+                            {{ $t('nav.messages') }}
                         </router-link>
                     </div>
                 </div>
 
                 <!-- Mobile menu button -->
                 <div class="sm:hidden flex items-center">
-                    <button @click="toggleMobileMenu" type="button"
+                    <button @click.stop="toggleMobileMenu" type="button"
                         class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-sky-500 hover:bg-sky-500/5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500 transition-colors duration-200">
                         <span class="sr-only">Open main menu</span>
                         <!-- Icon when menu is closed -->
@@ -80,7 +80,7 @@
                                 <div
                                     class="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                                     <span class="text-white font-semibold text-sm">{{ authStore.user?.firstName?.[0]
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <span class="text-sm font-medium text-gray-700">{{ authStore.user?.firstName }}</span>
                                 <ChevronDownIcon :class="[
@@ -95,7 +95,7 @@
                                         class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <UserIcon class="h-4 w-4" />
-                                            <span>My profile</span>
+                                            <span>{{ $t('nav.myProfile') }}</span>
                                         </div>
                                     </router-link>
                                 </div>
@@ -104,7 +104,7 @@
                                         class="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <ArrowRightOnRectangleIcon class="h-4 w-4" />
-                                            <span>Sign Out</span>
+                                            <span>{{ $t('nav.signOut') }}</span>
                                         </div>
                                     </button>
                                 </div>
@@ -114,10 +114,10 @@
                     <template v-else>
                         <router-link to="/login"
                             class="text-sky-500 hover:text-emerald-500 font-medium px-4 py-2 rounded-xl transition-colors duration-200">
-                            Sign In
+                            {{ $t('nav.signIn') }}
                         </router-link>
                         <router-link to="/register" class="btn-element-primary text-sm">
-                            Get Started
+                            {{ $t('nav.getStarted') }}
                         </router-link>
                     </template>
                 </div>
@@ -131,37 +131,37 @@
                 <router-link to="/"
                     class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                     :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/' }" @click="closeMobileMenu">
-                    Home
+                    {{ $t('nav.home') }}
                 </router-link>
-                <router-link to="/providers"
+                <router-link v-if="isConsultationsEnabled" to="/providers"
                     class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                     :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/providers' }" @click="closeMobileMenu">
-                    Find providers
+                    {{ $t('nav.findProviders') }}
                 </router-link>
                 <template v-if="authStore.isAuthenticated">
-                    <router-link v-if="authStore.isClient" to="/appointments/me"
+                    <router-link v-if="authStore.isClient && isConsultationsEnabled" to="/appointments/me"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                         :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/me') }"
                         @click="closeMobileMenu">
-                        My appointments
+                        {{ $t('nav.myAppointments') }}
                     </router-link>
-                    <router-link v-if="authStore.isProvider" to="/appointments/me"
+                    <router-link v-if="authStore.isProvider && isConsultationsEnabled" to="/appointments/me"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                         :class="{ 'text-sky-500 bg-sky-500/5': $route.path.includes('/appointments/me') }"
                         @click="closeMobileMenu">
-                        My schedule
+                        {{ $t('nav.mySchedule') }}
                     </router-link>
-                    <router-link v-if="authStore.isProvider" to="/courses/my"
+                    <router-link v-if="authStore.isProvider && isCoursesEnabled" to="/courses/my"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                         :class="{ 'text-sky-500 bg-sky-500/5': $route.path.startsWith('/courses') }"
                         @click="closeMobileMenu">
-                        Courses
+                        {{ $t('nav.courses') }}
                     </router-link>
-                    <router-link v-if="authStore.isClient" to="/courses"
+                    <router-link v-if="authStore.isClient && isCoursesEnabled" to="/courses"
                         class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                         :class="{ 'text-sky-500 bg-sky-500/5': $route.path.startsWith('/courses') }"
                         @click="closeMobileMenu">
-                        Courses
+                        {{ $t('nav.courses') }}
                     </router-link>
                     <div class="border-t border-gray-200 pt-4 pb-3">
                         <div class="flex items-center px-3 mb-3">
@@ -178,16 +178,16 @@
                         <router-link :to="authStore.isProvider ? '/profile/me' : '/profile/me'"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
-                            My profile
+                            {{ $t('nav.myProfile') }}
                         </router-link>
                         <router-link to="/profile/me/edit"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
-                            Edit profile
+                            {{ $t('nav.editProfile') }}
                         </router-link>
                         <button @click="logout"
                             class="block w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors duration-200">
-                            Sign out
+                            {{ $t('nav.signOut') }}
                         </button>
                     </div>
                 </template>
@@ -196,11 +196,11 @@
                         <router-link to="/login"
                             class="block px-3 py-2 text-base font-medium text-sky-500 hover:text-emerald-500 transition-colors duration-200"
                             @click="closeMobileMenu">
-                            Sign in
+                            {{ $t('nav.signIn') }}
                         </router-link>
                         <router-link to="/register" class="block mx-3 btn-element-primary text-center text-sm"
                             @click="closeMobileMenu">
-                            Get started
+                            {{ $t('nav.getStarted') }}
                         </router-link>
                     </div>
                 </template>
@@ -214,6 +214,9 @@ import { Bars3Icon, XMarkIcon, ChevronDownIcon, UserIcon, ArrowRightOnRectangleI
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useModules } from '@/composables/useModules'
+
+const { isConsultationsEnabled, isCoursesEnabled, isChatEnabled } = useModules()
 
 const router = useRouter()
 const authStore = useAuthStore()

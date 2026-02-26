@@ -4,20 +4,21 @@
         <div v-if="loading" class="flex items-center justify-center py-12">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent">
             </div>
-            <span class="ml-3 text-gray-600">Loading {{ mode === 'appointments' ? 'appointments' : 'availability'
-            }}...</span>
+            <span class="ml-3 text-gray-600">{{ $t('calendar.loading', {
+                type: mode === 'appointments' ?
+                    $t('calendar.title').toLowerCase() : $t('calendar.providerAvailability').toLowerCase() }) }}</span>
         </div>
 
         <!-- Error State -->
         <div v-else-if="error" class="p-6 text-center">
             <div class="text-red-600 mb-4">
                 <ExclamationTriangleIcon class="w-12 h-12 mx-auto mb-2" />
-                <p class="font-medium">Failed to load data</p>
+                <p class="font-medium">{{ $t('calendar.failedToLoad') }}</p>
                 <p class="text-sm text-gray-600 mt-1">{{ error }}</p>
             </div>
             <button @click="loadData"
                 class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                Retry
+                {{ $t('calendar.retry') }}
             </button>
         </div>
 
@@ -37,12 +38,12 @@
                             <button @click="currentView = 'weekly'"
                                 :class="currentView === 'weekly' ? 'bg-blue-500 text-white' : 'bg-blue-400 text-blue-100'"
                                 class="px-3 py-1 text-sm rounded-lg hover:bg-blue-500 transition-colors">
-                                Weekly View
+                                {{ $t('calendar.weeklyView') }}
                             </button>
                             <button @click="currentView = 'calendar'"
                                 :class="currentView === 'calendar' ? 'bg-blue-500 text-white' : 'bg-blue-400 text-blue-100'"
                                 class="px-3 py-1 text-sm rounded-lg hover:bg-blue-500 transition-colors">
-                                Calendar View
+                                {{ $t('calendar.calendarView') }}
                             </button>
                         </div>
 
@@ -51,15 +52,15 @@
                             class="flex items-center space-x-2">
                             <button @click="setPreset('business')"
                                 class="px-3 py-1 bg-blue-500 text-white text-xs rounded-full hover:bg-blue-400 transition-colors">
-                                Business hours
+                                {{ $t('calendar.businessHours') }}
                             </button>
                             <button @click="setPreset('flexible')"
                                 class="px-3 py-1 bg-blue-500 text-white text-xs rounded-full hover:bg-blue-400 transition-colors">
-                                Flexible
+                                {{ $t('calendar.flexible') }}
                             </button>
                             <button @click="clearAll()"
                                 class="px-3 py-1 bg-red-500 text-white text-xs rounded-full hover:bg-red-400 transition-colors">
-                                Clear all
+                                {{ $t('calendar.clearAll') }}
                             </button>
                         </div>
 
@@ -67,15 +68,15 @@
                         <div v-if="mode === 'appointments'" class="flex items-center space-x-3 text-sm">
                             <div class="flex items-center space-x-1">
                                 <div class="w-3 h-3 bg-green-400 rounded"></div>
-                                <span class="text-blue-100">Available</span>
+                                <span class="text-blue-100">{{ $t('calendar.available') }}</span>
                             </div>
                             <div class="flex items-center space-x-1">
                                 <div class="w-3 h-3 bg-blue-400 rounded"></div>
-                                <span class="text-blue-100">Scheduled</span>
+                                <span class="text-blue-100">{{ $t('calendar.scheduled') }}</span>
                             </div>
                             <div class="flex items-center space-x-1">
                                 <div class="w-3 h-3 bg-yellow-400 rounded"></div>
-                                <span class="text-blue-100">Pending</span>
+                                <span class="text-blue-100">{{ $t('calendar.pending') }}</span>
                             </div>
                         </div>
                     </div>
@@ -94,7 +95,7 @@
                         <div v-if="selectedDate && mode === 'availability' && userRole === 'provider'"
                             class="border-t border-gray-200 p-4">
                             <h3 class="text-sm font-medium text-gray-900 mb-3">
-                                Availability for {{ formatSelectedDate(selectedDate) }}
+                                {{ $t('calendar.availabilityFor', { date: formatSelectedDate(selectedDate) }) }}
                             </h3>
                             <div class="space-y-2">
                                 <div v-for="(slot, index) in getSelectedDateAvailability(selectedDate)" :key="index"
@@ -102,18 +103,18 @@
                                     <span>{{ slot.startTime }} - {{ slot.endTime }}</span>
                                     <button @click="removeTimeSlot(selectedDate, index)"
                                         class="px-2 py-1 text-xs text-red-700 bg-red-100 rounded hover:bg-red-200">
-                                        Remove
+                                        {{ $t('calendar.remove') }}
                                     </button>
                                 </div>
                                 <button @click="addTimeSlotForDate(selectedDate)"
                                     class="w-full py-2 px-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors text-sm">
-                                    + Add time slot
+                                    {{ $t('calendar.addTimeSlot') }}
                                 </button>
                             </div>
                         </div>
                         <div v-else-if="selectedDate && mode === 'appointments'" class="border-t border-gray-200 p-4">
                             <h3 class="text-sm font-medium text-gray-900 mb-3">
-                                Appointments for {{ formatSelectedDate(selectedDate) }}
+                                {{ $t('calendar.appointmentsFor', { date: formatSelectedDate(selectedDate) }) }}
                             </h3>
                             <div class="space-y-2">
                                 <div v-for="appointment in getSelectedDateAppointments(selectedDate)"
@@ -125,7 +126,7 @@
                                     </div>
                                     <button @click="$emit('appointmentClick', appointment)"
                                         class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
-                                        View
+                                        {{ $t('common.view') }}
                                     </button>
                                 </div>
                             </div>
@@ -153,7 +154,7 @@
 
                         <button @click="goToCurrentWeek"
                             class="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
-                            This week
+                            {{ $t('calendar.thisWeek') }}
                         </button>
                     </div>
                 </div>
@@ -226,7 +227,7 @@
                                                     class="absolute inset-0 p-1 cursor-pointer rounded-sm text-white text-xs font-medium overflow-hidden">
                                                     <div class="truncate">{{ getAppointmentTitle(appointment) }}</div>
                                                     <div class="text-xs opacity-75">{{ getAppointmentTime(appointment)
-                                                        }}
+                                                    }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -253,43 +254,46 @@
                 <div v-if="mode === 'availability'">
                     <div class="flex items-center justify-between">
                         <div class="text-sm text-gray-600">
-                            <span class="font-medium">{{ getAvailableDaysCount() }}</span> days •
-                            <span class="font-medium">{{ getTotalAvailableHours() }}</span> hours per week
+                            <span class="font-medium">{{ $t('calendar.daysLabel', { count: getAvailableDaysCount() })
+                                }}</span> •
+                            <span class="font-medium">{{ $t('calendar.hoursPerWeek', {
+                                hours: getTotalAvailableHours()
+                                }) }}</span>
                         </div>
 
                         <div v-if="userRole === 'provider'" class="flex items-center space-x-3">
                             <button v-if="hasUnsavedChanges" @click="loadAvailability"
                                 class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                Cancel changes
+                                {{ $t('calendar.cancelChanges') }}
                             </button>
                             <button @click="saveAvailability" :disabled="saving || !hasValidAvailability"
                                 class="px-6 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                                {{ saving ? 'Saving...' : 'Save Availability' }}
+                                {{ saving ? $t('calendar.saving') : $t('calendar.saveAvailability') }}
                             </button>
                         </div>
                     </div>
 
                     <!-- Validation message -->
                     <div v-if="userRole === 'provider' && !hasValidAvailability" class="mt-2 text-sm text-red-600">
-                        Please set at least one available time slot before saving.
+                        {{ $t('calendar.validationError') }}
                     </div>
                 </div>
 
                 <!-- Appointments mode footer -->
                 <div v-if="mode === 'appointments'" class="flex items-center justify-between text-sm text-gray-600">
                     <div>
-                        <span class="font-medium">{{ appointmentsSummary.total }}</span> appointments this week •
-                        <span class="font-medium">{{ appointmentsSummary.scheduled }}</span> scheduled •
-                        <span class="font-medium">{{ appointmentsSummary.pending }}</span> pending
+                        {{ $t('calendar.totalAppointments', { total: appointmentsSummary.total }) }} •
+                        {{ $t('calendar.scheduledCount', { count: appointmentsSummary.scheduled }) }} •
+                        {{ $t('calendar.pendingCount', { count: appointmentsSummary.pending }) }}
                     </div>
                     <div class="flex items-center space-x-3">
                         <button @click="refreshData" class="px-3 py-1 text-blue-600 hover:text-blue-800 font-medium">
                             <ArrowPathIcon class="w-4 h-4 mr-1 inline" />
-                            Refresh
+                            {{ $t('calendar.refresh') }}
                         </button>
                         <button @click="$emit('viewFullCalendar')"
                             class="px-3 py-1 text-blue-600 hover:text-blue-800 font-medium">
-                            View full calendar
+                            {{ $t('calendar.viewFullCalendar') }}
                         </button>
                     </div>
                 </div>
@@ -306,6 +310,7 @@ import {
     ArrowPathIcon
 } from "@heroicons/vue/24/outline"
 import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
     format,
     startOfWeek,
@@ -323,6 +328,7 @@ import axios from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
 import ReusableCalendar from './ReusableCalendar.vue'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 // Props (same as before)
@@ -430,7 +436,7 @@ const calendarEvents = computed(() => {
                         events.push({
                             id: `availability-${day.dayOfWeek}-${slot.startTime}`,
                             date: dayDate,
-                            title: 'Available',
+                            title: t('calendar.available'),
                             type: 'availability',
                             timeSlot: slot
                         })
@@ -447,16 +453,16 @@ const calendarEvents = computed(() => {
 // Methods
 const getTitle = () => {
     if (props.mode === 'availability') {
-        return props.userRole === 'provider' ? 'Set Your Availability' : 'Provider Availability'
+        return props.userRole === 'provider' ? t('calendar.setYourAvailability') : t('calendar.providerAvailability')
     }
-    return 'Appointments & Availability'
+    return t('calendar.appointmentsAndAvailability')
 }
 
 const getSubtitle = () => {
     if (currentView.value === 'calendar') {
         return props.mode === 'availability'
-            ? 'Select dates to view and edit availability'
-            : 'View appointments by date'
+            ? t('calendar.selectDatesToView')
+            : t('calendar.viewAppointmentsByDate')
     }
 
     const weekStart = format(currentWeekDays.value[0], 'MMM d')
@@ -464,11 +470,11 @@ const getSubtitle = () => {
 
     if (props.mode === 'availability') {
         if (props.userRole === 'provider') {
-            return 'Click and drag to set your working hours'
+            return t('calendar.clickDragHours')
         }
-        return `${getTotalAvailableHours()} hours available • Week of ${weekStart} - ${weekEnd}`
+        return `${t('calendar.hoursAvailable', { hours: getTotalAvailableHours() })} • ${t('calendar.weekOf', { start: weekStart, end: weekEnd })}`
     }
-    return `Week of ${weekStart} - ${weekEnd}`
+    return t('calendar.weekOf', { start: weekStart, end: weekEnd })
 }
 
 const getWeekRangeText = () => {
@@ -594,7 +600,7 @@ const loadAvailability = async () => {
         }
     } catch (err) {
         console.error('Error loading availability:', err)
-        error.value = err.response?.data?.message || 'Failed to load availability data'
+        error.value = err.response?.data?.message || t('calendar.failedToLoad')
     } finally {
         loading.value = false
     }
@@ -618,7 +624,7 @@ const loadAppointments = async () => {
 
 const saveAvailability = async () => {
     if (!hasValidAvailability.value) {
-        emit('error', 'Please set at least one available time slot before saving.')
+        emit('error', t('calendar.validationError'))
         return
     }
 
@@ -642,7 +648,7 @@ const saveAvailability = async () => {
         }
     } catch (err) {
         console.error('Error saving availability:', err)
-        emit('error', err.response?.data?.message || 'Failed to save availability')
+        emit('error', err.response?.data?.message || t('calendar.failedToLoad'))
     } finally {
         saving.value = false
     }
@@ -758,7 +764,7 @@ const getAppointmentClasses = (appointment) => {
 }
 
 const getAppointmentTitle = (appointment) => {
-    return appointment.title || 'Appointment'
+    return appointment.title || t('common.appointment')
 }
 
 const getAppointmentTime = (appointment) => {

@@ -5,12 +5,12 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="py-6 flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">My appointments</h1>
-                        <p class="text-gray-600">Manage your upcoming and past consultations</p>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ $t('nav.myAppointments') }}</h1>
+                        <p class="text-gray-600">{{ $t('clientAppointments.manageConsultations') }}</p>
                     </div>
                     <router-link to="/providers" class="btn-primary">
                         <PlusIcon class="w-5 h-5 mr-2" />
-                        Book new appointment
+                        {{ $t('clientAppointments.bookNew') }}
                     </router-link>
                 </div>
             </div>
@@ -36,10 +36,10 @@
             <!-- Empty State -->
             <div v-else-if="appointments.length === 0" class="text-center py-12">
                 <CalendarDaysIcon class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No appointments yet</h3>
-                <p class="text-gray-600 mb-6">Book your first consultation to get started</p>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('clientAppointments.noAppointments') }}</h3>
+                <p class="text-gray-600 mb-6">{{ $t('clientAppointments.bookFirstDesc') }}</p>
                 <router-link to="/providers" class="btn-primary">
-                    Book Your First Appointment
+                    {{ $t('clientAppointments.bookFirst') }}
                 </router-link>
             </div>
 
@@ -59,7 +59,7 @@
                                         {{ getProviderName(appointment.provider) }}
                                     </h3>
                                     <p class="text-sm text-gray-600">
-                                        {{ appointment.provider?.specializations?.[0] || 'Consultant' }}
+                                        {{ appointment.provider?.specializations?.[0] || $t('booking.consultant') }}
                                     </p>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@
                             </div>
                             <div class="flex items-center text-sm text-gray-600">
                                 <ClockIcon class="w-5 h-5 mr-2" />
-                                {{ appointment.type || 'Video session' }}
+                                {{ appointment.type || $t('clientAppointments.videoSession') }}
                             </div>
                             <div class="flex items-center text-sm text-gray-600">
                                 <CurrencyDollarIcon class="w-5 h-5 mr-2" />
@@ -92,14 +92,15 @@
                                 <div class="flex items-center">
                                     <ExclamationTriangleIcon class="w-5 h-5 text-yellow-500 mr-2" />
                                     <div>
-                                        <p class="text-sm font-medium text-yellow-800">Payment Required</p>
-                                        <p class="text-xs text-yellow-700">Complete payment to confirm your appointment
-                                        </p>
+                                        <p class="text-sm font-medium text-yellow-800">{{
+                                            $t('clientAppointments.paymentRequired') }}</p>
+                                        <p class="text-xs text-yellow-700">{{ $t('clientAppointments.completePayment')
+                                            }}</p>
                                     </div>
                                 </div>
                                 <button @click="retryPayment(appointment._id)"
                                     class="px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded hover:bg-yellow-200">
-                                    Pay Now
+                                    {{ $t('clientAppointments.payNow') }}
                                 </button>
                             </div>
                         </div>
@@ -110,9 +111,10 @@
                             <div class="flex items-center">
                                 <ClockIcon class="w-5 h-5 text-purple-500 mr-2" />
                                 <div>
-                                    <p class="text-sm font-medium text-purple-800">Reschedule Request Pending</p>
-                                    <p class="text-xs text-purple-700">Waiting for provider to confirm your reschedule
-                                        request</p>
+                                    <p class="text-sm font-medium text-purple-800">{{
+                                        $t('clientAppointments.reschedulePending') }}</p>
+                                    <p class="text-xs text-purple-700">{{ $t('clientAppointments.waitingProvider') }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -128,7 +130,7 @@
                                 <!-- View details -->
                                 <router-link :to="`/appointments/${appointment._id}`"
                                     class="px-3 py-2 text-sm text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
-                                    View details
+                                    {{ $t('clientAppointments.viewDetails') }}
                                 </router-link>
 
                                 <!-- Reschedule (only for scheduled appointments, not already rescheduled, and more than 12 hours away) -->
@@ -136,21 +138,20 @@
                                     :to="`/appointments/${appointment._id}/edit`"
                                     class="px-3 py-2 text-sm text-green-700 bg-green-100 rounded-lg hover:bg-green-200 transition-colors">
                                     <ArrowPathIcon class="w-4 h-4 mr-1 inline" />
-                                    Reschedule
+                                    {{ $t('clientAppointments.reschedule') }}
                                 </router-link>
 
                                 <!-- Join session (for scheduled appointments within join window) -->
                                 <button v-if="canJoinSession(appointment)" @click="joinSession(appointment._id)"
                                     class="px-3 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
                                     <VideoCameraIcon class="w-4 h-4 mr-1 inline" />
-                                    Join session
+                                    {{ $t('clientAppointments.joinSession') }}
                                 </button>
                             </div>
 
                             <!-- Reschedule Count Info -->
                             <div v-if="appointment.rescheduleCount > 0" class="text-xs text-gray-500">
-                                Rescheduled {{ appointment.rescheduleCount }} time{{ appointment.rescheduleCount > 1 ?
-                                's' : '' }}
+                                {{ $t('clientAppointments.rescheduledCount', { count: appointment.rescheduleCount }) }}
                             </div>
                         </div>
                     </div>
@@ -164,6 +165,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { format, parseISO, isFuture, isWithinInterval, subMinutes, addMinutes, subHours } from 'date-fns'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 import { usePaymentStore } from '@/stores/payment'
 import {
@@ -178,6 +180,7 @@ import {
     ArrowPathIcon
 } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const router = useRouter()
 const paymentStore = usePaymentStore()
 
@@ -204,7 +207,6 @@ const retryPayment = async (appointmentId) => {
         await paymentStore.createCheckoutSession(appointmentId)
     } catch (error) {
         console.error('Error retrying payment:', error)
-        // Show error message to user
     }
 }
 
@@ -230,8 +232,8 @@ const formatCurrency = (amount) => {
 }
 
 const getProviderName = (provider) => {
-    if (!provider) return 'Unknown Provider'
-    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || 'Provider'
+    if (!provider) return t('booking.unknownProvider')
+    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || t('appointmentDetail.provider')
 }
 
 const getStatusClass = (status) => {
@@ -249,13 +251,13 @@ const getStatusClass = (status) => {
 
 const formatStatus = (status) => {
     const statusMap = {
-        'pending-provider-confirmation': 'Pending Confirmation',
-        'pending-payment': 'Payment Required',
-        'scheduled': 'Scheduled',
-        'completed': 'Completed',
-        'canceled': 'Canceled',
-        'cancelled': 'Canceled',
-        'no-show': 'No Show'
+        'pending-provider-confirmation': t('appointments.statusPendingConfirmation'),
+        'pending-payment': t('appointments.statusPendingPayment'),
+        'scheduled': t('appointments.statusScheduled'),
+        'completed': t('appointments.statusCompleted'),
+        'canceled': t('appointments.statusCanceled'),
+        'cancelled': t('appointments.statusCanceled'),
+        'no-show': t('appointments.statusNoShow')
     }
     return statusMap[status] || status
 }

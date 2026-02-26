@@ -1,9 +1,10 @@
+<!-- frontend/src/views/providers/ProviderPublicProfile.vue -->
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div v-if="loading" class="text-center py-8">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent">
             </div>
-            <p class="mt-2 text-gray-600">Loading provider profile...</p>
+            <p class="mt-2 text-gray-600">{{ $t('providerPublicProfile.loading') }}</p>
         </div>
 
         <template v-else-if="provider">
@@ -18,14 +19,15 @@
                                 <h1 class="text-3xl font-bold text-gray-900">
                                     {{ provider.firstName }} {{ provider.lastName }}
                                 </h1>
-                                <p class="text-lg text-gray-600">Professional provider</p>
+                                <p class="text-lg text-gray-600">{{ $t('providerPublicProfile.professionalProvider') }}
+                                </p>
 
                                 <!-- Status & Rating -->
                                 <div class="mt-3 flex flex-wrap gap-2 justify-center sm:justify-start">
                                     <span v-if="provider.isVerified"
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                                         <CheckCircleIcon class="w-4 h-4 mr-1" />
-                                        Verified provider
+                                        {{ $t('providerPublicProfile.verifiedProvider') }}
                                     </span>
                                     <div v-if="reviewStats.average > 0"
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
@@ -36,7 +38,9 @@
                                     </div>
                                     <span
                                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                        {{ provider.experience || 0 }} years experience
+                                        {{ $t('providerPublicProfile.yearsExperience', {
+                                            count: provider.experience || 0
+                                        }) }}
                                     </span>
                                 </div>
                             </div>
@@ -47,14 +51,14 @@
                             <button v-if="canContact" @click="initiateChat"
                                 class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 <ChatBubbleLeftRightIcon class="w-4 h-4 mr-2" />
-                                Send message
+                                {{ $t('providerPublicProfile.sendMessage') }}
                             </button>
 
                             <router-link v-if="authStore.isClient"
                                 :to="{ name: 'book-appointment', params: { providerId: provider._id } }"
                                 class="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 <CalendarDaysIcon class="w-4 h-4 mr-2" />
-                                Book appointment
+                                {{ $t('providerPublicProfile.bookAppointment') }}
                             </router-link>
                         </div>
                     </div>
@@ -71,7 +75,7 @@
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <LightBulbIcon class="w-5 h-5 mr-2 text-blue-600" />
-                                    Specializations
+                                    {{ $t('providerPublicProfile.specializations') }}
                                 </h2>
                                 <div v-if="provider.specializations?.length > 0" class="flex flex-wrap gap-3">
                                     <span v-for="spec in provider.specializations" :key="spec"
@@ -79,14 +83,15 @@
                                         {{ spec }}
                                     </span>
                                 </div>
-                                <div v-else class="text-gray-500">No specializations listed</div>
+                                <div v-else class="text-gray-500">{{ $t('providerPublicProfile.noSpecializations') }}
+                                </div>
                             </div>
 
                             <!-- About (Bio) -->
                             <div v-if="provider.bio" class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <UserIcon class="w-5 h-5 mr-2 text-purple-600" />
-                                    About
+                                    {{ $t('providerPublicProfile.about') }}
                                 </h2>
                                 <div class="prose max-w-none">
                                     <p class="text-gray-700 leading-relaxed">{{ decodedBio }}</p>
@@ -97,7 +102,7 @@
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <BookOpenIcon class="w-5 h-5 mr-2 text-green-600" />
-                                    Education
+                                    {{ $t('providerPublicProfile.education') }}
                                 </h2>
                                 <div v-if="provider.education?.length > 0" class="space-y-4">
                                     <div v-for="edu in provider.education" :key="`${edu.degree}-${edu.institution}`"
@@ -107,7 +112,7 @@
                                         <p class="text-sm text-gray-500">{{ edu.year }}</p>
                                     </div>
                                 </div>
-                                <div v-else class="text-gray-500">No education information provided</div>
+                                <div v-else class="text-gray-500">{{ $t('providerPublicProfile.noEducation') }}</div>
                             </div>
 
                             <!-- Experience & Languages -->
@@ -116,12 +121,13 @@
                                 <div class="bg-white border border-gray-200 rounded-xl p-6">
                                     <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                         <BriefcaseIcon class="w-5 h-5 mr-2 text-orange-600" />
-                                        Experience
+                                        {{ $t('providerPublicProfile.experienceTitle') }}
                                     </h2>
                                     <div class="text-center p-4">
                                         <div class="text-3xl font-bold text-orange-600">{{ provider.experience || 0 }}
                                         </div>
-                                        <div class="text-sm text-gray-600">Years of experience</div>
+                                        <div class="text-sm text-gray-600">{{
+                                            $t('providerPublicProfile.yearsOfExperience') }}</div>
                                     </div>
                                 </div>
 
@@ -129,7 +135,7 @@
                                 <div class="bg-white border border-gray-200 rounded-xl p-6">
                                     <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                         <LanguageIcon class="w-5 h-5 mr-2 text-purple-600" />
-                                        Languages
+                                        {{ $t('providerPublicProfile.languages') }}
                                     </h2>
                                     <div v-if="provider.languages?.length > 0" class="flex flex-wrap gap-2">
                                         <span v-for="language in provider.languages" :key="language"
@@ -137,7 +143,8 @@
                                             {{ language }}
                                         </span>
                                     </div>
-                                    <div v-else class="text-gray-500 text-sm">No languages specified</div>
+                                    <div v-else class="text-gray-500 text-sm">{{ $t('providerPublicProfile.noLanguages')
+                                        }}</div>
                                 </div>
                             </div>
 
@@ -145,7 +152,7 @@
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <StarIcon class="w-5 h-5 mr-2 text-yellow-600" />
-                                    Client reviews
+                                    {{ $t('providerPublicProfile.clientReviews') }}
                                 </h2>
 
                                 <!-- Rating Summary -->
@@ -160,9 +167,10 @@
                                             </div>
                                             <div class="ml-3">
                                                 <p class="text-lg font-medium text-gray-900">{{
-                                                    reviewStats.average.toFixed(1) }} out of 5</p>
-                                                <p class="text-sm text-gray-600">Based on {{ reviewStats.total }}
-                                                    reviews</p>
+                                                    $t('providerPublicProfile.outOf', { rating:
+                                                    reviewStats.average.toFixed(1) }) }}</p>
+                                                <p class="text-sm text-gray-600">{{ $t('providerPublicProfile.basedOn',
+                                                    { count: reviewStats.total }) }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -198,8 +206,9 @@
                                                 <!-- Provider Response -->
                                                 <div v-if="review.providerResponse?.text"
                                                     class="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-200">
-                                                    <p class="text-sm font-medium text-blue-900 mb-1">Response from {{
-                                                        provider.firstName }}</p>
+                                                    <p class="text-sm font-medium text-blue-900 mb-1">{{
+                                                        $t('providerPublicProfile.responseFrom', { name:
+                                                        provider.firstName }) }}</p>
                                                     <p class="text-sm text-blue-800">{{ review.providerResponse.text }}
                                                     </p>
                                                     <p class="text-xs text-blue-600 mt-1">{{
@@ -212,7 +221,8 @@
                                     <div v-if="reviews.length > 3" class="text-center">
                                         <button @click="showAllReviews = !showAllReviews"
                                             class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                                            {{ showAllReviews ? 'Show less' : `View ${reviews.length - 3} More reviews`
+                                            {{ showAllReviews ? $t('providerPublicProfile.showLess') :
+                                                $t('providerPublicProfile.viewMoreReviews', { count: reviews.length - 3 })
                                             }}
                                         </button>
                                     </div>
@@ -220,8 +230,8 @@
 
                                 <div v-else class="text-center py-8">
                                     <StarIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                                    <p class="text-gray-500">No reviews yet</p>
-                                    <p class="text-gray-400 text-sm mt-1">Be the first to leave a review!</p>
+                                    <p class="text-gray-500">{{ $t('providerPublicProfile.noReviews') }}</p>
+                                    <p class="text-gray-400 text-sm mt-1">{{ $t('providerPublicProfile.beFirst') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -233,20 +243,21 @@
                             <div class="bg-white border border-gray-200 rounded-xl p-6 text-center">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-center">
                                     <CurrencyDollarIcon class="w-5 h-5 mr-2 text-green-600" />
-                                    Consultation fee
+                                    {{ $t('providerPublicProfile.consultationFee') }}
                                 </h3>
                                 <div class="text-3xl font-bold text-green-600 mb-2">{{ formatSessionFee }}</div>
-                                <div class="text-sm text-gray-600">per {{ provider.sessionDuration || 60 }} minutes
-                                </div>
+                                <div class="text-sm text-gray-600">{{ $t('providerPublicProfile.perMinutes', {
+                                    n:
+                                    provider.sessionDuration || 60 }) }}</div>
 
                                 <div class="mt-4 pt-4 border-t border-gray-200">
                                     <router-link v-if="authStore.isClient"
                                         :to="{ name: 'book-appointment', params: { providerId: provider._id } }"
                                         class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        Book now
+                                        {{ $t('providerPublicProfile.bookNow') }}
                                     </router-link>
                                     <div v-else class="text-sm text-gray-500">
-                                        Sign in as a client to book appointments
+                                        {{ $t('providerPublicProfile.signInToBook') }}
                                     </div>
                                 </div>
                             </div>
@@ -255,13 +266,13 @@
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <CheckCircleIcon class="w-5 h-5 mr-2 text-yellow-600" />
-                                    Achievements
+                                    {{ $t('providerPublicProfile.achievements') }}
                                 </h3>
 
                                 <!-- Achievement progress -->
                                 <div class="mb-4">
                                     <div class="flex justify-between text-sm text-gray-600 mb-1">
-                                        <span>Earned</span>
+                                        <span>{{ $t('providerPublicProfile.earned') }}</span>
                                         <span>{{ earnedAchievements.length }}/{{ totalAchievements }}</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
@@ -290,36 +301,43 @@
                                     <div v-if="earnedAchievements.length > 4" class="text-center">
                                         <button @click="showAllAchievements = !showAllAchievements"
                                             class="text-yellow-600 hover:text-yellow-700 text-sm font-medium">
-                                            {{ showAllAchievements ? 'Show less' : `View ${earnedAchievements.length -
-                                                4} More` }}
+                                            {{ showAllAchievements ? $t('providerPublicProfile.showLess') :
+                                                $t('providerPublicProfile.viewMore', { count: earnedAchievements.length - 4
+                                            }) }}
                                         </button>
                                     </div>
                                 </div>
 
                                 <div v-else class="text-center py-4">
-                                    <p class="text-gray-500 text-sm">No achievements earned yet</p>
+                                    <p class="text-gray-500 text-sm">{{ $t('providerPublicProfile.noAchievements') }}
+                                    </p>
                                 </div>
                             </div>
 
                             <!-- Provider stats -->
                             <div class="bg-gray-50 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Provider stats</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">{{
+                                    $t('providerPublicProfile.providerStats') }}</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Completed sessions</span>
+                                        <span class="text-sm text-gray-600">{{
+                                            $t('providerPublicProfile.completedSessions') }}</span>
                                         <span class="font-medium text-gray-900">{{ completedAppointments }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Response rate</span>
+                                        <span class="text-sm text-gray-600">{{ $t('providerPublicProfile.responseRate')
+                                            }}</span>
                                         <span class="font-medium text-gray-900">{{ responseRate }}%</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Member since</span>
+                                        <span class="text-sm text-gray-600">{{ $t('providerPublicProfile.memberSince')
+                                            }}</span>
                                         <span class="font-medium text-gray-900">{{ formatDateShort(provider.createdAt)
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                     <div v-if="provider.lastLoginAt" class="flex justify-between items-center">
-                                        <span class="text-sm text-gray-600">Last active</span>
+                                        <span class="text-sm text-gray-600">{{ $t('providerPublicProfile.lastActive')
+                                            }}</span>
                                         <span class="font-medium text-gray-900">{{
                                             formatRelativeTime(provider.lastLoginAt) }}</span>
                                     </div>
@@ -329,7 +347,8 @@
                             <!-- Similar providers -->
                             <div v-if="similarProviders.length > 0"
                                 class="bg-white border border-gray-200 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Similar providers</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">{{
+                                    $t('providerPublicProfile.similarProviders') }}</h3>
                                 <div class="space-y-3">
                                     <div v-for="similar in similarProviders.slice(0, 3)" :key="similar._id"
                                         class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -342,7 +361,7 @@
                                         </div>
                                         <router-link :to="`/providers/${similar._id}`"
                                             class="text-indigo-600 hover:text-indigo-700 text-xs font-medium">
-                                            View
+                                            {{ $t('providerPublicProfile.view') }}
                                         </router-link>
                                     </div>
                                 </div>
@@ -354,7 +373,7 @@
         </template>
 
         <div v-else class="text-center py-8">
-            <p class="text-gray-500">Provider not found</p>
+            <p class="text-gray-500">{{ $t('providerPublicProfile.notFound') }}</p>
         </div>
     </div>
 </template>

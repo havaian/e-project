@@ -1,3 +1,4 @@
+<!-- frontend/src/views/profile/ProviderOnboarding.vue -->
 <template>
     <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
         <!-- Header -->
@@ -7,14 +8,16 @@
                     <div class="flex items-center space-x-3">
                         <img src="/images/logo.svg" alt="Logo" width="40" height="40" class="w-10 h-10" />
                         <div>
-                            <h1 class="text-xl font-bold text-gray-900">Provider setup</h1>
-                            <p class="text-sm text-gray-500">Complete your profile to start accepting appointments</p>
+                            <h1 class="text-xl font-bold text-gray-900">{{ $t('providerOnboarding.title') }}</h1>
+                            <p class="text-sm text-gray-500">{{ $t('providerOnboarding.subtitle') }}</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-sm font-medium text-gray-900">Step {{ currentStep }} of {{ totalSteps }}</div>
-                        <div class="text-xs text-gray-500">{{ Math.round((currentStep / totalSteps) * 100) }}% Complete
-                        </div>
+                        <div class="text-sm font-medium text-gray-900">{{ $t('providerOnboarding.stepOf', {
+                            current:
+                            currentStep, total: totalSteps }) }}</div>
+                        <div class="text-xs text-gray-500">{{ Math.round((currentStep / totalSteps) * 100) }}% {{
+                            $t('providerOnboarding.complete') }}</div>
                     </div>
                 </div>
             </div>
@@ -98,7 +101,6 @@
                     <StepProfile v-if="currentStep === 4" v-model="formData" @next="nextStep" @prev="prevStep"
                         @validate="validateStep" />
 
-                    <!-- Add @editStep handler -->
                     <StepReview v-if="currentStep === 5" v-model="formData" @next="nextStep" @prev="prevStep"
                         @validate="validateStep" @editStep="goToStep" />
 
@@ -110,7 +112,7 @@
                     <button v-if="currentStep > 1" @click="prevStep" class="btn-element-secondary"
                         :class="{ 'cursor-not-allowed': loading || autoSaving }" :disabled="loading || autoSaving">
                         <ChevronLeftIcon class="w-4 h-4 mr-2" />
-                        Previous
+                        {{ $t('providerOnboarding.previous') }}
                     </button>
                     <div v-else></div>
 
@@ -127,9 +129,9 @@
                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                     </path>
                                 </svg>
-                                Saving...
+                                {{ $t('providerOnboarding.savingDraft') }}
                             </span>
-                            <span v-else>Save draft</span>
+                            <span v-else>{{ $t('providerOnboarding.saveDraft') }}</span>
                         </button>
 
                         <button @click="nextStep" class="btn-element-primary transition-all duration-200" :class="{
@@ -144,10 +146,11 @@
                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                     </path>
                                 </svg>
-                                Saving...
+                                {{ $t('providerOnboarding.savingDraft') }}
                             </span>
                             <span class="flex items-center" v-else>
-                                {{ currentStep === 5 ? 'Complete setup' : 'Next' }}
+                                {{ currentStep === 5 ? $t('providerOnboarding.completeSetup') :
+                                    $t('providerOnboarding.next') }}
                                 <ChevronRightIcon v-if="currentStep < 5" class="w-4 h-4 ml-2" />
                             </span>
                         </button>
@@ -162,12 +165,12 @@
                 <div class="flex items-start space-x-3">
                     <InformationCircleIcon class="w-6 h-6 text-blue-500 mt-1 flex-shrink-0" />
                     <div>
-                        <h3 class="text-sm font-medium text-blue-900">Need help?</h3>
+                        <h3 class="text-sm font-medium text-blue-900">{{ $t('providerOnboarding.needHelp') }}</h3>
                         <p class="text-sm text-blue-700 mt-1">
-                            Contact our support team at <a :href="`mailto:${supportEmail}`" class="underline">{{
-                                supportEmail }}</a>
-                            or call us at <a :href="`tel:${supportPhone}`" class="underline">{{ supportPhone }}</a> if
-                            you need assistance completing your profile.
+                            {{ $t('providerOnboarding.helpText') }}
+                            <a :href="`mailto:${supportEmail}`" class="underline">{{ supportEmail }}</a>
+                            {{ $t('providerOnboarding.orCall') }}
+                            <a :href="`tel:${supportPhone}`" class="underline">{{ supportPhone }}</a>
                         </p>
                     </div>
                 </div>
@@ -180,6 +183,7 @@
 import { CheckIcon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
 
@@ -191,6 +195,7 @@ import StepProfile from '@/components/onboarding/StepProfile.vue'
 import StepReview from '@/components/onboarding/StepReview.vue'
 import StepComplete from '@/components/onboarding/StepComplete.vue'
 
+const { t } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -202,30 +207,27 @@ const isStepValid = ref(false)
 
 // Auto-save state
 const autoSaving = ref(false)
-const autoSaveStatus = ref('') // '', 'saving', 'saved', 'error'
+const autoSaveStatus = ref('')
 const lastSavedStep = ref(0)
 
 const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
 const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL
 
 // Steps configuration
-const steps = [
-    { name: 'Education', component: 'StepEducation' },
-    { name: 'Availability', component: 'StepAvailability' },
-    { name: 'Sessions', component: 'StepSessionSettings' },
-    { name: 'Profile', component: 'StepProfile' },
-    { name: 'Review', component: 'StepReview' },
-    { name: 'Complete', component: 'StepComplete' }
-]
+const steps = computed(() => [
+    { name: t('providerOnboarding.stepEducation'), component: 'StepEducation' },
+    { name: t('providerOnboarding.stepAvailability'), component: 'StepAvailability' },
+    { name: t('providerOnboarding.stepSessions'), component: 'StepSessionSettings' },
+    { name: t('providerOnboarding.stepProfile'), component: 'StepProfile' },
+    { name: t('providerOnboarding.stepReview'), component: 'StepReview' },
+    { name: t('providerOnboarding.stepComplete'), component: 'StepComplete' }
+])
 
-// Form data - centralized state for all steps
+// Form data
 const formData = reactive({
-    // Step 1: Education
     education: [],
     certifications: [],
     languages: [],
-
-    // Step 2: Availability (using new timeSlots structure)
     availability: [
         { dayOfWeek: 1, isAvailable: false, timeSlots: [] },
         { dayOfWeek: 2, isAvailable: false, timeSlots: [] },
@@ -235,17 +237,11 @@ const formData = reactive({
         { dayOfWeek: 6, isAvailable: false, timeSlots: [] },
         { dayOfWeek: 7, isAvailable: false, timeSlots: [] }
     ],
-
-    // Step 3: session settings
     sessionDuration: 60,
     sessionFee: 0,
-
-    // Step 4: profile info
     specializations: [],
     bio: '',
     experience: 0,
-
-    // Additional fields that might be needed
     licenseNumber: ''
 })
 
@@ -254,66 +250,44 @@ console.log('[ProviderOnboarding] formData initialized with availability:', form
 // Auto-save computed properties
 const autoSaveStatusClass = computed(() => {
     switch (autoSaveStatus.value) {
-        case 'saving':
-            return 'bg-blue-100 text-blue-800'
-        case 'saved':
-            return 'bg-green-100 text-green-800'
-        case 'error':
-            return 'bg-red-100 text-red-800'
-        default:
-            return 'bg-gray-100 text-gray-800'
+        case 'saving': return 'bg-blue-100 text-blue-800'
+        case 'saved': return 'bg-green-100 text-green-800'
+        case 'error': return 'bg-red-100 text-red-800'
+        default: return 'bg-gray-100 text-gray-800'
     }
 })
 
 const autoSaveStatusText = computed(() => {
     switch (autoSaveStatus.value) {
-        case 'saving':
-            return 'Auto-saving...'
-        case 'saved':
-            return 'Changes saved'
-        case 'error':
-            return 'Save failed'
-        default:
-            return ''
+        case 'saving': return t('providerOnboarding.autoSaving')
+        case 'saved': return t('providerOnboarding.changesSaved')
+        case 'error': return t('providerOnboarding.saveFailed')
+        default: return ''
     }
 })
 
-// ENHANCED: Auto-save function with better error handling and status tracking
 const autoSaveCurrentStep = async (stepNumber = currentStep.value, showStatus = true) => {
     try {
-        if (autoSaving.value) return // Prevent concurrent saves
-
+        if (autoSaving.value) return
         autoSaving.value = true
-        if (showStatus) {
-            autoSaveStatus.value = 'saving'
-        }
+        if (showStatus) autoSaveStatus.value = 'saving'
 
-        // Prepare update data based on step
         let updateData = {}
-
         switch (stepNumber) {
-            case 1: // Education
+            case 1:
                 updateData = {
                     education: formData.education.filter(edu => edu.degree && edu.institution && edu.year),
                     certifications: formData.certifications.filter(cert => cert.name && cert.issuer && cert.year),
                     languages: formData.languages.filter(lang => lang !== '')
                 }
                 break
-
-            case 2: // Availability
-                updateData = {
-                    availability: formData.availability
-                }
+            case 2:
+                updateData = { availability: formData.availability }
                 break
-
-            case 3: // session settings
-                updateData = {
-                    sessionDuration: formData.sessionDuration,
-                    sessionFee: formData.sessionFee
-                }
+            case 3:
+                updateData = { sessionDuration: formData.sessionDuration, sessionFee: formData.sessionFee }
                 break
-
-            case 4: // profile
+            case 4:
                 updateData = {
                     specializations: formData.specializations.filter(spec => spec !== ''),
                     bio: formData.bio,
@@ -321,9 +295,7 @@ const autoSaveCurrentStep = async (stepNumber = currentStep.value, showStatus = 
                     licenseNumber: formData.licenseNumber
                 }
                 break
-
             default:
-                // For step 5 (review), save all data
                 updateData = {
                     education: formData.education.filter(edu => edu.degree && edu.institution && edu.year),
                     certifications: formData.certifications.filter(cert => cert.name && cert.issuer && cert.year),
@@ -338,7 +310,6 @@ const autoSaveCurrentStep = async (stepNumber = currentStep.value, showStatus = 
                 }
         }
 
-        // Only save if there's actual data to update
         if (Object.keys(updateData).length > 0) {
             await axios.patch('/users/me', updateData)
             lastSavedStep.value = stepNumber
@@ -346,27 +317,19 @@ const autoSaveCurrentStep = async (stepNumber = currentStep.value, showStatus = 
 
         if (showStatus) {
             autoSaveStatus.value = 'saved'
-            // Clear status after 2 seconds
-            setTimeout(() => {
-                autoSaveStatus.value = ''
-            }, 2000)
+            setTimeout(() => { autoSaveStatus.value = '' }, 2000)
         }
-
     } catch (error) {
         console.error('Error auto-saving step data:', error)
         if (showStatus) {
             autoSaveStatus.value = 'error'
-            // Clear error status after 3 seconds
-            setTimeout(() => {
-                autoSaveStatus.value = ''
-            }, 3000)
+            setTimeout(() => { autoSaveStatus.value = '' }, 3000)
         }
     } finally {
         autoSaving.value = false
     }
 }
 
-// ENHANCED: Navigation methods with auto-save
 const nextStep = async () => {
     if (currentStep.value < totalSteps) {
         await autoSaveCurrentStep(currentStep.value, true)
@@ -382,22 +345,14 @@ const prevStep = async () => {
     }
 }
 
-// Enhanced goToStep with auto-save for edit functionality
 const goToStep = async (stepNumber) => {
-    // Only allow navigating to steps already reached — never skip forward
-    if (
-        stepNumber >= 1 &&
-        stepNumber <= 5 &&
-        stepNumber !== currentStep.value &&
-        stepNumber < currentStep.value   // ← key restriction: only backwards
-    ) {
+    if (stepNumber >= 1 && stepNumber <= 5 && stepNumber !== currentStep.value && stepNumber < currentStep.value) {
         await autoSaveCurrentStep(currentStep.value, true)
         currentStep.value = stepNumber
         isStepValid.value = false
     }
 }
 
-// Expose saveCurrentStep for manual saving
 const saveCurrentStep = async () => {
     await autoSaveCurrentStep(currentStep.value, true)
 }
@@ -406,7 +361,6 @@ const validateStep = (isValid) => {
     isStepValid.value = isValid
 }
 
-// Keep the old saveStepData for compatibility but redirect to autoSave
 const saveStepData = async () => {
     loading.value = true
     try {
@@ -416,7 +370,6 @@ const saveStepData = async () => {
     }
 }
 
-// Update onboarding step in auth store
 const updateOnboardingStep = async () => {
     try {
         await authStore.updateOnboardingStep(currentStep.value)
@@ -425,20 +378,12 @@ const updateOnboardingStep = async () => {
     }
 }
 
-// Complete onboarding
 const completeOnboarding = async () => {
     try {
         loading.value = true
-
-        // Final auto-save before completion
         await autoSaveCurrentStep(5, true)
-
-        // Mark onboarding as complete
         await authStore.updateOnboardingStep(6)
-
-        // Redirect to provider dashboard with refresh flag
         router.push('/profile/me?refreshProfile=true')
-
     } catch (error) {
         console.error('Error completing onboarding:', error)
     } finally {
@@ -446,23 +391,18 @@ const completeOnboarding = async () => {
     }
 }
 
-// Auto-save when significant form data changes (debounced)
 let autoSaveTimeout = null
 const debouncedAutoSave = () => {
-    if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout)
-    }
+    if (autoSaveTimeout) clearTimeout(autoSaveTimeout)
     autoSaveTimeout = setTimeout(() => {
         if (currentStep.value <= 4 && !autoSaving.value) {
-            autoSaveCurrentStep(currentStep.value, false) // Silent auto-save
+            autoSaveCurrentStep(currentStep.value, false)
         }
-    }, 2000) // Save 2 seconds after user stops typing
+    }, 2000)
 }
 
-// Watch for form data changes and trigger debounced auto-save
 watch(formData, debouncedAutoSave, { deep: true })
 
-// Auto-save before user navigates away
 const handleBeforeUnload = (event) => {
     if (autoSaving.value) {
         event.preventDefault()
@@ -471,11 +411,9 @@ const handleBeforeUnload = (event) => {
     }
 }
 
-// Helper function to normalize availability data from server
 const normalizeAvailability = (serverAvailability) => {
     console.log('[ProviderOnboarding] Normalizing availability:', serverAvailability)
 
-    // Create default structure for all 7 days
     const defaultAvailability = [
         { dayOfWeek: 1, isAvailable: false, timeSlots: [] },
         { dayOfWeek: 2, isAvailable: false, timeSlots: [] },
@@ -491,27 +429,18 @@ const normalizeAvailability = (serverAvailability) => {
         return defaultAvailability
     }
 
-    // Map server data to default structure
     return defaultAvailability.map(defaultDay => {
         const serverDay = serverAvailability.find(d => d.dayOfWeek === defaultDay.dayOfWeek)
+        if (!serverDay) return defaultDay
 
-        if (!serverDay) {
-            return defaultDay
-        }
-
-        // If old format (direct startTime/endTime), convert to new format
         if (serverDay.startTime && serverDay.endTime && !serverDay.timeSlots) {
             return {
                 dayOfWeek: defaultDay.dayOfWeek,
                 isAvailable: serverDay.isAvailable || false,
-                timeSlots: serverDay.isAvailable ? [{
-                    startTime: serverDay.startTime,
-                    endTime: serverDay.endTime
-                }] : []
+                timeSlots: serverDay.isAvailable ? [{ startTime: serverDay.startTime, endTime: serverDay.endTime }] : []
             }
         }
 
-        // Already in new format
         return {
             dayOfWeek: defaultDay.dayOfWeek,
             isAvailable: serverDay.isAvailable || false,
@@ -520,27 +449,22 @@ const normalizeAvailability = (serverAvailability) => {
     })
 }
 
-// Load existing data on mount
 onMounted(async () => {
     try {
-        // Add beforeunload listener for auto-save
         window.addEventListener('beforeunload', handleBeforeUnload)
 
         console.log('[ProviderOnboarding] Loading user data...')
 
-        // Get current user data
         const response = await axios.get('/users/me')
         const user = response.data
 
         console.log('[ProviderOnboarding] User data received:', user)
         console.log('[ProviderOnboarding] User availability:', user.availability)
 
-        // Populate form with existing data
         if (user.education) formData.education = [...user.education]
         if (user.certifications) formData.certifications = [...user.certifications]
         if (user.languages) formData.languages = [...user.languages]
 
-        // Normalize availability data to ensure correct format - ALWAYS
         const normalizedAvailability = normalizeAvailability(user.availability)
         console.log('[ProviderOnboarding] Normalized availability:', normalizedAvailability)
         formData.availability = normalizedAvailability
@@ -552,7 +476,6 @@ onMounted(async () => {
         if (user.experience) formData.experience = user.experience
         if (user.licenseNumber) formData.licenseNumber = user.licenseNumber
 
-        // Set current step from auth store or user profile
         currentStep.value = authStore.currentOnboardingStep || user.profileSetupStep || 1
         lastSavedStep.value = currentStep.value
 
@@ -566,11 +489,8 @@ onMounted(async () => {
     }
 })
 
-// Cleanup on unmount
 onBeforeUnmount(() => {
     window.removeEventListener('beforeunload', handleBeforeUnload)
-    if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout)
-    }
+    if (autoSaveTimeout) clearTimeout(autoSaveTimeout)
 })
 </script>

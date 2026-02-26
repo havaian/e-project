@@ -1,9 +1,10 @@
 <template>
     <div class="min-h-screen flex items-center justify-center element-gradient py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10 text-center">
+        <div
+            class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10 text-center">
             <div v-if="loading" class="flex flex-col items-center">
                 <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
-                <p class="mt-4 text-gray-600">Verifying your email...</p>
+                <p class="mt-4 text-gray-600">{{ $t('authPages.verifyingEmail') }}</p>
             </div>
 
             <template v-else>
@@ -13,15 +14,15 @@
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
-                        Email verified!
+                        {{ $t('authPages.emailVerified') }}
                     </h2>
                     <p class="mt-2 text-sm text-gray-600">
-                        Your email has been verified successfully. You can now log in to your account.
+                        {{ $t('authPages.emailVerifiedDesc') }}
                     </p>
 
                     <div class="mt-8">
                         <router-link to="/login" class="btn-primary w-full justify-center">
-                            Go to login
+                            {{ $t('authPages.goToLogin') }}
                         </router-link>
                     </div>
                 </div>
@@ -32,15 +33,15 @@
                     </div>
 
                     <h2 class="text-3xl font-extrabold text-gray-900">
-                        Verification failed
+                        {{ $t('authPages.verificationFailed') }}
                     </h2>
                     <p class="mt-2 text-sm text-gray-600">
-                        {{ error || 'The verification link is invalid or has expired.' }}
+                        {{ error || $t('authPages.verificationFailedDesc') }}
                     </p>
 
                     <div class="mt-8">
                         <router-link to="/login" class="btn-primary w-full justify-center">
-                            Return to login
+                            {{ $t('authPages.returnToLogin') }}
                         </router-link>
                     </div>
                 </div>
@@ -53,8 +54,10 @@
 import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -68,7 +71,7 @@ onMounted(async () => {
         await axios.get(`/users/verify/${token}`)
         success.value = true
     } catch (err) {
-        error.value = err.response?.data?.message || 'Failed to verify email'
+        error.value = err.response?.data?.message || t('authPages.verifyFailed')
         success.value = false
     } finally {
         loading.value = false

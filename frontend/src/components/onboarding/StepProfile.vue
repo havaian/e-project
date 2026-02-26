@@ -2,168 +2,138 @@
     <div class="space-y-8">
         <!-- Step Header -->
         <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Complete your profile</h2>
-            <p class="mt-2 text-gray-600">Add your specializations, experience, and professional bio</p>
+            <h2 class="text-3xl font-bold text-gray-900">{{ $t('onboarding.educationExperience') }}</h2>
+            <p class="mt-2 text-gray-600">{{ $t('onboarding.educationExperienceDesc') }}</p>
         </div>
 
-        <!-- Specializations -->
+        <!-- Education section -->
         <div class="space-y-6">
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Specializations</h3>
-                <p class="text-sm text-gray-600 mb-4">Select the areas you specialize in</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('onboarding.education') }}</h3>
+                <div class="space-y-4">
+                    <div v-for="(edu, index) in modelValue.education" :key="index"
+                        class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('onboarding.degree')
+                                    }}</label>
+                                <input v-model="edu.degree" type="text"
+                                    :placeholder="$t('onboarding.degreePlaceholder')" class="input"
+                                    @input="validateForm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{
+                                    $t('onboarding.institution') }}</label>
+                                <input v-model="edu.institution" type="text"
+                                    :placeholder="$t('onboarding.institutionPlaceholder')" class="input"
+                                    @input="validateForm" />
+                            </div>
+                            <div class="flex items-end space-x-2">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('onboarding.year')
+                                        }}</label>
+                                    <input v-model.number="edu.year" type="number" :min="1950"
+                                        :max="new Date().getFullYear()" placeholder="2020" class="input"
+                                        @input="validateForm" />
+                                </div>
+                                <button v-if="modelValue.education.length > 1" @click="removeEducation(index)"
+                                    class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                    <TrashIcon class="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button @click="addEducation"
+                    class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
+                    <PlusIcon class="w-5 h-5" />
+                    <span>{{ $t('onboarding.addEducation') }}</span>
+                </button>
+            </div>
+
+            <!-- Certifications section -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('onboarding.certifications') }}</h3>
+                <div class="space-y-4">
+                    <div v-for="(cert, index) in modelValue.certifications" :key="index"
+                        class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('onboarding.certName')
+                                    }}</label>
+                                <input v-model="cert.name" type="text"
+                                    :placeholder="$t('onboarding.certNamePlaceholder')" class="input"
+                                    @input="validateForm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{
+                                    $t('onboarding.issuingOrg') }}</label>
+                                <input v-model="cert.issuer" type="text"
+                                    :placeholder="$t('onboarding.issuingOrgPlaceholder')" class="input"
+                                    @input="validateForm" />
+                            </div>
+                            <div class="flex items-end space-x-2">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">{{
+                                        $t('onboarding.yearObtained') }}</label>
+                                    <input v-model.number="cert.year" type="number" :min="1950"
+                                        :max="new Date().getFullYear()" placeholder="2020" class="input"
+                                        @input="validateForm" />
+                                </div>
+                                <button v-if="modelValue.certifications.length > 1" @click="removeCertification(index)"
+                                    class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                    <TrashIcon class="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button @click="addCertification"
+                    class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
+                    <PlusIcon class="w-5 h-5" />
+                    <span>{{ $t('onboarding.addCertification') }}</span>
+                </button>
+            </div>
+
+            <!-- Languages section -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('onboarding.languages') }}</h3>
+                <p class="text-sm text-gray-600 mb-4">{{ $t('onboarding.whyInfoDesc').split('.')[1]?.trim() || '' }}</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-for="(specialization, index) in modelValue.specializations" :key="index"
+                    <div v-for="(language, index) in modelValue.languages" :key="index"
                         class="flex items-center space-x-3">
-                        <select v-model="modelValue.specializations[index]" class="input flex-1"
-                            @change="validateForm">
-                            <option value="">Select a specialization</option>
-                            <option v-for="spec in getAvailableSpecializations(index)" :key="spec.name"
-                                :value="spec.name">
-                                {{ spec.name }}
+                        <select v-model="modelValue.languages[index]" class="input flex-1" @change="validateForm">
+                            <option value="">{{ $t('onboarding.selectLanguage') }}</option>
+                            <option v-for="lang in getAvailableLanguages(index)" :key="lang" :value="lang">
+                                {{ lang }}
                             </option>
                         </select>
-                        <button v-if="modelValue.specializations.length > 1" @click="removeSpecialization(index)"
+                        <button v-if="modelValue.languages.length > 1" @click="removeLanguage(index)"
                             class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
                             <TrashIcon class="w-5 h-5" />
                         </button>
                     </div>
                 </div>
 
-                <button v-if="modelValue.specializations.length < availableSpecializations.length"
-                    @click="addSpecialization"
+                <button v-if="modelValue.languages.length < availableLanguages.length" @click="addLanguage"
                     class="mt-4 flex items-center space-x-2 text-sky-600 hover:text-sky-700 font-medium">
                     <PlusIcon class="w-5 h-5" />
-                    <span>Add specialization</span>
+                    <span>{{ $t('onboarding.addLanguage') }}</span>
                 </button>
             </div>
-
-            <!-- Professional License number -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional license number</h3>
-                <p class="text-sm text-gray-600 mb-4">Enter your professional license or certification number</p>
-
-                <div class="max-w-md">
-                    <input 
-                        v-model="modelValue.licenseNumber" 
-                        type="text" 
-                        placeholder="e.g., PSY12345 or LPC-67890"
-                        class="input" 
-                        @input="validateForm" 
-                        maxlength="50"
-                    />
-                    <p class="text-sm text-gray-500 mt-2">
-                        This verifies your professional credentials and builds client trust
-                    </p>
-                </div>
-            </div>
-
-            <!-- Years of experience -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Years of experience</h3>
-                <p class="text-sm text-gray-600 mb-4">How many years of professional experience do you have?</p>
-
-                <div class="max-w-md">
-                    <input v-model.number="modelValue.experience" type="number" min="0" max="50" placeholder="5"
-                        class="input" @input="validateForm" />
-                    <p class="text-sm text-gray-500 mt-2">
-                        This helps clients verify your credentials and qualifications
-                    </p>
-                </div>
-            </div>
-
-            <!-- Professional Bio -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional bio</h3>
-                <p class="text-sm text-gray-600 mb-4">Write a brief description of your background and approach</p>
-
-                <div class="space-y-4">
-                    <textarea v-model="modelValue.bio" rows="6"
-                        placeholder="Tell potential clients about your background, approach, and what makes you unique. This will be displayed on your profile page."
-                        class="input resize-none" maxlength="500" @input="validateForm"></textarea>
-
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-500">
-                            Write at least 50 characters for a complete profile
-                        </span>
-                        <span class="font-medium"
-                            :class="bioLength >= 450 ? 'text-red-600' : bioLength >= 50 ? 'text-green-600' : 'text-gray-500'">
-                            {{ bioLength }}/500 characters
-                        </span>
-                    </div>
-
-                    <!-- Bio writing tips -->
-                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                        <h4 class="text-sm font-medium text-blue-900 mb-2">Bio writing tips</h4>
-                        <ul class="text-sm text-blue-700 space-y-1">
-                            <li>• Mention your educational background and certifications</li>
-                            <li>• Describe your approach or methodology</li>
-                            <li>• Include areas of expertise and client populations you work with</li>
-                            <li>• Keep it professional but personable</li>
-                            <li>• Avoid overly technical jargon</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- Profile preview -->
-        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">Profile preview</h4>
-            <div class="bg-white rounded-lg p-4 border border-gray-200">
-                <div class="flex items-start space-x-4">
-                    <div
-                        class="w-16 h-16 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
-                        <span class="text-white font-semibold text-xl">{{ userInitials }}</span>
-                    </div>
-                    <div class="flex-1">
-                        <h5 class="text-lg font-semibold text-gray-900">
-                            Dr. {{ currentUser?.firstName }} {{ currentUser?.lastName }}
-                        </h5>
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            <span v-for="spec in selectedSpecializations" :key="spec"
-                                class="px-2 py-1 bg-sky-100 text-sky-700 text-xs rounded-full">
-                                {{ spec }}
-                            </span>
-                        </div>
-                        <div class="mt-3 text-sm text-gray-600">
-                            <p v-if="modelValue.experience > 0">
-                                {{ modelValue.experience }} {{ modelValue.experience === 1 ? 'year' : 'years' }} of
-                                experience
-                            </p>
-                            <p v-if="modelValue.licenseNumber" class="mt-1">
-                                License: {{ modelValue.licenseNumber }}
-                            </p>
-                        </div>
-                        <div class="mt-3 text-sm text-gray-700">
-                            <p>{{ modelValue.bio || 'Professional bio will appear here...' }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Validation Messages -->
-        <div v-if="validationMessages.length > 0" class="bg-red-50 rounded-xl p-4 border border-red-200">
+        <!-- Help Text -->
+        <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
             <div class="flex items-start space-x-3">
-                <ExclamationCircleIcon class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <InformationCircleIcon class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                    <p class="font-medium text-red-900">Please complete the following:</p>
-                    <ul class="text-red-700 mt-1 list-disc list-inside">
-                        <li v-for="message in validationMessages" :key="message">{{ message }}</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Success Message -->
-        <div v-if="isFormValid" class="bg-green-50 rounded-xl p-4 border border-green-200">
-            <div class="flex items-start space-x-3">
-                <CheckCircleIcon class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <div class="text-sm">
-                    <p class="font-medium text-green-900">Profile complete!</p>
-                    <p class="text-green-700 mt-1">
-                        Your profile information looks great. You're ready to proceed to the review step.
+                    <p class="font-medium text-blue-900">{{ $t('onboarding.whyInfo') }}</p>
+                    <p class="text-blue-700 mt-1">
+                        {{ $t('onboarding.whyInfoDesc') }}
                     </p>
                 </div>
             </div>
@@ -172,10 +142,8 @@
 </template>
 
 <script setup>
-import { TrashIcon, PlusIcon, ExclamationCircleIcon, CheckCircleIcon } from "@heroicons/vue/24/outline";
-import { ref, computed, watch, onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
-import axios from '@/plugins/axios'
+import { TrashIcon, PlusIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
+import { ref, watch, onMounted } from 'vue'
 
 const emit = defineEmits(['update:modelValue', 'validate'])
 const props = defineProps({
@@ -185,95 +153,91 @@ const props = defineProps({
     }
 })
 
-const authStore = useAuthStore()
+// Available languages
+const availableLanguages = ref([
+    'English', 'Russian', 'Uzbek', 'Arabic', 'Spanish', 'French',
+    'German', 'Turkish', 'Persian', 'Korean', 'Chinese', 'Japanese'
+])
 
-// State
-const availableSpecializations = ref([])
-const loading = ref(false)
-
-// Computed properties
-const currentUser = computed(() => authStore.user)
-
-const userInitials = computed(() => {
-    if (!currentUser.value) return 'U'
-    const first = currentUser.value.firstName?.[0] || ''
-    const last = currentUser.value.lastName?.[0] || ''
-    return (first + last).toUpperCase()
-})
-
-const bioLength = computed(() => {
-    return props.modelValue.bio?.length || 0
-})
-
-const selectedSpecializations = computed(() => {
-    return props.modelValue.specializations.filter(spec => spec !== '')
-})
-
-const validationMessages = computed(() => {
-    const messages = []
-
-    if (selectedSpecializations.value.length === 0) {
-        messages.push('Select at least one specialization')
+// Initialize with at least one entry for each section
+onMounted(() => {
+    if (props.modelValue.education.length === 0) {
+        addEducation()
     }
-
-    if (!props.modelValue.experience || props.modelValue.experience < 0) {
-        messages.push('Enter your years of experience')
+    if (props.modelValue.certifications.length === 0) {
+        addCertification()
     }
-
-    if (!props.modelValue.licenseNumber?.trim()) {
-        messages.push('Enter your professional license number')
+    if (props.modelValue.languages.length === 0) {
+        addLanguage()
     }
-
-    if (!props.modelValue.bio?.trim() || props.modelValue.bio.length < 50) {
-        messages.push('Write a professional bio (at least 50 characters)')
-    }
-
-    return messages
-})
-
-const isFormValid = computed(() => {
-    return validationMessages.value.length === 0
+    validateForm()
 })
 
 // Methods
-const addSpecialization = () => {
-    props.modelValue.specializations.push('')
+const addEducation = () => {
+    props.modelValue.education.push({
+        degree: '',
+        institution: '',
+        year: null
+    })
     validateForm()
 }
 
-const removeSpecialization = (index) => {
-    props.modelValue.specializations.splice(index, 1)
+const removeEducation = (index) => {
+    props.modelValue.education.splice(index, 1)
     validateForm()
 }
 
-const getAvailableSpecializations = (currentIndex) => {
-    const selectedSpecs = props.modelValue.specializations
-        .filter((spec, index) => index !== currentIndex && spec !== '')
+const addCertification = () => {
+    props.modelValue.certifications.push({
+        name: '',
+        issuer: '',
+        year: null
+    })
+    validateForm()
+}
 
-    return availableSpecializations.value.filter(spec =>
-        !selectedSpecs.includes(spec.name)
+const removeCertification = (index) => {
+    props.modelValue.certifications.splice(index, 1)
+    validateForm()
+}
+
+const addLanguage = () => {
+    props.modelValue.languages.push('')
+    validateForm()
+}
+
+const removeLanguage = (index) => {
+    props.modelValue.languages.splice(index, 1)
+    validateForm()
+}
+
+const getAvailableLanguages = (currentIndex) => {
+    const selectedLanguages = props.modelValue.languages
+        .filter((lang, index) => index !== currentIndex && lang !== '')
+
+    return availableLanguages.value.filter(lang =>
+        !selectedLanguages.includes(lang)
     )
 }
 
 const validateForm = () => {
-    emit('validate', isFormValid.value)
+    const hasValidEducation = props.modelValue.education.some(edu =>
+        edu.degree && edu.institution && edu.year
+    )
+
+    const hasValidCertification = props.modelValue.certifications.some(cert =>
+        cert.name && cert.issuer && cert.year
+    )
+
+    const hasValidLanguage = props.modelValue.languages.some(lang => lang !== '')
+
+    const isValid = hasValidEducation && hasValidCertification && hasValidLanguage
+
+    emit('validate', isValid)
 }
 
-const fetchSpecializations = async () => {
-    try {
-        loading.value = true
-        const response = await axios.get('/specializations')
-        availableSpecializations.value = response.data.specializations || []
-    } catch (error) {
-        console.error('Error fetching specializations:', error)
-        // Fallback specializations
-        availableSpecializations.value = []
-    } finally {
-        loading.value = false
-    }
-}
-
-// Watch for changes
+// Watch for changes to validate
 watch(() => props.modelValue, validateForm, { deep: true })
 
 // Initialize

@@ -321,16 +321,29 @@ initializeSocketIO(io);
 
 // Routes
 app.use('/api/users', require('./src/user/routes'));
-app.use('/api/appointments', require('./src/appointment/routes'));
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false') {
+    app.use('/api/appointments', require('./src/appointment/routes'));
+}
 app.use('/api/telegram', require('./src/bot/routes'));
 // app.use('/api/assistant', require('./src/assistant/routes'));
 app.use('/api/payments', require('./src/payment/routes'));
-app.use('/api/sessions', require('./src/session/routes'));
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false') {
+    app.use('/api/sessions', require('./src/session/routes'));
+}
 app.use('/api/admin', require('./src/admin/routes'));
-app.use('/api/specializations', require('./src/specialization/routes'));
-app.use('/api/chat', require('./src/chat/routes'));
-app.use('/api/reviews', require('./src/review/routes'));
-app.use('/api/courses', require('./src/course/routes'));
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false') {
+    app.use('/api/specializations', require('./src/specialization/routes'));
+}
+// Chat available when at least one core module is on
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false' || process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
+    app.use('/api/chat', require('./src/chat/routes'));
+}
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false') {
+    app.use('/api/reviews', require('./src/review/routes'));
+}
+if (process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
+    app.use('/api/courses', require('./src/course/routes'));
+}
 
 // Conditional module routes
 if (process.env.MODULE_GROUP_CONSULTATIONS_ENABLED === 'true' && groupConsultationRoutes) {
@@ -342,7 +355,9 @@ if (process.env.MODULE_MONTHLY_PAYMENTS_ENABLED === 'true' && monthlyPaymentRout
 }
 
 // Initialize cron jobs
-scheduleAppointmentReminders();
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false') {
+    scheduleAppointmentReminders();
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -368,6 +383,9 @@ server.listen(PORT, () => {
     console.log(`✅ PORT ${PORT}`);
     console.log(`✅ ${(process.env.NODE_ENV).toUpperCase()} mode`);
 });
+
+console.log(`📦 Consultations: ${process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false' ? 'ON' : 'OFF'}`);
+console.log(`📦 Courses: ${process.env.VITE_MODULE_COURSES_ENABLED !== 'false' ? 'ON' : 'OFF'}`);
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', err => {

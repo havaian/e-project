@@ -3,7 +3,8 @@
         <div
             class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-sky-500/10">
             <div>
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">{{ $t('authPages.createAccount') }}
+                </h2>
             </div>
 
             <div v-if="registrationSuccess"
@@ -13,13 +14,13 @@
                         <CheckCircleIcon class="h-5 w-5 text-green-400" />
                     </div>
                     <div class="ml-3">
-                        <h3 class="text-sm font-medium text-green-800">Registration successful!</h3>
+                        <h3 class="text-sm font-medium text-green-800">{{ $t('authPages.registrationSuccess') }}</h3>
                         <div class="mt-2 text-sm text-green-700">
-                            <p>Please check your email to verify your account before logging in.</p>
+                            <p>{{ $t('authPages.verifyEmailPrompt') }}</p>
                         </div>
                         <div class="mt-4">
                             <router-link to="/login" class="text-sm font-medium text-green-600 hover:text-green-500">
-                                Go to login page →
+                                {{ $t('authPages.goToLogin') }} →
                             </router-link>
                         </div>
                     </div>
@@ -29,43 +30,44 @@
             <form v-else class="form-container" @submit.prevent="handleSubmit">
                 <div class="space-y-4">
                     <div class="form-group">
-                        <label for="role" class="label">I am a</label>
+                        <label for="role" class="label">{{ $t('authPages.iAmA') }}</label>
                         <select id="role" v-model="formData.role" class="input" required @change="watchRole">
-                            <option value="client">Client</option>
-                            <option value="provider">Provider</option>
+                            <option value="client">{{ $t('authPages.roleClient') }}</option>
+                            <option value="provider">{{ $t('authPages.roleProvider') }}</option>
                         </select>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="form-group">
-                            <label for="firstName" class="label">First name</label>
+                            <label for="firstName" class="label">{{ $t('authPages.firstName') }}</label>
                             <input id="firstName" v-model="formData.firstName" type="text" required class="input"
-                                placeholder="Enter first name" />
+                                :placeholder="$t('authPages.firstNamePlaceholder')" />
                         </div>
                         <div class="form-group">
-                            <label for="lastName" class="label">Last name</label>
+                            <label for="lastName" class="label">{{ $t('authPages.lastName') }}</label>
                             <input id="lastName" v-model="formData.lastName" type="text" required class="input"
-                                placeholder="Enter last name" />
+                                :placeholder="$t('authPages.lastNamePlaceholder')" />
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="email" class="label">Email address</label>
+                        <label for="email" class="label">{{ $t('auth.email') }}</label>
                         <input id="email" v-model="formData.email" type="email" required class="input"
-                            placeholder="Enter your email" />
+                            :placeholder="$t('authPages.emailPlaceholder')" />
                     </div>
 
                     <div class="form-group">
-                        <label for="phone" class="label">Phone number</label>
+                        <label for="phone" class="label">{{ $t('authPages.phone') }}</label>
                         <input id="phone" v-model="formData.phone" type="tel" required class="input"
                             placeholder="+998901234567" />
                     </div>
 
                     <div class="form-group">
-                        <label for="password" class="label">Password</label>
+                        <label for="password" class="label">{{ $t('auth.password') }}</label>
                         <div class="input-group">
                             <input id="password" v-model="formData.password" :type="showPassword ? 'text' : 'password'"
-                                required class="input" placeholder="Enter your password" @input="validatePassword" />
+                                required class="input" :placeholder="$t('authPages.passwordPlaceholder')"
+                                @input="validatePassword" />
                             <button type="button" @click="togglePassword" class="input-icon"
                                 :class="showPassword ? 'active' : ''">
                                 <!-- Eye with diagonal stroke (password hidden) -->
@@ -77,34 +79,34 @@
 
                         <!-- password requirements -->
                         <div class="mt-3 text-sm">
-                            <p class="text-gray-600 mb-2">Password must contain:</p>
+                            <p class="text-gray-600 mb-2">{{ $t('authPages.passwordMustContain') }}</p>
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
                                     <CheckCircleIcon class="h-4 w-4"
                                         :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.minLength ? 'text-green-600' : 'text-gray-500'">
-                                        At least 8 characters
+                                        {{ $t('authPages.pwdMinLength') }}
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <CheckCircleIcon class="h-4 w-4"
                                         :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.hasUppercase ? 'text-green-600' : 'text-gray-500'">
-                                        One uppercase letter
+                                        {{ $t('authPages.pwdUppercase') }}
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <CheckCircleIcon class="h-4 w-4"
                                         :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.hasLowercase ? 'text-green-600' : 'text-gray-500'">
-                                        One lowercase letter
+                                        {{ $t('authPages.pwdLowercase') }}
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <CheckCircleIcon class="h-4 w-4"
                                         :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span :class="passwordValidation.hasNumber ? 'text-green-600' : 'text-gray-500'">
-                                        One number
+                                        {{ $t('authPages.pwdNumber') }}
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
@@ -112,7 +114,7 @@
                                         :class="passwordValidation.minLength ? 'text-green-500' : 'text-gray-400'" />
                                     <span
                                         :class="passwordValidation.hasSpecialChar ? 'text-green-600' : 'text-gray-500'">
-                                        One special character (!@#$%^&*)
+                                        {{ $t('authPages.pwdSpecialChar') }}
                                     </span>
                                 </div>
                             </div>
@@ -120,7 +122,7 @@
                             <!-- password Strength Indicator -->
                             <div class="mt-3">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm text-gray-600">Strength:</span>
+                                    <span class="text-sm text-gray-600">{{ $t('authPages.strength') }}:</span>
                                     <div class="flex-1 bg-gray-200 rounded-full h-2">
                                         <div class="h-2 rounded-full transition-buttery duration-300"
                                             :class="passwordStrengthColor" :style="{ width: passwordStrengthWidth }">
@@ -136,18 +138,18 @@
 
                     <!-- Date of Birth - Only for clients -->
                     <div class="form-group">
-                        <label for="dateOfBirth" class="label">Date of Birth</label>
+                        <label for="dateOfBirth" class="label">{{ $t('authPages.dateOfBirth') }}</label>
                         <input id="dateOfBirth" v-model="formData.dateOfBirth" type="date" required class="input"
                             :max="maxDate" />
                     </div>
 
                     <!-- Gender - Only for clients -->
                     <div class="form-group">
-                        <label for="gender" class="label">Gender</label>
+                        <label for="gender" class="label">{{ $t('authPages.gender') }}</label>
                         <select id="gender" v-model="formData.gender" class="input" required>
-                            <option value="">Select gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="">{{ $t('authPages.selectGender') }}</option>
+                            <option value="male">{{ $t('authPages.male') }}</option>
+                            <option value="female">{{ $t('authPages.female') }}</option>
                             <!-- <option value="other">Other</option>
                             <option value="prefer not to say">Prefer not to say</option> -->
                         </select>
@@ -165,21 +167,21 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                 </path>
                             </svg>
-                            Creating account...
+                            {{ $t('authPages.creatingAccount') }}
                         </span>
-                        <span v-else>Create account</span>
+                        <span v-else>{{ $t('authPages.createAccountBtn') }}</span>
                     </button>
                     <p v-if="!isPasswordValid && formData.password" class="mt-2 text-sm text-red-600 text-center">
-                        Please ensure your password meets all requirements
+                        {{ $t('authPages.passwordRequirementsNotMet') }}
                     </p>
                 </div>
             </form>
 
             <p class="mt-2 text-center text-sm text-gray-600">
-                Already have an account?
+                {{ $t('authPages.haveAccount') }}
                 <router-link to="/login"
                     class="font-medium bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent hover:text-indigo-500">
-                    Sign in
+                    {{ $t('auth.login') }}
                 </router-link>
             </p>
 
@@ -199,8 +201,10 @@ import { EyeIcon, EyeSlashIcon, InformationCircleIcon, ExclamationCircleIcon } f
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 
+const { t } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -260,11 +264,11 @@ const passwordStrengthColor = computed(() => {
 
 const passwordStrengthText = computed(() => {
     const score = passwordStrengthScore.value
-    if (score <= 1) return 'Very Weak'
-    if (score <= 2) return 'Weak'
-    if (score <= 3) return 'Fair'
-    if (score <= 4) return 'Good'
-    return 'Strong'
+    if (score <= 1) return t('authPages.strengthVeryWeak')
+    if (score <= 2) return t('authPages.strengthWeak')
+    if (score <= 3) return t('authPages.strengthFair')
+    if (score <= 4) return t('authPages.strengthGood')
+    return t('authPages.strengthStrong')
 })
 
 const passwordStrengthTextColor = computed(() => {
@@ -318,7 +322,7 @@ async function handleSubmit() {
 
         // Validate password before submitting
         if (!isPasswordValid.value) {
-            error.value = 'Please ensure your password meets all requirements';
+            error.value = t('authPages.passwordRequirementsNotMet');
             return;
         }
 
@@ -332,12 +336,12 @@ async function handleSubmit() {
         if (response.success) {
             registrationSuccess.value = true;
         } else {
-            throw new Error(response.message || 'Registration failed');
+            throw new Error(response.message || t('authPages.registrationFailed'));
         }
 
     } catch (err) {
         console.error('Registration error:', err);
-        error.value = err.message || 'Failed to create account';
+        error.value = err.message || t('authPages.registrationFailed');
     } finally {
         loading.value = false;
     }

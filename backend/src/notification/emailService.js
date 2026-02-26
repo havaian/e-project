@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const { format } = require('date-fns');
+const { t, getUserLocale } = require('../utils/i18n');
 
 // Format currency amount
 const formatCurrency = (amount) => {

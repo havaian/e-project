@@ -29,7 +29,7 @@
                 <div class="flex items-center">
                     <button @click="$emit('view-profile')" class="btn-secondary flex items-center space-x-2 text-sm">
                         <UserIcon class="w-4 h-4" />
-                        <span>View profile</span>
+                        <span>{{ $t('chat.viewProfile') }}</span>
                     </button>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                 <div
                     class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-1 border-t-transparent">
                 </div>
-                <p class="ml-3 text-gray-600">Loading conversation...</p>
+                <p class="ml-3 text-gray-600">{{ $t('chat.loadingConversation') }}</p>
             </div>
 
             <!-- Messages -->
@@ -57,7 +57,8 @@
                     </div>
                     <div class="bg-white rounded-2xl px-4 py-3 border border-gray-100 shadow-sm">
                         <div class="flex items-center space-x-1">
-                            <span class="text-sm text-gray-600">{{ recipientName }} is typing</span>
+                            <span class="text-sm text-gray-600">{{ $t('chat.isTyping', { name: recipientName })
+                                }}</span>
                             <div class="flex space-x-1 ml-2">
                                 <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                                 <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"

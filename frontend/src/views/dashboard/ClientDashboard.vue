@@ -1,3 +1,4 @@
+<!-- frontend/src/views/dashboard/ClientDashboard.vue -->
 <template>
     <div class="min-h-screen bg-gray-50">
         <!-- Header -->
@@ -7,7 +8,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">
-                                Welcome back, {{ authStore.user?.firstName }}!
+                                {{ $t('clientDashboard.welcome', { name: authStore.user?.firstName }) }}
                             </h1>
                             <p class="mt-1 text-sm text-gray-600">
                                 {{ currentDate }}
@@ -15,7 +16,7 @@
                         </div>
                         <router-link to="/providers" class="btn-primary px-6 py-3">
                             <PlusIcon class="w-5 h-5 mr-2" />
-                            Book new appointment
+                            {{ $t('clientDashboard.bookNew') }}
                         </router-link>
                     </div>
                 </div>
@@ -32,7 +33,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.upcoming }}</p>
-                            <p class="text-sm text-gray-600">Upcoming</p>
+                            <p class="text-sm text-gray-600">{{ $t('clientDashboard.upcoming') }}</p>
                         </div>
                     </div>
                 </div>
@@ -44,7 +45,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.completed }}</p>
-                            <p class="text-sm text-gray-600">Completed</p>
+                            <p class="text-sm text-gray-600">{{ $t('clientDashboard.completed') }}</p>
                         </div>
                     </div>
                 </div>
@@ -56,7 +57,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.providers }}</p>
-                            <p class="text-sm text-gray-600">Providers</p>
+                            <p class="text-sm text-gray-600">{{ $t('clientDashboard.providers') }}</p>
                         </div>
                     </div>
                 </div>
@@ -68,7 +69,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-gray-900">{{ stats.totalHours }}</p>
-                            <p class="text-sm text-gray-600">Total hours</p>
+                            <p class="text-sm text-gray-600">{{ $t('clientDashboard.totalHours') }}</p>
                         </div>
                     </div>
                 </div>
@@ -82,11 +83,11 @@
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <h2 class="text-lg font-semibold text-gray-900">
-                                    Upcoming appointments
+                                    {{ $t('clientDashboard.upcomingAppointments') }}
                                 </h2>
                                 <router-link to="/appointments/me"
                                     class="text-sm text-brand-1 hover:text-brand-1/80 font-medium">
-                                    View all
+                                    {{ $t('clientDashboard.viewAll') }}
                                 </router-link>
                             </div>
                         </div>
@@ -128,7 +129,8 @@
                                                 {{ formatDateTime(appointment.dateTime) }}
                                             </p>
                                             <p class="text-xs text-gray-500 capitalize">
-                                                {{ appointment.type || 'Video session' }} • {{ appointment.status }}
+                                                {{ appointment.type || $t('clientDashboard.videoSession') }} • {{
+                                                appointment.status }}
                                             </p>
                                         </div>
                                     </div>
@@ -138,7 +140,7 @@
                                         <button v-if="isWithinJoinWindow(appointment.dateTime)"
                                             @click="joinSession(appointment._id)" class="btn-primary px-3 py-1 text-xs">
                                             <VideoCameraIcon class="w-4 h-4 mr-1" />
-                                            Join
+                                            {{ $t('clientDashboard.join') }}
                                         </button>
 
                                         <!-- Time until appointment -->
@@ -159,10 +161,11 @@
                             <!-- Empty State -->
                             <div v-else class="text-center py-8">
                                 <CalendarDaysIcon class="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                <h3 class="text-lg font-medium text-gray-900 mb-2">No upcoming appointments</h3>
-                                <p class="text-gray-600 mb-4">Book your first appointment to get started</p>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('clientDashboard.noUpcoming')
+                                    }}</h3>
+                                <p class="text-gray-600 mb-4">{{ $t('clientDashboard.noUpcomingHint') }}</p>
                                 <router-link to="/providers" class="btn-primary px-4 py-2">
-                                    Browse providers
+                                    {{ $t('clientDashboard.browseProviders') }}
                                 </router-link>
                             </div>
                         </div>
@@ -171,7 +174,8 @@
                     <!-- Recent activity -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
-                            <h2 class="text-lg font-semibold text-gray-900">Recent activity</h2>
+                            <h2 class="text-lg font-semibold text-gray-900">{{ $t('clientDashboard.recentActivity') }}
+                            </h2>
                         </div>
 
                         <div class="p-6">
@@ -195,7 +199,7 @@
 
                             <div v-else class="text-center py-6">
                                 <ClockIcon class="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                <p class="text-gray-500 text-sm">No recent activity</p>
+                                <p class="text-gray-500 text-sm">{{ $t('clientDashboard.noActivity') }}</p>
                             </div>
                         </div>
                     </div>
@@ -205,7 +209,8 @@
                 <div class="space-y-6">
                     <!-- Your providers -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Your providers</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('clientDashboard.yourProviders') }}
+                        </h3>
 
                         <div v-if="favoriteProviders.length > 0" class="space-y-3">
                             <div v-for="provider in favoriteProviders" :key="provider._id"
@@ -217,7 +222,7 @@
                                         {{ getProviderName(provider) }}
                                     </p>
                                     <p class="text-xs text-gray-500">
-                                        {{ provider.specializations?.[0] || 'Consultant' }}
+                                        {{ provider.specializations?.[0] || $t('clientDashboard.consultant') }}
                                     </p>
                                 </div>
                                 <router-link :to="`/providers/${provider._id}`"
@@ -229,9 +234,9 @@
 
                         <div v-else class="text-center py-4">
                             <UsersIcon class="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                            <p class="text-sm text-gray-500">No providers yet</p>
+                            <p class="text-sm text-gray-500">{{ $t('clientDashboard.noProviders') }}</p>
                             <router-link to="/providers" class="text-xs text-brand-1 hover:text-brand-1/80 font-medium">
-                                Browse providers
+                                {{ $t('clientDashboard.browseProviders') }}
                             </router-link>
                         </div>
                     </div>
@@ -410,7 +415,7 @@ const getTimeUntilAppointment = (dateTime) => {
 
     if (minutesUntil < 60) {
         return `in ${minutesUntil} min`
-    } else if (minutesUntil < 1440) { // 24 hours
+    } else if (minutesUntil < 1440) {
         const hours = Math.floor(minutesUntil / 60)
         return `in ${hours}h`
     } else {
@@ -448,7 +453,6 @@ const joinSession = (appointmentId) => {
 
 // Lifecycle
 onMounted(() => {
-    // Only load if user is authenticated and we have a user ID
     if (authStore.isAuthenticated && getUserId()) {
         loadDashboardData()
     } else {

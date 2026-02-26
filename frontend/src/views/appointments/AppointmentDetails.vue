@@ -3,7 +3,7 @@
         <div v-if="loading" class="text-center py-8">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent">
             </div>
-            <p class="mt-2 text-gray-600">Loading appointment details...</p>
+            <p class="mt-2 text-gray-600">{{ $t('appointmentDetail.loading') }}</p>
         </div>
 
         <template v-else-if="appointment">
@@ -12,7 +12,7 @@
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex items-center justify-between">
                         <h1 class="text-2xl font-bold text-gray-900">
-                            Appointment details
+                            {{ $t('appointmentDetail.title') }}
                         </h1>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" :class="{
                             'bg-green-100 text-green-800': appointment.status === 'completed',
@@ -30,7 +30,8 @@
                     <!-- Participants -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Provider</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.provider') }}
+                            </h3>
                             <div class="flex items-center space-x-4">
                                 <img :src="appointment.provider.profilePicture ? `/api${appointment.provider.profilePicture}` : '/images/user-placeholder.jpg'"
                                     :alt="appointment.provider.firstName" class="h-12 w-12 rounded-full object-cover" />
@@ -49,7 +50,7 @@
                         </div>
 
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Client</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.client') }}</h3>
                             <div class="flex items-center space-x-4">
                                 <img :src="appointment.client.profilePicture ? `/api${appointment.client.profilePicture}` : '/images/user-placeholder.jpg'"
                                     :alt="appointment.client.firstName" class="h-12 w-12 rounded-full object-cover" />
@@ -58,7 +59,8 @@
                                         {{ appointment.client.firstName }} {{ appointment.client.lastName }}
                                     </p>
                                     <p class="text-sm text-gray-500">
-                                        Age: {{ calculateAge(appointment.client.dateOfBirth) }}
+                                        {{ $t('appointmentDetail.age') }}: {{
+                                        calculateAge(appointment.client.dateOfBirth) }}
                                     </p>
                                 </div>
                             </div>
@@ -68,12 +70,14 @@
                     <!-- Appointment details -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Date & time</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.dateTime') }}
+                            </h3>
                             <p class="text-gray-900">{{ formatDateTime(appointment.dateTime) }}</p>
                         </div>
 
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Session type</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.sessionType') }}
+                            </h3>
                             <p class="text-gray-900">
                                 {{ appointment.type.charAt(0).toUpperCase() + appointment.type.slice(1) }}
                             </p>
@@ -82,13 +86,15 @@
 
                     <!-- Short description -->
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Short description</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.shortDescription')
+                            }}</h3>
                         <p class="text-gray-900">{{ appointment.shortDescription }}</p>
                     </div>
 
                     <!-- Session summary (only for completed appointments) -->
                     <div v-if="appointment.status === 'completed' && appointment.sessionSummary">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Session summary</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.sessionSummary') }}
+                        </h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="text-gray-900 whitespace-pre-line">{{ appointment.sessionSummary }}</p>
                         </div>
@@ -97,30 +103,36 @@
                     <!-- Recommendations (only for completed appointments) -->
                     <div
                         v-if="appointment.status === 'completed' && appointment.recommendations && appointment.recommendations.length > 0">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Recommendations</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.recommendations') }}
+                        </h3>
                         <div class="space-y-4">
                             <div v-for="(recommendation, index) in appointment.recommendations" :key="index"
                                 class="bg-gray-50 p-4 rounded-lg">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <p class="text-sm font-medium text-gray-500">Title</p>
+                                        <p class="text-sm font-medium text-gray-500">{{ $t('appointmentDetail.recTitle')
+                                            }}</p>
                                         <p class="text-gray-900">{{ recommendation.title }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-500">Description</p>
+                                        <p class="text-sm font-medium text-gray-500">{{
+                                            $t('appointmentDetail.recDescription') }}</p>
                                         <p class="text-gray-900">{{ recommendation.description }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-500">Frequency</p>
+                                        <p class="text-sm font-medium text-gray-500">{{
+                                            $t('appointmentDetail.recFrequency') }}</p>
                                         <p class="text-gray-900">{{ recommendation.frequency }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-500">Duration</p>
+                                        <p class="text-sm font-medium text-gray-500">{{
+                                            $t('appointmentDetail.recDuration') }}</p>
                                         <p class="text-gray-900">{{ recommendation.duration }}</p>
                                     </div>
                                 </div>
                                 <div v-if="recommendation.instructions" class="mt-2">
-                                    <p class="text-sm font-medium text-gray-500">Instructions</p>
+                                    <p class="text-sm font-medium text-gray-500">{{
+                                        $t('appointmentDetail.recInstructions') }}</p>
                                     <p class="text-gray-900">{{ recommendation.instructions }}</p>
                                 </div>
                             </div>
@@ -130,34 +142,37 @@
                     <!-- Follow-up Information (only for completed appointments with follow-up) -->
                     <div
                         v-if="appointment.status === 'completed' && appointment.followUp && appointment.followUp.recommended">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Follow-up recommendation</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{
+                            $t('appointmentDetail.followUpRecommendation') }}</h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <p class="text-sm font-medium text-gray-500">Recommended date</p>
+                                    <p class="text-sm font-medium text-gray-500">{{
+                                        $t('appointmentDetail.recommendedDate') }}</p>
                                     <p class="text-gray-900">{{ formatDate(appointment.followUp.date) }}</p>
                                 </div>
                                 <div v-if="appointment.followUp.notes">
-                                    <p class="text-sm font-medium text-gray-500">Notes</p>
+                                    <p class="text-sm font-medium text-gray-500">{{ $t('appointmentDetail.notes') }}</p>
                                     <p class="text-gray-900">{{ appointment.followUp.notes }}</p>
                                 </div>
                             </div>
 
                             <div v-if="followUpAppointment" class="mt-4 p-3 bg-indigo-50 rounded-lg">
                                 <p class="text-sm font-medium text-indigo-800">
-                                    Follow-up appointment has been scheduled for
-                                    <span class="font-bold">{{ formatDateTime(followUpAppointment.dateTime) }}</span>
+                                    {{ $t('appointmentDetail.followUpScheduledFor', {
+                                        dateTime:
+                                            formatDateTime(followUpAppointment.dateTime) }) }}
                                 </p>
                                 <div v-if="followUpAppointment.status === 'pending-payment'" class="mt-2">
                                     <button @click="proceedToPayment(followUpAppointment._id)"
                                         class="btn-primary text-sm">
-                                        Proceed to payment
+                                        {{ $t('appointmentDetail.proceedToPayment') }}
                                     </button>
                                 </div>
                             </div>
                             <div v-else-if="authStore.isClient && appointment.followUp.recommended" class="mt-4">
                                 <button @click="findFollowUpAppointment" class="btn-primary text-sm">
-                                    View follow-up details
+                                    {{ $t('appointmentDetail.viewFollowUpDetails') }}
                                 </button>
                             </div>
                         </div>
@@ -166,10 +181,10 @@
                     <!-- Chat Log (if available) -->
                     <div v-if="appointment.chatLog && appointment.chatLog.length > 0">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-medium text-gray-900">Chat History</h3>
+                            <h3 class="text-lg font-medium text-gray-900">{{ $t('appointmentDetail.chatHistory') }}</h3>
                             <button @click="showChatLog = !showChatLog"
                                 class="text-sm bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent  hover:text-indigo-900">
-                                {{ showChatLog ? 'Hide chat' : 'Show chat' }}
+                                {{ showChatLog ? $t('appointmentDetail.hideChat') : $t('appointmentDetail.showChat') }}
                             </button>
                         </div>
                         <div v-if="showChatLog" class="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
@@ -187,19 +202,19 @@
 
                     <!-- Payment Information for Pending-Payment appointments -->
                     <div v-if="appointment.status === 'pending-payment'">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Information</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.paymentInfo') }}
+                        </h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="text-gray-700">
-                                This appointment requires payment to be confirmed. Once payment is completed, your
-                                appointment will be scheduled.
+                                {{ $t('appointmentDetail.paymentRequiredDesc') }}
                             </p>
                             <div class="mt-4">
-                                <p class="text-sm font-medium text-gray-500">Amount</p>
+                                <p class="text-sm font-medium text-gray-500">{{ $t('appointmentDetail.amount') }}</p>
                                 <p class="text-gray-900">{{ formatCurrency(appointment.payment.amount) }} UZS</p>
                             </div>
                             <div class="mt-4">
                                 <button @click="proceedToPayment(appointment._id)" class="btn-primary">
-                                    Proceed to payment
+                                    {{ $t('appointmentDetail.proceedToPayment') }}
                                 </button>
                             </div>
                         </div>
@@ -207,14 +222,15 @@
 
                     <!-- Provider-client chat -->
                     <div class="mt-8" v-if="canStartChat">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Communication</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.communication') }}
+                        </h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="text-gray-600 mb-4">
                                 {{ getChatButtonText }}
                             </p>
                             <button @click="startChat" class="btn-primary flex items-center">
                                 <ChatBubbleLeftRightIcon class="h-5 w-5 mr-2" />
-                                Start chat
+                                {{ $t('appointmentDetail.startChat') }}
                             </button>
                         </div>
                     </div>
@@ -223,11 +239,12 @@
                     <div class="flex justify-end space-x-4">
                         <button v-if="appointment.status === 'scheduled' && authStore.isClient"
                             class="btn-secondary text-red-600 hover:text-red-700" @click="cancelAppointment">
-                            Cancel Appointment
+                            {{ $t('appointmentDetail.cancelAppointment') }}
                         </button>
                         <button v-if="appointment.status === 'scheduled' && isWithinJoinWindow" class="btn-primary"
                             @click="joinSession">
-                            {{ authStore.isProvider ? 'Start session' : 'Join session' }}
+                            {{ authStore.isProvider ? $t('appointmentDetail.startSession') :
+                                $t('appointmentDetail.joinSession') }}
                         </button>
                         <div v-if="showFollowUpModal"
                             class="fixed inset-0 bg-gray-500 bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
@@ -235,8 +252,8 @@
                                 class="bg-white/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl max-w-md w-full mx-4 border border-gray-200">
                                 <div class="p-6">
                                     <div class="flex items-center justify-between mb-6">
-                                        <h3 class="text-xl font-semibold text-gray-900">Schedule follow-up Appointment
-                                        </h3>
+                                        <h3 class="text-xl font-semibold text-gray-900">{{
+                                            $t('appointmentDetail.scheduleFollowUp') }}</h3>
                                         <button type="button" @click="showFollowUpModal = false"
                                             class="text-gray-400 hover:text-gray-600 transition-colors">
                                             <XMarkIcon class="h-6 w-6" />
@@ -245,21 +262,23 @@
 
                                     <form @submit.prevent="createFollowUp" class="form-container">
                                         <div class="form-group">
-                                            <label for="followUpDate" class="label">Follow-up Date</label>
+                                            <label for="followUpDate" class="label">{{
+                                                $t('appointmentDetail.followUpDate') }}</label>
                                             <input id="followUpDate" v-model="followUpDate" type="date" class="input"
                                                 :min="minFollowUpDate" required />
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="followUpNotes" class="label">Notes</label>
+                                            <label for="followUpNotes" class="label">{{ $t('appointmentDetail.notes')
+                                                }}</label>
                                             <textarea id="followUpNotes" v-model="followUpNotes" rows="3" class="input"
-                                                placeholder="Add any notes about the follow-up appointment"></textarea>
+                                                :placeholder="$t('appointmentDetail.followUpNotesPlaceholder')"></textarea>
                                         </div>
 
                                         <div class="flex justify-end space-x-3 pt-4">
                                             <button type="button" class="btn-secondary"
                                                 @click="showFollowUpModal = false">
-                                                Cancel
+                                                {{ $t('common.cancel') }}
                                             </button>
                                             <button type="submit" class="btn-primary" :disabled="submitting">
                                                 <span v-if="submitting" class="flex items-center">
@@ -272,9 +291,9 @@
                                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                                         </path>
                                                     </svg>
-                                                    Scheduling...
+                                                    {{ $t('appointmentDetail.scheduling') }}
                                                 </span>
-                                                <span v-else>Schedule follow-up</span>
+                                                <span v-else>{{ $t('appointmentDetail.scheduleFollowUp') }}</span>
                                             </button>
                                         </div>
                                     </form>
@@ -287,7 +306,7 @@
         </template>
 
         <div v-else class="text-center py-8">
-            <p class="text-gray-600">Appointment not found.</p>
+            <p class="text-gray-600">{{ $t('appointmentDetail.notFound') }}</p>
         </div>
     </div>
 </template>
@@ -299,9 +318,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePaymentStore } from '@/stores/payment'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
 
+const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
 
 const route = useRoute()
@@ -345,7 +366,7 @@ const formatDateTime = (dateTime) => {
 }
 
 const formatDate = (date) => {
-    if (!date) return 'Not specified'
+    if (!date) return t('appointmentDetail.notSpecified')
     const dateObj = new Date(date)
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -380,8 +401,16 @@ const formatCurrency = (amount) => {
 }
 
 const formatStatus = (status) => {
-    if (status === 'pending-payment') return 'Pending payment'
-    return status.charAt(0).toUpperCase() + status.slice(1)
+    const statusMap = {
+        'pending-provider-confirmation': t('appointments.statusPendingConfirmation'),
+        'pending-payment': t('appointments.statusPendingPayment'),
+        'scheduled': t('appointments.statusScheduled'),
+        'completed': t('appointments.statusCompleted'),
+        'canceled': t('appointments.statusCanceled'),
+        'cancelled': t('appointments.statusCanceled'),
+        'no-show': t('appointments.statusNoShow')
+    }
+    return statusMap[status] || status
 }
 
 const calculateAge = (dateOfBirth) => {
@@ -418,7 +447,7 @@ const getChatButtonText = computed(() => {
         `${appointment.value.client.firstName} ${appointment.value.client.lastName}` :
         `${appointment.value.provider.firstName} ${appointment.value.provider.lastName}`
 
-    return `Chat with ${otherParty} about this appointment`
+    return t('appointmentDetail.chatWith', { name: otherParty })
 })
 
 async function fetchAppointment() {
@@ -460,7 +489,7 @@ async function findFollowUpAppointment() {
 }
 
 async function cancelAppointment() {
-    if (!(await modal.confirm('Are you sure you want to cancel this appointment?'))) return
+    if (!(await modal.confirm(t('appointmentDetail.confirmCancel')))) return
 
     try {
         await axios.patch(`/appointments/${appointment.value._id}/status`, {
@@ -485,9 +514,9 @@ async function joinSession() {
         console.error('Error joining session:', error)
         // If session is not ready yet, show the time remaining
         if (error.response && error.response.data && error.response.data.startsInMinutes) {
-            toast.error(`This session will be available in ${error.response.data.startsInMinutes} minutes.`)
+            toast.error(t('appointmentDetail.sessionAvailableIn', { minutes: error.response.data.startsInMinutes }))
         } else {
-            toast.error('Unable to join session at this time. Please try again later.')
+            toast.error(t('appointmentDetail.unableToJoin'))
         }
     }
 }
@@ -498,7 +527,7 @@ async function proceedToPayment(appointmentId) {
         // Redirect handled by payment store
     } catch (error) {
         console.error('Error creating payment session:', error)
-        toast.error('There was a problem processing your payment. Please try again.')
+        toast.error(t('appointmentDetail.paymentError'))
     }
 }
 
@@ -543,7 +572,7 @@ async function createFollowUp() {
         await fetchAppointment()
     } catch (error) {
         console.error('Error creating follow-up:', error)
-        toast.error('Failed to schedule follow-up appointment. Please try again.')
+        toast.error(t('appointmentDetail.followUpError'))
     } finally {
         submitting.value = false
     }

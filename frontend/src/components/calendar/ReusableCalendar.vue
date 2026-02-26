@@ -17,7 +17,8 @@
 
         <!-- Days of Week -->
         <div class="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
-            <div v-for="day in daysOfWeek" :key="day" class="px-2 py-3 text-center text-sm font-medium text-gray-500">
+            <div v-for="day in localizedDaysOfWeek" :key="day"
+                class="px-2 py-3 text-center text-sm font-medium text-gray-500">
                 {{ day }}
             </div>
         </div>
@@ -55,7 +56,7 @@
         <!-- Selected Date Info -->
         <div v-if="selectedDate && showSelectedDateInfo" class="px-4 py-3 bg-blue-50 border-t border-blue-200">
             <p class="text-sm text-blue-800">
-                Selected: <span class="font-medium">{{ formatSelectedDate }}</span>
+                {{ $t('calendar.selected') }} <span class="font-medium">{{ formatSelectedDate }}</span>
             </p>
         </div>
 
@@ -67,6 +68,7 @@
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
     format,
     addMonths,
@@ -83,6 +85,8 @@ import {
     startOfWeek,
     endOfWeek
 } from 'date-fns'
+
+const { t } = useI18n()
 
 // Props
 const props = defineProps({
@@ -144,8 +148,16 @@ const emit = defineEmits(['update:modelValue', 'dateSelected', 'monthChanged'])
 const currentMonth = ref(props.initialMonth)
 const selectedDate = ref(props.modelValue ? new Date(props.modelValue) : null)
 
-// Constants - ONLY CHANGE: Start from Monday instead of Sunday
-const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+// Localized day names - Start from Monday
+const localizedDaysOfWeek = computed(() => [
+    t('calendar.mon'),
+    t('calendar.tue'),
+    t('calendar.wed'),
+    t('calendar.thu'),
+    t('calendar.fri'),
+    t('calendar.sat'),
+    t('calendar.sun')
+])
 
 // Computed properties
 const currentMonthYear = computed(() => {
@@ -161,7 +173,7 @@ const calendarDays = computed(() => {
     const start = startOfMonth(currentMonth.value)
     const end = endOfMonth(currentMonth.value)
 
-    // ONLY CHANGE: Use Monday as week start instead of Sunday
+    // Use Monday as week start instead of Sunday
     const startDate = startOfWeek(start, { weekStartsOn: 1 })
     const endDate = endOfWeek(end, { weekStartsOn: 1 })
 

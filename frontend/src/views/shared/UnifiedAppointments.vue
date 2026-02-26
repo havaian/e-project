@@ -1,3 +1,4 @@
+<!-- frontend/src/views/shared/UnifiedAppointments.vue -->
 <template>
     <div>
         <!-- Loading state while determining user role -->
@@ -6,7 +7,7 @@
                 <div
                     class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent">
                 </div>
-                <p class="mt-4 text-gray-600">Loading appointments...</p>
+                <p class="mt-4 text-gray-600">{{ $t('unified.loadingAppointments') }}</p>
             </div>
         </div>
 
@@ -14,11 +15,11 @@
         <div v-else-if="error" class="min-h-screen bg-gray-50 flex items-center justify-center">
             <div class="text-center">
                 <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
-                    <h3 class="text-lg font-medium text-red-900 mb-2">Unable to Load Appointments</h3>
+                    <h3 class="text-lg font-medium text-red-900 mb-2">{{ $t('unified.unableToLoadAppointments') }}</h3>
                     <p class="text-red-700 mb-4">{{ error }}</p>
                     <button @click="retryLoad"
                         class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
-                        Try Again
+                        {{ $t('unified.tryAgain') }}
                     </button>
                 </div>
             </div>
@@ -58,7 +59,6 @@ const appointmentsComponent = computed(() => {
 })
 
 const componentProps = computed(() => {
-    // Pass any shared props to the appointments components if needed
     return {}
 })
 
@@ -68,24 +68,20 @@ const initializeAppointments = async () => {
         loading.value = true
         error.value = null
 
-        // Ensure we have user data
         if (!authStore.user) {
             await authStore.refreshUserData()
         }
 
-        // Validate user authentication and role
         if (!authStore.isAuthenticated) {
             router.push('/login')
             return
         }
 
-        // For providers, check if they need to complete onboarding first
         if (authStore.isProvider && authStore.needsOnboarding) {
             router.push('/profile/me/onboarding')
             return
         }
 
-        // Validate that we have a supported role
         if (!authStore.isClient && !authStore.isProvider) {
             error.value = 'Invalid user role. Please contact support.'
             return
@@ -116,7 +112,6 @@ watch(() => authStore.isAuthenticated, (newVal) => {
 
 watch(() => authStore.user?.role, (newRole, oldRole) => {
     if (newRole && newRole !== oldRole && componentLoaded.value) {
-        // Role changed, reinitialize
         initializeAppointments()
     }
 }, { immediate: false })

@@ -1,10 +1,11 @@
+<!-- frontend/src/views/support/Accessibility.vue -->
 <template>
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <!-- Header -->
             <div class="text-center mb-12">
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">Accessibility statement</h1>
-                <p class="text-lg text-gray-600">Our commitment to digital inclusion</p>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $t('accessibility.title') }}</h1>
+                <p class="text-lg text-gray-600">{{ $t('accessibility.subtitle') }}</p>
                 <div class="w-24 h-1 bg-gradient-to-r from-sky-500 to-cyan-500 mx-auto mt-6"></div>
             </div>
 
@@ -12,7 +13,7 @@
             <div class="text-center mb-12">
                 <div class="inline-flex items-center bg-blue-100 rounded-full px-6 py-3">
                     <UserIcon class="w-6 h-6 text-blue-600 mr-3" />
-                    <span class="text-blue-800 font-semibold">WCAG 2.1 AA compliant</span>
+                    <span class="text-blue-800 font-semibold">{{ $t('accessibility.badge') }}</span>
                 </div>
             </div>
 
@@ -20,302 +21,220 @@
             <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
                 <div class="prose prose-lg max-w-none">
                     <p class="text-gray-700 leading-relaxed mb-8">
-                        {{ companyName }} is committed to ensuring digital accessibility for people with disabilities.
-                        We are continually improving the user experience for everyone and applying the relevant
-                        accessibility standards.
+                        {{ $t('accessibility.intro', { company: companyName }) }}
                     </p>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Our accessibility commitment</h2>
-                        <p class="text-gray-700 mb-6">
-                            We believe that access to education and professional consultation services should be
-                            available to everyone,
-                            regardless of ability. Our platform is designed and developed with accessibility as a core
-                            principle,
-                            not an afterthought.
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.commitmentTitle') }}</h2>
+                        <p class="text-gray-700 mb-6">{{ $t('accessibility.commitmentText') }}</p>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility standards</h2>
-                        <p class="text-gray-700 mb-4">
-                            Our website and platform aim to conform to the web content accessibility guidelines (WCAG)
-                            2.1 Level AA.
-                            These guidelines explain how to make web content more accessible for people with
-                            disabilities.
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.standardsTitle') }}</h2>
+                        <p class="text-gray-700 mb-4">{{ $t('accessibility.standardsText') }}</p>
 
                         <div class="grid md:grid-cols-3 gap-6 mt-6">
                             <div class="bg-green-50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-green-900 mb-3">Perceivable</h3>
-                                <p class="text-green-800 text-sm">
-                                    Information and UI components must be presentable to users in ways they can
-                                    perceive.
-                                </p>
+                                <h3 class="text-lg font-semibold text-green-900 mb-3">{{ $t('accessibility.perceivable')
+                                    }}</h3>
+                                <p class="text-green-800 text-sm">{{ $t('accessibility.perceivableDesc') }}</p>
                             </div>
 
                             <div class="bg-blue-50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-blue-900 mb-3">Operable</h3>
-                                <p class="text-blue-800 text-sm">
-                                    User interface components and navigation must be operable by all users.
-                                </p>
+                                <h3 class="text-lg font-semibold text-blue-900 mb-3">{{ $t('accessibility.operable') }}
+                                </h3>
+                                <p class="text-blue-800 text-sm">{{ $t('accessibility.operableDesc') }}</p>
                             </div>
 
                             <div class="bg-purple-50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-purple-900 mb-3">Understandable</h3>
-                                <p class="text-purple-800 text-sm">
-                                    Information and the operation of user interface must be understandable.
-                                </p>
+                                <h3 class="text-lg font-semibold text-purple-900 mb-3">{{
+                                    $t('accessibility.understandable') }}</h3>
+                                <p class="text-purple-800 text-sm">{{ $t('accessibility.understandableDesc') }}</p>
                             </div>
                         </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility features</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.featuresTitle') }}</h2>
 
                         <div class="space-y-6">
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <EyeIcon class="w-5 h-5 text-blue-600 mr-2" />
-                                    Visual accessibility
+                                    {{ $t('accessibility.visualTitle') }}
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
-                                    <li>• High contrast color schemes</li>
-                                    <li>• Scalable text (up to 200% without horizontal scrolling)</li>
-                                    <li>• Alternative text for all images</li>
-                                    <li>• Color is not the only means of conveying information</li>
-                                    <li>• Focus indicators for keyboard navigation</li>
+                                    <li v-for="item in $tm('accessibility.visualItems')" :key="item">• {{ item }}</li>
                                 </ul>
                             </div>
 
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <MusicalNoteIcon class="w-5 h-5 text-green-600 mr-2" />
-                                    Audio accessibility
+                                    {{ $t('accessibility.audioTitle') }}
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
-                                    <li>• Closed captions for video consultations</li>
-                                    <li>• Audio descriptions when available</li>
-                                    <li>• Visual indicators for audio alerts</li>
-                                    <li>• Adjustable audio volume controls</li>
-                                    <li>• Text-based alternatives to audio content</li>
+                                    <li v-for="item in $tm('accessibility.audioItems')" :key="item">• {{ item }}</li>
                                 </ul>
                             </div>
 
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <AdjustmentsHorizontalIcon class="w-5 h-5 text-purple-600 mr-2" />
-                                    Keyboard and motor accessibility
+                                    {{ $t('accessibility.motorTitle') }}
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
-                                    <li>• Full keyboard navigation support</li>
-                                    <li>• No keyboard traps</li>
-                                    <li>• Reasonable time limits with extensions available</li>
-                                    <li>• Large click targets (minimum 44x44 pixels)</li>
-                                    <li>• Voice control compatibility</li>
+                                    <li v-for="item in $tm('accessibility.motorItems')" :key="item">• {{ item }}</li>
                                 </ul>
                             </div>
 
                             <div class="border border-gray-200 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                                     <LightBulbIcon class="w-5 h-5 text-orange-600 mr-2" />
-                                    Cognitive accessibility
+                                    {{ $t('accessibility.cognitiveTitle') }}
                                 </h3>
                                 <ul class="text-gray-700 space-y-2">
-                                    <li>• Clear and simple language</li>
-                                    <li>• Consistent navigation and layout</li>
-                                    <li>• Error prevention and clear error messages</li>
-                                    <li>• Help and documentation readily available</li>
-                                    <li>• Progress indicators for multi-step processes</li>
+                                    <li v-for="item in $tm('accessibility.cognitiveItems')" :key="item">• {{ item }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Assistive technology support</h2>
-                        <p class="text-gray-700 mb-4">Our platform is compatible with a wide range of assistive
-                            technologies:</p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.assistiveTechTitle') }}
+                        </h2>
+                        <p class="text-gray-700 mb-4">{{ $t('accessibility.assistiveTechText') }}</p>
 
                         <div class="grid md:grid-cols-2 gap-6">
                             <div class="bg-gray-50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Screen readers</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">{{
+                                    $t('accessibility.screenReaders') }}</h3>
                                 <ul class="text-gray-700 space-y-1">
-                                    <li>• JAWS (Job access with speech)</li>
-                                    <li>• NVDA (Non-visual desktop access)</li>
-                                    <li>• VoiceOver (macOS/iOS)</li>
-                                    <li>• TalkBack (Android)</li>
+                                    <li v-for="item in $tm('accessibility.screenReaderItems')" :key="item">• {{ item }}
+                                    </li>
                                 </ul>
                             </div>
 
                             <div class="bg-gray-50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Other tools</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">{{ $t('accessibility.otherTools')
+                                    }}</h3>
                                 <ul class="text-gray-700 space-y-1">
-                                    <li>• Voice recognition software</li>
-                                    <li>• Switch navigation devices</li>
-                                    <li>• Eye-tracking systems</li>
-                                    <li>• Browser zoom tools</li>
+                                    <li v-for="item in $tm('accessibility.otherToolItems')" :key="item">• {{ item }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Testing and evaluation</h2>
-                        <p class="text-gray-700 mb-6">
-                            We regularly test our platform for accessibility compliance through:
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.testingTitle') }}</h2>
+                        <p class="text-gray-700 mb-6">{{ $t('accessibility.testingText') }}</p>
                         <ul class="list-disc ml-6 text-gray-700 mb-6">
-                            <li>Automated accessibility testing tools</li>
-                            <li>Manual testing with keyboard navigation</li>
-                            <li>Screen reader testing</li>
-                            <li>User testing with people with disabilities</li>
-                            <li>Third-party accessibility audits</li>
-                            <li>Continuous monitoring and improvement</li>
+                            <li v-for="item in $tm('accessibility.testingItems')" :key="item">{{ item }}</li>
                         </ul>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Known issues and limitations</h2>
-                        <p class="text-gray-700 mb-4">
-                            While we strive for full accessibility, we acknowledge some current limitations:
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.knownIssuesTitle') }}
+                        </h2>
+                        <p class="text-gray-700 mb-4">{{ $t('accessibility.knownIssuesText') }}</p>
                         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                             <ul class="text-gray-700 space-y-2">
-                                <li>• Some third-party video conferencing features may have limited accessibility</li>
-                                <li>• PDF documents may not always be fully accessible (we're working to improve this)
-                                </li>
-                                <li>• Some dynamic content updates may not be immediately announced to screen readers
-                                </li>
+                                <li v-for="item in $tm('accessibility.knownIssueItems')" :key="item">• {{ item }}</li>
                             </ul>
-                            <p class="text-gray-700 mt-4 text-sm">
-                                We are actively working to address these issues in upcoming updates.
-                            </p>
+                            <p class="text-gray-700 mt-4 text-sm">{{ $t('accessibility.knownIssuesNote') }}</p>
                         </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility support</h2>
-                        <p class="text-gray-700 mb-6">
-                            If you experience any accessibility barriers while using our platform, we want to help.
-                            Our accessibility support team is available to assist you.
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.supportTitle') }}</h2>
+                        <p class="text-gray-700 mb-6">{{ $t('accessibility.supportText') }}</p>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Feedback and continuous improvement</h2>
-                        <p class="text-gray-700 mb-6">
-                            We welcome your feedback on the accessibility of our platform. Your input helps us identify
-                            areas
-                            for improvement and prioritize accessibility enhancements.
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.feedbackTitle') }}</h2>
+                        <p class="text-gray-700 mb-6">{{ $t('accessibility.feedbackText') }}</p>
 
                         <div class="grid md:grid-cols-2 gap-6">
                             <div class="border border-gray-200 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">How to provide feedback</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">{{
+                                    $t('accessibility.howToFeedback') }}</h3>
                                 <ul class="text-gray-700 space-y-2">
-                                    <li>• Use our accessibility feedback form</li>
-                                    <li>• Email our accessibility team</li>
-                                    <li>• Call our accessibility hotline</li>
-                                    <li>• Submit through our general support channels</li>
+                                    <li v-for="item in $tm('accessibility.howToFeedbackItems')" :key="item">• {{ item }}
+                                    </li>
                                 </ul>
                             </div>
 
                             <div class="border border-gray-200 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">What to include</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">{{
+                                    $t('accessibility.whatToInclude') }}</h3>
                                 <ul class="text-gray-700 space-y-2">
-                                    <li>• Description of the accessibility barrier</li>
-                                    <li>• Your assistive technology details</li>
-                                    <li>• Browser and device information</li>
-                                    <li>• Steps to reproduce the issue</li>
+                                    <li v-for="item in $tm('accessibility.whatToIncludeItems')" :key="item">• {{ item }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Training and awareness</h2>
-                        <p class="text-gray-700 mb-6">
-                            All {{ companyName }} team members receive accessibility training to ensure they understand
-                            and can
-                            support users with disabilities. Our training program includes:
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.trainingTitle') }}</h2>
+                        <p class="text-gray-700 mb-6">{{ $t('accessibility.trainingText', { company: companyName }) }}
                         </p>
                         <ul class="list-disc ml-6 text-gray-700 mb-6">
-                            <li>Disability awareness and etiquette</li>
-                            <li>Understanding assistive technologies</li>
-                            <li>Accessible design principles</li>
-                            <li>WCAG guidelines and compliance</li>
-                            <li>Customer service for people with disabilities</li>
+                            <li v-for="item in $tm('accessibility.trainingItems')" :key="item">{{ item }}</li>
                         </ul>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Legal compliance</h2>
-                        <p class="text-gray-700 mb-6">
-                            Our accessibility efforts align with various legal requirements and standards, including:
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.legalTitle') }}</h2>
+                        <p class="text-gray-700 mb-6">{{ $t('accessibility.legalText') }}</p>
 
                         <div class="space-y-4">
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Americans with disabilities act (ADA)</h4>
-                                    <p class="text-gray-700 text-sm">Ensuring equal access to public accommodations and
-                                        services</p>
+                                    <h4 class="font-semibold text-gray-900">{{ $t('accessibility.adaTitle') }}</h4>
+                                    <p class="text-gray-700 text-sm">{{ $t('accessibility.adaDesc') }}</p>
                                 </div>
                             </div>
 
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Section 508 of the rehabilitation act</h4>
-                                    <p class="text-gray-700 text-sm">Federal accessibility standards for electronic
-                                        content</p>
+                                    <h4 class="font-semibold text-gray-900">{{ $t('accessibility.section508Title') }}
+                                    </h4>
+                                    <p class="text-gray-700 text-sm">{{ $t('accessibility.section508Desc') }}</p>
                                 </div>
                             </div>
 
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900">Web content accessibility guidelines (WCAG)
-                                        2.1</h4>
-                                    <p class="text-gray-700 text-sm">International standards for web accessibility</p>
+                                    <h4 class="font-semibold text-gray-900">{{ $t('accessibility.wcagTitle') }}</h4>
+                                    <p class="text-gray-700 text-sm">{{ $t('accessibility.wcagDesc') }}</p>
                                 </div>
                             </div>
                         </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Alternative formats</h2>
-                        <p class="text-gray-700 mb-4">
-                            We can provide information in alternative formats upon request:
-                        </p>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.altFormatsTitle') }}</h2>
+                        <p class="text-gray-700 mb-4">{{ $t('accessibility.altFormatsText') }}</p>
                         <div class="bg-green-50 rounded-lg p-6">
                             <ul class="text-green-800 space-y-2">
-                                <li>• Large print documents</li>
-                                <li>• Audio recordings</li>
-                                <li>• Braille materials (where possible)</li>
-                                <li>• Electronic text files</li>
-                                <li>• Sign language interpretation for video calls</li>
+                                <li v-for="item in $tm('accessibility.altFormatItems')" :key="item">• {{ item }}</li>
                             </ul>
-                            <p class="text-green-700 mt-4 text-sm">
-                                Please contact us at least 48 hours in advance to arrange alternative formats.
-                            </p>
+                            <p class="text-green-700 mt-4 text-sm">{{ $t('accessibility.altFormatsNote') }}</p>
                         </div>
                     </section>
 
                     <section class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Updates and maintenance</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('accessibility.updatesTitle') }}</h2>
                         <p class="text-gray-700 mb-6">
-                            This accessibility statement is reviewed and updated regularly to reflect our current
-                            accessibility status.
-                            Last reviewed: {{ lastUpdated }}
+                            {{ $t('accessibility.updatesText', { date: lastUpdated }) }}
                         </p>
-                        <p class="text-gray-700">
-                            We are committed to continuing our accessibility improvements and will update this statement
-                            as we
-                            make enhancements to our platform.
-                        </p>
+                        <p class="text-gray-700">{{ $t('accessibility.updatesCommitment') }}</p>
                     </section>
                 </div>
             </div>

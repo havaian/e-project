@@ -3,17 +3,17 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Book an Appointment</h1>
-                <p class="text-gray-600">Schedule a consultation with one of our verified providers</p>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('booking.title') }}</h1>
+                <p class="text-gray-600">{{ $t('booking.subtitle') }}</p>
             </div>
 
             <!-- Provider Selection -->
             <div v-if="!selectedProvider" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Select a Provider</h2>
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $t('booking.selectProvider') }}</h2>
 
                 <!-- Provider Search/Filter -->
                 <div class="mb-6">
-                    <input v-model="searchQuery" type="text" placeholder="Search providers by name or specialization..."
+                    <input v-model="searchQuery" type="text" :placeholder="$t('booking.searchPlaceholder')"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1" />
                 </div>
 
@@ -26,7 +26,8 @@
                                 :alt="getProviderName(provider)" class="w-12 h-12 rounded-full object-cover">
                             <div class="flex-1">
                                 <h3 class="font-medium text-gray-900">{{ getProviderName(provider) }}</h3>
-                                <p class="text-sm text-gray-600">{{ provider.specializations?.[0] || 'Consultant' }}</p>
+                                <p class="text-sm text-gray-600">{{ provider.specializations?.[0] ||
+                                    $t('booking.consultant') }}</p>
                                 <p class="text-sm font-medium text-brand-1">{{ formatCurrency(provider.sessionFee) }}
                                 </p>
                             </div>
@@ -37,8 +38,10 @@
 
             <div v-else-if="loadingProvider" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                 <div class="flex items-center justify-center py-8">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent"></div>
-                    <p class="ml-3 text-gray-600">Loading provider...</p>
+                    <div
+                        class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent">
+                    </div>
+                    <p class="ml-3 text-gray-600">{{ $t('booking.loadingProvider') }}</p>
                 </div>
             </div>
 
@@ -47,9 +50,9 @@
                 <!-- Selected Provider Info -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-semibold text-gray-900">Selected Provider</h2>
+                        <h2 class="text-xl font-semibold text-gray-900">{{ $t('booking.selectedProvider') }}</h2>
                         <button @click="selectedProvider = null" class="text-sm text-gray-500 hover:text-gray-700">
-                            Change Provider
+                            {{ $t('booking.changeProvider') }}
                         </button>
                     </div>
 
@@ -58,9 +61,10 @@
                             :alt="getProviderName(selectedProvider)" class="w-16 h-16 rounded-full object-cover">
                         <div>
                             <h3 class="text-lg font-medium text-gray-900">{{ getProviderName(selectedProvider) }}</h3>
-                            <p class="text-gray-600">{{ selectedProvider.specializations?.[0] || 'Consultant' }}</p>
+                            <p class="text-gray-600">{{ selectedProvider.specializations?.[0] ||
+                                $t('booking.consultant') }}</p>
                             <p class="text-lg font-medium text-brand-1">{{ formatCurrency(selectedProvider.sessionFee)
-                                }}</p>
+                            }}</p>
                         </div>
                     </div>
                 </div>
@@ -68,33 +72,33 @@
                 <!-- Booking Form -->
                 <form @submit.prevent="bookAppointment"
                     class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-6">Appointment details</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-6">{{ $t('appointmentDetail.title') }}</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Date Selection using ReusableCalendar -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Select Date <span class="text-red-500">*</span>
+                                {{ $t('booking.selectDate') }} <span class="text-red-500">*</span>
                             </label>
                             <ReusableCalendar v-model="selectedDateObj" :disable-past-dates="true" :max-future-days="90"
                                 :show-selected-date-info="true" @date-selected="handleDateSelected" />
                             <div v-if="formData.date && !loadingTimeSlots && availableTimeSlots.length === 0"
                                 class="mt-2 text-sm text-amber-600">
-                                No available time slots for selected date. Please choose a different date.
+                                {{ $t('booking.noTimeSlotsForDate') }}
                             </div>
                         </div>
 
                         <!-- Time Selection -->
                         <div>
                             <label for="time" class="block text-sm font-medium text-gray-700 mb-2">
-                                Time <span class="text-red-500">*</span>
+                                {{ $t('booking.time') }} <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <select id="time" v-model="formData.time" required
                                     :disabled="!formData.date || loadingTimeSlots"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-1/20 focus:border-brand-1 disabled:bg-gray-100 disabled:cursor-not-allowed">
                                     <option value="">
-                                        {{ loadingTimeSlots ? 'Loading...' : 'Select time' }}
+                                        {{ loadingTimeSlots ? $t('common.loading') : $t('booking.selectTime') }}
                                     </option>
                                     <option v-for="slot in availableTimeSlots" :key="slot.value" :value="slot.value">
                                         {{ slot.label }}
@@ -108,11 +112,10 @@
                             <!-- Time Slots status Messages -->
                             <div v-if="formData.date && !loadingTimeSlots" class="mt-2">
                                 <p v-if="availableTimeSlots.length === 0" class="text-sm text-amber-600">
-                                    No available time slots for selected date. Please choose a different date.
+                                    {{ $t('booking.noTimeSlotsForDate') }}
                                 </p>
                                 <p v-else-if="availableTimeSlots.length > 0" class="text-sm text-green-600">
-                                    {{ availableTimeSlots.length }} time slot{{ availableTimeSlots.length > 1 ? 's' : ''
-                                    }} available
+                                    {{ $t('booking.timeSlotsAvailable', { count: availableTimeSlots.length }) }}
                                 </p>
                             </div>
 
@@ -121,7 +124,7 @@
                                 <p class="text-sm text-red-600">{{ timeSlotsError }}</p>
                                 <button @click="retryLoadTimeSlots" type="button"
                                     class="text-sm text-brand-1 hover:text-brand-2 underline mt-1">
-                                    Try again
+                                    {{ $t('booking.tryAgain') }}
                                 </button>
                             </div>
                         </div>
@@ -130,7 +133,7 @@
                     <!-- Session type -->
                     <div class="mt-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Session type <span class="text-red-500">*</span>
+                            {{ $t('appointmentDetail.sessionType') }} <span class="text-red-500">*</span>
                         </label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label v-for="type in sessionTypes" :key="type.value"
@@ -149,33 +152,33 @@
                     <!-- Description -->
                     <div class="mt-6">
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                            Brief Description (Optional)
+                            {{ $t('booking.briefDescription') }}
                         </label>
                         <textarea id="description" v-model="formData.shortDescription" rows="3"
-                            placeholder="Briefly describe what you'd like to discuss in this consultation..."
-                            class="input"></textarea>
+                            :placeholder="$t('booking.briefDescriptionPlaceholder')" class="input"></textarea>
                     </div>
 
                     <!-- Appointment Summary -->
                     <div v-if="formData.date && formData.time" class="mt-8 bg-gray-50 rounded-lg p-4">
-                        <h4 class="font-medium text-gray-900 mb-3">Appointment Summary</h4>
+                        <h4 class="font-medium text-gray-900 mb-3">{{ $t('booking.summary') }}</h4>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Provider:</span>
+                                <span class="text-gray-600">{{ $t('appointmentDetail.provider') }}:</span>
                                 <span class="font-medium">{{ getProviderName(selectedProvider) }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Date & time:</span>
+                                <span class="text-gray-600">{{ $t('appointmentDetail.dateTime') }}:</span>
                                 <span class="font-medium">{{ formatSelectedDateTime() }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Session type:</span>
-                                <span class="font-medium capitalize">{{ formData.type }} session</span>
+                                <span class="text-gray-600">{{ $t('appointmentDetail.sessionType') }}:</span>
+                                <span class="font-medium capitalize">{{ formData.type }} {{ $t('booking.session')
+                                    }}</span>
                             </div>
                             <div class="flex justify-between pt-2 border-t border-gray-200">
-                                <span class="text-gray-600">Session fee:</span>
+                                <span class="text-gray-600">{{ $t('booking.sessionFee') }}:</span>
                                 <span class="font-bold text-brand-1">{{ formatCurrency(selectedProvider.sessionFee)
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -192,13 +195,13 @@
                     <div class="mt-8 flex items-center justify-between">
                         <button type="button" @click="selectedProvider = null"
                             class="px-6 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                            Back to Providers
+                            {{ $t('booking.backToProviders') }}
                         </button>
 
                         <button type="submit" :disabled="booking || !formData.date || !formData.time || !formData.type"
                             class="px-8 py-3 text-white bg-brand-1 rounded-lg hover:bg-brand-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
-                            <span v-if="booking">Creating Appointment...</span>
-                            <span v-else>Book appointment</span>
+                            <span v-if="booking">{{ $t('booking.creatingAppointment') }}</span>
+                            <span v-else>{{ $t('booking.bookAppointment') }}</span>
                             <ArrowRightIcon v-if="!booking" class="w-4 h-4" />
                         </button>
                     </div>
@@ -212,6 +215,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { format, addDays, parseISO } from 'date-fns'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 import { usePaymentStore } from '@/stores/payment'
 import ReusableCalendar from '@/components/calendar/ReusableCalendar.vue'
@@ -220,6 +224,7 @@ import {
     ExclamationTriangleIcon
 } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const paymentStore = usePaymentStore()
@@ -243,23 +248,23 @@ const formData = ref({
     shortDescription: ''
 })
 
-const sessionTypes = [
+const sessionTypes = computed(() => [
     {
         value: 'video',
-        label: 'Video Call',
-        description: 'Online video consultation'
+        label: t('booking.sessionTypeVideo'),
+        description: t('booking.sessionTypeVideoDesc')
     },
     {
         value: 'phone',
-        label: 'Phone Call',
-        description: 'Voice-only consultation'
+        label: t('booking.sessionTypePhone'),
+        description: t('booking.sessionTypePhoneDesc')
     },
     {
         value: 'in-person',
-        label: 'In-Person',
-        description: 'Face-to-face meeting'
+        label: t('booking.sessionTypeInPerson'),
+        description: t('booking.sessionTypeInPersonDesc')
     }
-]
+])
 
 // Handle date selection from ReusableCalendar
 const handleDateSelected = (date) => {
@@ -303,22 +308,22 @@ const loadProviders = async () => {
     try {
         const response = await axios.get('/users/providers')
         providers.value = response.data.providers || []
-        
+
         // After loading providers, check if we need to pre-select one from the URL
         await handleProviderFromRoute()
     } catch (err) {
         console.error('Error loading providers:', err)
-        error.value = 'Failed to load providers. Please refresh the page.'
+        error.value = t('booking.loadProvidersFailed')
     }
 }
 
 const handleProviderFromRoute = async () => {
     const providerId = route.params.providerId
-    
+
     if (providerId) {
         // First check if the provider is in our loaded providers list
         const provider = providers.value.find(p => p._id === providerId)
-        
+
         if (provider) {
             selectedProvider.value = provider
         } else {
@@ -333,17 +338,17 @@ const loadSpecificProvider = async (providerId) => {
         loadingProvider.value = true
         const response = await axios.get(`/users/providers/${providerId}`)
         const provider = response.data.provider || response.data
-        
+
         if (provider) {
             selectedProvider.value = provider
         } else {
-            error.value = 'Provider not found or is not available for booking.'
+            error.value = t('booking.providerNotFound')
             // Redirect back to provider list if provider not found
             router.push('/providers')
         }
     } catch (err) {
         console.error('Error loading specific provider:', err)
-        error.value = 'Failed to load provider. Please try again.'
+        error.value = t('booking.loadProviderFailed')
         // Redirect back to provider list on error
         router.push('/providers')
     } finally {
@@ -411,7 +416,7 @@ const loadAvailableTimeSlots = async () => {
 
     } catch (err) {
         console.error('Error loading time slots:', err)
-        timeSlotsError.value = 'Failed to load available times. Please try again.'
+        timeSlotsError.value = t('booking.timeSlotsError')
         availableTimeSlots.value = []
     } finally {
         loadingTimeSlots.value = false
@@ -453,7 +458,7 @@ const bookAppointment = async () => {
         if (err.response?.data?.fallbackSuggestion) {
             error.value = `${err.response.data.message} ${err.response.data.fallbackSuggestion}`
         } else {
-            error.value = err.response?.data?.message || 'Failed to book appointment. Please try again.'
+            error.value = err.response?.data?.message || t('booking.bookingFailed')
         }
 
         // If time slot became unavailable, refresh time slots
@@ -467,8 +472,8 @@ const bookAppointment = async () => {
 
 // Helper functions
 const getProviderName = (provider) => {
-    if (!provider) return 'Unknown Provider'
-    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || 'Provider'
+    if (!provider) return t('booking.unknownProvider')
+    return `${provider.firstName || ''} ${provider.lastName || ''}`.trim() || t('appointmentDetail.provider')
 }
 
 const formatCurrency = (amount) => {
