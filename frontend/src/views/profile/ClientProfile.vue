@@ -63,6 +63,10 @@
                   <dt class="text-sm font-medium text-gray-500">{{ $t('clientProfile.memberSince') }}</dt>
                   <dd class="mt-1 text-gray-900">{{ formatDate(user?.createdAt) }}</dd>
                 </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">{{ $t('clientProfile.interfaceLanguage') }}</dt>
+                    <dd class="mt-1 text-gray-900">{{ getLocaleName(user?.preferences?.language) }}</dd>
+                </div>
               </dl>
             </div>
 
@@ -290,6 +294,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
 import { isAchievementsEnabled } from '@/utils/modules'
+import { availableLocales } from '@/utils/i18n'
 
 // Simple computed property
 const showAchievements = computed(() => isAchievementsEnabled())
@@ -331,6 +336,12 @@ const achievementProgress = computed(() => {
 })
 
 // Methods
+const getLocaleName = (code) => {
+    if (!code) return 'English'
+    const found = availableLocales.find(l => l.code === code)
+    return found ? `${found.flag} ${found.name}` : code
+}
+
 const fetchUserProfile = async () => {
   try {
     const response = await axios.get('/users/me')

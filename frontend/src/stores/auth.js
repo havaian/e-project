@@ -66,9 +66,9 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = response.data.token
 
       // Sync locale from user preferences
-      if (user.preferences?.language) {
+      if (user.value?.preferences?.language) {
           const { changeLocale } = await import('@/utils/i18n')
-          changeLocale(user.preferences.language)
+          changeLocale(user.value.preferences.language)
       }
 
       localStorage.setItem('user', JSON.stringify(user.value))

@@ -95,6 +95,10 @@
                   <dd class="mt-1 text-gray-900">{{ user?.languages?.join(', ') || $t('providerProfile.notSpecified') }}
                   </dd>
                 </div>
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">{{ $t('providerProfile.interfaceLanguage') }}</dt>
+                  <dd class="mt-1 text-gray-900">{{ getLocaleName(user?.preferences?.language) }}</dd>
+                </div>
               </dl>
             </div>
 
@@ -375,6 +379,7 @@ import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
 import { isAchievementsEnabled } from '@/utils/modules'
 import { useGlobals } from '@/plugins/globals'
+import { availableLocales } from '@/utils/i18n'
 
 const { toast, uploadsUrl, modal } = useGlobals()
 
@@ -420,6 +425,12 @@ const achievementProgress = computed(() => {
 })
 
 // Methods
+const getLocaleName = (code) => {
+    if (!code) return 'English'
+    const found = availableLocales.find(l => l.code === code)
+    return found ? `${found.flag} ${found.name}` : code
+}
+
 const fetchUserProfile = async () => {
   try {
     const response = await axios.get('/users/me')

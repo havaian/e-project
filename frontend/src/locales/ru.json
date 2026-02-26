@@ -12,7 +12,8 @@
     "editProfile": "Редактировать профиль",
     "signIn": "Войти",
     "signOut": "Выйти",
-    "getStarted": "Начать"
+    "getStarted": "Начать",
+    "changeLanguage": "Сменить язык"
   },
   "common": {
     "save": "Сохранить",
@@ -868,7 +869,8 @@
     "noAppointments": "Записей пока нет",
     "availableAchievements": "Доступные достижения",
     "viewMore": "Ещё {count}",
-    "noReviewsHint": "Отзывы появятся после завершения записей"
+    "noReviewsHint": "Отзывы появятся после завершения записей",
+    "interfaceLanguage": "Язык интерфейса"
   },
   "about": {
     "metaTitle": "О нас",
@@ -1311,7 +1313,9 @@
     "newPassword": "Новый пароль",
     "updatePassword": "Обновить пароль",
     "saving": "Сохранение...",
-    "saveChanges": "Сохранить"
+    "saveChanges": "Сохранить",
+    "interfaceLanguage": "Язык интерфейса",
+    "interfaceLanguageHint": "Выберите язык интерфейса приложения"
   },
   "providerOnboarding": {
     "title": "Настройка профиля",
@@ -1383,9 +1387,10 @@
     "earningsSummary": "Обзор доходов",
     "thisMonth": "Этот месяц",
     "totalEarned": "Всего заработано",
-    "viewDetailedEarnings": "Подробная статистика"
+    "viewDetailedEarnings": "Подробная статистика",
+    "interfaceLanguage": "Язык интерфейса"
   },
-  
+
   "unified": {
     "loadingAppointments": "Загрузка записей...",
     "loadingDashboard": "Загрузка панели...",

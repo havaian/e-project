@@ -12,7 +12,8 @@
     "editProfile": "Edit profile",
     "signIn": "Sign In",
     "signOut": "Sign Out",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "changeLanguage": "Change language"
   },
   "common": {
     "save": "Save",
@@ -868,7 +869,8 @@
     "noAppointments": "No appointments yet",
     "availableAchievements": "Available achievements",
     "viewMore": "View {count} More",
-    "noReviewsHint": "Reviews will appear here after completing appointments"
+    "noReviewsHint": "Reviews will appear here after completing appointments",
+    "interfaceLanguage": "Interface Language"
   },
   "about": {
     "metaTitle": "About us",
@@ -1311,7 +1313,9 @@
     "newPassword": "New password",
     "updatePassword": "Update password",
     "saving": "Saving...",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "interfaceLanguage": "Interface Language",
+    "interfaceLanguageHint": "Choose the language for the app interface"
   },
   "providerOnboarding": {
     "title": "Provider setup",
@@ -1383,9 +1387,10 @@
     "earningsSummary": "Earnings summary",
     "thisMonth": "This month",
     "totalEarned": "Total earned",
-    "viewDetailedEarnings": "View detailed earnings"
+    "viewDetailedEarnings": "View detailed earnings",
+    "interfaceLanguage": "Interface Language"
   },
-  
+
   "unified": {
     "loadingAppointments": "Loading appointments...",
     "loadingDashboard": "Loading dashboard...",

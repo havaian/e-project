@@ -316,6 +316,24 @@
                             </div>
                         </div>
 
+                        <!-- Interface Language -->
+                        <div class="bg-gray-50/50 rounded-2xl p-6">
+                            <div class="flex items-center mb-6">
+                                <div class="w-8 h-8 bg-sky-500/10 rounded-full flex items-center justify-center mr-3">
+                                    <GlobeAltIcon class="w-4 h-4 text-sky-500" />
+                                </div>
+                                <h2 class="text-xl font-semibold text-gray-900">{{ $t('editProfile.interfaceLanguage') }}</h2>
+                            </div>
+                            <div class="form-group">
+                                <label for="locale" class="label">{{ $t('editProfile.interfaceLanguageHint') }}</label>
+                                <select id="locale" v-model="formData.locale" class="input max-w-xs">
+                                    <option v-for="loc in availableLocales" :key="loc.code" :value="loc.code">
+                                        {{ loc.flag }} {{ loc.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
                         <!-- password Change section -->
                         <div class="bg-gray-50/50 rounded-2xl p-6">
                             <div class="flex items-center mb-6">
@@ -369,12 +387,13 @@
 </template>
 
 <script setup>
-import { XMarkIcon, PhotoIcon, CameraIcon, UserIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { XMarkIcon, PhotoIcon, CameraIcon, UserIcon, ExclamationTriangleIcon, LightBulbIcon, BookOpenIcon, BriefcaseIcon, CurrencyDollarIcon, LanguageIcon, LockClosedIcon, TrashIcon, PlusIcon,GlobeAltIcon } from "@heroicons/vue/24/outline";
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios, { uploadApi } from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
+import { availableLocales, changeLocale } from '@/utils/i18n'
 
 const { toast, uploadsUrl, modal } = useGlobals()
 
@@ -401,6 +420,7 @@ const formData = reactive({
     phone: '',
     email: '',
     profilePicture: '',
+    locale: 'en',
     // Provider-specific fields
     specializations: [],
     education: [],
@@ -489,6 +509,7 @@ const populateFormData = (userData) => {
     formData.phone = userData.phone || ''
     formData.email = userData.email || ''
     formData.profilePicture = userData.profilePicture || ''
+    formData.locale = userData.preferences?.language || 'en'
 
     if (authStore.isProvider && userData) {
         formData.specializations = Array.isArray(userData.specializations) ?
@@ -674,6 +695,25 @@ const handleSubmit = async () => {
         }
 
         const response = await axios.patch('/users/me', updateData)
+
+        // Save locale preference separately via preferences endpoint
+        if (formData.locale) {
+            try {
+                await axios.patch('/users/me/preferences', {
+                    preferences: { language: formData.locale }
+                })
+                // Apply the locale change to the frontend
+                await changeLocale(formData.locale)
+                // Update auth store user preferences
+                if (authStore.user) {
+                    if (!authStore.user.preferences) authStore.user.preferences = {}
+                    authStore.user.preferences.language = formData.locale
+                    localStorage.setItem('user', JSON.stringify(authStore.user))
+                }
+            } catch (error) {
+                console.error('Error saving language preference:', error)
+            }
+        }
 
         if (response.data) {
             authStore.user = { ...authStore.user, ...response.data }

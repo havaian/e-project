@@ -12,7 +12,8 @@
     "editProfile": "Profilni tahrirlash",
     "signIn": "Kirish",
     "signOut": "Chiqish",
-    "getStarted": "Boshlash"
+    "getStarted": "Boshlash",
+    "changeLanguage": "Tilni o'zgartirish"
   },
   "common": {
     "save": "Saqlash",
@@ -868,7 +869,8 @@
     "noAppointments": "Yozuvlar hali yo'q",
     "availableAchievements": "Mavjud yutuqlar",
     "viewMore": "Yana {count} ta",
-    "noReviewsHint": "Sharhlar uchrashuvlar tugagandan keyin paydo bo'ladi"
+    "noReviewsHint": "Sharhlar uchrashuvlar tugagandan keyin paydo bo'ladi",
+    "interfaceLanguage": "Interfeys tili"
   },
   "about": {
     "metaTitle": "Biz haqimizda",
@@ -1311,7 +1313,9 @@
     "newPassword": "Yangi parol",
     "updatePassword": "Parolni yangilash",
     "saving": "Saqlanmoqda...",
-    "saveChanges": "Saqlash"
+    "saveChanges": "Saqlash",
+    "interfaceLanguage": "Interfeys tili",
+    "interfaceLanguageHint": "Ilova interfeysi uchun tilni tanlang"
   },
   "providerOnboarding": {
     "title": "Profil sozlash",
@@ -1383,7 +1387,8 @@
     "earningsSummary": "Daromad xulosasi",
     "thisMonth": "Bu oy",
     "totalEarned": "Jami ishlab topilgan",
-    "viewDetailedEarnings": "Batafsil statistika"
+    "viewDetailedEarnings": "Batafsil statistika",
+    "interfaceLanguage": "Interfeys tili"
   },
   "unified": {
     "loadingAppointments": "Yozuvlar yuklanmoqda...",

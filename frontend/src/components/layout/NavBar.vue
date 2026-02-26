@@ -73,6 +73,7 @@
 
                 <!-- Desktop profile menu -->
                 <div class="hidden sm:flex sm:items-center sm:space-x-4">
+                    <LanguageSwitcher />
                     <template v-if="authStore.isAuthenticated">
                         <div class="relative" ref="profileMenuRef">
                             <button @click="toggleProfileMenu"
@@ -128,7 +129,11 @@
         <div v-if="showMobileMenu" class="sm:hidden bg-white/95 backdrop-blur-md border-t border-sky-500/10"
             ref="mobileMenuRef">
             <div class="px-2 pt-2 pb-3 space-y-1">
-                <router-link to="/"
+                    <!-- Language Switcher (mobile) -->
+                    <div class="px-3 py-2">
+                        <LanguageSwitcher />
+                    </div>
+                    <router-link to="/"
                     class="text-gray-700 hover:text-sky-500 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                     :class="{ 'text-sky-500 bg-sky-500/5': $route.path === '/' }" @click="closeMobileMenu">
                     {{ $t('nav.home') }}
@@ -215,6 +220,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useModules } from '@/composables/useModules'
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher.vue'
 
 const { isConsultationsEnabled, isCoursesEnabled, isChatEnabled } = useModules()
 
