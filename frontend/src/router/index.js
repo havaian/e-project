@@ -96,24 +96,26 @@ const router = createRouter({
       }
     },
 
-    {
-      path: '/profile/me/earnings',
-      name: 'my-earnings',
-      component: () => import('@/views/dashboard/ProviderEarnings.vue'),
-      meta: {
+    ...(isConsultationsEnabled() && isCoursesEnabled() ? [
+      {
+        path: '/profile/me/earnings',
+        name: 'my-earnings',
+        component: () => import('@/views/dashboard/ProviderEarnings.vue'),
+        meta: {
           requiresAuth: true,
           requiresProvider: true
-      }
-  },
-  {
-      path: '/profile/me/payments',
-      name: 'my-payments',
-      component: () => import('@/views/dashboard/ClientPayments.vue'),
-      meta: {
+        }
+      },
+      {
+        path: '/profile/me/payments',
+        name: 'my-payments',
+        component: () => import('@/views/dashboard/ClientPayments.vue'),
+        meta: {
           requiresAuth: true,
           requiresClient: true
-      }
-  },
+        }
+      },
+    ] : []),
 
     // ── Consultation routes (conditional) ────────────────────────────────
     ...(isConsultationsEnabled() ? [

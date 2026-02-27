@@ -39,13 +39,3 @@ export const isCoursesEnabled = () => {
 export const isChatEnabled = () => {
   return isConsultationsEnabled() || isCoursesEnabled()
 }
-
-export const isReviewsConsultationsEnabled = () => {
-    return import.meta.env.VITE_MODULE_REVIEWS_CONSULTATIONS_ENABLED !== 'false'
-}
-export const isReviewsCoursesEnabled = () => {
-    return import.meta.env.VITE_MODULE_REVIEWS_COURSES_ENABLED !== 'false'
-}
-export const isReviewsBidirectionalEnabled = () => {
-    return import.meta.env.VITE_MODULE_REVIEWS_BIDIRECTIONAL_ENABLED === 'true'
-}
