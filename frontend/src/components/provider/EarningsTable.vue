@@ -1,3 +1,4 @@
+<!-- frontend/src/components/provider/EarningsTable.vue -->
 <template>
     <div>
         <!-- Loading State -->
@@ -22,7 +23,7 @@
                                 {{ $t('earnings.period') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ $t('earnings.appointments') }}
+                                {{ $t('earnings.transactions') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ $t('earnings.totalEarnings') }}
@@ -55,14 +56,14 @@
                                 </div>
                             </td>
 
-                            <!-- Appointments -->
+                            <!-- Transactions -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex flex-col">
                                     <div class="text-sm font-medium text-gray-900">
-                                        {{ row.totalAppointments }}
+                                        {{ row.totalTransactions }}
                                     </div>
                                     <div class="text-xs text-gray-500">
-                                        {{ row.completedAppointments }} {{ $t('earnings.completed') }}
+                                        {{ row.completedTransactions }} {{ $t('earnings.completed') }}
                                     </div>
                                 </div>
                             </td>
@@ -132,8 +133,8 @@
                         <span class="font-medium text-gray-900 ml-2">{{ tableData.length }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-600">{{ $t('earnings.totalAppointments') }}</span>
-                        <span class="font-medium text-gray-900 ml-2">{{ totalAppointments }}</span>
+                        <span class="text-gray-600">{{ $t('earnings.totalTransactions') }}</span>
+                        <span class="font-medium text-gray-900 ml-2">{{ totalTransactions }}</span>
                     </div>
                     <div>
                         <span class="text-gray-600">{{ $t('earnings.totalEarnings') }}:</span>
@@ -146,14 +147,11 @@
                 </div>
             </div>
 
-            <!-- Pagination -->
+            <!-- Pagination hint -->
             <div v-if="tableData.length >= 10"
                 class="bg-white px-6 py-3 border-t border-gray-200 flex items-center justify-between">
                 <div class="text-sm text-gray-700">
                     {{ $t('earnings.showing', { shown: Math.min(tableData.length, 10), total: tableData.length }) }}
-                </div>
-                <div class="text-sm text-gray-500">
-                    <!-- Could add pagination controls here if needed -->
                 </div>
             </div>
         </div>
@@ -165,7 +163,7 @@ import { DocumentChartBarIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon } from
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const props = defineProps({
     data: {
@@ -182,28 +180,42 @@ const props = defineProps({
     }
 })
 
-// Process data for table
+// ── Locale mapping ───────────────────────────────────────────────────────────
+const intlLocale = computed(() => {
+    const map = { en: 'en-US', ru: 'ru-RU', uz: 'uz-UZ' }
+    return map[locale.value] || 'en-US'
+})
+
+// ── Process data for table ───────────────────────────────────────────────────
 const tableData = computed(() => {
     if (!props.data || props.data.length === 0) return []
 
     return props.data.map((item, index) => {
         const periodLabel = getPeriodLabel(item)
         const dateRange = getDateRange(item)
-        const completionRate = item.totalAppointments > 0
-            ? Math.round((item.completedAppointments / item.totalAppointments) * 100)
+
+        // Use generic transaction fields, with fallback to old appointment fields
+        const totalTx = item.totalTransactions ?? item.totalAppointments ?? 0
+        const completedTx = item.completedTransactions ?? item.completedAppointments ?? 0
+
+        const completionRate = totalTx > 0
+            ? Math.round((completedTx / totalTx) * 100)
             : 0
 
-        // Calculate growth compared to previous period
+        // Growth compared to previous period in the array
         let growthPercentage = null
         if (index < props.data.length - 1) {
             const previousItem = props.data[index + 1]
-            if (previousItem.totalEarnings > 0) {
-                growthPercentage = ((item.totalEarnings - previousItem.totalEarnings) / previousItem.totalEarnings) * 100
+            const prevEarnings = previousItem.totalEarnings || 0
+            if (prevEarnings > 0) {
+                growthPercentage = ((item.totalEarnings - prevEarnings) / prevEarnings) * 100
             }
         }
 
         return {
             ...item,
+            totalTransactions: totalTx,
+            completedTransactions: completedTx,
             periodLabel,
             dateRange,
             completionRate,
@@ -212,16 +224,16 @@ const tableData = computed(() => {
     })
 })
 
-// Helper functions
+// ── Helper functions ─────────────────────────────────────────────────────────
 const getPeriodLabel = (item) => {
     if (props.period === 'monthly') {
         const date = new Date(item.year, item.month - 1)
-        return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        return date.toLocaleDateString(intlLocale.value, { month: 'long', year: 'numeric' })
     } else if (props.period === 'weekly') {
         return `${t('earnings.week')} ${item.week}`
     } else {
         const date = new Date(item.year, item.month - 1, item.day)
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(intlLocale.value, {
             weekday: 'long',
             month: 'short',
             day: 'numeric'
@@ -233,7 +245,8 @@ const getDateRange = (item) => {
     if (props.period === 'monthly') {
         const startDate = new Date(item.year, item.month - 1, 1)
         const endDate = new Date(item.year, item.month, 0)
-        return `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+        const opts = { month: 'short', day: 'numeric' }
+        return `${startDate.toLocaleDateString(intlLocale.value, opts)} – ${endDate.toLocaleDateString(intlLocale.value, opts)}`
     } else if (props.period === 'weekly') {
         return `${item.year}`
     } else {
@@ -249,16 +262,16 @@ const getCompletionRateColor = (rate) => {
 }
 
 const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('uz-UZ').format(amount) + ' UZS'
+    return new Intl.NumberFormat(intlLocale.value).format(amount || 0) + ' UZS'
 }
 
-// Computed totals
-const totalAppointments = computed(() => {
-    return tableData.value.reduce((sum, item) => sum + item.totalAppointments, 0)
+// ── Computed totals ──────────────────────────────────────────────────────────
+const totalTransactions = computed(() => {
+    return tableData.value.reduce((sum, item) => sum + item.totalTransactions, 0)
 })
 
 const totalEarnings = computed(() => {
-    return tableData.value.reduce((sum, item) => sum + item.totalEarnings, 0)
+    return tableData.value.reduce((sum, item) => sum + (item.totalEarnings || 0), 0)
 })
 
 const averageEarnings = computed(() => {

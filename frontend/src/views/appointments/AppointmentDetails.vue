@@ -60,7 +60,7 @@
                                     </p>
                                     <p class="text-sm text-gray-500">
                                         {{ $t('appointmentDetail.age') }}: {{
-                                        calculateAge(appointment.client.dateOfBirth) }}
+                                            calculateAge(appointment.client.dateOfBirth) }}
                                     </p>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@
                     <!-- Short description -->
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('appointmentDetail.shortDescription')
-                            }}</h3>
+                        }}</h3>
                         <p class="text-gray-900">{{ appointment.shortDescription }}</p>
                     </div>
 
@@ -111,7 +111,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-sm font-medium text-gray-500">{{ $t('appointmentDetail.recTitle')
-                                            }}</p>
+                                        }}</p>
                                         <p class="text-gray-900">{{ recommendation.title }}</p>
                                     </div>
                                     <div>
@@ -161,7 +161,8 @@
                                 <p class="text-sm font-medium text-indigo-800">
                                     {{ $t('appointmentDetail.followUpScheduledFor', {
                                         dateTime:
-                                            formatDateTime(followUpAppointment.dateTime) }) }}
+                                            formatDateTime(followUpAppointment.dateTime)
+                                    }) }}
                                 </p>
                                 <div v-if="followUpAppointment.status === 'pending-payment'" class="mt-2">
                                     <button @click="proceedToPayment(followUpAppointment._id)"
@@ -176,6 +177,22 @@
                                 </button>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- ── Review: Client → Provider ──────────────────────────── -->
+                    <div v-if="appointment.status === 'completed' && authStore.isClient && canReviewAppointment"
+                        class="bg-gray-50 border border-gray-200 rounded-xl p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('reviews.reviewProvider') }}</h3>
+                        <ReviewForm ref="clientReviewFormRef" direction="client_to_provider"
+                            :appointment-id="appointment._id" :loading="submittingReview" @submit="submitReview" />
+                    </div>
+
+                    <!-- ── Review: Provider → Client (bidirectional) ──────────── -->
+                    <div v-if="appointment.status === 'completed' && authStore.isProvider && isReviewsBidirectionalEnabled && canReviewClient"
+                        class="bg-gray-50 border border-gray-200 rounded-xl p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('reviews.reviewClient') }}</h3>
+                        <ReviewForm ref="providerReviewFormRef" direction="provider_to_client"
+                            :appointment-id="appointment._id" :loading="submittingReview" @submit="submitReview" />
                     </div>
 
                     <!-- Chat Log (if available) -->
@@ -270,7 +287,7 @@
 
                                         <div class="form-group">
                                             <label for="followUpNotes" class="label">{{ $t('appointmentDetail.notes')
-                                                }}</label>
+                                            }}</label>
                                             <textarea id="followUpNotes" v-model="followUpNotes" rows="3" class="input"
                                                 :placeholder="$t('appointmentDetail.followUpNotesPlaceholder')"></textarea>
                                         </div>
@@ -313,17 +330,20 @@
 
 <script setup>
 import { ChatBubbleLeftRightIcon, XMarkIcon } from "@heroicons/vue/24/outline";
-import { format, parseISO, differenceInYears, isWithinInterval, subMinutes, addMinutes } from 'date-fns'
+import { format, parseISO, differenceInYears, isWithinInterval, subMinutes, addMinutes, addDays } from 'date-fns'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePaymentStore } from '@/stores/payment'
 import { useI18n } from 'vue-i18n'
+import { useModules } from '@/composables/useModules'
 import axios from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
+import ReviewForm from '@/components/reviews/ReviewForm.vue'
 
 const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
+const { isReviewsBidirectionalEnabled } = useModules()
 
 const route = useRoute()
 const router = useRouter()
@@ -338,6 +358,13 @@ const showFollowUpModal = ref(false)
 const followUpDate = ref('')
 const followUpNotes = ref('')
 const submitting = ref(false)
+
+// ── Review state ─────────────────────────────────────────────────────────
+const canReviewAppointment = ref(false)
+const canReviewClient = ref(false)
+const submittingReview = ref(false)
+const clientReviewFormRef = ref(null)
+const providerReviewFormRef = ref(null)
 
 const minFollowUpDate = computed(() => {
     const tomorrow = addDays(new Date(), 1)
@@ -462,10 +489,61 @@ async function fetchAppointment() {
             appointment.value.followUp.recommended) {
             findFollowUpAppointment()
         }
+
+        // Check review eligibility after appointment is loaded
+        if (appointment.value.status === 'completed') {
+            checkCanReview()
+        }
     } catch (error) {
         console.error('Error fetching appointment:', error)
     } finally {
         loading.value = false
+    }
+}
+
+/**
+ * Check if the current user can review for this appointment.
+ * The backend can-review endpoint returns { canReview, reason } and
+ * auto-detects the direction based on the user's role.
+ */
+async function checkCanReview() {
+    try {
+        const res = await axios.get('/reviews/can-review', {
+            params: { appointmentId: appointment.value._id }
+        })
+
+        if (authStore.isClient) {
+            canReviewAppointment.value = res.data.canReview
+        } else if (authStore.isProvider) {
+            canReviewClient.value = res.data.canReview
+        }
+    } catch (error) {
+        console.error('Error checking review eligibility:', error)
+    }
+}
+
+/**
+ * Submit a review (works for both client→provider and provider→client).
+ * The payload shape is determined by the ReviewForm component.
+ */
+async function submitReview(payload) {
+    try {
+        submittingReview.value = true
+        await axios.post('/reviews', payload)
+        toast.success(t('reviews.reviewSubmitted'))
+
+        // Reset form and hide it
+        if (authStore.isClient) {
+            clientReviewFormRef.value?.resetForm()
+            canReviewAppointment.value = false
+        } else {
+            providerReviewFormRef.value?.resetForm()
+            canReviewClient.value = false
+        }
+    } catch (error) {
+        toast.error(error.response?.data?.message || t('reviews.submitError'))
+    } finally {
+        submittingReview.value = false
     }
 }
 

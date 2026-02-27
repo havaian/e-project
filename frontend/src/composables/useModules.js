@@ -21,9 +21,25 @@ export function useModules() {
         return isConsultationsEnabled.value || isCoursesEnabled.value
     })
 
+    // Inside useModules():
+    const isReviewsConsultationsEnabled = computed(() => {
+        return import.meta.env.VITE_MODULE_REVIEWS_CONSULTATIONS_ENABLED !== 'false'
+    })
+
+    const isReviewsCoursesEnabled = computed(() => {
+        return import.meta.env.VITE_MODULE_REVIEWS_COURSES_ENABLED !== 'false'
+    })
+
+    const isReviewsBidirectionalEnabled = computed(() => {
+        return import.meta.env.VITE_MODULE_REVIEWS_BIDIRECTIONAL_ENABLED === 'true'
+    })
+
     return {
         isConsultationsEnabled,
         isCoursesEnabled,
         isChatEnabled,
+        isReviewsConsultationsEnabled,
+        isReviewsCoursesEnabled,
+        isReviewsBidirectionalEnabled,
     }
 }

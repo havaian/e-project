@@ -1,3 +1,4 @@
+<!-- frontend/src/views/clients/ClientPublicProfile.vue -->
 <template>
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div v-if="loading" class="text-center py-8">
@@ -74,13 +75,13 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <dt class="text-sm font-medium text-blue-700">{{ $t('clientProfile.memberSince')
-                                            }}</dt>
+                                        }}</dt>
                                         <dd class="mt-1 text-blue-900 font-medium">{{ formatDate(student.createdAt) }}
                                         </dd>
                                     </div>
                                     <div v-if="student.lastLoginAt">
                                         <dt class="text-sm font-medium text-blue-700">{{ $t('clientProfile.lastActive')
-                                            }}</dt>
+                                        }}</dt>
                                         <dd class="mt-1 text-blue-900 font-medium">{{
                                             formatRelativeTime(student.lastLoginAt) }}</dd>
                                     </div>
@@ -88,7 +89,7 @@
                                         <dt class="text-sm font-medium text-blue-700">{{
                                             $t('clientProfile.learningStatus') }}</dt>
                                         <dd class="mt-1 text-blue-900 font-medium">{{ $t('clientProfile.activeStudent')
-                                            }}</dd>
+                                        }}</dd>
                                     </div>
                                     <div>
                                         <dt class="text-sm font-medium text-blue-700">{{
@@ -105,7 +106,7 @@
                                     <div class="grid grid-cols-2 gap-4 text-sm">
                                         <div>
                                             <span class="text-blue-700">{{ $t('clientProfile.sessionsTogether')
-                                                }}:</span>
+                                            }}:</span>
                                             <span class="font-medium text-blue-900 ml-1">{{
                                                 sessionsWithViewer }}</span>
                                         </div>
@@ -116,6 +117,17 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Client Reputation (provider → client tags) -->
+                            <div v-if="isReviewsBidirectionalEnabled && reputationData.totalReviews > 0"
+                                class="bg-white border border-gray-200 rounded-xl p-6">
+                                <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                                    <StarIcon class="w-5 h-5 mr-2 text-sky-600" />
+                                    {{ $t('reviews.clientReputation') }}
+                                </h2>
+                                <ReviewStats mode="tags" :total-reviews="reputationData.totalReviews"
+                                    :tags-summary="reputationData.tags" />
                             </div>
 
                             <!-- Achievements -->
@@ -136,7 +148,8 @@
                                             :style="{ width: achievementProgress + '%' }"></div>
                                     </div>
                                     <p class="text-xs text-gray-500 mt-1">{{ $t('clientProfile.percentComplete', {
-                                        percent: achievementProgress }) }}</p>
+                                        percent: achievementProgress
+                                    }) }}</p>
                                 </div>
 
                                 <!-- Earned achievements -->
@@ -190,7 +203,7 @@
                                             {{ showAllAchievements ? $t('clientProfile.showLess') :
                                                 $t('clientProfile.viewMoreGoals', {
                                                     count: unearnedAchievements.length - 4
-                                            })
+                                                })
                                             }}
                                         </button>
                                     </div>
@@ -202,7 +215,7 @@
                                 </div>
                             </div>
 
-                            <!-- Reviews given -->
+                            <!-- Reviews given by this client -->
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <StarIcon class="w-5 h-5 mr-2 text-purple-600" />
@@ -220,14 +233,15 @@
                                                         class="w-4 h-4" />
                                                 </div>
                                                 <span class="text-sm text-gray-600">{{ formatDate(review.createdAt)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                         <p class="text-sm text-gray-900 mb-2 leading-relaxed">{{ review.comment }}</p>
                                         <p class="text-xs text-gray-500">
                                             {{ $t('clientProfile.forProvider', {
-                                                name: `${review.provider?.firstName ||
-                                                    ''} ${review.provider?.lastName || ''}` }) }}
+                                                name: `${review.reviewee?.firstName ||
+                                                    ''} ${review.reviewee?.lastName || ''}`
+                                            }) }}
                                         </p>
                                     </div>
 
@@ -279,7 +293,7 @@
                                     <div class="bg-yellow-50 p-4 rounded-lg">
                                         <div class="text-2xl font-bold text-yellow-600">{{ providersWorkedWith }}</div>
                                         <div class="text-sm text-yellow-600">{{ $t('clientProfile.providersWorkedWith')
-                                            }}</div>
+                                        }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -287,7 +301,7 @@
                             <!-- Recent activity -->
                             <div class="bg-gray-50 rounded-xl p-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('clientProfile.recentActivity')
-                                    }}</h3>
+                                }}</h3>
                                 <div class="space-y-3">
                                     <div v-if="recentActivity.length > 0">
                                         <div v-for="activity in recentActivity" :key="activity.id"
@@ -324,9 +338,9 @@
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">{{ $t('clientProfile.startedLearning')
-                                            }}</span>
-                                        <span class="font-medium text-gray-900">{{ formatDateShort(student.createdAt)
                                         }}</span>
+                                        <span class="font-medium text-gray-900">{{ formatDateShort(student.createdAt)
+                                            }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">{{ $t('clientProfile.activeDays') }}</span>
@@ -334,14 +348,15 @@
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">{{ $t('clientProfile.learningStreak')
-                                            }}</span>
+                                        }}</span>
                                         <span class="font-medium text-gray-900">{{ $t('clientProfile.days', {
                                             count:
-                                            learningStreak }) }}</span>
+                                                learningStreak
+                                        }) }}</span>
                                     </div>
                                     <div v-if="authStore.isProvider" class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">{{ $t('clientProfile.sessionsWithYou')
-                                            }}</span>
+                                        }}</span>
                                         <span class="font-medium text-gray-900">{{ sessionsWithViewer }}</span>
                                     </div>
                                 </div>
@@ -359,16 +374,19 @@
 </template>
 
 <script setup>
-import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, ChatBubbleLeftRightIcon, UserIcon, LockClosedIcon, StarIcon, ChartBarIcon, DevicePhoneMobileIcon, ArrowTrendingUpIcon, UserPlusIcon } from "@heroicons/vue/24/outline";
+import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, ChatBubbleLeftRightIcon, UserIcon, LockClosedIcon, StarIcon, ChartBarIcon, ArrowTrendingUpIcon, UserPlusIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
+import { useModules } from '@/composables/useModules'
 import axios from '@/plugins/axios'
 import { useGlobals } from '@/plugins/globals'
+import ReviewStats from '@/components/reviews/ReviewStats.vue'
 
 const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
+const { isReviewsBidirectionalEnabled } = useModules()
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -377,6 +395,7 @@ const authStore = useAuthStore()
 const student = ref(null)
 const achievements = ref([])
 const reviews = ref([])
+const reputationData = ref({ tags: [], totalReviews: 0 })
 const recentActivity = ref([])
 const loading = ref(true)
 const showAllAchievements = ref(false)
@@ -449,12 +468,45 @@ const fetchStudentAchievements = async () => {
     }
 }
 
+/**
+ * Fetch reviews written BY this client (client_to_provider / client_to_course).
+ * The /reviews/my-reviews endpoint only works for the current user,
+ * so for a public profile we fetch provider reviews and filter by reviewer.
+ * Alternatively, the backend could expose a public endpoint.
+ * For now, we use the client reviews endpoint which returns reviews ABOUT the client.
+ * The "reviews given" section is only shown if data is available.
+ */
 const fetchStudentReviews = async () => {
     try {
+        // This returns reviews the client has written (direction: client_to_provider)
+        // via the my-reviews-like endpoint, but since this is a public profile,
+        // we rely on the backend returning public review data
         const response = await axios.get(`/reviews/client/${route.params.id}`)
+        // The response includes both reviews about the client and their written reviews
         reviews.value = response.data.reviews || []
     } catch (error) {
         console.error('Error fetching reviews:', error)
+    }
+}
+
+/**
+ * Fetch client reputation data — provider→client tags summary.
+ */
+const fetchReputation = async () => {
+    if (!isReviewsBidirectionalEnabled.value) {
+        reputationData.value = { tags: [], totalReviews: 0 }
+        return
+    }
+
+    try {
+        const response = await axios.get(`/reviews/client/${route.params.id}`)
+        reputationData.value = {
+            tags: response.data.tagsSummary?.tags || [],
+            totalReviews: response.data.tagsSummary?.totalReviews || 0
+        }
+    } catch (error) {
+        console.error('Error fetching reputation:', error)
+        reputationData.value = { tags: [], totalReviews: 0 }
     }
 }
 
@@ -571,7 +623,7 @@ const addAsStudent = async () => {
         await axios.post('/users/students', {
             studentId: student.value._id
         })
-        toast.error(t('clientProfile.studentAdded'))
+        toast.success(t('clientProfile.studentAdded'))
     } catch (error) {
         console.error('Error adding student:', error)
         toast.error(t('clientProfile.addStudentError'))
@@ -626,7 +678,8 @@ onMounted(async () => {
             fetchStudentAchievements(),
             fetchStudentReviews(),
             fetchStudentStats(),
-            fetchRecentActivity()
+            fetchRecentActivity(),
+            fetchReputation()
         ])
     } catch (error) {
         console.error('Error loading student data:', error)

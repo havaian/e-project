@@ -345,6 +345,13 @@ if (process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
     app.use('/api/courses', require('./src/course/routes'));
 }
 
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false' || process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
+    app.use('/api/earnings', require('./earnings/routes'));
+}
+if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false' || process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
+    app.use('/api/reviews', require('./src/review/routes'));
+}
+
 // Conditional module routes
 if (process.env.MODULE_GROUP_CONSULTATIONS_ENABLED === 'true' && groupConsultationRoutes) {
     app.use('/api/group-consultations', require('./src/group-consultation/routes'));

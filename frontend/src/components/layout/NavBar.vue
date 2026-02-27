@@ -185,6 +185,20 @@
                             @click="closeMobileMenu">
                             {{ $t('nav.myProfile') }}
                         </router-link>
+                        <router-link v-if="authStore.isProvider" to="/profile/me/earnings"
+                            class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
+                            <div class="flex items-center space-x-3">
+                                <BanknotesIcon class="h-4 w-4" />
+                                <span>{{ $t('nav.earnings') }}</span>
+                            </div>
+                        </router-link>
+                        <router-link v-if="authStore.isClient" to="/profile/me/payments"
+                            class="block px-4 py-3 text-sm text-gray-700 hover:bg-sky-500/5 hover:text-sky-500 transition-colors duration-200">
+                            <div class="flex items-center space-x-3">
+                                <BanknotesIcon class="h-4 w-4" />
+                                <span>{{ $t('nav.payments') }}</span>
+                            </div>
+                        </router-link>
                         <router-link to="/profile/me/edit"
                             class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500 hover:bg-sky-500/5 transition-colors duration-200"
                             @click="closeMobileMenu">
@@ -215,7 +229,7 @@
 </template>
 
 <script setup>
-import { Bars3Icon, XMarkIcon, ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon } from "@heroicons/vue/24/outline";
+import { Bars3Icon, XMarkIcon, ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon, BanknotesIcon } from "@heroicons/vue/24/outline";
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

@@ -39,10 +39,11 @@
                         </div>
                         <!-- Stats -->
                         <span class="text-gray-400">{{ $t('courseDetail.lessonsCount', { count: totalLessons })
-                            }}</span>
+                        }}</span>
                         <span class="text-gray-400">{{ $t('courseDetail.blocksCount', {
                             count: course.blocks?.length ||
-                            0 }) }}</span>
+                                0
+                        }) }}</span>
                         <!-- Category -->
                         <span v-if="course.subcategory" class="text-gray-400">{{ course.subcategory }}</span>
                     </div>
@@ -59,7 +60,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium">{{ course.provider?.firstName }} {{ course.provider?.lastName
-                            }}</p>
+                                }}</p>
                             <p class="text-xs text-gray-500">{{ $t('courseDetail.instructor') }}</p>
                         </div>
                     </div>
@@ -93,7 +94,8 @@
                                 <p class="text-xs text-gray-400">
                                     {{ $t('courseDetail.contentSummary', {
                                         blocks: course.blocks?.length || 0, topics:
-                                            allTopics.length, lessons: totalLessons }) }}
+                                            allTopics.length, lessons: totalLessons
+                                    }) }}
                                 </p>
                             </div>
 
@@ -109,7 +111,8 @@
                                                 :class="{ '-rotate-90': !expanded[block._id] }" />
                                             <div>
                                                 <span class="font-semibold text-gray-900 text-sm">{{
-                                                    $t('courseDetail.blockLabel', { number: bi + 1, title: block.title
+                                                    $t('courseDetail.blockLabel', {
+                                                        number: bi + 1, title: block.title
                                                     }) }}</span>
                                                 <span class="block text-xs text-gray-400 mt-0.5">
                                                     {{ $t('courseDetail.lessonsCount', {
@@ -159,8 +162,8 @@
                                     </p>
                                     <p class="text-xs text-gray-400">{{ $t('courseDetail.finalExamDesc', {
                                         count:
-                                        course.finalQuiz.questions.length
-                                        }) }}</p>
+                                            course.finalQuiz.questions.length
+                                    }) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -186,6 +189,26 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ── Course Reviews (INSIDE the course block) ──────── -->
+                        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">{{ $t('reviews.courseReviews') }}</h3>
+
+                            <ReviewStats mode="stars" :average-rating="courseReviewStats.averageRating"
+                                :total-reviews="courseReviewStats.totalReviews"
+                                :rating-distribution="courseReviewStats.ratingDistribution" />
+
+                            <!-- Write review form (only when eligible) -->
+                            <div v-if="canReviewCourse" class="mt-6 p-4 border border-gray-200 rounded-xl bg-gray-50">
+                                <h4 class="text-sm font-medium text-gray-900 mb-3">{{ $t('reviews.writeReview') }}</h4>
+                                <ReviewForm ref="reviewFormRef" direction="client_to_course" :course-id="courseId"
+                                    :loading="submittingReview" @submit="submitCourseReview" />
+                            </div>
+
+                            <div class="mt-6">
+                                <ReviewList :reviews="courseReviews" :loading="loadingReviews" />
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Right sidebar: enroll card -->
@@ -204,7 +227,7 @@
                                     <!-- Price -->
                                     <p class="text-3xl font-extrabold text-gray-900">
                                         {{ course.price === 0 ? $t('courseDetail.free') : course.price.toLocaleString()
-                                        + ' UZS' }}
+                                            + ' UZS' }}
                                     </p>
 
                                     <!-- Already enrolled -->
@@ -244,38 +267,39 @@
                                             <BookmarkIcon class="w-4 h-4 text-gray-400 shrink-0" />
                                             <span class="text-gray-600">{{ $t('courseDetail.lessonsCount', {
                                                 count:
-                                                totalLessons })
-                                                }}</span>
+                                                    totalLessons
+                                            })
+                                            }}</span>
                                         </div>
                                         <div class="flex items-center gap-3 text-sm">
                                             <CubeIcon class="w-4 h-4 text-gray-400 shrink-0" />
                                             <span class="text-gray-600">{{ $t('courseDetail.blocksCount', {
                                                 count:
-                                                course.blocks?.length ||
-                                                0 }) }}</span>
+                                                    course.blocks?.length ||
+                                                    0
+                                            }) }}</span>
                                         </div>
                                         <div v-if="course.finalQuiz?.questions?.length"
                                             class="flex items-center gap-3 text-sm">
                                             <AcademicCapIcon class="w-4 h-4 text-gray-400 shrink-0" />
                                             <span class="text-gray-600">{{ $t('courseDetail.finalExamIncluded')
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div v-if="avgRating" class="flex items-center gap-3 text-sm">
                                             <StarIcon class="w-4 h-4 text-amber-400 fill-amber-400 shrink-0" />
                                             <span class="text-gray-600">{{ $t('courseDetail.ratingInfo', {
                                                 rating:
-                                                avgRating, count:
-                                                course.ratings?.length }) }}</span>
+                                                    avgRating, count:
+                                                    course.ratings?.length
+                                            }) }}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </template>
 
         <!-- Not found -->
@@ -283,9 +307,8 @@
             <p>{{ $t('courseDetail.notFound') }}</p>
             <router-link to="/courses" class="text-sky-500 hover:underline mt-2 text-sm">{{
                 $t('courseDetail.browseCourses')
-                }}</router-link>
+            }}</router-link>
         </div>
-
     </div>
 </template>
 
@@ -301,6 +324,10 @@ import { useAuthStore } from '@/stores/auth'
 import { useCourseStore } from '@/stores/course'
 import { useGlobals } from '@/plugins/globals'
 import { useI18n } from 'vue-i18n'
+import axios from '@/plugins/axios'
+import ReviewList from '@/components/reviews/ReviewList.vue'
+import ReviewStats from '@/components/reviews/ReviewStats.vue'
+import ReviewForm from '@/components/reviews/ReviewForm.vue'
 
 const { t } = useI18n()
 const { toast, uploadsUrl, modal } = useGlobals()
@@ -315,6 +342,14 @@ const loading = ref(true)
 const enrolling = ref(false)
 const course = ref(null)
 const isEnrolled = ref(false)
+
+// ── Review state ─────────────────────────────────────────────────────────
+const courseReviews = ref([])
+const courseReviewStats = ref({ averageRating: 0, totalReviews: 0, ratingDistribution: {} })
+const loadingReviews = ref(false)
+const canReviewCourse = ref(false)
+const reviewFormRef = ref(null)
+const submittingReview = ref(false)
 
 const expanded = reactive({})
 
@@ -338,6 +373,45 @@ function toggleBlock(id) {
 
 function blockLessonCount(block) {
     return block.topics.reduce((t, tp) => t + tp.lessons.length, 0)
+}
+
+const fetchCourseReviews = async () => {
+    try {
+        loadingReviews.value = true
+        const [reviewsRes, statsRes] = await Promise.all([
+            axios.get(`/reviews/course/${courseId}`),
+            axios.get(`/reviews/course/${courseId}/statistics`)
+        ])
+        courseReviews.value = reviewsRes.data.reviews || []
+        courseReviewStats.value = statsRes.data
+    } catch (error) {
+        console.error('Error fetching course reviews:', error)
+    } finally {
+        loadingReviews.value = false
+    }
+}
+
+const checkCanReview = async () => {
+    if (!authStore.isAuthenticated) return
+    try {
+        const res = await axios.get('/reviews/can-review', { params: { courseId } })
+        canReviewCourse.value = res.data.canReview
+    } catch { /* ignore — user probably not enrolled */ }
+}
+
+const submitCourseReview = async (payload) => {
+    try {
+        submittingReview.value = true
+        await axios.post('/reviews', payload)
+        toast.success(t('reviews.reviewSubmitted'))
+        reviewFormRef.value?.resetForm()
+        canReviewCourse.value = false
+        await fetchCourseReviews()
+    } catch (error) {
+        toast.error(error.response?.data?.message || t('reviews.submitError'))
+    } finally {
+        submittingReview.value = false
+    }
 }
 
 async function handleEnroll() {
@@ -375,6 +449,12 @@ async function load() {
         if (course.value?.blocks?.length) {
             expanded[course.value.blocks[0]._id] = true
         }
+
+        // Fetch reviews and check eligibility after course is loaded
+        await Promise.all([
+            fetchCourseReviews(),
+            checkCanReview()
+        ])
     } catch (e) {
         console.error('CourseDetail load error:', e)
         course.value = null

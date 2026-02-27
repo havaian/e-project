@@ -3,6 +3,7 @@ const Payment = require('./model');
 const Appointment = require('../appointment/model');
 const { NotificationService } = require('../notification');
 const { uzsToUsdCents } = require('../utils/exchangeRate')
+const Earnings = require('../earnings/model');
 
 /**
  * Create a checkout session for an appointment
@@ -206,6 +207,12 @@ async function handleCheckoutSessionCompleted(session) {
             enrollment.payment.status = 'succeeded';
             enrollment.payment.paidAt = new Date();
             await enrollment.save();
+
+            const { Course } = require('../course/model');
+            const course = await Course.findById(enrollment.course);
+            if (course) {
+                await Earnings.recordCourseEarning(course.provider, enrollment, 'add');
+            }
 
             console.log(`Course enrollment confirmed via webhook — session ${session.id}`);
             return;

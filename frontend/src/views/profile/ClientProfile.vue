@@ -64,8 +64,8 @@
                   <dd class="mt-1 text-gray-900">{{ formatDate(user?.createdAt) }}</dd>
                 </div>
                 <div>
-                    <dt class="text-sm font-medium text-gray-500">{{ $t('clientProfile.interfaceLanguage') }}</dt>
-                    <dd class="mt-1 text-gray-900">{{ getLocaleName(user?.preferences?.language) }}</dd>
+                  <dt class="text-sm font-medium text-gray-500">{{ $t('clientProfile.interfaceLanguage') }}</dt>
+                  <dd class="mt-1 text-gray-900">{{ getLocaleName(user?.preferences?.language) }}</dd>
                 </div>
               </dl>
             </div>
@@ -85,7 +85,7 @@
                       :alt="provider?.firstName || 'Provider'" class="h-12 w-12 rounded-full object-cover">
                     <div>
                       <p class="font-medium text-gray-900">{{ provider?.firstName || '' }} {{ provider?.lastName || ''
-                        }}</p>
+                      }}</p>
                       <p class="text-sm text-gray-600">
                         {{ provider?.specializations?.join(', ') || $t('clientProfile.noSpecializations') }}
                       </p>
@@ -154,7 +154,7 @@
                   </div>
                   <div class="text-right">
                     <p class="text-sm font-medium text-gray-900">{{ appointment.type || $t('clientProfile.consultation')
-                      }}</p>
+                    }}</p>
                     <router-link :to="`/appointments/${appointment._id}`"
                       class="text-xs text-indigo-600 hover:text-indigo-700">
                       {{ $t('clientProfile.viewDetails') }}
@@ -229,7 +229,8 @@
                     class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
                     {{ showAllAchievements ? $t('clientProfile.showLess') : $t('clientProfile.viewMore', {
                       count:
-                    unearnedAchievements.length - 3 }) }}
+                        unearnedAchievements.length - 3
+                    }) }}
                   </button>
                 </div>
               </div>
@@ -239,15 +240,26 @@
               </div>
             </div>
 
-            <!-- Reviews -->
+            <!-- My Reputation (provider → client tags) -->
+            <div v-if="isReviewsBidirectionalEnabled" class="bg-white border border-gray-200 rounded-xl p-6">
+              <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                <StarIcon class="w-5 h-5 mr-2 text-sky-600" />
+                {{ $t('reviews.clientReputation') }}
+              </h2>
+              <ReviewStats mode="tags" :total-reviews="reputationData.totalReviews"
+                :tags-summary="reputationData.tags" />
+            </div>
+
+            <!-- Reviews I've Written -->
             <div class="bg-white border border-gray-200 rounded-xl p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                 <StarIcon class="w-5 h-5 mr-2 text-purple-600" />
                 {{ $t('clientProfile.reviewsGiven') }}
               </h2>
 
-              <div v-if="reviews.length > 0" class="space-y-4">
-                <div v-for="review in reviews.slice(0, 3)" :key="review._id" class="border-l-4 border-purple-200 pl-4">
+              <div v-if="myReviews.length > 0" class="space-y-4">
+                <div v-for="review in myReviews.slice(0, showAllReviews ? myReviews.length : 3)" :key="review._id"
+                  class="border-l-4 border-purple-200 pl-4">
                   <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center space-x-2">
                       <div class="flex">
@@ -260,17 +272,19 @@
                   <p class="text-sm text-gray-900 mb-2">{{ review.comment }}</p>
                   <p class="text-xs text-gray-500">
                     {{ $t('clientProfile.forProvider', {
-                      name: `${review.provider?.firstName || ''}
-                    ${review.provider?.lastName || ''}` }) }}
+                      name: `${review.reviewee?.firstName || ''}
+                    ${review.reviewee?.lastName || ''}`
+                    }) }}
                   </p>
                 </div>
 
-                <div v-if="reviews.length > 3" class="text-center">
+                <div v-if="myReviews.length > 3" class="text-center">
                   <button @click="showAllReviews = !showAllReviews"
                     class="text-purple-600 hover:text-purple-700 text-sm font-medium">
                     {{ showAllReviews ? $t('clientProfile.showLess') : $t('clientProfile.viewMoreReviews', {
                       count:
-                    reviews.length - 3 }) }}
+                        myReviews.length - 3
+                    }) }}
                   </button>
                 </div>
               </div>
@@ -280,6 +294,15 @@
                 <p class="text-gray-500 text-sm">{{ $t('clientProfile.noReviews') }}</p>
                 <p class="text-gray-400 text-xs mt-1">{{ $t('clientProfile.noReviewsHint') }}</p>
               </div>
+            </div>
+
+            <!-- Payment History -->
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+              <h2 class="text-lg font-medium text-gray-900 mb-4">{{ $t('clientProfile.paymentHistory') }}</h2>
+              <router-link to="/profile/me/payments"
+                class="block text-center text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                {{ $t('clientProfile.viewPaymentHistory') }}
+              </router-link>
             </div>
           </div>
         </div>
@@ -294,7 +317,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
 import { isAchievementsEnabled } from '@/utils/modules'
+import { useModules } from '@/composables/useModules'
 import { availableLocales } from '@/utils/i18n'
+import ReviewStats from '@/components/reviews/ReviewStats.vue'
+
+const { isReviewsBidirectionalEnabled } = useModules()
 
 // Simple computed property
 const showAchievements = computed(() => isAchievementsEnabled())
@@ -311,7 +338,8 @@ const appointmentStats = ref({
   upcoming: 0
 })
 const achievements = ref([])
-const reviews = ref([])
+const myReviews = ref([])
+const reputationData = ref({ tags: [], totalReviews: 0 })
 const loading = ref(true)
 const showAllAchievements = ref(false)
 const showAllReviews = ref(false)
@@ -337,9 +365,9 @@ const achievementProgress = computed(() => {
 
 // Methods
 const getLocaleName = (code) => {
-    if (!code) return 'English'
-    const found = availableLocales.find(l => l.code === code)
-    return found ? `${found.flag} ${found.name}` : code
+  if (!code) return 'English'
+  const found = availableLocales.find(l => l.code === code)
+  return found ? `${found.flag} ${found.name}` : code
 }
 
 const fetchUserProfile = async () => {
@@ -412,13 +440,39 @@ const fetchAchievements = async () => {
   }
 }
 
-const fetchReviews = async () => {
+/**
+ * Fetch reviews the client has WRITTEN (client_to_provider and client_to_course).
+ * Uses /reviews/my-reviews which returns reviews by the current user.
+ */
+const fetchMyReviews = async () => {
+  try {
+    const response = await axios.get('/reviews/my-reviews')
+    myReviews.value = response.data.reviews || []
+  } catch (error) {
+    console.error('Error fetching my reviews:', error)
+    myReviews.value = []
+  }
+}
+
+/**
+ * Fetch client reputation data — provider→client reviews (tags summary).
+ * Uses /reviews/client/:clientId which returns reviews ABOUT the client.
+ */
+const fetchReputation = async () => {
+  if (!isReviewsBidirectionalEnabled.value) {
+    reputationData.value = { tags: [], totalReviews: 0 }
+    return
+  }
+
   try {
     const response = await axios.get(`/reviews/client/${authStore.user._id}`)
-    reviews.value = response.data.reviews || []
+    reputationData.value = {
+      tags: response.data.tagsSummary?.tags || [],
+      totalReviews: response.data.tagsSummary?.totalReviews || 0
+    }
   } catch (error) {
-    console.error('Error fetching reviews:', error)
-    reviews.value = []
+    console.error('Error fetching reputation:', error)
+    reputationData.value = { tags: [], totalReviews: 0 }
   }
 }
 
@@ -459,7 +513,8 @@ onMounted(async () => {
     const basePromises = [
       fetchUserProfile(),
       fetchAppointmentsAndProviders(),
-      fetchReviews()
+      fetchMyReviews(),
+      fetchReputation()
     ]
 
     if (showAchievements.value) {

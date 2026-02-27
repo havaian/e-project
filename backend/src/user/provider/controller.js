@@ -448,7 +448,7 @@ exports.getAppointmentStats = async (req, res) => {
 exports.exportEarnings = async (req, res) => {
     try {
         const providerId = req.user.id;
-        const { format = 'csv', period = 'monthly', startDate, endDate } = req.query;
+        const { format: exportFormat = 'csv', period = 'monthly', startDate, endDate } = req.query;
 
         let earnings;
         if (startDate && endDate) {
@@ -462,7 +462,7 @@ exports.exportEarnings = async (req, res) => {
             earnings = await ProviderEarnings.getEarningsSummary(providerId, period, 50);
         }
 
-        if (format === 'csv') {
+        if (exportFormat === 'csv') {
             // Generate CSV
             const csvHeader = 'Period,Total earnings,Net earnings,Appointments,Completed,Canceled\n';
             const csvRows = earnings.map(record => {

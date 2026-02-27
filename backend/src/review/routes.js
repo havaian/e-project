@@ -6,18 +6,43 @@ const { authenticateUser, authorizeRoles } = require('../auth');
 
 /**
  * @route POST /api/reviews
- * @desc Create a new review for a completed appointment
- * @access Private (Client only)
+ * @desc Create a review (unified — direction determined by body params)
+ * @access Private (authenticated users)
+ * @body Client → Provider: { appointmentId, rating, comment }
+ * @body Client → Course:   { courseId, rating, comment }
+ * @body Provider → Client:  { appointmentId, tags, note? }
  */
 router.post('/',
     authenticateUser,
-    authorizeRoles(['client']),
     reviewController.createReview
 );
 
 /**
+ * @route GET /api/reviews/can-review
+ * @desc Check if the user can review a given appointment or course
+ * @access Private (authenticated users)
+ * @query appointmentId or courseId
+ */
+router.get('/can-review',
+    authenticateUser,
+    reviewController.canReview
+);
+
+/**
+ * @route GET /api/reviews/my-reviews
+ * @desc Get all reviews written by the authenticated user
+ * @access Private
+ * @query direction — optional filter (client_to_provider, provider_to_client, client_to_course)
+ * @query limit, skip — pagination
+ */
+router.get('/my-reviews',
+    authenticateUser,
+    reviewController.getMyReviews
+);
+
+/**
  * @route GET /api/reviews/provider/:providerId
- * @desc Get all reviews for a specific provider
+ * @desc Get all reviews about a provider (client_to_provider)
  * @access Public
  */
 router.get('/provider/:providerId',
@@ -26,17 +51,35 @@ router.get('/provider/:providerId',
 
 /**
  * @route GET /api/reviews/provider/:providerId/statistics
- * @desc Get review statistics for a provider (rating distribution, averages)
+ * @desc Get rating distribution for a provider
  * @access Public
  */
 router.get('/provider/:providerId/statistics',
-    reviewController.getReviewStatistics
+    reviewController.getProviderStatistics
+);
+
+/**
+ * @route GET /api/reviews/course/:courseId
+ * @desc Get all reviews for a course (client_to_course)
+ * @access Public
+ */
+router.get('/course/:courseId',
+    reviewController.getCourseReviews
+);
+
+/**
+ * @route GET /api/reviews/course/:courseId/statistics
+ * @desc Get rating distribution for a course
+ * @access Public
+ */
+router.get('/course/:courseId/statistics',
+    reviewController.getCourseStatistics
 );
 
 /**
  * @route GET /api/reviews/client/:clientId
- * @desc Get all reviews written by a specific client
- * @access Private (Client can only see own reviews, providers/admins can see all)
+ * @desc Get reviews about a client (provider_to_client)
+ * @access Private (client can see own; providers/admins can see all)
  */
 router.get('/client/:clientId',
     authenticateUser,
@@ -45,18 +88,17 @@ router.get('/client/:clientId',
 
 /**
  * @route PUT /api/reviews/:reviewId
- * @desc Update a review (only by the client who wrote it, within 24 hours)
- * @access Private (Client only)
+ * @desc Edit a review (only by reviewer, within 24 hours)
+ * @access Private
  */
 router.put('/:reviewId',
     authenticateUser,
-    authorizeRoles(['client']),
     reviewController.updateReview
 );
 
 /**
  * @route POST /api/reviews/:reviewId/respond
- * @desc Provider responds to a review
+ * @desc Provider responds to a client_to_provider review
  * @access Private (Provider only)
  */
 router.post('/:reviewId/respond',
@@ -68,7 +110,7 @@ router.post('/:reviewId/respond',
 /**
  * @route POST /api/reviews/:reviewId/flag
  * @desc Flag a review for inappropriate content
- * @access Private (Any authenticated user)
+ * @access Private (any authenticated user)
  */
 router.post('/:reviewId/flag',
     authenticateUser,
@@ -77,7 +119,7 @@ router.post('/:reviewId/flag',
 
 /**
  * @route POST /api/reviews/:reviewId/moderate
- * @desc Admin: Moderate a flagged review (approve, hide, or delete)
+ * @desc Admin: moderate a flagged review (approve, hide, delete)
  * @access Private (Admin only)
  */
 router.post('/:reviewId/moderate',

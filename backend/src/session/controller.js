@@ -1,5 +1,6 @@
 const Appointment = require('../appointment/model');
 const User = require('../user/model');
+const Earnings = require('../earnings/model');
 const JitsiUtils = require('../utils/jitsiUtils');
 const { NotificationService } = require('../notification');
 
@@ -195,6 +196,8 @@ class SessionController {
             }
 
             await appointment.save();
+
+            await Earnings.recordConsultationEarning(appointment.provider._id || appointment.provider, appointment, 'add');
 
             // Send completion notification
             await NotificationService.sendAppointmentCompletionNotification(appointment);
@@ -497,6 +500,8 @@ class SessionController {
             }
 
             await appointment.save();
+
+            await Earnings.recordConsultationEarning(appointment.provider._id || appointment.provider, appointment, 'add');
 
             res.status(200).json({
                 message: 'Room exit recorded successfully',

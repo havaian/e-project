@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const Appointment = require('../appointment/model');
+const Earnings = require('../earnings/model');
 const { NotificationService } = require('../notification');
 
 // Schedule job to run every 5 minutes to check and end sessions that have reached their end time
@@ -29,6 +30,8 @@ const scheduleSessionTerminator = () => {
                 }
 
                 await appointment.save();
+
+                await Earnings.recordConsultationEarning(appointment.provider._id || appointment.provider, appointment, 'add');
 
                 // Send notifications to both client and provider
                 await NotificationService.sendSessionCompletedNotification(appointment);

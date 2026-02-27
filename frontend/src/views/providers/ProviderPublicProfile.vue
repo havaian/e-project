@@ -144,94 +144,23 @@
                                         </span>
                                     </div>
                                     <div v-else class="text-gray-500 text-sm">{{ $t('providerPublicProfile.noLanguages')
-                                        }}</div>
+                                    }}</div>
                                 </div>
                             </div>
 
-                            <!-- Reviews -->
+                            <!-- Reviews — uses ReviewStats + ReviewList components -->
                             <div class="bg-white border border-gray-200 rounded-xl p-6">
                                 <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                     <StarIcon class="w-5 h-5 mr-2 text-yellow-600" />
                                     {{ $t('providerPublicProfile.clientReviews') }}
                                 </h2>
 
-                                <!-- Rating Summary -->
-                                <div v-if="reviewStats.average > 0"
-                                    class="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center">
-                                            <div class="flex">
-                                                <StarIcon v-for="i in 5" :key="i"
-                                                    :class="i <= Math.round(reviewStats.average) ? 'text-yellow-400' : 'text-gray-300'"
-                                                    class="w-6 h-6" />
-                                            </div>
-                                            <div class="ml-3">
-                                                <p class="text-lg font-medium text-gray-900">{{
-                                                    $t('providerPublicProfile.outOf', { rating:
-                                                    reviewStats.average.toFixed(1) }) }}</p>
-                                                <p class="text-sm text-gray-600">{{ $t('providerPublicProfile.basedOn',
-                                                    { count: reviewStats.total }) }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <ReviewStats mode="stars" :average-rating="reviewStatistics.averageRating"
+                                    :total-reviews="reviewStatistics.totalReviews"
+                                    :rating-distribution="reviewStatistics.ratingDistribution" />
 
-                                <!-- Individual Reviews -->
-                                <div v-if="reviews.length > 0" class="space-y-6">
-                                    <div v-for="review in reviews.slice(0, showAllReviews ? reviews.length : 3)"
-                                        :key="review._id" class="border-b border-gray-100 pb-6 last:border-b-0">
-                                        <div class="flex items-start space-x-4">
-                                            <img :src="review.client.profilePicture ? `/api${review.client.profilePicture}` : '/images/user-placeholder.jpg'"
-                                                :alt="review.client?.firstName"
-                                                class="h-10 w-10 rounded-full object-cover">
-                                            <div class="flex-1">
-                                                <div class="flex items-center justify-between mb-2">
-                                                    <div>
-                                                        <p class="font-medium text-gray-900">
-                                                            {{ review.client?.firstName }} {{ review.client?.lastName }}
-                                                        </p>
-                                                        <div class="flex items-center mt-1">
-                                                            <div class="flex">
-                                                                <StarIcon v-for="i in 5" :key="i"
-                                                                    :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'"
-                                                                    class="w-4 h-4" />
-                                                            </div>
-                                                            <span class="ml-2 text-sm text-gray-600">{{
-                                                                formatDate(review.createdAt) }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <p class="text-gray-700 leading-relaxed">{{ review.comment }}</p>
-
-                                                <!-- Provider Response -->
-                                                <div v-if="review.providerResponse?.text"
-                                                    class="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-200">
-                                                    <p class="text-sm font-medium text-blue-900 mb-1">{{
-                                                        $t('providerPublicProfile.responseFrom', { name:
-                                                        provider.firstName }) }}</p>
-                                                    <p class="text-sm text-blue-800">{{ review.providerResponse.text }}
-                                                    </p>
-                                                    <p class="text-xs text-blue-600 mt-1">{{
-                                                        formatDate(review.providerResponse.respondedAt) }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div v-if="reviews.length > 3" class="text-center">
-                                        <button @click="showAllReviews = !showAllReviews"
-                                            class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                                            {{ showAllReviews ? $t('providerPublicProfile.showLess') :
-                                                $t('providerPublicProfile.viewMoreReviews', { count: reviews.length - 3 })
-                                            }}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div v-else class="text-center py-8">
-                                    <StarIcon class="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                                    <p class="text-gray-500">{{ $t('providerPublicProfile.noReviews') }}</p>
-                                    <p class="text-gray-400 text-sm mt-1">{{ $t('providerPublicProfile.beFirst') }}</p>
+                                <div class="mt-6">
+                                    <ReviewList :reviews="reviews" :loading="loadingReviews" :initial-limit="3" />
                                 </div>
                             </div>
                         </div>
@@ -248,7 +177,8 @@
                                 <div class="text-3xl font-bold text-green-600 mb-2">{{ formatSessionFee }}</div>
                                 <div class="text-sm text-gray-600">{{ $t('providerPublicProfile.perMinutes', {
                                     n:
-                                    provider.sessionDuration || 60 }) }}</div>
+                                        provider.sessionDuration || 60
+                                }) }}</div>
 
                                 <div class="mt-4 pt-4 border-t border-gray-200">
                                     <router-link v-if="authStore.isClient"
@@ -302,8 +232,9 @@
                                         <button @click="showAllAchievements = !showAllAchievements"
                                             class="text-yellow-600 hover:text-yellow-700 text-sm font-medium">
                                             {{ showAllAchievements ? $t('providerPublicProfile.showLess') :
-                                                $t('providerPublicProfile.viewMore', { count: earnedAchievements.length - 4
-                                            }) }}
+                                                $t('providerPublicProfile.viewMore', {
+                                                    count: earnedAchievements.length - 4
+                                                }) }}
                                         </button>
                                     </div>
                                 </div>
@@ -326,18 +257,18 @@
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">{{ $t('providerPublicProfile.responseRate')
-                                            }}</span>
+                                        }}</span>
                                         <span class="font-medium text-gray-900">{{ responseRate }}%</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">{{ $t('providerPublicProfile.memberSince')
-                                            }}</span>
+                                        }}</span>
                                         <span class="font-medium text-gray-900">{{ formatDateShort(provider.createdAt)
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                     <div v-if="provider.lastLoginAt" class="flex justify-between items-center">
                                         <span class="text-sm text-gray-600">{{ $t('providerPublicProfile.lastActive')
-                                            }}</span>
+                                        }}</span>
                                         <span class="font-medium text-gray-900">{{
                                             formatRelativeTime(provider.lastLoginAt) }}</span>
                                     </div>
@@ -384,6 +315,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/plugins/axios'
+import ReviewList from '@/components/reviews/ReviewList.vue'
+import ReviewStats from '@/components/reviews/ReviewStats.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -393,6 +326,8 @@ const authStore = useAuthStore()
 const provider = ref(null)
 const reviews = ref([])
 const reviewStats = ref({ average: 0, total: 0 })
+const reviewStatistics = ref({ averageRating: 0, totalReviews: 0, ratingDistribution: {} })
+const loadingReviews = ref(false)
 const achievements = ref([])
 const similarProviders = ref([])
 const loading = ref(true)
@@ -443,11 +378,23 @@ const fetchProviderProfile = async () => {
 
 const fetchProviderReviews = async () => {
     try {
+        loadingReviews.value = true
         const response = await axios.get(`/reviews/provider/${route.params.id}`)
         reviews.value = response.data.reviews || []
         reviewStats.value = response.data.statistics || { average: 0, total: 0 }
     } catch (error) {
         console.error('Error fetching reviews:', error)
+    } finally {
+        loadingReviews.value = false
+    }
+}
+
+const fetchReviewStatistics = async () => {
+    try {
+        const response = await axios.get(`/reviews/provider/${route.params.id}/statistics`)
+        reviewStatistics.value = response.data || { averageRating: 0, totalReviews: 0, ratingDistribution: {} }
+    } catch (error) {
+        console.error('Error fetching review statistics:', error)
     }
 }
 
@@ -554,6 +501,7 @@ onMounted(async () => {
         await Promise.all([
             fetchProviderProfile(),
             fetchProviderReviews(),
+            fetchReviewStatistics(),
             fetchProviderAchievements(),
             fetchCompletedAppointments()
         ])

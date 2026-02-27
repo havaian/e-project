@@ -296,7 +296,7 @@
                             </div>
                         </div>
 
-                        <router-link to="/profile/me/dashboard"
+                        <router-link to="/profile/me/earnings"
                             class="block text-center text-brand-1 hover:text-brand-1/80 text-sm font-medium mt-4">
                             {{ $t('providerDashboard.viewAnalytics') }}
                         </router-link>

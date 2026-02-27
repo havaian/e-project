@@ -893,6 +893,8 @@ exports.initiateEnrollment = async (req, res) => {
                 client: clientId,
                 payment: { amount: 0, currency: course.currency || 'uzs', status: 'free' }
             });
+            const Earnings = require('../earnings/model');
+            await Earnings.recordCourseEarning(course.provider._id, enrollment, 'add');
             return res.status(201).json({ success: true, data: { enrollment, free: true } });
         }
 

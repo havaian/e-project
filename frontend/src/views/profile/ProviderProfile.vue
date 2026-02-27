@@ -83,7 +83,7 @@
                   <dt class="text-sm font-medium text-gray-500">{{ $t('providerProfile.experienceLabel') }}</dt>
                   <dd class="mt-1 text-gray-900">{{ $t('providerProfile.yearsExperience', {
                     count: user?.experience || 0
-                    }) }}</dd>
+                  }) }}</dd>
                 </div>
                 <div>
                   <dt class="text-sm font-medium text-gray-500">{{ $t('providerProfile.specializations') }}</dt>
@@ -222,6 +222,18 @@
                 <p class="text-gray-400 text-sm mt-1">{{ $t('providerProfile.noAppointmentsHint') }}</p>
               </div>
             </div>
+
+            <!-- ── My Reviews (with respond capability) ────────────────── -->
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('reviews.myReviews') }}</h3>
+
+              <ReviewStats mode="stars" :average-rating="reviewStats.averageRating"
+                :total-reviews="reviewStats.totalReviews" :rating-distribution="reviewStats.ratingDistribution" />
+
+              <div class="mt-6">
+                <ReviewList :reviews="reviews" :loading="loadingReviews" :can-respond="true" @respond="handleRespond" />
+              </div>
+            </div>
           </div>
 
           <!-- Right Column -->
@@ -314,7 +326,8 @@
                     class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
                     {{ showAllAchievements ? $t('providerProfile.showLess') : $t('providerProfile.viewMore', {
                       count:
-                    unearnedAchievements.length - 3 }) }}
+                        unearnedAchievements.length - 3
+                    }) }}
                   </button>
                 </div>
               </div>
@@ -376,12 +389,21 @@
 import { CheckCircleIcon, CalendarDaysIcon, UsersIcon, PencilIcon, ChartBarIcon, BriefcaseIcon, CurrencyDollarIcon, UserPlusIcon, DocumentTextIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import axios from '@/plugins/axios'
 import { isAchievementsEnabled } from '@/utils/modules'
 import { useGlobals } from '@/plugins/globals'
 import { availableLocales } from '@/utils/i18n'
+import ReviewList from '@/components/reviews/ReviewList.vue'
+import ReviewStats from '@/components/reviews/ReviewStats.vue'
 
-const { toast, uploadsUrl, modal } = useGlobals()
+const { t } = useI18n()
+const { toast, modal } = useGlobals()
+
+// In the data fetching section:
+const reviews = ref([])
+const reviewStats = ref({ averageRating: 0, totalReviews: 0, ratingDistribution: {} })
+const loadingReviews = ref(false)
 
 // Simple computed property
 const showAchievements = computed(() => isAchievementsEnabled())
@@ -425,10 +447,36 @@ const achievementProgress = computed(() => {
 })
 
 // Methods
+const fetchReviews = async () => {
+  try {
+    loadingReviews.value = true
+    const [reviewsRes, statsRes] = await Promise.all([
+      axios.get(`/reviews/provider/${authStore.user._id}`),
+      axios.get(`/reviews/provider/${authStore.user._id}/statistics`)
+    ])
+    reviews.value = reviewsRes.data.reviews || []
+    reviewStats.value = statsRes.data
+  } catch (error) {
+    console.error('Error fetching reviews:', error)
+  } finally {
+    loadingReviews.value = false
+  }
+}
+
+const handleRespond = async ({ reviewId, responseText }) => {
+  try {
+    await axios.post(`/reviews/${reviewId}/respond`, { responseText })
+    toast.success(t('reviews.responseSent'))
+    await fetchReviews() // Refresh
+  } catch (error) {
+    toast.error(error.response?.data?.message || t('reviews.responseError'))
+  }
+}
+
 const getLocaleName = (code) => {
-    if (!code) return 'English'
-    const found = availableLocales.find(l => l.code === code)
-    return found ? `${found.flag} ${found.name}` : code
+  if (!code) return 'English'
+  const found = availableLocales.find(l => l.code === code)
+  return found ? `${found.flag} ${found.name}` : code
 }
 
 const fetchUserProfile = async () => {
@@ -595,7 +643,8 @@ onMounted(async () => {
       fetchUserProfile(),
       fetchClients(),
       fetchAppointments(),
-      fetchEarnings()
+      fetchEarnings(),
+      fetchReviews()
     ]
 
     // Conditionally add achievements fetch
