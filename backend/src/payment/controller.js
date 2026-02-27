@@ -57,8 +57,7 @@ exports.createCheckoutSession = async (req, res) => {
             // UZS is not supported by Stripe. Convert to USD cents using the
             // daily CBU rate (cached in Redis for 24 h). Price is stored and
             // displayed in UZS; we only send USD to Stripe.
-            // Create Stripe checkout session
-            const amountCents = await uzsToUsdCents(course.price)
+            const amountCents = await uzsToUsdCents(amount);
 
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
@@ -232,7 +231,8 @@ async function handleCheckoutSessionCompleted(session) {
         await payment.save();
 
         // Update appointment payment status
-        const appointment = await Appointment.findById(payment.appointment);
+        const appointment = await Appointment.findById(payment.appointment)
+            .populate('provider', 'sessionFee firstName lastName');
         if (appointment) {
             // Send success emails
             await NotificationService.sendPaymentSuccessEmail(payment._id, appointment);
@@ -243,6 +243,22 @@ async function handleCheckoutSessionCompleted(session) {
 
             // Send payment confirmation
             await NotificationService.sendPaymentConfirmation(payment._id);
+
+            // ── Record consultation earnings ─────────────────────────────
+            try {
+                await Earnings.recordConsultationEarning(
+                    payment.provider,
+                    {
+                        dateTime: appointment.dateTime,
+                        status: 'completed',
+                        sessionFee: payment.amount
+                    },
+                    'add'
+                );
+            } catch (earningsError) {
+                // Non-blocking — don't fail the webhook if earnings recording fails
+                console.error('Error recording consultation earnings:', earningsError);
+            }
         }
     } catch (error) {
         console.error('Error handling completed checkout session:', error);
@@ -354,6 +370,86 @@ exports.verifySessionStatus = async (req, res) => {
 };
 
 /**
+ * GET /api/payments/my
+ * Get the authenticated client's payment history.
+ */
+exports.getMyPayments = async (req, res) => {
+    try {
+        const clientId = req.user.id;
+        const {
+            status,
+            page = 1,
+            limit = 20,
+            sort = '-createdAt'
+        } = req.query;
+
+        const query = { client: clientId };
+        if (status && ['pending', 'succeeded', 'failed', 'canceled'].includes(status)) {
+            query.status = status;
+        }
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+
+        const [payments, total] = await Promise.all([
+            Payment.find(query)
+                .populate('appointment', 'dateTime type status')
+                .populate('provider', 'firstName lastName profilePicture specializations')
+                .sort(sort)
+                .skip(skip)
+                .limit(parseInt(limit)),
+            Payment.countDocuments(query)
+        ]);
+
+        // Calculate summary for the client
+        const summaryPipeline = [
+            { $match: { client: new (require('mongoose').Types.ObjectId)(clientId) } },
+            {
+                $group: {
+                    _id: '$status',
+                    count: { $sum: 1 },
+                    totalAmount: { $sum: '$amount' }
+                }
+            }
+        ];
+        const summaryResults = await Payment.aggregate(summaryPipeline);
+
+        const summary = {
+            totalSpent: 0,
+            totalPayments: 0,
+            pending: 0,
+            succeeded: 0,
+            failed: 0
+        };
+        summaryResults.forEach(item => {
+            summary.totalPayments += item.count;
+            if (item._id === 'succeeded') {
+                summary.totalSpent = item.totalAmount;
+                summary.succeeded = item.count;
+            } else if (item._id === 'pending') {
+                summary.pending = item.count;
+            } else if (item._id === 'failed') {
+                summary.failed = item.count;
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            payments,
+            summary,
+            pagination: {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                total,
+                pages: Math.ceil(total / parseInt(limit))
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching client payments:', error);
+        res.status(500).json({ message: 'Failed to fetch payment history' });
+    }
+};
+
+/**
  * Process a refund for a payment
  * @param {String} paymentId - Payment ID to refund
  * @returns {Promise<Object>} Updated payment object
@@ -459,17 +555,19 @@ exports.handlePaymentFailure = async (appointmentId, error) => {
         };
         await appointment.save();
 
-        // Create new checkout session for retry
+        // Create new checkout session for retry — convert UZS → USD for Stripe
+        const amountCents = await uzsToUsdCents(appointment.provider.sessionFee);
+
         const retrySession = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
                 price_data: {
-                    currency: 'uzs',
+                    currency: 'usd',
                     product_data: {
                         name: `Consultation with ${appointment.provider.firstName} ${appointment.provider.lastName}`,
                         description: `${appointment.type} session`
                     },
-                    unit_amount: appointment.provider.sessionFee * 100 // Convert to cents
+                    unit_amount: amountCents
                 },
                 quantity: 1
             }],

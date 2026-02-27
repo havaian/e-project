@@ -19,6 +19,33 @@ router.post(
 );
 
 /**
+ * @route GET /api/payments/my
+ * @desc Get the authenticated client's payment history with summary
+ * @access Private (client)
+ * @query {string} status - Filter by status: pending, succeeded, failed, canceled (optional)
+ * @query {number} page - Page number (default: 1)
+ * @query {number} limit - Results per page (default: 20)
+ * @query {string} sort - Sort field with direction (default: '-createdAt')
+ */
+router.get(
+    '/my',
+    authenticateUser,
+    authorizeRoles(['client']),
+    paymentController.getMyPayments
+);
+
+/**
+ * @route GET /api/payments/appointment/:appointmentId/status
+ * @desc Get payment status for an appointment (client, provider, or admin)
+ * @access Private
+ */
+router.get(
+    '/appointment/:appointmentId/status',
+    authenticateUser,
+    paymentController.getAppointmentPaymentStatus
+);
+
+/**
  * @route GET /api/payments/session/:sessionId
  * @desc Verify payment session status
  * @access Public (needed for redirect after payment)

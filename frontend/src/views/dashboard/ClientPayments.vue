@@ -11,11 +11,6 @@
                             <p class="mt-1 text-sm text-gray-600">{{ $t('providerEarnings.subtitle') }}</p>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <button @click="exportData" :disabled="exporting"
-                                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                                <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
-                                {{ exporting ? $t('providerEarnings.exporting') : $t('providerEarnings.exportCSV') }}
-                            </button>
                             <router-link to="/profile/me/dashboard"
                                 class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50">
                                 <ArrowLeftIcon class="w-4 h-4 mr-2" />
@@ -223,7 +218,7 @@ const fetchEarnings = async () => {
 const fetchSummary = async () => {
     try {
         loadingSummary.value = true
-        const response = await axios.get('/earnings/summary')
+        const response = await axios.get('/payments/my')
         summary.value = response.data.summary || {}
     } catch (error) {
         console.error('Error fetching earnings summary:', error)
@@ -231,35 +226,6 @@ const fetchSummary = async () => {
         loadingSummary.value = false
     }
 }
-
-const exportData = async () => {
-    try {
-        exporting.value = true
-        const response = await axios.get('/earnings/export', {
-            params: {
-                format: 'csv',
-                source: activeSource.value,
-                period: activePeriod.value
-            },
-            responseType: 'blob'
-        })
-
-        // Trigger download
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', `earnings-${activeSource.value}-${activePeriod.value}.csv`)
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        window.URL.revokeObjectURL(url)
-    } catch (error) {
-        console.error('Error exporting earnings:', error)
-    } finally {
-        exporting.value = false
-    }
-}
-
 // ── Watchers ─────────────────────────────────────────────────────────────────
 watch([activeSource, activePeriod], () => {
     fetchEarnings()
