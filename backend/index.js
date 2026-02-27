@@ -346,7 +346,7 @@ if (process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
 }
 
 if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false' || process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
-    app.use('/api/earnings', require('./earnings/routes'));
+    app.use('/api/earnings', require('./src/earnings/routes'));
 }
 if (process.env.VITE_MODULE_CONSULTATIONS_ENABLED !== 'false' || process.env.VITE_MODULE_COURSES_ENABLED !== 'false') {
     app.use('/api/reviews', require('./src/review/routes'));
